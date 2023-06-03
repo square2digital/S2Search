@@ -1,0 +1,111 @@
+name: S2Search.Elastic.API - Docker Build and Push 
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+env:
+  GITLAB_ENDPOINT: registry.gitlab.com
+  YOUR_GITLAB_USERNAME: dp-dev0
+  YOUR_REPOSITORY: s2search
+  IMAGE_NAME: elasticui
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'csharp' ]
+        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
+        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          queries: +security-extended
+          languages: ${{ matrix.language }}
+          # If you wish to specify custom queries, you can do so here or in a config file.
+          # By default, queries listed here will override any specified in a config file.
+          # Prefix the list here with "+" to use these queries and those in the config file.
+
+          # Details on CodeQL's query packs refer to : https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
+          # queries: security-extended,security-and-quality
+
+
+      # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+      # If this step fails, then you should remove it and run the build manually (see below)
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      # Command-line programs to run using the OS shell.
+      # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+
+      #   If the Autobuild fails above, remove it and uncomment the following three lines.
+      #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
+
+      # - run: |
+      #   echo "Run, Build Application using script"
+      #   ./location_of_script_within_repo/buildscript.sh
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Initial Sanity Checks
+        run: |
+          cd ./
+          cd S2Search
+          ls -l
+          echo $PWD
+          echo ${{ env.GITLAB_ENDPOINT }}/${{ env.YOUR_GITLAB_USERNAME }}/${{ env.YOUR_REPOSITORY }}/${{ env.IMAGE_NAME }}
+          echo ${{ env.IMAGE_NAME }}:latest ${{ env.GITLAB_ENDPOINT }}/${{ env.YOUR_GITLAB_USERNAME }}/${{ env.YOUR_REPOSITORY }}/${{ env.IMAGE_NAME }}
+
+          echo docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.GITLAB_ENDPOINT }}/${{ env.YOUR_GITLAB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+          echo docker login ${{ env.GITLAB_ENDPOINT }}
+          echo docker push ${{ env.GITLAB_ENDPOINT }}/${{ env.YOUR_GITLAB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+
+          echo *******************
+          echo ** Variables ******
+          echo *******************
+          echo GITLAB_ENDPOINT: ${{ env.GITLAB_ENDPOINT }}
+          echo YOUR_GITLAB_USERNAME: ${{ env.YOUR_GITLAB_USERNAME }}
+          echo YOUR_REPOSITORY: ${{ env.YOUR_REPOSITORY }}
+          echo IMAGE_NAME: ${{ env.IMAGE_NAME }}
+
+      - name: Login to GitLab Container Registry
+        run: |
+          echo ${{ secrets.GITLAB_TOKEN }} | docker login ${{ env.GITLAB_ENDPOINT }} -u ${{ env.YOUR_GITLAB_USERNAME }} --password-stdin
+
+      - name: Build & Push Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          context: "${{ github.workspace }}/S2Search"
+          push: false
+          tags: ${{ env.IMAGE_NAME }}
+
+      - name: Docker Push Image To GitLab
+        run: |
+          docker images
+          docker tag elasticui:latest registry.gitlab.com/dp-dev0/s2search/elasticui:latest
+          docker login registry.gitlab.com
+          docker push registry.gitlab.com/dp-dev0/s2search/elasticui:latest
