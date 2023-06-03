@@ -1,0 +1,40 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+name: 1.0.$(Rev:r)
+
+resources:
+  repositories:
+    - repository: DevOpsTemplates
+      name: "S2Search/S2Search.Infrastructure"
+      type: git
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - src/lib/*
+    exclude:
+      - src/api/*
+
+variables:
+  - template: DevOps/templates/shared/variables-default.yml@DevOpsTemplates
+  - template: DevOps/templates/shared/variables-custom.yml@DevOpsTemplates
+    parameters:
+      customVariables:
+        vmImage: "ubuntu-latest"
+        targetRestoreProject: "src/lib/CustomerResourceApi.Client/*.csproj"
+        targetPackageProject: "src/lib/CustomerResourceApi.Client/CustomerResourceApi.Client.csproj"
+
+stages:
+  - template: DevOps/templates/dotnet/stage-nuget-package.yml@DevOpsTemplates
+    parameters:
+      targetRestoreProject: "$(targetRestoreProject)"
+      targetPackageProject: "$(targetPackageProject)"
+      hasTests: false
+      buildVmImage: "$(vmImage)"
+      vstsFeed: "$(vstsFeed)"
+      buildConfiguration: "$(buildConfiguration)"

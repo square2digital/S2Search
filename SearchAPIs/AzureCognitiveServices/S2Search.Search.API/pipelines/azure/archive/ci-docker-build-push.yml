@@ -1,0 +1,49 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  - master
+
+resources:
+  - repo: self
+
+variables:
+  tag: "$(Build.BuildId)"
+  PAT: $(ArtifactsAccessToken) # Set this up as a secret in the CI pipeline
+  containerRegistry: "GitLab"
+  containerNamespace: "dp-dev0"
+  containerRepository: "$(containerNamespace)/s2search/searchapi"
+  dockerfilePath: "./Search/Dockerfile"
+  dockerBuildContext: "$(Build.ArtifactStagingDirectory)/Search"
+
+stages:
+  - stage: Build
+    displayName: Build image
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: Docker@2
+            displayName: Build image
+            inputs:
+              containerRegistry: "$(containerRegistry)"
+              repository: "$(containerRepository)"
+              command: "build"
+              Dockerfile: "$(dockerfilePath)"
+              buildContext: "$(dockerBuildContext)"
+              tags: "$(tag)"
+              arguments: "--build-arg PAT=$(PAT)"
+              addPipelineData: false
+              addBaseImageData: false
+          - task: Docker@2
+            displayName: Push image
+            inputs:
+              containerRegistry: "$(containerRegistry)"
+              repository: "$(containerRepository)"
+              command: "push"
+              tags: "$(tag)"
+              addPipelineData: false
+              addBaseImageData: false

@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: $env:SERVICENAME-cronjob
+spec:
+  schedule: $env:CRONSCHEDULE
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: $env:SERVICENAME-container
+              image: $env:CONTAINERIMAGEURL
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: ASPNETCORE_ENVIRONMENT
+                  value: $env:ASPNETENVIRONMENT
+              volumeMounts:
+                - name: appsettings
+                  mountPath: /app/appsettings.$env:ASPNETENVIRONMENT.json
+                  subPath: appsettings.$env:ASPNETENVIRONMENT.json
+                  readOnly: true
+          volumes:
+            - name: appsettings
+              configMap:
+                name: $env:SERVICENAME-appsettings
+          restartPolicy: Never

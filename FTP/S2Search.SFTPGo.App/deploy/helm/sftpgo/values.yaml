@@ -1,0 +1,38 @@
+# Default values for sftpgo.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+deployment:
+  name: sftpgo-deployment
+  label: sftpgo
+  replicaCount: 1
+  image:
+    repository: drakkan/sftpgo
+    tag: latest
+    pullPolicy: IfNotPresent
+  ports:
+    containerPort: 2022
+  volumes:
+    mountName: config
+    mounthPath: /etc/sftpgo
+    configMapName: sftpgo-configmap
+
+service:
+  name: sftpgo-service
+  label: sftpgo
+  type: ClusterIp
+  port: 2022
+
+configMap:
+  name: sftpgo-configmap
+  label: sftpgo
+  sftpgo:
+    dataProvider:
+      driver: mysql
+      dbName: sftpgo
+      host: mysql-ftp-service
+      port: 3306
+      username: root
+      password: password
+      sslMode: 0
+      userBaseDirectory: "/srv/sftpgo/data"

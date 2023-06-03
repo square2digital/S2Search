@@ -1,0 +1,95 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  - main
+
+variables:
+  buildPlatform: "Any CPU"
+  buildConfiguration: "Release"
+  vstsFeed: "8806f2ad-d1f9-4f70-a901-b5c4d0bd18c3"
+  containerRegistry: "GitLab"
+  containerNamespace: "dp-dev0"
+  containerRepository: "$(containerNamespace)/s2search/searchapi"
+  dockerfilePath: "**/Dockerfile"
+  dockerBuildContext: "$(Build.ArtifactStagingDirectory)/Search"
+
+stages:
+  - stage: Build
+    displayName: Build image
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: ubuntu-latest
+        continueOnError: false
+        steps:
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Restore
+            inputs:
+              command: "restore"
+              projects: "**/Search.csproj"
+              feedsToUse: "select"
+              vstsFeed: "$(vstsFeed)"
+
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Build
+            inputs:
+              command: "build"
+              projects: "**/Search.csproj"
+              arguments: "-c $(buildConfiguration)"
+
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Test
+            inputs:
+              command: "test"
+              projects: "**/Tests.csproj"
+
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Publish
+            inputs:
+              command: "publish"
+              publishWebProjects: true
+              arguments: "--output $(Build.ArtifactStagingDirectory) -c $(buildConfiguration)"
+              zipAfterPublish: false
+
+          - task: PublishBuildArtifacts@1
+            displayName: Publish Artifacts
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "drop"
+              publishLocation: "Container"
+
+          - task: CmdLine@2
+            displayName: List Build.ArtifactStagingDirectory
+            inputs:
+              script: "dir"
+              workingDirectory: "$(dockerBuildContext)"
+
+          - task: Docker@2
+            displayName: Build docker image
+            inputs:
+              containerRegistry: "$(containerRegistry)"
+              repository: "$(containerRepository)"
+              command: "build"
+              tags: |
+                $(Build.BuildId)
+                latest
+              Dockerfile: "$(dockerfilePath)"
+              buildContext: "$(dockerBuildContext)"
+              addPipelineData: false
+              addBaseImageData: false
+
+          - task: Docker@2
+            displayName: Push docker image
+            inputs:
+              containerRegistry: "$(containerRegistry)"
+              repository: "$(containerRepository)"
+              command: "push"
+              tags: |
+                $(Build.BuildId)
+                latest
+              addPipelineData: false
+              addBaseImageData: false
