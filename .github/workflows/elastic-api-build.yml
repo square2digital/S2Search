@@ -100,7 +100,7 @@ jobs:
       - name: Build & Push Docker Image
         uses: docker/build-push-action@v2
         with:
-          context: "${{ github.workspace }}/S2Search"
+          context: "${{ github.workspace }}/SearchAPIs/ElasticSearch/S2Search.Elastic.API"
           push: false
           tags: ${{ env.IMAGE_NAME }}
 
