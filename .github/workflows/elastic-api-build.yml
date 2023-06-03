@@ -74,7 +74,8 @@ jobs:
       - name: Initial Sanity Checks
         run: |
           cd ./
-          cd S2Search
+          ls -l
+          cd SearchAPIs/ElasticSearch/S2Search.Elastic.API
           ls -l
           echo $PWD
           echo ${{ env.GITLAB_ENDPOINT }}/${{ env.YOUR_GITLAB_USERNAME }}/${{ env.YOUR_REPOSITORY }}/${{ env.IMAGE_NAME }}
