@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: { { .Values.deployment.name } }
+  labels:
+    app: { { .Values.deployment.label } }
+spec:
+  replicas: { { .Values.deployment.replicaCount } }
+  selector:
+    matchLabels:
+      app: { { .Values.deployment.label } }
+  template:
+    metadata:
+      labels:
+        app: { { .Values.deployment.label } }
+    spec:
+      containers:
+        - name: { { .Chart.Name } }
+          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
+          imagePullPolicy: { { .Values.deployment.image.pullPolicy } }
+          ports:
+            - containerPort: { { .Values.deployment.ports.containerPort } }
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          volumeMounts:
+            - name: { { .Values.deployment.volumes.mountName } }
+              mountPath: { { .Values.deployment.volumes.mounthPath } }
+      volumes:
+        name: { { .Values.deployment.volumes.mountName } }
+        configMap:
+          name: { { .Values.deployment.volumes.configMapName } }

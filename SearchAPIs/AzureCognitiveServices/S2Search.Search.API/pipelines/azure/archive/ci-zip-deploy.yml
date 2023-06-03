@@ -1,0 +1,63 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  - main
+
+variables:
+  buildPlatform: "Any CPU"
+  buildConfiguration: "Release"
+  vstsFeed: "8806f2ad-d1f9-4f70-a901-b5c4d0bd18c3"
+
+stages:
+  - stage: Build
+    displayName: Build image
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: ubuntu-latest
+        continueOnError: false
+        steps:
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Restore
+            inputs:
+              command: "restore"
+              projects: "**/Search.csproj"
+              feedsToUse: "select"
+              vstsFeed: "$(vstsFeed)"
+
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Build
+            inputs:
+              command: "build"
+              projects: "**/Search.csproj"
+              arguments: "-c $(buildConfiguration)"
+
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Test
+            inputs:
+              command: "test"
+              projects: "**/Tests.csproj"
+
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Publish
+            inputs:
+              command: "publish"
+              publishWebProjects: true
+              arguments: "--output $(Build.ArtifactStagingDirectory) -c $(buildConfiguration)"
+              zipAfterPublish: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: Publish Artifacts
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "drop"
+              publishLocation: "Container"
+
+          - task: CmdLine@2
+            inputs:
+              script: "dir"
+              workingDirectory: "$(Build.ArtifactStagingDirectory)"

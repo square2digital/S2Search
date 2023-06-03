@@ -1,0 +1,85 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+resources:
+  repositories:
+    - repository: DevOpsTemplates
+      name: "S2Search/S2Search.Infrastructure"
+      type: git
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - src/api/*
+    exclude:
+      - src/lib/*
+
+variables:
+  - template: DevOps/templates/shared/variables-default.yml@DevOpsTemplates
+    parameters:
+      dockerBuildContext: "$(Build.ArtifactStagingDirectory)/ClientConfiguration"
+      containerRepository: "$(containerNamespace)/s2search/clientconfigurationapi"
+  - template: DevOps/templates/shared/variables-custom.yml@DevOpsTemplates
+    parameters:
+      customVariables:
+        vmImage: "ubuntu-latest"
+        targetRestoreProject: "src/api/**/*.csproj"
+        targetWebProject: "src/api/**/ClientConfiguration.csproj"
+        targetTestProject: "src/api/**/Tests.csproj"
+        azureSubscription: "S2-Pay-As-You-Go (f8cff945-b5e5-462a-9786-d69bd7a0eb34)"
+        appServiceName: "s2clientconfiguration-api-dev"
+        azureResourceGroup: "Demo-JG-UKS-AzureSearch"
+
+stages:
+  - template: DevOps/templates/dotnet/stage-build-docker-image.yml@DevOpsTemplates
+    parameters:
+      deploymentFilesSourceFolder: "$(System.DefaultWorkingDirectory)/deploy"
+      deploymentFilesTargetFolder: "$(Build.ArtifactStagingDirectory)/deploy"
+      appSettingsSourceFolder: "$(System.DefaultWorkingDirectory)/src/api/ClientConfiguration"
+      targetRestoreProject: "$(targetRestoreProject)"
+      targetWebProject: "$(targetWebProject)"
+      targetTestProject: "$(targetTestProject)"
+      hasTests: true
+      vstsFeed: "$(vstsFeed)"
+      buildConfiguration: "$(buildConfiguration)"
+      buildVmImage: "$(vmImage)"
+      buildPublishDirectory: "$(Build.ArtifactStagingDirectory)"
+      containerRegistryConnection: "$(containerRegistryConnection)"
+      containerRepository: "$(containerRepository)"
+      dockerfilePath: "$(dockerfilePath)"
+      dockerBuildContext: "$(dockerBuildContext)"
+      dockerBuildTag: "$(Build.BuildId)"
+
+  # - template: DevOps/templates/shared/stage-deploy-app-service-container.yml@DevOpsTemplates
+  #   parameters:
+  #     deployVmImage: "$(vmImage)"
+  #     deployEnvironment: "dev"
+  #     azureSubscription: "$(azureSubscription)"
+  #     azureResourceGroup: "$(azureResourceGroup)"
+  #     appServiceName: "$(appServiceName)"
+  #     fullContainerImageUrl: $(ContainerImageUrl)
+  #     containerRegistryUrl: $(ContainerRegistryUrl)
+  #     containerRegistryUsername: $(ContainerRegistryUsername)
+  #     containerRegistryPassword: $(ContainerRegistryPassword)
+  #     workingDirectory: "$(System.DefaultWorkingDirectory)"
+  #     deployScriptsPath: "$(Agent.BuildDirectory)/drop/deploy"
+  #     templatesRepositoryName: "DevOpsTemplates"
+  #     secrets:
+  #       CUSTOMERRESOURCESTORE: $(CustomerResourceStore)
+
+  # - template: DevOps/templates/shared/stage-deploy-k8s.yml@DevOpsTemplates
+  #   parameters:
+  #     workingDirectory: "$(System.DefaultWorkingDirectory)"
+  #     deployVmImage: "$(vmImage)"
+  #     deployEnvironment: "dev"
+  #     deployScriptsPath: "$(Agent.BuildDirectory)/drop/deploy"
+  #     kubernetesServiceConnection: "Okteto"
+  #     kubernetesNamespace: "$(containerNamespace)"
+  #     templatesRepositoryName: "DevOpsTemplates"
+  #     secrets:
+  #       CUSTOMERRESOURCESTORE: $(CustomerResourceStore)

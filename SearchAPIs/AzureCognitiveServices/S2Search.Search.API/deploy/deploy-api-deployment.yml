@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $env:SERVICENAME-deployment
+  labels:
+    app: $env:SERVICENAME
+spec:
+  replicas: $env:REPLICAS
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: $env:SERVICENAME
+  template:
+    metadata:
+      labels:
+        app: $env:SERVICENAME
+    spec:
+      containers:
+        - name: $env:SERVICENAME-container
+          image: $env:CONTAINERIMAGEURL
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: $env:ASPNETENVIRONMENT
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          livenessProbe:
+            httpGet:
+              path: /api/Status
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/Status
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 10m
+              memory: 130Mi
+#            limits:
+#              cpu: 100m
+#              memory: 225Mi
+          volumeMounts:
+            - name: appsettings
+              mountPath: /app/appsettings.$env:ASPNETENVIRONMENT.json
+              subPath: appsettings.$env:ASPNETENVIRONMENT.json
+              readOnly: true
+      volumes:
+        - name: appsettings
+          configMap:
+            name: $env:SERVICENAME-appsettings

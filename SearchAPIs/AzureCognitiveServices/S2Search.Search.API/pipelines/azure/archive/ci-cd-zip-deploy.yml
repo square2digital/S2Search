@@ -1,0 +1,93 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  - main
+
+variables:
+  buildPlatform: "Any CPU"
+  buildConfiguration: "Release"
+  vstsFeed: "8806f2ad-d1f9-4f70-a901-b5c4d0bd18c3"
+  containerRegistry: "GitLab"
+  containerNamespace: "dp-dev0"
+  containerRepository: "$(containerNamespace)/s2search/searchapi"
+  dockerfilePath: "**/Dockerfile"
+
+stages:
+  - stage: Build
+    displayName: Build image
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: ubuntu-latest
+        continueOnError: false
+        steps:
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Restore
+            inputs:
+              command: "restore"
+              projects: "**/Search.csproj"
+              feedsToUse: "select"
+              vstsFeed: "$(vstsFeed)"
+
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Build
+            inputs:
+              command: "build"
+              projects: "**/Search.csproj"
+              arguments: "-c $(buildConfiguration)"
+
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Test
+            inputs:
+              command: "test"
+              projects: "**/Tests.csproj"
+
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet Publish
+            inputs:
+              command: "publish"
+              publishWebProjects: true
+              arguments: "--output $(Build.ArtifactStagingDirectory) -c $(buildConfiguration)"
+              zipAfterPublish: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: Publish Artifacts
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "drop"
+              publishLocation: "Container"
+
+          - task: CmdLine@2
+            inputs:
+              script: "dir"
+              workingDirectory: "$(Build.ArtifactStagingDirectory)"
+
+  - stage: DeployDev
+    displayName: Deploy to Dev
+    variables:
+      appPackagePath: "$(Agent.BuildDirectory)/**/*.zip"
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy Web App
+        pool:
+          vmImage: "ubuntu-latest"
+        # Creates an environment if it doesn't exist.
+        environment: "dev"
+        strategy:
+          # Default deployment strategy
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureRmWebAppDeployment@4
+                  displayName: "Deploy Azure App Service"
+                  inputs:
+                    ConnectionType: "AzureRM"
+                    azureSubscription: "S2-Pay-As-You-Go (f8cff945-b5e5-462a-9786-d69bd7a0eb34)"
+                    appType: "webApp"
+                    WebAppName: "s2searchdev"
+                    packageForLinux: "$(appPackagePath)"
