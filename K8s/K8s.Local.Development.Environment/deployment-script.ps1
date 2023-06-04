@@ -1,22 +1,29 @@
 # #############################################################
-# Script to re-deploy the S2 Search app to a local K8s Cluster
+# Script to deploy the S2 Search app to a local K8s Cluster
+# - the script is designed to be run as required
+# - you can choose to install the full platform or select specific components
+# -  
 # #############################################################
 
 # execution commands
 # build all services
 # .\deployment-script.ps1
 
+#############################################################
+# - replace with your path to use the example commands below 
+#############################################################
+
 # build everything
-# cls; cd "E:\git\Square2 Digital\S2 Search\K8s.Local.Cluster.Setup\local"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -deleteS2Namespace $true
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -deleteS2Namespace $true
 
 # build specifc service only - Elastic UI & API in this case
-# cls; cd "E:\git\Square2 Digital\S2 Search\K8s.Local.Cluster.Setup\local"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $false -includeConfigAPI $false -includeSearchAPI $false -includeElasticAPI $false -includeCRAPI $false -includeRedis $false -includeSftpGo $false -includeElastic $false -deleteAllImages $false -deleteS2Namespace $false
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $false -includeConfigAPI $false -includeSearchAPI $false -includeElasticAPI $false -includeCRAPI $false -includeRedis $false -includeSftpGo $false -includeElastic $false -deleteAllImages $false -deleteS2Namespace $false
 
 #######################
 # debug the elastic UI
 #######################
 # build everything
-# cls; cd "E:\git\Square2 Digital\S2 Search\K8s.Local.Cluster.Setup\local"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $false -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $false -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -deleteS2Namespace $true
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $false -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $false -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -deleteS2Namespace $true
 
 param (
     [bool]$includeElasticUI = $false,
@@ -34,7 +41,7 @@ param (
     [bool]$deleteS2Namespace = $false
 )
 
-# suppoted colour values - Black DarkBlue DarkGreen DarkCyan DarkRed DarkMagenta DarkYellow Gray DarkGray Blue Green Cyan Red Magenta Yellow White
+# Suppoted colour values - Black DarkBlue DarkGreen DarkCyan DarkRed DarkMagenta DarkYellow Gray DarkGray Blue Green Cyan Red Magenta Yellow White
 function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
     for ($i = 0; $i -lt $Text.Length; $i++) {
         Write-Host $Text[$i] -Foreground $Color[$i] -NoNewLine
@@ -110,39 +117,39 @@ if ($context -ne $localContext) {
 # the PatToken is for the "Azure DevOps Artifacts Credentials Provider" which allows the docker images
 # when built to pull down dependacies from the DevOps artifacts repo "square2digital"
 $PatToken = "ko5bu6j5m3yhg3h43aeoffgjh24zkm77bbf62qm3jlhxqe4yjooa"
-$DeploymentRoot = "E:\git\Square2 Digital\S2 Search"
+$DeploymentRoot = "F:\github\Square2 Digital\S2Search"
 
-$ApplicationPathCustomerAPIDockerFile = "$DeploymentRoot\S2Search.CustomerResource.API\src\api\CustomerResource\"
+$ApplicationPathCustomerAPIDockerFile = "$DeploymentRoot\APIs\S2Search.CustomerResource.API\src\api\CustomerResource\"
 Write-Color -Text "The ApplicationPathCustomerAPIDockerFile is -> $ApplicationPathCustomerAPIDockerFile" -Color Blue
 
-$ApplicationPathCustomerAPIContext = "$DeploymentRoot\S2Search.CustomerResource.API"
+$ApplicationPathCustomerAPIContext = "$DeploymentRoot\APIs\S2Search.CustomerResource.API"
 Write-Color -Text "The ApplicationPathCustomerAPIContext is -> $ApplicationPathCustomerAPIContext" -Color Blue
 
-$ApplicationPathClientDockerFile = "$DeploymentRoot\S2Search.ClientConfiguration.API\src\api\ClientConfiguration\"
+$ApplicationPathClientDockerFile = "$DeploymentRoot\APIs\S2Search.ClientConfiguration.API\src\api\ClientConfiguration\"
 Write-Color -Text "The ApplicationPathClientDockerFile is -> $ApplicationPathClientDockerFile" -Color Blue
 
-$ApplicationPathClientConfigContext = "$DeploymentRoot\S2Search.ClientConfiguration.API"
+$ApplicationPathClientConfigContext = "$DeploymentRoot\APIs\S2Search.ClientConfiguration.API"
 Write-Color -Text "The ApplicationPathClientConfigContext is -> $ApplicationPathClientConfigContext" -Color Blue
 
-$ApplicationPathSearchAPI = "$DeploymentRoot\S2Search.Search.API\Search\"
+$ApplicationPathSearchAPI = "$DeploymentRoot\SearchAPIs\AzureCognitiveServices\S2Search.Search.API\Search\"
 Write-Color -Text "The ApplicationPathSearchAPI is -> $ApplicationPathSearchAPI" -Color Blue
 
-$ApplicationPathSearchAPIContext = "$DeploymentRoot\S2Search.Search.API"
+$ApplicationPathSearchAPIContext = "$DeploymentRoot\SearchAPIs\AzureCognitiveServices\S2Search.Search.API"
 Write-Color -Text "The ApplicationPathSearchAPIContext is -> $ApplicationPathSearchAPIContext" -Color Blue
 
-$ApplicationPathElasticAPI = "$DeploymentRoot\S2Search.Elastic.API\Search\"
+$ApplicationPathElasticAPI = "$DeploymentRoot\SearchAPIs\ElasticSearch\S2Search.Elastic.API\Search\"
 Write-Color -Text "The ApplicationPathElasticAPI is -> $ApplicationPathElasticAPI" -Color Blue
 
-$ApplicationPathElasticAPIContext = "$DeploymentRoot\S2Search.Elastic.API"
+$ApplicationPathElasticAPIContext = "$DeploymentRoot\SearchAPIs\ElasticSearch\S2Search.Elastic.API"
 Write-Color -Text "The ApplicationPathElasticAPIContext is -> $ApplicationPathElasticAPIContext" -Color Blue
 
-$ApplicationPathElasticUI = "$DeploymentRoot\S2Search.Elastic.NextJS.ReactUI\S2Search"
+$ApplicationPathElasticUI = "$DeploymentRoot\SearchUIs\ElasticSearch\S2Search.Elastic.NextJS.ReactUI\S2Search"
 Write-Color -Text "The ApplicationPathElasticUI is -> $ApplicationPathElasticUI" -Color Blue
 
-$ApplicationPathSearchUI = "$DeploymentRoot\S2Search.Search.NextJS.ReactUI\S2Search"
+$ApplicationPathSearchUI = "$DeploymentRoot\SearchUIs\AzureCognitiveServices\S2Search.Search.NextJS.ReactUI\S2Search"
 Write-Color -Text "The ApplicationPathSearchUI is -> $ApplicationPathSearchUI" -Color Blue
 
-$ApplicationPathAdminUI = "$DeploymentRoot\S2Search.Admin.NextJS.ReactUI\s2admin"
+$ApplicationPathAdminUI = "$DeploymentRoot\SearchUIs\AzureCognitiveServices\S2Search.Admin.NextJS.ReactUI\s2admin"
 Write-Color -Text "The ApplicationPathAdminUI is -> $ApplicationPathAdminUI" -Color Blue
 
 $S2Namespace = "s2"
@@ -199,20 +206,20 @@ Write-Color -Text "################################" -Color DarkCyan
 kubectl create namespace $S2Namespace
 
 # redis cluster
-#$RedisPath = "$DeploymentRoot\K8s.Local.Cluster.Setup\local\redis"
+#$RedisPath = "$DeploymentRoot\K8s\K8s.Local.Development.Environment\redis"
 #$RedisSentinelPath = "$RedisPath\sentinel"
 
 #redis single instance
-$RedisPath = "$DeploymentRoot\K8s.Local.Cluster.Setup\local\redis\SingleInstance"
+$RedisPath = "$DeploymentRoot\K8s\K8s.Local.Development.Environment\redis\SingleInstance"
 Write-Color -Text "The RedisPath is -> $RedisPath" -Color Blue
 
 #Elastic Cluster
-$ElasticSearchPath = "$DeploymentRoot\K8s.Local.Cluster.Setup\local\ElasticSearch"
+$ElasticSearchPath = "$DeploymentRoot\K8s\K8s.Local.Development.Environment\ElasticSearch"
 Write-Color -Text "The elastic path is -> $ElasticSearchPath" -Color Blue
 
 #sftpgo + MySQL
-$SFTPGoPath = "$DeploymentRoot\K8s.Local.Cluster.Setup\local\SFTPGo"
-$MySQLPath = "$DeploymentRoot\K8s.Local.Cluster.Setup\local\MySql"
+$SFTPGoPath = "$DeploymentRoot\K8s\K8s.Local.Development.Environment\SFTPGo"
+$MySQLPath = "$DeploymentRoot\K8s\K8s.Local.Development.Environment\MySql"
 
 Write-Color -Text "The SFTPGoPath is -> $SFTPGoPath" -Color Blue
 Write-Color -Text "The MySQLPath is -> $MySQLPath" -Color Blue
@@ -294,6 +301,7 @@ Write-Color -Text "################################" -Color Green
 
 if ($includeElasticUI) {
     Set-Location $ApplicationPathElasticUI
+    npm install
     Write-Color -Text "Building Docker Image - S2 Elastic UI (NextJS) at location $ApplicationPathElasticUI" -Color Magenta    
     Write-Color -Text "docker build --pull --rm -f "Dockerfile" -t s2elasticui:dev . --build-arg NODE_ENV=production" -Color Yellow
     docker build --pull --rm -f "Dockerfile" -t s2elasticui:dev . --build-arg NODE_ENV=production
@@ -304,6 +312,7 @@ if ($includeElasticUI) {
 
 if ($includeSearchUI) {
     Set-Location $ApplicationPathSearchUI
+    npm install
     Write-Color -Text "Building Docker Image - S2 Search UI (NextJS) at location $ApplicationPathSearchUI" -Color Magenta    
     Write-Color -Text "docker build --pull --rm -f "Dockerfile" -t s2searchui:dev . --build-arg NODE_ENV=production" -Color Yellow
     docker build --pull --rm -f "Dockerfile" -t s2searchui:dev . --build-arg NODE_ENV=production
@@ -314,6 +323,7 @@ if ($includeSearchUI) {
 
 if ($includeAdminUI) {
     Set-Location $ApplicationPathAdminUI
+    npm install
     Write-Color -Text "Building Docker Image - S2 Admin UI  (ReactJS) at location $ApplicationPathAdminUI" -Color Magenta
     Write-Color -Text "docker build --pull --rm -f "Dockerfile" -t s2adminui:dev ." -Color Yellow
     docker build --pull --rm -f "Dockerfile" -t s2adminui:dev .
@@ -371,56 +381,56 @@ Write-Color -Text "Creating K8s Deployments to local cluster" -Color Green
 Write-Color -Text "################################" -Color Green
 
 # - 3 - deploy each of the services back to k8s
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2ClientConfigurationApi"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ClientConfigurationApi"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2SearchAPI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchAPI"
 kubectl apply -f .\ConfigMaps\configmap-localk8s.yml --namespace=$S2Namespace
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2ElasticAPI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ElasticAPI"
 kubectl apply -f .\ConfigMaps\configmap-localk8s.yml --namespace=$S2Namespace
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2ElasticUI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ElasticUI"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2SearchUI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchUI"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2CustomerResourceApi"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2CustomerResourceApi"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2AdminUI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminUI"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Creating K8s Services to local cluster" -Color Green
 Write-Color -Text "################################" -Color Green
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2ClientConfigurationApi"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ClientConfigurationApi"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2SearchAPI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchAPI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2ElasticAPI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ElasticAPI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2ElasticUI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ElasticUI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2SearchUI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchUI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2CustomerResourceApi"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2CustomerResourceApi"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local\S2AdminUI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminUI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 
 if ($includeSearchUI -and $includeAdminUI) {
@@ -451,7 +461,7 @@ if ($includeElasticUI) {
     Test-Application -Endpoint $S2ElasticUIURL -TimeoutMs 10000
 }
 
-Set-Location "$DeploymentRoot\K8s.Local.Cluster.Setup\local"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment"
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete" -Color Green
