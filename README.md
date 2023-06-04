@@ -28,7 +28,7 @@ S2 Search consists of multiple components such as APIs. UIs. SQL Databases, Azur
 
 S2 Search provides rich search insights that are designed to provide business intelligence on your stock. What are you customers searching for? Which search attributes are higher and lower, what is the trend? These insights will provide a valuable tool to ensure you are purchasing stock which match your customer sentiment.
 
-# Main Features:
+# Main Features
 
 1. Modern React Search UIs offering a clean and responsive UX.
 2. Admin Portal to manage your search instances.
@@ -40,7 +40,19 @@ S2 Search provides rich search insights that are designed to provide business in
 8. Automated deployment to K8s for both Cloud and OnPrem production environments
 9. Automated PowerShell scripts to easily setup the local development environment.
 
-Standard Readme is designed for open source libraries. Although it’s [historically](#background) made for Node and npm projects, it also applies to libraries in other languages and package managers.
+## Elastic Search or Cognitive Services?
+
+S2 Search supports both Elastic Search and Azure Cognitive Services. The statements below will help you decide which S2 Version will be better suited for your requirements.
+
+Choose Elastic if…
+
+- You want to deploy S2 Search OnPrem.
+- Will be deploying to AWS, GCP or any cloud platform that is not Azure.
+
+Choose Azure Cognitive services if…
+
+- Will be deploying S2 Search to Azure.
+- Want to utilize all features of the S2 Search platform.
 
 ## Table of Contents
 
@@ -102,41 +114,15 @@ $ standard-readme-spec
 
 To use the generator, look at [generator-standard-readme](https://github.com/RichardLitt/generator-standard-readme). There is a global executable to run the generator in that package, aliased as `standard-readme`.
 
-## Badge
-
-If your README is compliant with Standard-Readme and you're on GitHub, it would be great if you could add the badge. This allows people to link back to this Spec, and helps adoption of the README. The badge is **not required**.
-
-[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/JGilmartin-S2/S2Search)
-
-To add in Markdown format, use this code:
-
-```
-[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/JGilmartin-S2/S2Search)
-```
-
-## Example Readmes
-
-To see how the specification has been applied, see the [example-readmes](example-readmes/).
-
-## Related Efforts
-
-- [Art of Readme](https://github.com/noffle/art-of-readme) - 💌 Learn the art of writing quality READMEs.
-- [open-source-template](https://github.com/davidbgk/open-source-template/) - A README template to encourage open-source contributions.
-
 ## Maintainers
 
-[@RichardLitt](https://github.com/RichardLitt).
+[@JonathanGilmatin](https://github.com/JGilmartin-S2).
 
 ## Contributing
 
 Feel free to dive in! [Open an issue](https://github.com/JGilmartin-S2/S2Search/issues/new) or submit PRs.
 
 Standard Readme follows the [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) Code of Conduct.
-
-### Contributors
-
-This project exists thanks to all the people who contribute.
-<a href="https://github.com/JGilmartin-S2/S2Search/graphs/contributors"><img src="https://opencollective.com/standard-readme/contributors.svg?width=890&button=false" /></a>
 
 ## License
 
