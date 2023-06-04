@@ -3,12 +3,32 @@
 <p align="center"><a href="https://www.square2digital.com/s2-search/" target="_blank" rel="noopener noreferrer"><img src="https://www.square2digital.com/wp-content/uploads/2022/01/Square_2_Logo_Colour_Blue_White_BG.svg" alt="re-frame logo" width="30%"></a></p>
 
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/JGilmartin-S2/S2Search)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-A standard style for README files
+Technology
 
-Your README file is normally the first entry point to your code. It should tell people why they should use your module, how they can install it, and how they can use it. Standardizing how you write your README makes creating and maintaining your READMEs easier. Great documentation takes work!
+[![JavaScript](https://img.shields.io/badge/--F7DF1E?logo=javascript&logoColor=000)](https://www.javascript.com/)
+[![.NET](https://img.shields.io/badge/--512BD4?logo=.net&logoColor=ffffff)](https://dotnet.microsoft.com/)
+[![Azure](https://badgen.net/badge/icon/azure?icon=azure&label)](https://azure.microsoft.com)
+[![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://https://docker.com/)
+[![NuGet](https://badgen.net/badge/icon/nuget?icon=nuget&label)](https://https://nuget.org/)
+[![Npm](https://badgen.net/badge/icon/npm?icon=npm&label)](https://https://npmjs.com/)
 
-This repository contains:
+# Overview
+
+> An Enterprise Search platform designed for the Automotive Industry which provides a modern and responsive search experience for your Vehicle Stock. Supports both Elastic and Azure Cognitive Services and can be integrated with an existing application.
+
+---
+
+S2 Search provides a Modern and Responsive UX that looks great on any device. It’s simple and easy to use UI is fully customisable to perfectly fit your branding and vehicle stock profile. S2 Search can be scaled to support any demand. The S2 Search platform is highly available, supporting both SaaS and OnPrem.
+
+S2 Search supports both Elastic and Azure Cognitive Services. The codebase provides APIs and UIs designed to work specifically with each search technology.
+
+S2 Search consists of multiple components such as APIs. UIs. SQL Databases, Azure Functions, Storage Integrations and FTP support. Each component builds as docker containers which are deployed and orchestrated to Kubernetes.
+
+S2 Search provides rich search insights that are designed to provide business intelligence on your stock. What are you customers searching for? Which search attributes are higher and lower, what is the trend? These insights will provide a valuable tool to ensure you are purchasing stock which match your customer sentiment.
+
+# This repository contains:
 
 1. [The specification](spec.md) for how a standard README should look.
 2. A link to [a linter](https://github.com/JGilmartin-S2/S2Search-preset) you can use to keep your README maintained ([work in progress](https://github.com/JGilmartin-S2/S2Search/issues/5)).
