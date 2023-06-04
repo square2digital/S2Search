@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: s2adminui-loadbalancer
+  labels:
+    app: s2adminui
+spec:
+  type: LoadBalancer
+  selector:
+    app: s2adminui
+  ports:
+    - name: "3001"
+      port: 3001
+      # this may need to be 80 for docker desktop -> targetPort: 80
+      targetPort: 3001

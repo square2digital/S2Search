@@ -1,0 +1,45 @@
+parameters:
+  - name: azureSubscription
+    type: string
+    default: ""
+  - name: azureResourceGroup
+    type: string
+    default: ""
+  - name: appServiceName
+    type: string
+    default: ""
+  - name: fullContainerImageUrl
+    type: string
+    default: ""
+  - name: containerRegistryUrl
+    type: string
+    default: ""
+  - name: containerRegistryUsername
+    type: string
+    default: ""
+  - name: containerRegistryPassword
+    type: string
+    default: ""
+
+steps:
+  - task: AzureAppServiceSettings@1
+    displayName: Deploy App Service Settings
+    inputs:
+      ConnectedServiceName: "${{ parameters.azureSubscription }}"
+      appName: "${{ parameters.appServiceName }}"
+      resourceGroupName: "${{ parameters.azureResourceGroup }}"
+      appSettings: $(AppServiceSettings) # Optional  # Add/Update App Service App Settings using the json syntax as follows:<br/> [<br/>&nbsp;&nbsp; {<br/>&nbsp;&nbsp;&nbsp;&nbsp;"name": "key1", <br/>&nbsp;&nbsp;&nbsp;&nbsp;"value": "valueabcd",<br/>&nbsp;&nbsp;&nbsp;&nbsp;"slotSetting": false <br/> &nbsp;&nbsp; },<br/>&nbsp;&nbsp; {<br/>&nbsp;&nbsp;&nbsp;&nbsp;"name": "key2", <br/>&nbsp;&nbsp;&nbsp;&nbsp;"value": "valueefgh",<br/>&nbsp;&nbsp;&nbsp;&nbsp;"slotSetting": true <br/> &nbsp;&nbsp; }<br/>]
+      #generalSettings:  # Optional  # Add/Update App Service General Settings using the json syntax as follows:<br/> [<br/>&nbsp;&nbsp; {<br/>&nbsp;&nbsp;&nbsp;&nbsp;"alwaysOn": true, <br/>&nbsp;&nbsp;&nbsp;&nbsp;"webSocketsEnabled": false<br/> &nbsp;&nbsp; }<br/>]
+      #connectionStrings:  # Optional  # Add/Update App Service Connection strings using the json syntax as follows:<br/> [<br/>&nbsp;&nbsp; {<br/>&nbsp;&nbsp;&nbsp;&nbsp;"name": "key1", <br/>&nbsp;&nbsp;&nbsp;&nbsp;"value": "valueabcd",<br/>&nbsp;&nbsp;&nbsp;&nbsp;"type": "MySql", <br/> &nbsp;&nbsp;&nbsp;&nbsp;"slotSetting": false <br/> &nbsp;&nbsp; },<br/>&nbsp;&nbsp; {<br/>&nbsp;&nbsp;&nbsp;&nbsp;"name": "key2", <br/>&nbsp;&nbsp;&nbsp;&nbsp;"value": "valueefgh",<br/>&nbsp;&nbsp;&nbsp;&nbsp;"type": "Custom", <br/> &nbsp;&nbsp;&nbsp;&nbsp;"slotSetting": true <br/> &nbsp;&nbsp; }<br/>]
+
+  - task: AzureWebAppContainer@1
+    displayName: Deploy App Service
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscription }}"
+      appName: "${{ parameters.appServiceName }}"
+      imageName: "${{ parameters.fullContainerImageUrl }}"
+      appSettings:
+        -DOCKER_REGISTRY_SERVER_USERNAME "${{ parameters.containerRegistryUsername }}"
+        -DOCKER_REGISTRY_SERVER_PASSWORD "${{ parameters.containerRegistryPassword }}"
+        -DOCKER_CUSTOM_IMAGE_NAME "${{ parameters.fullContainerImageUrl }}"
+        -DOCKER_REGISTRY_SERVER_URL "${{ parameters.containerRegistryUrl }}"

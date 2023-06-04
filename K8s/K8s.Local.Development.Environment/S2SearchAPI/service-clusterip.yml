@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: search-api-service
+  labels:
+    app: s2searchapi
+spec:
+  type: ClusterIP
+  selector:
+    app: s2searchapi
+  ports:
+    - port: 80
+      targetPort: 80

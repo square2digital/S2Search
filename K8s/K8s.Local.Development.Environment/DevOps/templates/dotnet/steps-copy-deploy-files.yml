@@ -1,0 +1,25 @@
+parameters:
+  - name: deploymentFilesSourceFolder
+    type: string
+    default: ""
+  - name: deploymentFilesTargetFolder
+    type: string
+    default: ""
+  - name: appSettingsSourceFolder
+    type: string
+    default: ""
+
+steps:
+  - task: CopyFiles@2
+    displayName: Copy Deployment Files
+    inputs:
+      SourceFolder: "${{ parameters.deploymentFilesSourceFolder }}"
+      Contents: "**"
+      TargetFolder: "${{ parameters.deploymentFilesTargetFolder }}"
+
+  - task: CopyFiles@2
+    displayName: Copy appsettings files
+    inputs:
+      SourceFolder: "${{ parameters.appSettingsSourceFolder }}"
+      Contents: "appsettings.?(Kubernetes|AppService).json"
+      TargetFolder: "${{ parameters.deploymentFilesTargetFolder }}"

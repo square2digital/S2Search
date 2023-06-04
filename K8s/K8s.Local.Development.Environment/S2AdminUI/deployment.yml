@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s2adminui-deployment
+  labels:
+    app: s2adminui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s2adminui
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: s2adminui
+    spec:
+      containers:
+        - name: s2adminui
+          image: s2adminui:dev
+          ports:
+            - containerPort: 3001
+          resources:
+            limits:
+              memory: "128Mi" #128 MB
+              cpu: "200m" #200 millicpu (.2 cpu or 20% of the cpu)
+          imagePullPolicy: IfNotPresent

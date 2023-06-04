@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s2elasticui-deployment
+  labels:
+    app: s2elasticui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s2elasticui
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: s2elasticui
+    spec:
+      containers:
+        - name: s2elasticui
+          image: s2elasticui:dev
+          ports:
+            - containerPort: 2999
+          resources:
+            limits:
+              memory: "128Mi" #128 MB
+              cpu: "200m" #200 millicpu (.2 cpu or 20% of the cpu)
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /vehicletest
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10

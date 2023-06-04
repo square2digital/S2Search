@@ -1,0 +1,62 @@
+parameters:
+  - name: directory
+    displayName: "the folder name for the react app"
+    type: string
+    default: ""
+  - name: nodeVersion
+    displayName: "The version of Node to install"
+    type: string
+    default: ""
+  - name: npmRunScript
+    displayName: "The script to run in packages.json e.g. build:production"
+    type: string
+    default: ""
+  - name: buildVmImage
+    displayName: "The Build Agent VM Image"
+    type: string
+  - name: archiveBuildPath
+    displayName: "The build path to archive"
+    type: string
+  - name: archiveTargetFile
+    displayName: "The file path to output the archive to"
+    type: string
+    default: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)"
+  - name: azureStaticAppApiToken
+    type: string
+    default: ""
+
+stages:
+  - stage: Build
+    displayName: Build
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: "${{ parameters.buildVmImage }}"
+        continueOnError: false
+        steps:
+          - task: NodeTool@0
+            displayName: "Install Node.js"
+            inputs:
+              versionSpec: "${{ parameters.nodeVersion }}"
+
+          - script: |
+              npm install
+              npm run ${{ parameters.npmRunScript }}
+            displayName: "npm install and build"
+            workingDirectory: "${{ parameters.directory }}"
+
+          - task: CopyFiles@2
+            displayName: "Copy files"
+            inputs:
+              sourceFolder: "$(Build.ArtifactStagingDirectory)/${{ parameters.archiveBuildPath }}"
+              Contents: "**/*"
+              TargetFolder: "$(Build.ArtifactStagingDirectory)"
+              cleanTargetFolder: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: Publish Build
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "drop"
+              publishLocation: "Container"
