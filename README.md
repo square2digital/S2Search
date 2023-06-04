@@ -2,10 +2,7 @@
 
 <p align="center"><a href="https://www.square2digital.com/s2-search/" target="_blank" rel="noopener noreferrer"><img src="https://www.square2digital.com/wp-content/uploads/2022/01/Square_2_Logo_Colour_Blue_White_BG.svg" alt="re-frame logo" width="30%"></a></p>
 
-[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/JGilmartin-S2/S2Search)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-
-Technology
+---
 
 [![JavaScript](https://img.shields.io/badge/--F7DF1E?logo=javascript&logoColor=000)](https://www.javascript.com/)
 [![.NET](https://img.shields.io/badge/--512BD4?logo=.net&logoColor=ffffff)](https://dotnet.microsoft.com/)
@@ -121,6 +118,10 @@ To use the generator, look at [generator-standard-readme](https://github.com/Ric
 ## Contributing
 
 Feel free to dive in! [Open an issue](https://github.com/JGilmartin-S2/S2Search/issues/new) or submit PRs.
+
+If you wish to contribute to the project please select an issue form the [issue board](https://github.com/JGilmartin-S2/S2Search/issues/new) and submit a PR. Please ensure your code follows the Contributor Covenant Code of Conduct.
+
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-green.svg?style=flat-square)](http://makeapullrequest.com)
 
 Standard Readme follows the [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) Code of Conduct.
 
