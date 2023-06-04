@@ -16,7 +16,7 @@ Technology
 
 # Overview
 
-> An Enterprise Search platform designed for the Automotive Industry which provides a modern and responsive search experience for your Vehicle Stock. Supports both Elastic and Azure Cognitive Services and can be integrated with an existing application.
+> An Enterprise Search platform designed for the Automotive Industry which provides a modern and responsive search experience for your Vehicle Stock. Supports both Elastic and Azure Cognitive Services and can be integrated with any existing application.
 
 ---
 
@@ -28,13 +28,17 @@ S2 Search consists of multiple components such as APIs. UIs. SQL Databases, Azur
 
 S2 Search provides rich search insights that are designed to provide business intelligence on your stock. What are you customers searching for? Which search attributes are higher and lower, what is the trend? These insights will provide a valuable tool to ensure you are purchasing stock which match your customer sentiment.
 
-# This repository contains:
+# Main Features:
 
-1. [The specification](spec.md) for how a standard README should look.
-2. A link to [a linter](https://github.com/JGilmartin-S2/S2Search-preset) you can use to keep your README maintained ([work in progress](https://github.com/JGilmartin-S2/S2Search/issues/5)).
-3. A link to [a generator](https://github.com/RichardLitt/generator-standard-readme) you can use to create standard READMEs.
-4. [A badge](#badge) to point to this spec.
-5. [Examples of standard READMEs](example-readmes/) - such as this file you are reading.
+1. Modern React Search UIs offering a clean and responsive UX.
+2. Admin Portal to manage your search instances.
+3. CSV and FTP support for stock management.
+4. Search Insights that provide you a rich set of user search analytics
+5. Support for Elastic Search
+6. Support for Azure Cognitive Services
+7. Integrates with Redis cache to provide lighting fast response speeds.
+8. Automated deployment to K8s for both Cloud and OnPrem production environments
+9. Automated PowerShell scripts to easily setup the local development environment.
 
 Standard Readme is designed for open source libraries. Although it’s [historically](#background) made for Node and npm projects, it also applies to libraries in other languages and package managers.
 
