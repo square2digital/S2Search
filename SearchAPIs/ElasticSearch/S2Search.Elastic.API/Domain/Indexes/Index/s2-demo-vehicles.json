@@ -5,7 +5,7 @@
   "mappings": {
     "dynamic": "true",
     "properties": {
-      "VRM": {
+      "vrm": {
         "type": "text"
       },
       "bodyStyle": {
@@ -39,6 +39,9 @@
         }
       },
       "imageURL": {
+        "type": "text"
+      },
+      "pageUrl": {
         "type": "text"
       },
       "city": {
@@ -106,9 +109,6 @@
         }
       },
       "mileage": {
-        "type": "integer"
-      },
-      "modelYear": {
         "type": "integer"
       },
       "monthlyPrice": {

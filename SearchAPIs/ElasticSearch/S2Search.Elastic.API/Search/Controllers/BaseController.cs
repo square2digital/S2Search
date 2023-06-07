@@ -84,13 +84,19 @@ namespace Elastic.API.Controllers
                 throw exception;
             }
 
-            if (request.Size == 0)
+            if (request.PageSize == 0)
             {
                 errorMessage = $"Error on {actionName} | Message: The Page Size cannot be zero";
                 var exception = new ElasticSearchException(errorMessage);
                 _logger.LogError(EventIds.ElasticSearchSizeNumberCannotBeZero, exception, exception.Message);
                 throw exception;
             }
+        }
+
+        protected void LogApiDetails()
+        {
+            var requestUrl = $"{Request.Scheme}://{Request.Host.Value}{Request.Path}";
+            _logger.LogInformation($"requestUrl -> {requestUrl}{Request.QueryString.Value}");
         }
     }
 }

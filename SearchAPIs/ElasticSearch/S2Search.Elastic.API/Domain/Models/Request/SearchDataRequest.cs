@@ -26,8 +26,8 @@ namespace Domain.Models.Request
         public int From { get; set; }
 
         [Required]
-        [JsonPropertyName("size")]
-        public int Size { get; set; }
+        [JsonPropertyName("pageSize")]
+        public int PageSize { get; set; }
 
         [JsonPropertyName("index")]
         public string Index { get; set; }

@@ -21,7 +21,7 @@ namespace Search.Controllers
             _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         }
 
-        [HttpGet("UploadTestData/{index}")]
+        [HttpGet("UploadTestData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UploadTestData(string index)
@@ -46,7 +46,7 @@ namespace Search.Controllers
             }
         }
 
-        [HttpDelete("DeleteIndex/{index}")]
+        [HttpDelete("DeleteIndex")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteIndex(string index)
@@ -64,7 +64,7 @@ namespace Search.Controllers
             }
         }
 
-        [HttpGet("GetIndexSchema/{index}")]
+        [HttpGet("GetIndexSchema")]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -88,7 +88,7 @@ namespace Search.Controllers
             }
         }
 
-        [HttpGet("GetTotalIndexCount/{index}")]
+        [HttpGet("GetTotalIndexCount")]
         [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

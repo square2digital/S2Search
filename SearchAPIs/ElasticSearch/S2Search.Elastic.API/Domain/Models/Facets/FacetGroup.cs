@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Domain.Models.Facets
 {
@@ -17,6 +16,7 @@ namespace Domain.Models.Facets
             this.FacetKey = group.FacetKey;
             this.FacetItems = group.FacetItems;
             this.Enabled = group.Enabled;
+            this.Type = group.Type;
         }
 
         [JsonPropertyName("facetName")]
@@ -33,5 +33,8 @@ namespace Domain.Models.Facets
 
         [JsonPropertyName("enabled")]
         public bool Enabled { get; set; }
+
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
     }
 }

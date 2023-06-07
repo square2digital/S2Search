@@ -52,12 +52,14 @@ namespace Search
         {
             var appsettingsFile = $"appsettings.json";
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var configEnv = Environment.GetEnvironmentVariable("ASPNETCORE_CONFIGURATION");
 
             Console.WriteLine($"Environment configured as {env}");
+            Console.WriteLine($"Config configured as {configEnv}");
 
-            if(env == "Development")
+            if (!string.IsNullOrEmpty(configEnv))
             {
-                appsettingsFile = $"appsettings.{env}.json";
+                appsettingsFile = $"appsettings.{configEnv}.json";
             }
 
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
@@ -79,7 +81,6 @@ namespace Search
         private static IServiceCollection AddServices(IServiceCollection services)
         {
             services.AddSingleton<IElasticFacetService, ElasticFacetService>();
-            services.AddTransient<ILuceneSyntaxHelper, LuceneSyntaxHelper>();
             services.AddSingleton<IElasticSearchService, ElasticSearchService>();
             services.AddSingleton<IFacetHelper, FacetHelper>();
             services.AddSingleton<IDisplayTextFormatHelper, DisplayTextFormatHelper>();

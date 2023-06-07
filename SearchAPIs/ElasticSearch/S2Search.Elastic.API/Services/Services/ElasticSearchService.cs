@@ -15,7 +15,6 @@ namespace Services.Services
         private readonly ILogger _logger;
         private readonly IDisplayTextFormatHelper _displayTextFormatHelper;
         private readonly IElasticSearchClientProvider _elasticSearchClientProvider;
-        private readonly ILuceneSyntaxHelper _luceneSyntaxHelper;
         private readonly IElasticIndexService _elasticIndexService;
         private readonly IFacetHelper _facetHelper;
 
@@ -23,7 +22,6 @@ namespace Services.Services
                                     ILoggerFactory loggerFactory,
                                     IElasticSearchClientProvider elasticSearchClientProvider,
                                     IDisplayTextFormatHelper displayTextFormatHelper,
-                                    ILuceneSyntaxHelper luceneSyntaxHelper,
                                     IFacetHelper facetHelper,
                                     IFacetOverrideProvider facetOverrideProvider,
                                     IElasticIndexService elasticIndexService,
@@ -40,7 +38,6 @@ namespace Services.Services
             _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
             _displayTextFormatHelper = displayTextFormatHelper ?? throw new ArgumentNullException(nameof(displayTextFormatHelper));
             _elasticSearchClientProvider = elasticSearchClientProvider ?? throw new ArgumentNullException(nameof(elasticSearchClientProvider));
-            _luceneSyntaxHelper = luceneSyntaxHelper ?? throw new ArgumentNullException(nameof(luceneSyntaxHelper));
             _elasticIndexService = elasticIndexService ?? throw new ArgumentNullException(nameof(elasticIndexService));
             _facetHelper = facetHelper ?? throw new ArgumentNullException(nameof(facetHelper));
         }
