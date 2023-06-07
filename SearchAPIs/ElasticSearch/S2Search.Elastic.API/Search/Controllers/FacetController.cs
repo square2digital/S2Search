@@ -42,6 +42,7 @@ namespace Search.Controllers
         {
             try
             {
+                LogApiDetails();
                 ValidateIndex(request.Index, "DefaultFacets");
 
                 var response = await _elasticFacetService.GetDefaultFacets(request.Index);
@@ -62,6 +63,7 @@ namespace Search.Controllers
         {
             try
             {
+                LogApiDetails();
                 ValidateSearchDataRequest(request, "Facets");
 
                 var response = await _elasticFacetService.GetSearchFacets(request);
@@ -74,13 +76,14 @@ namespace Search.Controllers
             }
         }
 
-        [HttpGet("DefaultFacets/{index}")]
+        [HttpGet("DefaultFacets")]
         [ProducesResponseType(typeof(IList<FacetGroup>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DefaultFacets(string index)
         {
             try
             {
+                LogApiDetails();
                 ValidateIndex(index, "DefaultFacets");
 
                 var response = await _elasticFacetService.GetDefaultFacets(index);

@@ -1,0 +1,53 @@
+parameters:
+  - name: workingDirectory
+    type: string
+    default: ""
+  - name: deployVmImage
+    type: string
+    default: "ubuntu-latest"
+  - name: deployEnvironment
+    type: string
+    default: ""
+  - name: deployScriptsPath
+    type: string
+    default: ""
+  - name: kubernetesServiceConnection
+    type: string
+    default: ""
+  - name: kubernetesNamespace
+    type: string
+    default: ""
+  - name: "secrets"
+    type: object
+    default: {}
+  - name: templatesRepositoryName
+    type: string
+    default: ""
+
+stages:
+  - stage: DeployKubernetes
+    displayName: Deploy to Kubernetes
+    jobs:
+      - deployment: DeployWebAppToKubernetes
+        displayName: Deploy Web App
+        pool:
+          vmImage: "${{ parameters.deployVmImage }}"
+        # Creates an environment if it doesn't exist.
+        environment: "${{ parameters.deployEnvironment }}"
+        strategy:
+          # Default deployment strategy
+          runOnce:
+            deploy:
+              steps:
+                - template: steps-validate-vars.yml
+                  parameters:
+                    workingDirectory: "${{ parameters.workingDirectory }}"
+                    deployScriptsPath: "${{ parameters.deployScriptsPath }}"
+                    secrets: "${{ parameters.secrets }}"
+                    templatesRepositoryName: "${{ parameters.templatesRepositoryName }}"
+
+                - template: steps-deploy-k8s.yml
+                  parameters:
+                    deployScriptsPath: "${{ parameters.deployScriptsPath }}"
+                    kubernetesServiceConnection: "${{ parameters.kubernetesServiceConnection }}"
+                    kubernetesNamespace: "${{ parameters.kubernetesNamespace }}"

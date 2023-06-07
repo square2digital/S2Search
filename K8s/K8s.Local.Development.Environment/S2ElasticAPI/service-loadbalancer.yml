@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: s2elasticapi-loadbalancer
+  labels:
+    app: s2elasticapi
+spec:
+  type: LoadBalancer
+  selector:
+    app: s2elasticapi
+  ports:
+    - name: "6004"
+      port: 6004
+      targetPort: 80

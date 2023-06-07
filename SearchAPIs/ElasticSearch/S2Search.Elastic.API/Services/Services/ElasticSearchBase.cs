@@ -8,8 +8,10 @@ using Domain.Models.Response.Vehicle;
 using Microsoft.Extensions.Logging;
 using Nest;
 using Newtonsoft.Json;
+using Services.Helper;
 using Services.Helpers;
 using Services.Interfaces.FacetOverrides;
+using Services.Providers;
 
 namespace Services.Services
 {
@@ -54,11 +56,11 @@ namespace Services.Services
                 if (!_appSettings.UseGenericResponse)
                 {
                     var indexSchema = await _elasticIndexService.GetIndexSchema(request.Index);
-                    await BuildFacets(request, indexSchema);
+                    BuildFacets(request, indexSchema);
 
                     var client = _elasticSearchClientProvider.GetElasticClient();
                     var response = await SearchAsyncResponse<SearchVehicle>(client, request, _aggregations);
-                    
+
                     searchProductResult = BuildSearchProductResult<SearchVehicle>(response);
                     searchProductResult.Results = response.Documents.ToList();
                     searchProductResult.TotalResults = await _elasticIndexService.GetTotalIndexCount(request.Index);
@@ -70,7 +72,7 @@ namespace Services.Services
                 else
                 {
                     var indexSchema = await _elasticIndexService.GetIndexSchema(request.Index);
-                    await BuildFacets(request, indexSchema);
+                    BuildFacets(request, indexSchema);
 
                     var client = _elasticSearchClientProvider.GetElasticClient();
                     var response = await SearchAsyncResponse<GenericResponse>(client, request, _aggregations);
@@ -101,30 +103,30 @@ namespace Services.Services
             {
                 ISearchResponse<T> response;
 
-                if(aggregations != null && aggregations.Count > 0)
+                if (aggregations != null && aggregations.Count > 0)
                 {
                     response = await client.SearchAsync<T>(x => x
                                            .Index(request.Index)
                                            .Aggregations(aggregations)
                                            .Query(q => q
-                                           .QueryString(s => s.Query(request.SearchTerm)))
+                                           .QueryString(s => s.Query(BuildQueryString(request))))
                                            .Sort(s => s
                                                .Field(f => SortFromRequest(request))
                                             )
                                            .From(request.From)
-                                           .Size(request.Size));
+                                           .Size(request.PageSize));
                 }
                 else
                 {
                     response = await client.SearchAsync<T>(x => x
                                            .Index(request.Index)
                                            .Query(q => q
-                                           .QueryString(s => s.Query(request.SearchTerm)))
+                                           .QueryString(s => s.Query(BuildQueryString(request))))
                                            .Sort(s => s
                                                .Field(f => SortFromRequest(request))
                                             )
                                            .From(request.From)
-                                           .Size(request.Size));
+                                           .Size(request.PageSize));
                 }
 
                 if (!response.IsValid)
@@ -137,21 +139,59 @@ namespace Services.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error on SearchAsyncResponse | Message: {ex.Message}");
+                _logger.LogError(ex, $"Error on SearchAsyncResponse | Request: {JsonConvert.SerializeObject(request, Formatting.Indented)} | Message: {ex.Message}");
                 _logger.LogInformation($"searchQuery {JsonConvert.SerializeObject(request.SearchTerm)}");
 
                 throw;
             }
         }
 
-        private async Task BuildFacets(SearchDataRequest request, string indexSchema)
+        /// <summary>
+        /// This needs to be unit tested
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public string BuildQueryString(SearchDataRequest request)
+        {
+            var searchTerm = string.Empty;
+
+            // ************************************
+            // test for GenerateLuceneSearchString
+            // ************************************
+            searchTerm = LuceneSyntaxHelper.GenerateLuceneSearchString(request.SearchTerm);
+
+            // ********************************************
+            // this is what needs sorting for the filters
+            // ********************************************
+
+            if (!string.IsNullOrEmpty(request.Filters))
+            {
+                var testerSearchFilters = SearchFilterFormatter.Format(request.Filters.Split(","));
+
+                if (!string.IsNullOrEmpty(testerSearchFilters))
+                {
+                    if (!string.IsNullOrEmpty(searchTerm))
+                    {
+                        searchTerm = $"{searchTerm} AND {testerSearchFilters}";
+                    }
+                    else
+                    {
+                        searchTerm = $"{testerSearchFilters}";
+                    }
+                }
+            }
+
+            return searchTerm;
+        }
+
+        private void BuildFacets(SearchDataRequest request, string indexSchema)
         {
             // #######################
             // for testing purposes
             // #######################
-            _indexMapping = string.Empty;
-            _elasticFacets.Clear();
-            _aggregations.Clear();
+            //_indexMapping = string.Empty;
+            //_elasticFacets.Clear();
+            //_aggregations.Clear();
 
             _indexMapping = indexSchema;
 
@@ -219,19 +259,33 @@ namespace Services.Services
             {
                 var facetGroup = new FacetGroup();
 
-                facetGroup.FacetKey = kvp.Key;
+                facetGroup.FacetKey = GetFacetKeyFromFacetName(kvp.Key);
                 facetGroup.FacetName = kvp.Key;
                 facetGroup.FacetKeyDisplayName = kvp.Key;
+                facetGroup.Type = GetFacetType(facetGroup.FacetKey);
 
                 foreach (var item in kvp.Value)
                 {
+                    item.Value.Type = facetGroup.Type;
                     facetGroup.FacetItems.Add(item.Value);
                 }
 
                 searchProductResult.Facets.Add(facetGroup);
             }
-                            
+
             return searchProductResult;
+        }
+
+        private string GetFacetKeyFromFacetName(string facetName)
+        {
+            var facet = _elasticFacets.FirstOrDefault(x => x.FacetName == facetName);
+
+            if (facet != null)
+            {
+                return facet.FacetKey;
+            }
+
+            return facetName;
         }
 
         private void BuildFacets(string index)
@@ -242,7 +296,7 @@ namespace Services.Services
             {
                 switch (facet.Type)
                 {
-                    case FacetType.terms:
+                    case nameof(FacetType.terms):
 
                         var termsAggregation = new TermsAggregation(facet.FacetName)
                         {
@@ -254,7 +308,7 @@ namespace Services.Services
 
                         break;
 
-                    case FacetType.range:
+                    case nameof(FacetType.range):
 
                         var list = new List<IAggregationRange>();
 
@@ -304,7 +358,7 @@ namespace Services.Services
 
                         break;
 
-                    case FacetType.histogram:
+                    case nameof(FacetType.histogram):
 
                         var histogramAggregation = new HistogramAggregation(facet.FacetName)
                         {
@@ -316,83 +370,84 @@ namespace Services.Services
 
                         break;
                 }
-            }
-        }
-
-        private async Task<SearchProductResult> InvokeVehicleFacetRequest(SearchDataRequest request)
-        {
-            try
-            {
-                if (_aggregations.Count == 0 || _elasticFacets.Count == 0)
-                {
-                    BuildVehicleFacets();
-                }
-
-                //create the search request
-                var searchRequest = new SearchRequest
-                {
-                    QueryOnQueryString = request.SearchTerm,
-                    From = request.From,
-                    Size = request.Size,
-                    Aggregations = _aggregations
-                };
-
-                var client = _elasticSearchClientProvider.GetElasticClient();
-                ISearchResponse<SearchVehicle> result = await client.SearchAsync<SearchVehicle>(searchRequest);
-                var response = new SearchProductResult();
-                return response;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error on {nameof(InvokeVehicleFacetRequest)} | Message: {ex.Message}");
-                throw;
             }
         }
 
         private void BuildVehicleFacets()
         {
             // terms
-            _elasticFacets.Add(new ElasticFacet("make", FacetType.terms, $"group_by_make_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "make.raw", null));
-            _elasticFacets.Add(new ElasticFacet("model", FacetType.terms, $"group_by_model_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "model.raw", null));
-            _elasticFacets.Add(new ElasticFacet("fuelType", FacetType.terms, $"group_by_fuelType_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "fuelType.raw", null));
-            _elasticFacets.Add(new ElasticFacet("transmission", FacetType.terms, $"group_by_transmission_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "transmission.raw", null));
-            _elasticFacets.Add(new ElasticFacet("engineSize", FacetType.terms, $"group_by_engineSize_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "engineSize.raw", null));
-            _elasticFacets.Add(new ElasticFacet("colour", FacetType.terms, $"group_by_colour_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "colour.raw", null));
-            _elasticFacets.Add(new ElasticFacet("year", FacetType.terms, $"group_by_year_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "year.raw", null));
-            _elasticFacets.Add(new ElasticFacet("doors", FacetType.terms, $"group_by_doors_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "doors.raw", null));
-            _elasticFacets.Add(new ElasticFacet("bodyStyle", FacetType.terms, $"group_by_bodyStyle_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "bodyStyle.raw", null));
-
-            // histogram
-            _elasticFacets.Add(new ElasticFacet("price", FacetType.histogram, $"group_by_price_{Enum.GetName(typeof(FacetType), FacetType.histogram)}", "price.raw", null));
-            _elasticFacets.Add(new ElasticFacet("monthlyPrice", FacetType.histogram, $"group_by_{Enum.GetName(typeof(FacetType), FacetType.histogram)}", "monthlyPrice.raw", null));
+            _elasticFacets.Add(new ElasticFacet("make", "Make", FacetType.terms.ToString(), $"group_by_make_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "make.raw", null, null));
+            _elasticFacets.Add(new ElasticFacet("model", "Model", FacetType.terms.ToString(), $"group_by_model_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "model.raw", null, null));
+            _elasticFacets.Add(new ElasticFacet("fuelType", "Fuel Type", FacetType.terms.ToString(), $"group_by_fuelType_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "fuelType.raw", null, null));
+            _elasticFacets.Add(new ElasticFacet("transmission", "Transmission", FacetType.terms.ToString(), $"group_by_transmission_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "transmission.raw", null, null));
+            _elasticFacets.Add(new ElasticFacet("colour", "Colour", FacetType.terms.ToString(), $"group_by_colour_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "colour.raw", null, null));
+            _elasticFacets.Add(new ElasticFacet("year", "Year", FacetType.terms.ToString(), $"group_by_year_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "year", null, null));
+            _elasticFacets.Add(new ElasticFacet("doors", "Doors", FacetType.terms.ToString(), $"group_by_doors_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "doors", null, null));
+            _elasticFacets.Add(new ElasticFacet("bodyStyle", "Body Style", FacetType.terms.ToString(), $"group_by_bodyStyle_{Enum.GetName(typeof(FacetType), FacetType.terms)}", "bodyStyle.raw", null, null));
 
             // range
-            _elasticFacets.Add(new ElasticFacet("price", FacetType.range, $"group_by_price_{Enum.GetName(typeof(FacetType), FacetType.range)}", "price.raw", 1000));
-            _elasticFacets.Add(new ElasticFacet("monthlyPrice", FacetType.range, $"group_by_monthlyPrice_{Enum.GetName(typeof(FacetType), FacetType.range)}", "monthlyPrice.raw", 1000));
+            _elasticFacets.Add(new ElasticFacet("engineSize", "Engine Size", FacetType.range.ToString(), $"group_by_engineSize_{Enum.GetName(typeof(FacetType), FacetType.range)}", "engineSize", 500, 8000));
+            _elasticFacets.Add(new ElasticFacet("price", "Price", FacetType.range.ToString(), $"group_by_price_{Enum.GetName(typeof(FacetType), FacetType.range)}", "price", 1000, 100000));
+            _elasticFacets.Add(new ElasticFacet("monthlyPrice", "Monthly Price", FacetType.range.ToString(), $"group_by_monthlyPrice_{Enum.GetName(typeof(FacetType), FacetType.range)}", "monthlyPrice", 250, 10000));
 
             foreach (var facet in _elasticFacets)
             {
                 switch (facet.Type)
                 {
-                    case FacetType.terms:
+                    case nameof(FacetType.terms):
                         var termsAggregation = new TermsAggregation(facet.FacetName)
                         {
                             Field = facet.Field,
                             Size = 10000
                         };
-                        _aggregations.Add(facet.FacetName, new AggregationContainer { Terms = termsAggregation });
+
+                        if (!_aggregations.ContainsKey(facet.FacetName))
+                        {
+                            _aggregations.Add(facet.FacetName, new AggregationContainer { Terms = termsAggregation });
+                        }
+
                         break;
-                    case FacetType.histogram:
-                        var histogramAggregation = new HistogramAggregation(facet.FacetName)
+
+                    case nameof(FacetType.range):
+
+                        IList<IAggregationRange> ranges = new List<IAggregationRange>();
+
+                        int rangeCount = facet.MaxValue.Value / facet.Interval.Value;
+                        for (int i = 0; i < rangeCount; i++)
+                        {
+                            int from = i * facet.Interval.Value;
+                            int to = (i + 1) * facet.Interval.Value;
+                            var range = new AggregationRange
+                            {
+                                From = from,
+                                To = to,
+                            };
+
+                            if(facet.FacetName == "Engine Size")
+                            {
+                                range.Key = $"{from:N0}cc - {to:N0}cc";
+                            }
+                            else
+                            {
+                                range.Key = $"£{from:N0} - £{to:N0}";
+                            }
+
+                            ranges.Add(range);
+                        }
+
+                        var rangeAggregation = new RangeAggregation(facet.FacetName)
                         {
                             Field = facet.Field,
-                            Interval = 5000
+                            Ranges = ranges.OrderByDescending(r => r.Key)
                         };
-                        _aggregations.Add(facet.FacetName, new AggregationContainer { Histogram = histogramAggregation });
+
+                        _aggregations.TryAdd(facet.FacetName, new AggregationContainer { Range = rangeAggregation });
+
                         break;
                 }
             }
         }
+
 
         private IFieldSort SortFromRequest(SearchDataRequest request)
         {
@@ -412,10 +467,15 @@ namespace Services.Services
 
         private FieldSort GetFieldSort(string orderBy, string sortBy)
         {
+            if (string.IsNullOrEmpty(orderBy))
+            {
+                orderBy = "make.raw";
+            }
+
             var fieldSort = new FieldSort();
             var field = new Field(orderBy);
 
-            fieldSort.Field = field;    
+            fieldSort.Field = field;
 
             switch (sortBy)
             {
@@ -429,6 +489,19 @@ namespace Services.Services
             }
 
             return fieldSort;
+        }
+
+        private string GetFacetType(string FacetKey)
+        {
+            foreach(var item in _elasticFacets)
+            {
+                if(item.FacetKey == FacetKey)
+                {
+                    return item.Type;
+                }
+            }
+
+            throw new Exception($"FacetKey: {FacetKey} is not found in the _elasticFacets collection");
         }
     }
 }

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sftpgo-deployment
+  labels:
+    app: sftpgo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sftpgo
+  template:
+    metadata:
+      labels:
+        app: sftpgo
+    spec:
+      containers:
+        - name: sftpgo
+          image: drakkan/sftpgo:v2.2.0
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 2022
+              name: sftp
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/sftpgo
+      volumes:
+        - name: config
+          configMap:
+            name: sftpgo-configmap

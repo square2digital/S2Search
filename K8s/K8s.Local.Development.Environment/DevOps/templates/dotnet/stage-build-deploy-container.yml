@@ -1,0 +1,110 @@
+parameters:
+  - name: deploymentFilesSourceFolder
+    type: string
+    default: ""
+  - name: deploymentFilesTargetFolder
+    type: string
+    default: ""
+  - name: appSettingsSourceFolder
+    type: string
+    default: ""
+  - name: targetRestoreProject
+    type: string
+    default: ""
+  - name: targetWebProject
+    type: string
+    default: ""
+  - name: vstsFeed
+    type: string
+    default: ""
+  - name: buildConfiguration
+    type: string
+    default: "Release"
+  - name: buildVmImage
+    type: string
+    default: "ubuntu-latest"
+  - name: targetTestProject
+    type: string
+    default: ""
+  - name: buildPublishDirectory
+    type: string
+    default: ""
+  - name: containerRegistryConnection
+    type: string
+    default: ""
+  - name: containerRepository
+    type: string
+    default: ""
+  - name: dockerfilePath
+    type: string
+    default: ""
+  - name: dockerBuildContext
+    type: string
+    default: ""
+  - name: dockerBuildTag
+    type: string
+    default: ""
+  - name: workingDirectory
+    type: string
+    default: ""
+  - name: deployVmImage
+    type: string
+    default: "ubuntu-latest"
+  - name: deployEnvironment
+    type: string
+    default: ""
+  - name: deployScriptsPath
+    type: string
+    default: ""
+  - name: kubernetesServiceConnection
+    type: string
+    default: ""
+  - name: kubernetesNamespace
+    type: string
+    default: ""
+  - name: "secrets"
+    type: object
+    default: {}
+  - name: templatesRepositoryName
+    type: string
+    default: ""
+  - name: azureSubscription
+    type: string
+    default: ""
+  - name: appName
+    type: string
+    default: ""
+  - name: containerImageUrl
+    type: string
+    default: ""
+  - name: deployType
+    type: string
+    default: ""
+  - name: buildValidationOnly
+    type: boolean
+
+stages:
+  - ${{ if eq(parameters.buildValidationOnly, true) }}:
+      - template: stage-build-validation.yml
+        parameters:
+          targetRestoreProject: "${{ parameters.targetRestoreProject }}"
+          targetWebProject: "${{ parameters.targetWebProject }}"
+          targetTestProject: "${{ parameters.targetTestProject }}"
+          buildVmImage: "${{ parameters.buildVmImage }}"
+          vstsFeed: "${{ parameters.vstsFeed }}"
+          buildConfiguration: "${{ parameters.buildConfiguration }}"
+
+  - ${{ if not(eq(parameters.buildValidationOnly, true)) }}:
+      - template: ../shared/stage-deploy-container.yml
+        parameters:
+          workingDirectory: "${{ parameters.workingDirectory }}"
+          deployVmImage: "${{ parameters.deployVmImage }}"
+          deployEnvironment: "${{ parameters.deployEnvironment }}"
+          deployScriptsPath: "${{ parameters.deployScriptsPath }}"
+          kubernetesServiceConnection: "${{ parameters.kubernetesServiceConnection }}"
+          kubernetesNamespace: "${{ parameters.kubernetesNamespace }}"
+          templatesRepositoryName: "${{ parameters.templatesRepositoryName }}"
+          appName: "${{ parameters.appName }}"
+          containerImageUrl: "${{ parameters.containerImageUrl }}"
+          deployType: "${{ parameters.deployType }}"
+          secrets: "${{ parameters.secrets }}"

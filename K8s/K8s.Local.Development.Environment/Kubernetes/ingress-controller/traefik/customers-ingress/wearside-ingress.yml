@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-searchui-wearside
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  rules:
+    - host: wearside.s2search.co.uk
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: s2searchui-service
+              servicePort: 3000
+  tls:
+    - hosts:
+        - wearside.s2search.co.uk
+      secretName: prod-searchui-cert-wearside

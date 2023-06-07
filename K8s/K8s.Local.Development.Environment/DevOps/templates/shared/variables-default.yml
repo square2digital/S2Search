@@ -1,0 +1,31 @@
+parameters:
+  - name: dockerBuildContext
+    displayName: Docker Build Context
+    type: string
+    default: any
+  - name: containerRepository
+    displayName: The name of the container repository including the namespace e.g. namespace/repositoryName/containerName
+    type: string
+    default: any
+
+variables:
+  - name: DOCKER_BUILDKIT
+    value: 1
+  - name: buildConfiguration
+    value: "Release"
+  - name: vstsFeed
+    value: "8806f2ad-d1f9-4f70-a901-b5c4d0bd18c3"
+  - name: containerNamespace
+    value: "dp-dev0"
+  - name: containerRegistryConnection
+    value: "GitLab"
+  - name: dockerfilePath
+    value: "**/Dockerfile"
+  - name: deployScriptsPath
+    value: "$(Agent.BuildDirectory)/drop/deploy"
+
+  # Passed from parameters
+  - name: dockerBuildContext
+    value: ${{ parameters.dockerBuildContext }}
+  - name: containerRepository
+    value: ${{ parameters.containerRepository }}
