@@ -43,7 +43,10 @@ data:
           "FacetCurrencyRanges": "price,monthlyPrice",
           "FacetNonCurrencyRange": "mileage",
           "FacetMaxRangeToValue": 20000000,
-          "FacetToOverrideDisplay": "engineSize,mileage,doors"
+          "FacetToOverrideDisplay": "engineSize,mileage,doors",
+          "DefaultPageSize": 50,
+          "DemoVehiclesURL": "https://s2storagedev.blob.core.windows.net/assets/test-data/vehicles.json?sv=2021-10-04&st=2023-04-03T20%3A59%3A51Z&se=2030-05-04T20%3A59%3A00Z&sr=c&sp=rl&sig=f1k11fTLD1womukuaGGFlA%2B79Xph6CLCrj5B403ZlMo%3D",
+          "DemoVehiclesIndexSchemaURL": "https://s2storagedev.blob.core.windows.net/assets/test-data/s2-demo-vehicles.json?sv=2021-10-04&st=2023-04-03T20%3A59%3A51Z&se=2030-05-04T20%3A59%3A00Z&sr=c&sp=rl&sig=f1k11fTLD1womukuaGGFlA%2B79Xph6CLCrj5B403ZlMo%3D"
         },
         "FacetSettings": {
           "Make": "make, count:9999",
@@ -64,7 +67,7 @@ data:
         "ClientConfigurationSettings": {
           "ClientConfigurationEndpoint": "http://clientconfiguration-api-service",
           "HeaderAPISubscriptionName": "Ocp-Apim-Subscription-Key",
-          "APISubscriptionKey": "bc2f460930b049bfb7554e06d280a2c0"          
+          "APISubscriptionKey": "REDUNDANT"          
         },
         "MemoryCacheSettings": {
           "SearchCacheSlidingExpirySeconds": 1,

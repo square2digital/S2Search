@@ -46,7 +46,7 @@ spec:
               cpu: 200m #200 millicpu (.2 cpu or 20% of the cpu)
           env:
             - name: ASPNETCORE_ENVIRONMENT              
-              value: Development
+              value: Production
             - name: ASPNETCORE_CONFIGURATION
               value: Local_k8s
             - name: ASPNETCORE_URLS
