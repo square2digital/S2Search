@@ -303,7 +303,7 @@ if ($includeElasticUI) {
     Set-Location $ApplicationPathElasticUI
     npm install
     Write-Color -Text "Building Docker Image - S2 Elastic UI (NextJS) at location $ApplicationPathElasticUI" -Color Magenta    
-    Write-Color -Text "docker build --pull --rm -f "Dockerfile" -t s2elasticui:dev . --build-arg NODE_ENV=production" -Color Yellow
+    Write-Color -Text "docker build --pull --rm -f Dockerfile -t s2elasticui:dev . --build-arg NODE_ENV=production" -Color Yellow
     docker build --pull --rm -f "Dockerfile" -t s2elasticui:dev . --build-arg NODE_ENV=production
 
     Write-Color -Text "Deleting Deployment 's2elasticui-deployment'" -Color Magenta
@@ -314,7 +314,7 @@ if ($includeSearchUI) {
     Set-Location $ApplicationPathSearchUI
     npm install
     Write-Color -Text "Building Docker Image - S2 Search UI (NextJS) at location $ApplicationPathSearchUI" -Color Magenta    
-    Write-Color -Text "docker build --pull --rm -f "Dockerfile" -t s2searchui:dev . --build-arg NODE_ENV=production" -Color Yellow
+    Write-Color -Text "docker build --pull --rm -f Dockerfile -t s2searchui:dev . --build-arg NODE_ENV=production" -Color Yellow
     docker build --pull --rm -f "Dockerfile" -t s2searchui:dev . --build-arg NODE_ENV=production
 
     Write-Color -Text "Deleting Deployment 's2searchui-deployment'" -Color Magenta
@@ -325,7 +325,7 @@ if ($includeAdminUI) {
     Set-Location $ApplicationPathAdminUI
     npm install
     Write-Color -Text "Building Docker Image - S2 Admin UI  (ReactJS) at location $ApplicationPathAdminUI" -Color Magenta
-    Write-Color -Text "docker build --pull --rm -f "Dockerfile" -t s2adminui:dev ." -Color Yellow
+    Write-Color -Text "docker build --pull --rm -f Dockerfile -t s2adminui:dev ." -Color Yellow
     docker build --pull --rm -f "Dockerfile" -t s2adminui:dev .
 
     Write-Color -Text "Deleting Deployment 's2adminui-deployment'" -Color Magenta
@@ -355,7 +355,7 @@ if ($includeElasticAPI) {
 if ($includeConfigAPI) {
     Set-Location $ApplicationPathClientDockerFile 
     Write-Color -Text "Building Docker Image - Client Configuration API at location $ApplicationPathClientDockerFile and context $ApplicationPathClientConfigContext" -Color Magenta
-    Write-Color -Text "docker build --pull --rm -f "Dockerfile.local" -t s2clientconfigurationapi:dev $ApplicationPathClientConfigContext --build-arg PAT=$PatToken" -Color Yellow
+    Write-Color -Text "docker build --pull --rm -f Dockerfile.local -t s2clientconfigurationapi:dev $ApplicationPathClientConfigContext --build-arg PAT=$PatToken" -Color Yellow
     docker build --pull --rm -f "Dockerfile.local" -t s2clientconfigurationapi:dev $ApplicationPathClientConfigContext --build-arg PAT=$PatToken
 
     Write-Color -Text "Deleting Deployment 's2clientconfigurationapi-deployment'" -Color Magenta
@@ -365,7 +365,7 @@ if ($includeConfigAPI) {
 if ($includeCRAPI) {
     Set-Location $ApplicationPathCustomerAPIDockerFile
     Write-Color -Text "Building Docker Image - Customer Resource API at location $ApplicationPathCustomerAPI and context $ApplicationPathCustomerAPIContext" -Color Magenta
-    Write-Color -Text "docker build --pull --rm -f "Dockerfile.local" -t s2customerresourceapi:dev $ApplicationPathCustomerAPIContext --build-arg PAT=$PatToken" -Color Yellow
+    Write-Color -Text "docker build --pull --rm -f Dockerfile.local -t s2customerresourceapi:dev $ApplicationPathCustomerAPIContext --build-arg PAT=$PatToken" -Color Yellow
     docker build --pull --rm -f "Dockerfile.local" -t s2customerresourceapi:dev $ApplicationPathCustomerAPIContext --build-arg PAT=$PatToken
 
     Write-Color -Text "Deleting Deployment 's2customerresourceapi-deployment'" -Color Magenta
