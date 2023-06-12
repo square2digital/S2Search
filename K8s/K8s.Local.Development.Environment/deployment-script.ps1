@@ -116,7 +116,7 @@ if ($context -ne $localContext) {
 
 # the PatToken is for the "Azure DevOps Artifacts Credentials Provider" which allows the docker images
 # when built to pull down dependacies from the DevOps artifacts repo "square2digital"
-$PatToken = "otimxhz5kkp5kdsfbwrpv5caln3qba7a7esoohyxwty2ktcf3eea"
+$PatToken = "4quc53ontolu6jwvy4ktkj2o5z2mhojgpykrzba6mh477wc6zhcq"
 $DeploymentRoot = "F:\github\Square2 Digital\S2Search"
 
 $ApplicationPathCustomerAPIDockerFile = "$DeploymentRoot\APIs\S2Search.CustomerResource.API\src\api\CustomerResource\"
