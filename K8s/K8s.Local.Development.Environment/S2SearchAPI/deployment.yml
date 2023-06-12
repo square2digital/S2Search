@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s2searchapi-deployment
+  labels:
+    app: s2searchapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s2searchapi
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: s2searchapi
+    spec:
+      containers:
+        - name: s2searchapi
+          image: s2searchapi:dev
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /api/Status
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 180
+          readinessProbe:
+            httpGet:
+              path: /api/Status
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 180  
+          resources:
+            requests:
+              memory: 210Mi              
+              cpu: 10m
+            limits:
+              memory: 225Mi #225 MB     
+              cpu: 200m #200 millicpu (.2 cpu or 20% of the cpu)
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /api/Status
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/Status
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          volumeMounts:
+            - name: appsettings-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+              readOnly: true
+      volumes:
+        - name: appsettings-volume
+          configMap:
+            name: searchapi-appsettings-localk8s
+---            
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: appsettings-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/app/appsettings.json"

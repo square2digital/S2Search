@@ -2,9 +2,7 @@
 using Domain.Models.Request;
 using Domain.Models.Response.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Nest;
 using Newtonsoft.Json;
-using Services.Helpers;
 using Services.Interfaces;
 using Services.Services;
 
@@ -32,11 +30,6 @@ namespace Elastic.API.Controllers
             _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         }
 
-        /// <summary>
-        /// GET search method from Azure Search API
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(SearchProductResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -45,6 +38,7 @@ namespace Elastic.API.Controllers
         {
             try
             {
+                LogApiDetails();
                 ValidateSearchDataRequest(request, "Search");
 
                 var response = await _elasticSearchService.InvokeSearch(request);
@@ -66,6 +60,7 @@ namespace Elastic.API.Controllers
         {
             try
             {
+                LogApiDetails();
                 ValidateSearchDataRequest(request, "Search");
 
                 var response = await _elasticSearchService.InvokeSearch(request);
@@ -78,7 +73,7 @@ namespace Elastic.API.Controllers
             }
         }
 
-        [HttpGet("TotalDocumentCount/{index}")]
+        [HttpGet("TotalDocumentCount")]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -89,10 +84,11 @@ namespace Elastic.API.Controllers
                 return BadRequest();
             }
 
-            ValidateIndex(index, "TotalDocumentCount");
-
             try
             {
+                LogApiDetails();
+                ValidateIndex(index, "TotalDocumentCount");
+
                 var response = await _elasticSearchService.TotalDocumentCount(index);
                 return Ok(response);
             }
@@ -103,7 +99,7 @@ namespace Elastic.API.Controllers
             }
         }
 
-        [HttpGet("AutoSuggest/{index}")]
+        [HttpGet("AutoSuggest")]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -116,6 +112,8 @@ namespace Elastic.API.Controllers
 
             try
             {
+                LogApiDetails();
+
                 var suggestions = await _elasticSearchService.AutoCompleteWithSuggestions(searchTerm, index);
                 return Ok(suggestions);
             }

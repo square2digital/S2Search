@@ -1,0 +1,67 @@
+parameters:
+  - name: workingDirectory
+    type: string
+    default: ""
+  - name: deployScriptsPath
+    type: string
+    default: ""
+  - name: "secrets"
+    type: object
+    default: {}
+  - name: templatesRepositoryName
+    type: string
+    default: ""
+
+steps:
+  - checkout: "${{ parameters.templatesRepositoryName }}"
+
+  - task: CopyFiles@2
+    displayName: Copy Variable Validation Files
+    inputs:
+      SourceFolder: "$(Build.SourcesDirectory)/DevOps/templates/powershell/variable-injection"
+      Contents: "*.ps1"
+      TargetFolder: "${{ parameters.deployScriptsPath }}"
+
+  - task: PowerShell@2
+    displayName: Extract variables for replacement
+    inputs:
+      filePath: "${{ parameters.deployScriptsPath }}/extract-variables.ps1"
+      workingDirectory: "${{ parameters.workingDirectory }}"
+
+  - task: PowerShell@2
+    displayName: Validate variables exist
+    inputs:
+      filePath: "${{ parameters.deployScriptsPath }}/validate-variables.ps1"
+      workingDirectory: "${{ parameters.workingDirectory }}"
+    env:
+      ${{ insert }}: ${{ parameters.secrets }}
+
+  - task: PowerShell@2
+    displayName: Create AppSettings variable
+    inputs:
+      filePath: "${{ parameters.deployScriptsPath }}/create-appsettings.ps1"
+      workingDirectory: "${{ parameters.workingDirectory }}"
+    env:
+      ${{ insert }}: ${{ parameters.secrets }}
+
+  - task: PowerShell@2
+    displayName: Create AppServiceSettings variable
+    inputs:
+      filePath: "${{ parameters.deployScriptsPath }}/create-appsettings-app-service.ps1"
+      workingDirectory: "${{ parameters.workingDirectory }}"
+    env:
+      ${{ insert }}: ${{ parameters.secrets }}
+
+  - task: PowerShell@2
+    displayName: Inject variables into AppSettings
+    inputs:
+      filePath: "${{ parameters.deployScriptsPath }}/replace.ps1"
+      workingDirectory: "${{ parameters.workingDirectory }}"
+    env:
+      ${{ insert }}: ${{ parameters.secrets }}
+
+  - task: PowerShell@2
+    displayName: Verify AppSettings
+    inputs:
+      filePath: "${{ parameters.deployScriptsPath }}/verify-replace.ps1"
+      workingDirectory: "${{ parameters.workingDirectory }}"

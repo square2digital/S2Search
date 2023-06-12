@@ -74,7 +74,7 @@ namespace Services.Helpers
             ElasticFacet elasticFacet = new ElasticFacet();
 
             elasticFacet.FacetName = facetName;
-            elasticFacet.Type = type;
+            elasticFacet.Type = type.ToString();
             elasticFacet.FacetGroupName = $"group_by_{elasticFacet.FacetName}_{Enum.GetName(typeof(FacetType), type)}";
             elasticFacet.Field = field;
             elasticFacet.Interval = interval;

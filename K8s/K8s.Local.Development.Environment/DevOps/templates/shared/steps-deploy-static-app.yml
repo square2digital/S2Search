@@ -1,0 +1,22 @@
+parameters:
+  - name: appPath
+    type: string
+    default: ""
+  - name: apiPath
+    type: string
+    default: ""
+  - name: outputPath
+    type: string
+    default: ""
+  - name: azureStaticAppApiToken
+    type: string
+    default: ""
+
+steps:
+  - task: AzureStaticWebApp@0
+    displayName: Deploy Static Web App
+    inputs:
+      app_location: "${{ parameters.appPath }}"
+      api_location: "${{ parameters.apiPath }}"
+      output_location: "${{ parameters.outputPath }}"
+      azure_static_web_apps_api_token: ${{ parameters.azureStaticAppApiToken }}

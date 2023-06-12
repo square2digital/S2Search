@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-s2-default
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  backend:
+    serviceName: s2searchui-service
+    servicePort: 3000
+  tls:
+    - hosts:
+        - admin.s2search.co.uk
+      secretName: prod-s2-default-cert
+  rules:
+    - host: admin.s2search.co.uk
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: s2adminui-service
+              servicePort: 3001
+    # - host: "*.s2search.co.uk"
+    #   http:
+    #     paths:
+    #       - path: /
+    #         pathType: ImplementationSpecific
+    #         backend:
+    #           serviceName: s2searchui-service
+    #           servicePort: 3000

@@ -8,24 +8,30 @@ namespace Domain.Models.Facets
     {
         public ElasticFacet() { }
 
-        public ElasticFacet(string facetName,
-           FacetType type,
+        public ElasticFacet(string facetKey,
+           string facetName,
+           string type,
            string facetGroupName,
            string field,
-           int? interval
+           int? interval,
+           int? maxValue
            ) : this()
         {
-            FacetName = facetName;
+            FacetKey = facetKey;
+            FacetName = facetName;            
             Type = type;
             FacetGroupName = facetGroupName;
             Field = field;
             Interval = interval;
+            MaxValue = maxValue;
         }
 
+        public string FacetKey { get; set; }
         public string FacetName { get; set; }        
-        public FacetType Type { get; set; }
+        public string Type { get; set; }
         public string FacetGroupName { get; set; }
         public string Field { get; set; }
         public int? Interval { get; set; }
+        public int? MaxValue { get; set; }
     }
 }

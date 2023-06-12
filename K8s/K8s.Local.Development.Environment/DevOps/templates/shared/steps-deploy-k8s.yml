@@ -1,0 +1,35 @@
+parameters:
+  - name: deployScriptsPath
+    type: string
+    default: ""
+  - name: kubernetesServiceConnection
+    type: string
+    default: ""
+  - name: kubernetesNamespace
+    type: string
+    default: ""
+
+steps:
+  - task: KubernetesManifest@0
+    displayName: Deploy AppSettings
+    inputs:
+      action: "deploy"
+      kubernetesServiceConnection: "${{ parameters.kubernetesServiceConnection }}"
+      namespace: "${{ parameters.kubernetesNamespace }}"
+      manifests: "${{ parameters.deployScriptsPath }}/deploy-api-appsettings.yml"
+
+  - task: KubernetesManifest@0
+    displayName: Deploy API
+    inputs:
+      action: "deploy"
+      kubernetesServiceConnection: "${{ parameters.kubernetesServiceConnection }}"
+      namespace: "${{ parameters.kubernetesNamespace }}"
+      manifests: "${{ parameters.deployScriptsPath }}/deploy-api-deployment.yml"
+
+  - task: KubernetesManifest@0
+    displayName: Deploy Service
+    inputs:
+      action: "deploy"
+      kubernetesServiceConnection: "${{ parameters.kubernetesServiceConnection }}"
+      namespace: "${{ parameters.kubernetesNamespace }}"
+      manifests: "${{ parameters.deployScriptsPath }}/deploy-api-service-okteto.yml"
