@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.Dashboard
+namespace Domain.Customer.Dashboard
 {
     public class DashboardSummaryItem
     {

@@ -1,11 +1,9 @@
-﻿using Domain.Constants;
-using Domain.SearchResources.FeedCredentials;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Repositories;
-using System;
-using System.Threading.Tasks;
+﻿using Domain.Customer.Constants;
+using Domain.Customer.SearchResources.FeedCredentials;
+using Services.Customer.Interfaces.Managers;
+using Services.Customer.Interfaces.Repositories;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class FeedCredentialsManager : IFeedCredentialsManager
     {

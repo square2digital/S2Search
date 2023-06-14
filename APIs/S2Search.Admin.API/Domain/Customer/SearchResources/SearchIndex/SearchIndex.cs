@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.SearchResources.SearchIndex
+namespace Domain.Customer.SearchResources.SearchIndex
 {
     public class SearchIndex
     {

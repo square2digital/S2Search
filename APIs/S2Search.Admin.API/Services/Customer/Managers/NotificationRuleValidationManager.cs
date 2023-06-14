@@ -1,9 +1,8 @@
-﻿using Domain.Enums;
-using Domain.SearchResources.NotificationRules;
-using Services.Interfaces.Managers;
-using System;
+﻿using Domain.Customer.Enums;
+using Domain.Customer.SearchResources.NotificationRules;
+using Services.Customer.Interfaces.Managers;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class NotificationRuleValidationManager : INotificationRuleValidationManager
     {

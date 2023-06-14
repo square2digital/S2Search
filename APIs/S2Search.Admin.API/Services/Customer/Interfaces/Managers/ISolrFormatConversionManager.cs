@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Services.Interfaces.Managers
+namespace Services.Customer.Interfaces.Managers
 {
     public interface ISolrFormatConversionManager
     {

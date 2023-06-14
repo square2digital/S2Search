@@ -1,6 +1,6 @@
-﻿using Domain.SearchResources.NotificationRules;
+﻿using Domain.Customer.SearchResources.NotificationRules;
 
-namespace Services.Interfaces.Managers
+namespace Services.Customer.Interfaces.Managers
 {
     public interface INotificationRuleValidationManager
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.SearchResources.Synonyms
+namespace Domain.Customer.SearchResources.Synonyms
 {
     public class SynonymRequest
     {

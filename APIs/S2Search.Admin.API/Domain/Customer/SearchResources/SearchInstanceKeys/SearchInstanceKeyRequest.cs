@@ -1,6 +1,6 @@
-﻿using Domain.Enums;
+﻿using Domain.Customer.Enums;
 
-namespace Domain.SearchResources.SearchInstanceKeys
+namespace Domain.Customer.SearchResources.SearchInstanceKeys
 {
     public class SearchInstanceKeyRequest
     {

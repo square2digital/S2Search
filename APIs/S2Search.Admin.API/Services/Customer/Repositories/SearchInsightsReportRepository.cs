@@ -1,9 +1,8 @@
 ﻿using Domain.Constants;
-using Services.Interfaces.Repositories;
-using System;
-using System.Linq;
+using Domain.Customer.Constants;
+using Services.Customer.Interfaces.Repositories;
 
-namespace Services.Repositories
+namespace Services.Customer.Repositories
 {
     public class SearchInsightsReportRepository : ISearchInsightsReportRepository
     {

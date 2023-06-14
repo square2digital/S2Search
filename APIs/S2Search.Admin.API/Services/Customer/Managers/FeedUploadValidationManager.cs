@@ -1,13 +1,10 @@
 ﻿using Domain.Constants;
+using Domain.Customer.Constants;
 using Microsoft.AspNetCore.Http;
-using Services.Interfaces.Managers;
-using System;
-using System.IO;
+using Services.Customer.Interfaces.Managers;
 using System.IO.Compression;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class FeedUploadValidationManager : IFeedUploadValidationManager
     {

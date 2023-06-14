@@ -1,4 +1,4 @@
-﻿namespace Domain.Messages
+﻿namespace Domain.Customer.Messages
 {
     public class QueuedMessage
     {

@@ -1,7 +1,6 @@
-﻿using Services.Interfaces.Providers;
-using System;
+﻿using Services.Customer.Interfaces.Providers;
 
-namespace Services.Providers
+namespace Services.Customer.Providers
 {
     public class PercentageChangeProvider : IPercentageChangeProvider
     {

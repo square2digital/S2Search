@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.Shared
+namespace Domain.Customer.Shared
 {
     public class QueryKey
     {

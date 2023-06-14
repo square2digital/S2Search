@@ -1,8 +1,8 @@
-﻿using Domain.SearchResources.Feeds;
-using Services.Interfaces.Managers;
-using System;
+﻿using Domain.Customer.Enums;
+using Domain.Customer.SearchResources.Feeds;
+using Services.Customer.Interfaces.Managers;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class FeedSettingsValidationManager : IFeedSettingsValidationManager
     {

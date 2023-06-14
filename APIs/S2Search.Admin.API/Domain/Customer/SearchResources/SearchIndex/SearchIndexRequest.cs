@@ -1,7 +1,6 @@
-﻿using Domain.SearchResources.SearchInstance;
-using System;
+﻿using Domain.Customer.SearchResources.SearchInstance;
 
-namespace Domain.SearchResources.SearchIndex
+namespace Domain.Customer.SearchResources.SearchIndex
 {
     public class SearchIndexRequest
     {

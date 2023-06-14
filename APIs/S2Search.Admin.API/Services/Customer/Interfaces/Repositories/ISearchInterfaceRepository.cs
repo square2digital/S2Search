@@ -1,8 +1,6 @@
-﻿using Domain.SearchResources.SearchInterfaces;
-using System;
-using System.Threading.Tasks;
+﻿using Domain.Customer.SearchResources.SearchInterfaces;
 
-namespace Services.Interfaces.Repositories
+namespace Services.Customer.Interfaces.Repositories
 {
     public interface ISearchInterfaceRepository
     {

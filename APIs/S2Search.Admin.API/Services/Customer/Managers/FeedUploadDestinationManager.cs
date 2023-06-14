@@ -1,8 +1,7 @@
-﻿using Domain.Constants;
-using Services.Interfaces.Managers;
-using System;
+﻿using Domain.Customer.Constants;
+using Services.Customer.Interfaces.Managers;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class FeedUploadDestinationManager : IFeedUploadDestinationManager
     {

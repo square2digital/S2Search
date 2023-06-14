@@ -1,4 +1,4 @@
-﻿namespace Domain.Constants
+﻿namespace Domain.Customer.Constants
 {
     public static class ConnectionStrings
     {

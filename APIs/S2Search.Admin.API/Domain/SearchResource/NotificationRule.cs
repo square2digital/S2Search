@@ -1,7 +1,6 @@
-﻿using S2Search.Common.Models.SearchResource.Enums;
-using System.Collections.Generic;
+﻿using Domain.Customer.Enums;
 
-namespace S2Search.Common.Models.SearchResource
+namespace Domain.SearchResource
 {
     public class NotificationRule
     {

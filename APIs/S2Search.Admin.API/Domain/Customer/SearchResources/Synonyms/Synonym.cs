@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Domain.SearchResources.Synonyms
+namespace Domain.Customer.SearchResources.Synonyms
 {
     public class Synonym
     {

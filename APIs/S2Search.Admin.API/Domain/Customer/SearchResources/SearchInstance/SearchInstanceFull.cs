@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Domain.SearchResources.SearchInstance
+namespace Domain.Customer.SearchResources.SearchInstance
 {
     public class SearchInstanceFull
     {

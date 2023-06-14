@@ -1,9 +1,8 @@
 ﻿using Azure.Storage.Queues;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using Services.Interfaces.Providers;
-using System.Threading.Tasks;
+using Services.Customer.Interfaces.Providers;
+using Services.Dapper.Interfaces.Providers;
 
-namespace Services.Providers
+namespace Services.Customer.Providers
 {
     public class QueueClientProvider : IQueueClientProvider
     {

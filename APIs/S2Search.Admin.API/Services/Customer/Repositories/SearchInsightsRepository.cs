@@ -1,12 +1,10 @@
 ﻿using Domain.Constants;
-using Domain.Models;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using Services.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Domain.Customer.Constants;
+using Domain.Customer.Models;
+using Services.Customer.Interfaces.Repositories;
+using Services.Dapper.Interfaces.Providers;
 
-namespace Services.Repositories
+namespace Services.Customer.Repositories
 {
     public class SearchInsightsRepository : ISearchInsightsRepository
     {

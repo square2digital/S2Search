@@ -1,10 +1,10 @@
-﻿using S2Search.Common.Database.Sql.Dapper.Models;
+﻿using Services.Dapper.Models;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace S2Search.Common.Database.Sql.Dapper.Helpers
+namespace Services.Dapper.Helpers
 {
     public static class CustomObjectMapHelper
     {

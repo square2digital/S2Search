@@ -38,7 +38,7 @@
         public const string GetCustomerFull = "[CustomerResourceApi].[GetCustomerFull]";
 
         public const string GetThemeById = "[CustomerResourceApi].[GetThemeById]";
-        public const string GetThemeByCustomerId = "[CustomerResourceApi].[GetThemeByCustomerId]";        
+        public const string GetThemeByCustomerId = "[CustomerResourceApi].[GetThemeByCustomerId]";
         public const string GetThemeBySearchIndexId = "[CustomerResourceApi].[GetThemeBySearchIndexId]";
         public const string UpdateTheme = "[CustomerResourceApi].[UpdateTheme]";
 

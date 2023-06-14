@@ -1,8 +1,7 @@
-﻿using S2Search.Common.Database.Sql.Dapper.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace S2Search.Common.Database.Sql.Dapper.Interfaces.Providers
+namespace Services.Dapper.Interfaces.Providers
 {
     public interface IDbContextProvider
     {

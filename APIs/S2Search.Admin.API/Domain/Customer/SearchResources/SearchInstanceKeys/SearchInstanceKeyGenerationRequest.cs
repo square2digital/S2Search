@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain.SearchResources.SearchInstanceKeys
+namespace Domain.Customer.SearchResources.SearchInstanceKeys
 {
     public class SearchInstanceKeyGenerationRequest
     {

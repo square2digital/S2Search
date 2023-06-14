@@ -1,4 +1,4 @@
-﻿namespace S2Search.Common.Database.Sql.Dapper.Interfaces.Providers
+﻿namespace Services.Dapper.Interfaces.Providers
 {
     public interface IConnectionStringProvider
     {

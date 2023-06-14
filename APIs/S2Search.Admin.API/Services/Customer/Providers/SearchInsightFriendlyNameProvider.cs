@@ -1,8 +1,7 @@
-﻿using Domain.Constants;
-using Services.Interfaces.Providers;
-using System;
+﻿using Domain.Customer.Constants;
+using Services.Customer.Interfaces.Providers;
 
-namespace Services.Providers
+namespace Services.Customer.Providers
 {
     public class SearchInsightFriendlyNameProvider : ISearchInsightFriendlyNameProvider
     {

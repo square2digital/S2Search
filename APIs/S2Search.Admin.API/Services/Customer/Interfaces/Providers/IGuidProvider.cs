@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Services.Interfaces.Providers
+namespace Services.Customer.Interfaces.Providers
 {
     public interface IGuidProvider
     {

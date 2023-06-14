@@ -1,8 +1,6 @@
-﻿using Domain.Shared;
-using System;
-using System.Collections.Generic;
+﻿using Domain.Customer.Shared;
 
-namespace Domain.SearchResources.SearchInstanceKeys
+namespace Domain.Customer.SearchResources.SearchInstanceKeys
 {
     public class SearchInstanceQueryKeyDeletionRequest
     {

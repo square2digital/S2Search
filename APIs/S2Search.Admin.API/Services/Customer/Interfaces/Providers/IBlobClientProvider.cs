@@ -1,6 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 
-namespace Services.Interfaces.Providers
+namespace Services.Customer.Interfaces.Providers
 {
     public interface IBlobClientProvider
     {

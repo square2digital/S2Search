@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Domain.SearchResources.Themes
+namespace Domain.Customer.SearchResources.Themes
 {
     public class ThemeRequest
     {

@@ -1,7 +1,6 @@
-﻿using Domain.Enums;
-using System.Collections.Generic;
+﻿using Domain.Customer.Enums;
 
-namespace Domain.SearchResources.NotificationRules
+namespace Domain.Customer.SearchResources.NotificationRules
 {
     public class NotificationRule
     {

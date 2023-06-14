@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using S2Search.Common.Providers.AzureSearch;
+using Services.Providers.AzureSearch;
 
-namespace S2Search.Common.Providers.Utilities
+namespace Services.Providers.Utilities
 {
     public static class ProvidersExtension
     {

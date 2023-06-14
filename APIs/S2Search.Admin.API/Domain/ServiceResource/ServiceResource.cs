@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace S2Search.Common.Models.ServiceResource
+namespace Domain.ServiceResource
 {
     public class ServiceResource
     {

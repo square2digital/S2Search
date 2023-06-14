@@ -1,10 +1,7 @@
-﻿using Domain.SearchResources.CustomerPricing;
-using Domain.SearchResources.SearchIndex;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Domain.Customer.SearchResources.CustomerPricing;
+using Domain.Customer.SearchResources.SearchIndex;
 
-namespace Services.Interfaces.Repositories
+namespace Services.Customer.Interfaces.Repositories
 {
     public interface ISearchIndexRepository
     {

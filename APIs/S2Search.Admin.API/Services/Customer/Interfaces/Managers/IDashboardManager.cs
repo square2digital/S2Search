@@ -1,9 +1,5 @@
-﻿using Domain.Dashboard;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Services.Interfaces.Managers
+﻿using Domain.Customer.Dashboard;
+namespace Services.Customer.Interfaces.Managers
 {
     public interface IDashboardManager
     {

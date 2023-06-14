@@ -1,6 +1,6 @@
 ﻿using Microsoft.Azure.Search;
 
-namespace S2Search.Common.Providers.AzureSearch
+namespace Services.Providers.AzureSearch
 {
     public interface IAzureSearchClientProvider
     {

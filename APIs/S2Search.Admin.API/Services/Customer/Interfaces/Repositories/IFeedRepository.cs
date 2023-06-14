@@ -1,8 +1,6 @@
-﻿using Domain.SearchResources.Feeds;
-using System;
-using System.Threading.Tasks;
+﻿using Domain.Customer.SearchResources.Feeds;
 
-namespace Services.Interfaces.Repositories
+namespace Services.Customer.Interfaces.Repositories
 {
     public interface IFeedRepository
     {

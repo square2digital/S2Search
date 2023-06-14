@@ -1,4 +1,4 @@
-﻿namespace Services.Interfaces.Repositories
+﻿namespace Services.Customer.Interfaces.Repositories
 {
     public interface ISearchInsightsReportRepository
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.SearchResources.SearchInstance
+namespace Domain.Customer.SearchResources.SearchInstance
 {
     public class SearchInstance
     {

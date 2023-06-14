@@ -1,4 +1,4 @@
-﻿namespace Services.Interfaces.Providers
+﻿namespace Services.Customer.Interfaces.Providers
 {
     public interface IPercentageChangeProvider
     {

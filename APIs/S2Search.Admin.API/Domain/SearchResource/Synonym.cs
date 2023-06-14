@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace S2Search.Common.Models.SearchResource
+namespace Domain.SearchResource
 {
     public class Synonym
     {

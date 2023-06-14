@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Domain.Constants
+namespace Domain.Customer.Constants
 {
     public class AcceptedFileTypes
     {

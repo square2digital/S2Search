@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace S2Search.Common.Providers.Utilities
+namespace Services.Providers.Utilities
 {
     public static class IServiceCollectionExtension
     {

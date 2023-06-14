@@ -1,8 +1,6 @@
-﻿using Domain.SearchResources.FeedCredentials;
-using System;
-using System.Threading.Tasks;
+﻿using Domain.Customer.SearchResources.FeedCredentials;
 
-namespace Services.Interfaces.Managers
+namespace Services.Customer.Interfaces.Managers
 {
     public interface IFeedCredentialsManager
     {

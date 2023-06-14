@@ -1,9 +1,6 @@
-﻿using Domain.SearchResources.Synonyms;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Domain.Customer.SearchResources.Synonyms;
 
-namespace Services.Interfaces.Repositories
+namespace Services.Customer.Interfaces.Repositories
 {
     public interface ISynonymRepository
     {

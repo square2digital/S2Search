@@ -1,6 +1,6 @@
-﻿using Domain.SearchResources.Feeds;
+﻿using Domain.Customer.SearchResources.Feeds;
 
-namespace Services.Interfaces.Managers
+namespace Services.Customer.Interfaces.Managers
 {
     public interface IFeedSettingsValidationManager
     {

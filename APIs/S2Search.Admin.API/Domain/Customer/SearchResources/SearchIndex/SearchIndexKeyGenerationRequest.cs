@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain.SearchResources.SearchIndex
+namespace Domain.Customer.SearchResources.SearchIndex
 {
     public class SearchIndexKeyGenerationRequest
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace S2Search.Common.Database.Sql.Dapper.Helpers
+namespace Services.Dapper.Helpers
 {
     public static class ParameterHelper
     {

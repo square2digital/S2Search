@@ -1,9 +1,6 @@
-﻿using Domain.Dashboard;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Domain.Customer.Dashboard;
 
-namespace Services.Interfaces.Repositories
+namespace Services.Customer.Interfaces.Repositories
 {
     public interface IDashboardRepository
     {

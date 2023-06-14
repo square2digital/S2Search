@@ -1,19 +1,15 @@
-﻿using Domain.Dashboard;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Providers;
-using Services.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Domain.Customer.Dashboard;
+using Services.Customer.Interfaces.Managers;
+using Services.Customer.Interfaces.Providers;
+using Services.Customer.Interfaces.Repositories;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class DashboardManager : IDashboardManager
     {
         private readonly IDashboardRepository _dashboardRepo;
         private readonly IDateTimeProvider _dateTimeProvider;
         private const int _maxNumberOfHours = 1;
-
 
         public DashboardManager(IDashboardRepository dashboardRepo, IDateTimeProvider dateTimeProvider)
         {

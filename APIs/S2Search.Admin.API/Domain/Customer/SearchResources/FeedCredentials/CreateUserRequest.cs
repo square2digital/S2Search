@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.SearchResources.FeedCredentials
+namespace Domain.Customer.SearchResources.FeedCredentials
 {
     public class CreateUserRequest
     {

@@ -1,9 +1,6 @@
-﻿using Domain.SearchResources.Themes;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Domain.Customer.SearchResources.Themes;
 
-namespace Services.Interfaces.Repositories
+namespace Services.Customer.Interfaces.Repositories
 {
     public interface IThemeRepository
     {

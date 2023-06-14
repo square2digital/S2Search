@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using System;
+using Services.Dapper.Interfaces.Providers;
 
-namespace S2Search.Common.Database.Sql.Dapper.Providers
+namespace Services.Dapper.Providers
 {
     public class ConnectionStringProvider : IConnectionStringProvider
     {

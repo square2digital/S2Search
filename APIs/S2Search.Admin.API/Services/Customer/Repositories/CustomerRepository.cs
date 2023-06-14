@@ -1,12 +1,10 @@
 ﻿using Domain.Constants;
-using Domain.Customer;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using Services.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Domain.Customer.Constants;
+using Domain.Customer.Customer;
+using Services.Customer.Interfaces.Repositories;
+using Services.Dapper.Interfaces.Providers;
 
-namespace Services.Repositories
+namespace Services.Customer.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {
@@ -17,14 +15,14 @@ namespace Services.Repositories
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<Customer> GetCustomerById(Guid customerId)
+        public async Task<CustomerIds> GetCustomerById(Guid customerId)
         {
             var parameters = new Dictionary<string, object>()
             {
                 { "CustomerId", customerId }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<Customer>(ConnectionStrings.CustomerResourceStore, StoredProcedures.GetCustomerById, parameters);
+            var result = await _dbContext.QuerySingleOrDefaultAsync<CustomerIds>(ConnectionStrings.CustomerResourceStore, StoredProcedures.GetCustomerById, parameters);
 
             return result;
         }

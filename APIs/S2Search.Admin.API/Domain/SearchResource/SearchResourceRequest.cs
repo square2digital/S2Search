@@ -1,9 +1,6 @@
-﻿using S2Search.Common.Models.ServiceResource;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Domain.ServiceResource;
 
-namespace S2Search.Common.Models.SearchResource
+namespace Domain.SearchResource
 {
     public class SearchResourceRequest
     {

@@ -1,9 +1,8 @@
-﻿using Domain.SearchResources.Synonyms;
-using Services.Interfaces.Managers;
-using System.Linq;
+﻿using Domain.Customer.SearchResources.Synonyms;
+using Services.Customer.Interfaces.Managers;
 using System.Text.RegularExpressions;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class SynonymValidationManager : ISynonymValidationManager
     {

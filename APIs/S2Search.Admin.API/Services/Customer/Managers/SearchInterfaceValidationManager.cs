@@ -1,8 +1,7 @@
-﻿using Domain.SearchResources.SearchInterfaces;
-using Services.Interfaces.Managers;
-using System;
+﻿using Domain.Customer.SearchResources.SearchInterfaces;
+using Services.Customer.Interfaces.Managers;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class SearchInterfaceValidationManager : ISearchInterfaceValidationManager
     {

@@ -1,13 +1,10 @@
-﻿using Domain.SearchResources.SearchIndex;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Domain.Customer.SearchResources.SearchIndex;
 
-namespace Domain.Customer
+namespace Domain.Customer.Customer
 {
     public class CustomerFull
     {
-        public Customer Customer { get; set; }
+        public CustomerIds Customer { get; set; }
         public IEnumerable<SearchIndex> SearchIndexes { get; set; }
     }
 }

@@ -1,12 +1,10 @@
-﻿using Domain.SearchResources.Notifications;
-using Domain.Shared;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Providers;
-using Services.Interfaces.Repositories;
-using System;
-using System.Threading.Tasks;
+﻿using Domain.Customer.SearchResources.Notifications;
+using Domain.Customer.Shared;
+using Services.Customer.Interfaces.Managers;
+using Services.Customer.Interfaces.Providers;
+using Services.Customer.Interfaces.Repositories;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class NotificationManager : INotificationManager
     {

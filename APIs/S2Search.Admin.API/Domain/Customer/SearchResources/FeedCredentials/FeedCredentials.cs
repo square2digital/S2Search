@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.SearchResources.FeedCredentials
+namespace Domain.Customer.SearchResources.FeedCredentials
 {
     public class FeedCredentials
     {

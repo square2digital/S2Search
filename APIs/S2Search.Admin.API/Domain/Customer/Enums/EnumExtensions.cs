@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Domain.Enums
+namespace Domain.Customer.Enums
 {
     public static class EnumExtensions
     {

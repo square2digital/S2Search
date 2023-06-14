@@ -1,7 +1,7 @@
-﻿using Services.Interfaces.Managers;
+﻿using Services.Customer.Interfaces.Managers;
 using System.Text.RegularExpressions;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class QueryKeyNameValidationManager : IQueryKeyNameValidationManager
     {

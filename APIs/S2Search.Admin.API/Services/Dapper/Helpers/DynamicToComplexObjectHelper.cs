@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace S2Search.Common.Database.Sql.Dapper.Helpers
+namespace Services.Dapper.Helpers
 {
     public static class DynamicToComplexObjectHelper
     {

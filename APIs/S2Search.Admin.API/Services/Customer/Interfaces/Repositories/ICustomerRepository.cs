@@ -1,12 +1,11 @@
 ﻿using Domain.Customer;
-using System;
-using System.Threading.Tasks;
+using Domain.Customer.Customer;
 
-namespace Services.Interfaces.Repositories
+namespace Services.Customer.Interfaces.Repositories
 {
     public interface ICustomerRepository
     {
-        Task<Customer> GetCustomerById(Guid customerId);
+        Task<CustomerIds> GetCustomerById(Guid customerId);
         Task<CustomerFull> GetCustomerFull(Guid customerId);
     }
 }

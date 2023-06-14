@@ -1,13 +1,11 @@
 ﻿using Domain.Constants;
-using Domain.SearchResources.SearchInterfaces;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Domain.Customer.Constants;
+using Domain.Customer.SearchResources.SearchInterfaces;
+using Services.Customer.Interfaces.Managers;
+using Services.Customer.Interfaces.Repositories;
+using Services.Dapper.Interfaces.Providers;
 
-namespace Services.Repositories
+namespace Services.Customer.Repositories
 {
     public class SearchInterfaceRepository : ISearchInterfaceRepository
     {

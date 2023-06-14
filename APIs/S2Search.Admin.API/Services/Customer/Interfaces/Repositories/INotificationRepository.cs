@@ -1,9 +1,7 @@
-﻿using Domain.SearchResources.Notifications;
-using Domain.Shared;
-using System;
-using System.Threading.Tasks;
+﻿using Domain.Customer.SearchResources.Notifications;
+using Domain.Customer.Shared;
 
-namespace Services.Interfaces.Repositories
+namespace Services.Customer.Interfaces.Repositories
 {
     public interface INotificationRepository
     {

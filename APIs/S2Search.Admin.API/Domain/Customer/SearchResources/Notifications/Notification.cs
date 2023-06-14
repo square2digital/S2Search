@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain.SearchResources.Notifications
+namespace Domain.Customer.SearchResources.Notifications
 {
     public class Notification
     {

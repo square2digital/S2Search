@@ -1,4 +1,4 @@
-﻿namespace S2Search.Common.Models.Settings
+﻿namespace Domain.Settings
 {
     public class AppSettings
     {

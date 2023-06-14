@@ -1,0 +1,32 @@
+﻿using Domain.Constants;
+using Domain.Customer.Constants;
+using Domain.SearchResources.Configuration;
+using Services.Configuration.Interfaces.Repositories;
+using Services.Dapper.Interfaces.Providers;
+
+namespace Services.Configuration.Repositories
+{
+    public class SearchConfigurationRepository : ISearchConfigurationRepository
+    {
+        private readonly IDbContextProvider _dbContext;
+
+        public SearchConfigurationRepository(IDbContextProvider dbContext)
+        {
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        }
+
+        public async Task<IEnumerable<SearchConfigurationOption>> GetConfigurationForSearchIndexAsync(Guid searchIndexId)
+        {
+            var parameters = new Dictionary<string, object>()
+            {
+                { "SearchIndexId", searchIndexId }
+            };
+
+            var result = await _dbContext.QueryAsync<SearchConfigurationOption>(ConnectionStrings.CustomerResourceStore,
+                                                                              StoredProcedures.GetConfigurationForSearchIndex,
+                                                                              parameters);
+
+            return result;
+        }
+    }
+}

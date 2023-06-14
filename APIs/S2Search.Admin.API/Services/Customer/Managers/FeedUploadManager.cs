@@ -1,14 +1,12 @@
-﻿using Domain.Constants;
-using Domain.Enums;
-using Domain.SearchResources.Notifications;
+﻿using Domain.Customer.Constants;
+using Domain.Customer.Enums;
+using Domain.Customer.SearchResources.Notifications;
 using Microsoft.AspNetCore.Http;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Providers;
-using Services.Interfaces.Repositories;
-using System;
-using System.Threading.Tasks;
+using Services.Customer.Interfaces.Managers;
+using Services.Customer.Interfaces.Providers;
+using Services.Customer.Interfaces.Repositories;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class FeedUploadManager : IFeedUploadManager
     {

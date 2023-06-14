@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace S2Search.Common.Models.SearchResource
+namespace Domain.SearchResource
 {
     public enum SearchInterfaceType
     {

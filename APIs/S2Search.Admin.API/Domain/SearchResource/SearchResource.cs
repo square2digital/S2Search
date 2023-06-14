@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace S2Search.Common.Models.SearchResource
+namespace Domain.SearchResource
 {
     public class SearchResource
     {

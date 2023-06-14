@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Domain.Constants
+namespace Domain.Customer.Constants
 {
     public static class SearchIndexQueues
     {

@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Domain.Customer.Enums;
+using System;
 
-namespace Domain.SearchResources.Feeds
+namespace Domain.Customer.SearchResources.Feeds
 {
     public class Feed
     {

@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Domain.SearchResources.Feeds;
-using Domain.SearchResources.NotificationRules;
-using Domain.SearchResources.SearchInterfaces;
-using Domain.SearchResources.Synonyms;
+﻿using Domain.Customer.SearchResources.Feeds;
+using Domain.Customer.SearchResources.NotificationRules;
+using Domain.Customer.SearchResources.SearchInterfaces;
+using Domain.Customer.SearchResources.Synonyms;
 
-namespace Domain.SearchResources.SearchIndex
+namespace Domain.Customer.SearchResources.SearchIndex
 {
     public class SearchIndexFull
     {

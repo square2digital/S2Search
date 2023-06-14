@@ -1,14 +1,10 @@
-﻿using Domain.Constants;
-using Domain.Models;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Providers;
-using Services.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Domain.Customer.Constants;
+using Domain.Customer.Models;
+using Services.Customer.Interfaces.Managers;
+using Services.Customer.Interfaces.Providers;
+using Services.Customer.Interfaces.Repositories;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class SearchInsightsRetrievalManager : ISearchInsightsRetrievalManager
     {

@@ -1,6 +1,6 @@
-﻿using Domain.SearchResources.Synonyms;
+﻿using Domain.Customer.SearchResources.Synonyms;
 
-namespace Services.Interfaces.Managers
+namespace Services.Customer.Interfaces.Managers
 {
     public interface ISynonymValidationManager
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using S2Search.Common.Database.Sql.Dapper.Providers;
+using Services.Dapper.Interfaces.Providers;
+using Services.Dapper.Providers;
 
-namespace S2Search.Common.Database.Sql.Dapper.Utilities
+namespace Services.Dapper.Utilities
 {
     public static class ServiceClientExtension
     {

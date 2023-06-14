@@ -1,9 +1,6 @@
-﻿using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Domain.Customer.Models;
 
-namespace Services.Interfaces.Repositories
+namespace Services.Customer.Interfaces.Repositories
 {
     public interface ISearchInsightsRepository
     {

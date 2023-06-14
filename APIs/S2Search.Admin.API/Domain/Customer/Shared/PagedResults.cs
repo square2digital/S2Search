@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Domain.Shared
+namespace Domain.Customer.Shared
 {
     public class PagedResults<T>
     {

@@ -1,15 +1,12 @@
 ﻿using Dapper;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
-using System;
 using System.Dynamic;
 using static Dapper.SqlMapper;
-using S2Search.Common.Database.Sql.Dapper.Helpers;
-using S2Search.Common.Database.Sql.Dapper.Models;
+using Services.Dapper.Interfaces.Providers;
+using Services.Dapper.Helpers;
+using Services.Dapper.Models;
 
-namespace S2Search.Common.Database.Sql.Dapper.Providers
+namespace Services.Dapper.Providers
 {
     public class DbContextProvider : IDbContextProvider
     {

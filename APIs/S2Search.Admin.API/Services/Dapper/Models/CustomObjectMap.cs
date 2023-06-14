@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace S2Search.Common.Database.Sql.Dapper.Models
+namespace Services.Dapper.Models
 {
     public class CustomObjectMap
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Domain.SearchResources.SearchInterfaces
+namespace Domain.Customer.SearchResources.SearchInterfaces
 {
     public enum SearchInterfaceType
     {

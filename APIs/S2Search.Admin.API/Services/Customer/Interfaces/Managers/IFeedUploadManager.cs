@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Services.Interfaces.Managers
+namespace Services.Customer.Interfaces.Managers
 {
     public interface IFeedUploadManager
     {

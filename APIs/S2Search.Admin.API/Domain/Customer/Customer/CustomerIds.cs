@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Domain.Customer
+namespace Domain.Customer.Customer
 {
-    public class Customer
+    public class CustomerIds
     {
         public Guid CustomerId { get; set; }
         public string BusinessName { get; set; }
-
     }
 }

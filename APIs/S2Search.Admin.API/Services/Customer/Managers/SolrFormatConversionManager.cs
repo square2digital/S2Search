@@ -1,8 +1,6 @@
-﻿using Services.Interfaces.Managers;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Services.Customer.Interfaces.Managers;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class SolrFormatConversionManager : ISolrFormatConversionManager
     {

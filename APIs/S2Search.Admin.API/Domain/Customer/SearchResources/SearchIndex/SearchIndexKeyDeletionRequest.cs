@@ -1,8 +1,6 @@
-﻿using Domain.Shared;
-using System;
-using System.Collections.Generic;
+﻿using Domain.Customer.Shared;
 
-namespace Domain.SearchResources.SearchIndex
+namespace Domain.Customer.SearchResources.SearchIndex
 {
     public class SearchIndexKeyDeletionRequest
     {

@@ -1,8 +1,8 @@
-﻿using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
+﻿using Services.Dapper.Interfaces.Providers;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace S2Search.Common.Database.Sql.Dapper.Providers
+namespace Services.Dapper.Providers
 {
     public class DbConnectionFactory : IDbConnectionFactory
     {

@@ -1,4 +1,4 @@
-﻿namespace Domain.SearchResources.CustomerPricing
+﻿namespace Domain.Customer.SearchResources.CustomerPricing
 {
     public class CustomerPricingTier
     {

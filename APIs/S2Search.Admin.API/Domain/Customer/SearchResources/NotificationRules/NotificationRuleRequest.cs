@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.SearchResources.NotificationRules
+namespace Domain.Customer.SearchResources.NotificationRules
 {
     public class NotificationRuleRequest
     {

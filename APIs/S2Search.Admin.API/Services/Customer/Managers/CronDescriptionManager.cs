@@ -1,7 +1,7 @@
-﻿using Services.Interfaces.Managers;
-using CronExpressionDescriptor;
+﻿using CronExpressionDescriptor;
+using Services.Customer.Interfaces.Managers;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class CronDescriptionManager : ICronDescriptionManager
     {

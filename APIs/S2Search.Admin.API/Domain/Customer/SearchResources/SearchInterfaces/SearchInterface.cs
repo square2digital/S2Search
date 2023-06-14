@@ -1,4 +1,4 @@
-﻿namespace Domain.SearchResources.SearchInterfaces
+﻿namespace Domain.Customer.SearchResources.SearchInterfaces
 {
     public class SearchInterface
     {

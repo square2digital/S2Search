@@ -1,13 +1,11 @@
-﻿using Domain.Constants;
-using Domain.Messages;
+﻿using Domain.Customer.Constants;
+using Domain.Customer.Messages;
 using Newtonsoft.Json;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Providers;
-using System;
+using Services.Customer.Interfaces.Managers;
+using Services.Customer.Interfaces.Providers;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Services.Managers
+namespace Services.Customer.Managers
 {
     public class QueueManager : IQueueManager
     {
