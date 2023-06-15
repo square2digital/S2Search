@@ -8,7 +8,7 @@ namespace S2Search.Admin.API
 {
     public class Program
     {
-        public readonly string CorsPolicyName = "CorsPolicy";
+        public static readonly string CorsPolicyName = "CorsPolicy";
 
         public static void Main(string[] args)
         {
