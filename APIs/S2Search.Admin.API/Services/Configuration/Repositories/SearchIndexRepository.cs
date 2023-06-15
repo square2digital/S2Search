@@ -37,7 +37,7 @@ namespace Services.Configuration.Repositories
             };
 
             var result = await _dbContext.QueryAsync<GenericSynonyms>(ConnectionStrings.CustomerResourceStore,
-                                                                                 Domain.Configuration.Constants.StoredProcedures.GetGenericSynonymsByCategory,
+                                                                                 StoredProcedures.GetGenericSynonymsByCategory,
                                                                                  parameters);
 
             return result;

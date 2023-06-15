@@ -49,5 +49,8 @@
 
         public const string GetSearchInsightsByDataCategories = "[CustomerResourceApi].[GetSearchInsightsByDataCategories]";
         public const string GetSearchInsightsSearchCountByDateRange = "[CustomerResourceApi].[GetSearchInsightsSearchCountByDateRange]";
+
+        public const string GetTheme = "[ClientConfigurationApi].[GetThemeByCustomerEndpoint]";
+        public const string GetGenericSynonymsByCategory = "[ClientConfigurationApi].[GetGenericSynonymsByCategory]";
     }
 }

@@ -1,10 +1,6 @@
-﻿using Domain.SearchResources.Themes;
-using Microsoft.AspNetCore.Http;
+﻿using Domain.Customer.SearchResources.Themes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Services.Interfaces.Repositories;
-using System;
-using System.Threading.Tasks;
+using Services.Customer.Interfaces.Repositories;
 
 namespace CustomerResource.Controllers
 {

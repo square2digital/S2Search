@@ -1,12 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoWrapper.Filters;
-using Domain.SearchResources.Feeds;
-using Microsoft.AspNetCore.Http;
+﻿using AutoWrapper.Filters;
+using Domain.Customer.SearchResources.Feeds;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Repositories;
+using Services.Customer.Interfaces.Managers;
+using Services.Customer.Interfaces.Repositories;
 
 namespace CustomerResource.Controllers
 {

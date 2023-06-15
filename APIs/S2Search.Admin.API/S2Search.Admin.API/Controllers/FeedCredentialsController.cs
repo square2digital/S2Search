@@ -1,12 +1,8 @@
 ﻿using Domain.AppSettings;
-using Domain.SearchResources.FeedCredentials;
-using Microsoft.AspNetCore.Http;
+using Domain.Customer.SearchResources.FeedCredentials;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Services.Interfaces.Managers;
-using System;
-using System.Threading.Tasks;
+using Services.Customer.Interfaces.Managers;
 
 namespace CustomerResource.Controllers
 {

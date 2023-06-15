@@ -1,8 +1,8 @@
-﻿using Domain.Dashboard;
+﻿using Domain.Customer.Dashboard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Services.Interfaces.Managers;
+using Services.Customer.Interfaces.Managers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

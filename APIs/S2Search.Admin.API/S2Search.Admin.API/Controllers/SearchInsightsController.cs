@@ -1,10 +1,6 @@
-﻿using Domain.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Domain.Customer.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Services.Interfaces.Managers;
-using System;
-using System.Threading.Tasks;
+using Services.Customer.Interfaces.Managers;
 
 namespace CustomerResource.Controllers
 {

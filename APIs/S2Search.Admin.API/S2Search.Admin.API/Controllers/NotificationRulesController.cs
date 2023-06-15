@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.SearchResources.NotificationRules;
+using Domain.Customer.SearchResources.NotificationRules;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Services.Interfaces.Repositories;
+using Services.Customer.Interfaces.Repositories;
 
 namespace CustomerResource.Controllers
 {

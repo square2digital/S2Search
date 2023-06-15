@@ -1,8 +1,8 @@
-﻿using Domain.SearchResources.SearchIndex;
+﻿using Domain.Customer.SearchResources.SearchIndex;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Services.Interfaces.Repositories;
+using Services.Customer.Interfaces.Repositories;
 using System;
 using System.Threading.Tasks;
 

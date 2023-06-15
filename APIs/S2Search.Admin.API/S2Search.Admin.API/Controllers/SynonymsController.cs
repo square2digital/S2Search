@@ -1,11 +1,6 @@
-﻿using Domain.SearchResources.Synonyms;
-using Microsoft.AspNetCore.Http;
+﻿using Domain.Customer.SearchResources.Synonyms;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Services.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Services.Customer.Interfaces.Repositories;
 
 namespace CustomerResource.Controllers
 {

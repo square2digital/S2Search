@@ -1,11 +1,7 @@
-﻿using Domain.SearchResources.Notifications;
-using Domain.Shared;
-using Microsoft.AspNetCore.Http;
+﻿using Domain.Customer.SearchResources.Notifications;
+using Domain.Customer.Shared;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Services.Interfaces.Managers;
-using System;
-using System.Threading.Tasks;
+using Services.Customer.Interfaces.Managers;
 
 namespace CustomerResource.Controllers
 {

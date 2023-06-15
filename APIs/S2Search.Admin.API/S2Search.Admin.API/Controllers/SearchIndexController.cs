@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Domain.SearchResources.CustomerPricing;
-using Domain.SearchResources.SearchIndex;
-using Microsoft.AspNetCore.Http;
+﻿using Domain.Customer.SearchResources.CustomerPricing;
+using Domain.Customer.SearchResources.SearchIndex;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Services.Interfaces.Repositories;
+using Services.Customer.Interfaces.Repositories;
 
 namespace CustomerResource.Controllers
 {

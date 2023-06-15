@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Domain.Customer;
+using Domain.Customer.Customer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Services.Interfaces.Repositories;
+using Services.Customer.Interfaces.Repositories;
 
 namespace CustomerResource.Controllers
 {
@@ -26,10 +27,10 @@ namespace CustomerResource.Controllers
         /// Gets the Customer by customerId
         /// </summary>
         [HttpGet(Name = "GetCustomer")]
-        [ProducesResponseType(typeof(Customer), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CustomerIds), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Customer>> GetCustomer(Guid customerId)
+        public async Task<ActionResult<CustomerIds>> GetCustomer(Guid customerId)
         {
             try
             {

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Domain.Customer.SearchResources.Feeds;
+using Domain.Customer.SearchResources.Synonyms;
+using System.Collections.Generic;
 
 namespace Domain.SearchResource
 {

@@ -23,7 +23,7 @@ namespace Services.Configuration.Repositories
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(ConnectionStrings.CustomerResourceStore,
-                                                                           Domain.Configuration.Constants.StoredProcedures.GetTheme,
+                                                                           StoredProcedures.GetTheme,
                                                                            parameters);
 
             return result;
