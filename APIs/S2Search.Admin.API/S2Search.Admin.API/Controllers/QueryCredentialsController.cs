@@ -22,7 +22,7 @@ namespace CustomerResource.Controllers
             _searchIndexRepo = searchIndexRepo ?? throw new ArgumentNullException(nameof(searchIndexRepo));
         }
 
-        [HttpGet("endpoint/{customerEndpoint}", Name = "GetSearchIndexQueryCredentials")]
+        [HttpGet("endpoint/{customerEndpoint}")]
         [ProducesResponseType(typeof(SearchIndexQueryCredentials), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
