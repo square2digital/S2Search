@@ -1,9 +1,9 @@
 ﻿using Domain.Constants;
 using Domain.Customer.Constants;
 using Domain.Customer.SearchResources.NotificationRules;
+using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 using Services.Customer.Interfaces.Managers;
 using Services.Customer.Interfaces.Repositories;
-using Services.Dapper.Interfaces.Providers;
 
 namespace Services.Customer.Repositories
 {

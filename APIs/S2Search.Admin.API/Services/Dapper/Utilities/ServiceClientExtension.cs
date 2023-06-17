@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Services.Dapper.Interfaces.Providers;
+using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 using Services.Dapper.Providers;
 
 namespace Services.Dapper.Utilities

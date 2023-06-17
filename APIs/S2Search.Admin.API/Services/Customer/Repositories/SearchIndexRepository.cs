@@ -1,6 +1,5 @@
 ﻿using Domain.Constants;
 using Services.Customer.Interfaces.Repositories;
-using Services.Dapper.Interfaces.Providers;
 using Services.Customer.Interfaces.Managers;
 using Domain.Customer.Constants;
 using Domain.Customer.SearchResources.SearchIndex;
@@ -8,6 +7,7 @@ using Domain.Customer.SearchResources.CustomerPricing;
 using Domain.Customer.SearchResources.SearchInstanceKeys;
 using Domain.Customer.Enums;
 using Domain.Customer.Shared;
+using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 
 namespace Services.Customer.Repositories
 {

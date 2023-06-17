@@ -1,8 +1,8 @@
 ﻿using Domain.Constants;
 using Domain.Customer.Constants;
 using Domain.SearchResources.Configuration;
+using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 using Services.Configuration.Interfaces.Repositories;
-using Services.Dapper.Interfaces.Providers;
 
 namespace Services.Configuration.Repositories
 {

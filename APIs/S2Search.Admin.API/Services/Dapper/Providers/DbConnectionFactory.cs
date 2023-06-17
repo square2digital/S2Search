@@ -1,4 +1,4 @@
-﻿using Services.Dapper.Interfaces.Providers;
+﻿using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 using System.Data;
 using System.Data.SqlClient;
 

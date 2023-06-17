@@ -2,9 +2,9 @@
 using System.Data;
 using System.Dynamic;
 using static Dapper.SqlMapper;
-using Services.Dapper.Interfaces.Providers;
 using Services.Dapper.Helpers;
 using Services.Dapper.Models;
+using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 
 namespace Services.Dapper.Providers
 {
