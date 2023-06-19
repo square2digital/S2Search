@@ -1,5 +1,6 @@
 ﻿using Domain.Customer.SearchResources.CustomerPricing;
 using Domain.Customer.SearchResources.SearchIndex;
+using Domain.SearchResources;
 
 namespace Services.Customer.Interfaces.Repositories
 {

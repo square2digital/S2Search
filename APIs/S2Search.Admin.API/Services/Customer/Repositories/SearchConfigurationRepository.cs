@@ -1,6 +1,7 @@
 ﻿using Domain.Constants;
 using Domain.Customer.Constants;
 using Domain.Customer.SearchResources.SearchConfiguration;
+using Domain.SearchResources.Configuration;
 using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 using Services.Customer.Interfaces.Repositories;
 

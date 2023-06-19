@@ -1,4 +1,5 @@
 ﻿using Domain.Customer.SearchResources.Themes;
+using Domain.SearchResources;
 
 namespace Services.Customer.Interfaces.Repositories
 {

@@ -1,4 +1,5 @@
 ﻿using Domain.Customer.SearchResources.SearchConfiguration;
+using Domain.SearchResources.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Services.Customer.Interfaces.Repositories;
 

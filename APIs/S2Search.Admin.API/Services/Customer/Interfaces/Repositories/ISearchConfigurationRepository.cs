@@ -1,4 +1,5 @@
 ﻿using Domain.Customer.SearchResources.SearchConfiguration;
+using Domain.SearchResources.Configuration;
 
 namespace Services.Customer.Interfaces.Repositories
 {

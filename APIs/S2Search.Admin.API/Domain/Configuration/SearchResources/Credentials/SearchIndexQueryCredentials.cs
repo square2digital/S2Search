@@ -9,5 +9,6 @@ namespace Domain.SearchResources
         public string SearchIndexName { get; set; }
         public string SearchInstanceName { get; set; }
         public string SearchInstanceEndpoint { get; set; }
+        public string ApiKey { get; set; }
     }
 }

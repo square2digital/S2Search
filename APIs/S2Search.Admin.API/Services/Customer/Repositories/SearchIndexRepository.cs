@@ -8,6 +8,7 @@ using Domain.Customer.SearchResources.SearchInstanceKeys;
 using Domain.Customer.Enums;
 using Domain.Customer.Shared;
 using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
+using Domain.SearchResources;
 
 namespace Services.Customer.Repositories
 {
