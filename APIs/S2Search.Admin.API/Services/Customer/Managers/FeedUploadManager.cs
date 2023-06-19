@@ -2,6 +2,7 @@
 using Domain.Customer.Enums;
 using Domain.Customer.SearchResources.Notifications;
 using Microsoft.AspNetCore.Http;
+using Services.Configuration.Interfaces.Repositories;
 using Services.Customer.Interfaces.Managers;
 using Services.Customer.Interfaces.Providers;
 using Services.Customer.Interfaces.Repositories;

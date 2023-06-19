@@ -1,6 +1,7 @@
 ﻿using Domain.Customer.SearchResources.SearchConfiguration;
 using Domain.SearchResources.Configuration;
 using Microsoft.AspNetCore.Mvc;
+using Services.Configuration.Interfaces.Repositories;
 using Services.Customer.Interfaces.Repositories;
 
 namespace CustomerResource.Controllers

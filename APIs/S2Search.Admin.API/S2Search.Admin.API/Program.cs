@@ -7,6 +7,12 @@ using Services.Configuration.Interfaces.Repositories;
 using Services.Configuration.Repositories;
 using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 using S2Search.Common.Database.Sql.Dapper.Providers;
+using Services.Customer.Interfaces.Managers;
+using Services.Customer.Managers;
+using Services.Customer.Interfaces.Providers;
+using Services.Customer.Providers;
+using Services.Customer.Interfaces.Repositories;
+using Services.Customer.Repositories;
 
 namespace S2Search.Admin.API
 {
@@ -109,21 +115,55 @@ namespace S2Search.Admin.API
             services.AddHttpContextAccessor();
             services.AddControllers();
             services.AddLazyCache();
-            //services.AddAPIServices();
-            //services.AddSqlDapperAbstractions();
 
-            AddServices(services);
-        }
-
-        private static void AddServices(IServiceCollection services)
-        {
+            // AddServices
             services.AddSingleton<ISearchIndexRepository, SearchIndexRepository>();
             services.AddSingleton<IThemeRepository, ThemeRepository>();
             services.AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>();
-
             services.AddSingleton<IConnectionStringProvider, ConnectionStringProvider>();
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
             services.AddSingleton<IDbContextProvider, DbContextProvider>();
+
+            // AddManagers
+            services.AddSingleton<IQueueManager, QueueManager>();
+            services.AddSingleton<IFeedSettingsValidationManager, FeedSettingsValidationManager>();
+            services.AddSingleton<ICronDescriptionManager, CronDescriptionManager>();
+            services.AddSingleton<IQueryKeyNameValidationManager, QueryKeyNameValidationManager>();
+            services.AddSingleton<INotificationRuleValidationManager, NotificationRuleValidationManager>();
+            services.AddSingleton<ISearchInterfaceValidationManager, SearchInterfaceValidationManager>();
+            services.AddSingleton<ISynonymValidationManager, SynonymValidationManager>();
+            services.AddSingleton<ISolrFormatConversionManager, SolrFormatConversionManager>();
+            services.AddSingleton<IFeedCredentialsManager, FeedCredentialsManager>();
+            services.AddSingleton<INotificationManager, NotificationManager>();
+            services.AddSingleton<IDashboardManager, DashboardManager>();
+            services.AddSingleton<IFeedUploadDestinationManager, FeedUploadDestinationManager>();
+            services.AddSingleton<IFeedUploadValidationManager, FeedUploadValidationManager>();
+            services.AddSingleton<IFeedUploadManager, FeedUploadManager>();
+            services.AddSingleton<ISearchInsightsRetrievalManager, SearchInsightsRetrievalManager>();
+
+            // Providers
+            services.AddSingleton<IGuidProvider, GuidProvider>();
+            services.AddSingleton<IQueueClientProvider, QueueClientProvider>();
+            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            services.AddSingleton<IBlobClientProvider, BlobClientProvider>();
+            services.AddSingleton<IPreviousDateRangeProvider, PreviousDateRangeProvider>();
+            services.AddSingleton<IPercentageChangeProvider, PercentageChangeProvider>();
+            services.AddSingleton<ISearchInsightFriendlyNameProvider, SearchInsightFriendlyNameProvider>();
+
+            // AddRepositories
+            services.AddSingleton<ISearchIndexRepository, SearchIndexRepository>();
+            services.AddSingleton<IFeedRepository, FeedRepository>();
+            services.AddSingleton<INotificationRuleRepository, NotificationRuleRepository>();
+            services.AddSingleton<ISearchInterfaceRepository, SearchInterfaceRepository>();
+            services.AddSingleton<ISynonymRepository, SynonymRepository>();
+            services.AddSingleton<ICustomerRepository, CustomerRepository>();
+            services.AddSingleton<IThemeRepository, ThemeRepository>();
+            services.AddSingleton<IFeedCredentialsRepository, FeedCredentialsRepository>();
+            services.AddSingleton<INotificationRepository, NotificationRepository>();
+            services.AddSingleton<IDashboardRepository, DashboardRepository>();
+            services.AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>();
+            services.AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>();
+            services.AddSingleton<ISearchInsightsReportRepository, SearchInsightsReportRepository>();
         }
     }
 }

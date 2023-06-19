@@ -1,7 +1,7 @@
 ﻿using Domain.Customer.SearchResources.Themes;
 using Domain.SearchResources;
 using Microsoft.AspNetCore.Mvc;
-using Services.Customer.Interfaces.Repositories;
+using Services.Configuration.Interfaces.Repositories;
 
 namespace CustomerResource.Controllers
 {
