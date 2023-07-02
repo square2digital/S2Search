@@ -13,6 +13,7 @@ namespace Domain.Models
         public ClientConfigurationSettings ClientConfigurationSettings { get; set; }
         public MemoryCacheSettings MemoryCacheSettings { get; set; }
         public RedisCacheSettings RedisCacheSettings { get; set; }
+        public AdminSettings AdminSettings { get; set; }
     }
 
     public class SearchSettings
@@ -141,5 +142,10 @@ namespace Domain.Models
     {
         public string RedisConnectionString { get; set; }
         public int DefaultCacheExpiryInSeconds { get; set; }        
+    }
+
+    public class AdminSettings
+    {
+        public string AdminEndpoint { get; set; }
     }
 }

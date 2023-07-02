@@ -8,5 +8,6 @@
         ClientConfigurationSettings ClientConfigurationSettings { get; set; }
         MemoryCacheSettings MemoryCacheSettings { get; set; }
         RedisCacheSettings RedisCacheSettings { get; set; }
+        AdminSettings AdminSettings { get; set; }
     }
 }

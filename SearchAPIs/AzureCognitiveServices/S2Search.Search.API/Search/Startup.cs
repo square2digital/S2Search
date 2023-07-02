@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Models.Interfaces;
 using Search.Filters;
+using S2SearchAPI.Client;
 
 namespace Search
 {
@@ -69,6 +70,13 @@ namespace Search
             services.AddHttpContextAccessor();
             services.AddAPIServices();
             services.AddRedis(appSettings.RedisCacheSettings.RedisConnectionString);
+
+            // Register the NSwag client
+            services.AddHttpClient<IS2SearchAPIClient, S2SearchAPIClient>()
+                .ConfigureHttpClient((serviceProvider, httpClient) =>
+                {
+                    httpClient.BaseAddress = new Uri(appSettings.AdminSettings.AdminEndpoint);
+                });
         }
 
         /// <summary>
