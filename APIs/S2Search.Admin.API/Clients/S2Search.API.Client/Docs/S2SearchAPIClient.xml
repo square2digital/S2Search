@@ -1,0 +1,2141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <members>
+    <member name="GetConfigAsync(Guid,RequestContext)">
+<example>
+This sample shows how to call GetConfigAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetConfigAsync(Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("seachConfigurationOptionId").ToString());
+Console.WriteLine(result[0].GetProperty("searchConfigurationMappingId").ToString());
+Console.WriteLine(result[0].GetProperty("key").ToString());
+Console.WriteLine(result[0].GetProperty("value").ToString());
+Console.WriteLine(result[0].GetProperty("friendlyName").ToString());
+Console.WriteLine(result[0].GetProperty("description").ToString());
+Console.WriteLine(result[0].GetProperty("dataType").ToString());
+Console.WriteLine(result[0].GetProperty("orderIndex").ToString());
+Console.WriteLine(result[0].GetProperty("createdDate").ToString());
+Console.WriteLine(result[0].GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetConfig(Guid,RequestContext)">
+<example>
+This sample shows how to call GetConfig with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetConfig(Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("seachConfigurationOptionId").ToString());
+Console.WriteLine(result[0].GetProperty("searchConfigurationMappingId").ToString());
+Console.WriteLine(result[0].GetProperty("key").ToString());
+Console.WriteLine(result[0].GetProperty("value").ToString());
+Console.WriteLine(result[0].GetProperty("friendlyName").ToString());
+Console.WriteLine(result[0].GetProperty("description").ToString());
+Console.WriteLine(result[0].GetProperty("dataType").ToString());
+Console.WriteLine(result[0].GetProperty("orderIndex").ToString());
+Console.WriteLine(result[0].GetProperty("createdDate").ToString());
+Console.WriteLine(result[0].GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="UpdateConfigAsync(RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call UpdateConfigAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = await client.UpdateConfigAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call UpdateConfigAsync with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchConfigurationMappingId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    seachConfigurationOptionId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    value = "<value>",
+};
+
+Response response = await client.UpdateConfigAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchConfigurationMappingId").ToString());
+Console.WriteLine(result.GetProperty("seachConfigurationOptionId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("value").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="UpdateConfig(RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call UpdateConfig with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = client.UpdateConfig(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call UpdateConfig with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchConfigurationMappingId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    seachConfigurationOptionId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    value = "<value>",
+};
+
+Response response = client.UpdateConfig(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchConfigurationMappingId").ToString());
+Console.WriteLine(result.GetProperty("seachConfigurationOptionId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("value").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchIndexQueryCredentialsAsync(string,RequestContext)">
+<example>
+This sample shows how to call GetSearchIndexQueryCredentialsAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetSearchIndexQueryCredentialsAsync("<customerEndpoint>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("queryApiKey").ToString());
+Console.WriteLine(result.GetProperty("searchIndexName").ToString());
+Console.WriteLine(result.GetProperty("searchInstanceName").ToString());
+Console.WriteLine(result.GetProperty("searchInstanceEndpoint").ToString());
+Console.WriteLine(result.GetProperty("apiKey").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchIndexQueryCredentials(string,RequestContext)">
+<example>
+This sample shows how to call GetSearchIndexQueryCredentials with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetSearchIndexQueryCredentials("<customerEndpoint>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("queryApiKey").ToString());
+Console.WriteLine(result.GetProperty("searchIndexName").ToString());
+Console.WriteLine(result.GetProperty("searchInstanceName").ToString());
+Console.WriteLine(result.GetProperty("searchInstanceEndpoint").ToString());
+Console.WriteLine(result.GetProperty("apiKey").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetThemeAsync(string,RequestContext)">
+<example>
+This sample shows how to call GetThemeAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetThemeAsync("<customerEndpoint>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("themeId").ToString());
+Console.WriteLine(result.GetProperty("primaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("secondaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("navBarHexColour").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("missingImageURL").ToString());
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetTheme(string,RequestContext)">
+<example>
+This sample shows how to call GetTheme with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetTheme("<customerEndpoint>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("themeId").ToString());
+Console.WriteLine(result.GetProperty("primaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("secondaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("navBarHexColour").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("missingImageURL").ToString());
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchConfigurationAsync(string,RequestContext)">
+<example>
+This sample shows how to call GetSearchConfigurationAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetSearchConfigurationAsync("<customerEndpoint>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("seachConfigurationOptionId").ToString());
+Console.WriteLine(result[0].GetProperty("searchConfigurationMappingId").ToString());
+Console.WriteLine(result[0].GetProperty("key").ToString());
+Console.WriteLine(result[0].GetProperty("value").ToString());
+Console.WriteLine(result[0].GetProperty("friendlyName").ToString());
+Console.WriteLine(result[0].GetProperty("description").ToString());
+Console.WriteLine(result[0].GetProperty("dataType").ToString());
+Console.WriteLine(result[0].GetProperty("orderIndex").ToString());
+Console.WriteLine(result[0].GetProperty("createdDate").ToString());
+Console.WriteLine(result[0].GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchConfiguration(string,RequestContext)">
+<example>
+This sample shows how to call GetSearchConfiguration with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetSearchConfiguration("<customerEndpoint>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("seachConfigurationOptionId").ToString());
+Console.WriteLine(result[0].GetProperty("searchConfigurationMappingId").ToString());
+Console.WriteLine(result[0].GetProperty("key").ToString());
+Console.WriteLine(result[0].GetProperty("value").ToString());
+Console.WriteLine(result[0].GetProperty("friendlyName").ToString());
+Console.WriteLine(result[0].GetProperty("description").ToString());
+Console.WriteLine(result[0].GetProperty("dataType").ToString());
+Console.WriteLine(result[0].GetProperty("orderIndex").ToString());
+Console.WriteLine(result[0].GetProperty("createdDate").ToString());
+Console.WriteLine(result[0].GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetGenericSynonymsAsync(string,RequestContext)">
+<example>
+This sample shows how to call GetGenericSynonymsAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetGenericSynonymsAsync("<category>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("id").ToString());
+Console.WriteLine(result[0].GetProperty("category").ToString());
+Console.WriteLine(result[0].GetProperty("solrFormat").ToString());
+Console.WriteLine(result[0].GetProperty("createdDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetGenericSynonyms(string,RequestContext)">
+<example>
+This sample shows how to call GetGenericSynonyms with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetGenericSynonyms("<category>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("id").ToString());
+Console.WriteLine(result[0].GetProperty("category").ToString());
+Console.WriteLine(result[0].GetProperty("solrFormat").ToString());
+Console.WriteLine(result[0].GetProperty("createdDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetCustomerAsync(Guid,RequestContext)">
+<example>
+This sample shows how to call GetCustomerAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetCustomerAsync(Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("businessName").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetCustomer(Guid,RequestContext)">
+<example>
+This sample shows how to call GetCustomer with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetCustomer(Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("businessName").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetCustomerAndSearchIndexesAsync(Guid,RequestContext)">
+<example>
+This sample shows how to call GetCustomerAndSearchIndexesAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetCustomerAndSearchIndexesAsync(Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("customer").GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("customer").GetProperty("businessName").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("searchInstanceId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("friendlyName").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("indexName").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("indexType").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetCustomerAndSearchIndexes(Guid,RequestContext)">
+<example>
+This sample shows how to call GetCustomerAndSearchIndexes with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetCustomerAndSearchIndexes(Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("customer").GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("customer").GetProperty("businessName").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("searchInstanceId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("friendlyName").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("indexName").ToString());
+Console.WriteLine(result.GetProperty("searchIndexes")[0].GetProperty("indexType").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetDashboardSummaryAsync(Guid,RequestContext)">
+<example>
+This sample shows how to call GetDashboardSummaryAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetDashboardSummaryAsync(Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("searchIndexId").ToString());
+Console.WriteLine(result[0].GetProperty("searchIndexFriendlyName").ToString());
+Console.WriteLine(result[0].GetProperty("searchIndexCreatedDate").ToString());
+Console.WriteLine(result[0].GetProperty("notificationEvent").ToString());
+Console.WriteLine(result[0].GetProperty("notificationCategory").ToString());
+Console.WriteLine(result[0].GetProperty("notificationCreatedDate").ToString());
+Console.WriteLine(result[0].GetProperty("synonymsCount").ToString());
+Console.WriteLine(result[0].GetProperty("notificationsCount").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetDashboardSummary(Guid,RequestContext)">
+<example>
+This sample shows how to call GetDashboardSummary with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetDashboardSummary(Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("searchIndexId").ToString());
+Console.WriteLine(result[0].GetProperty("searchIndexFriendlyName").ToString());
+Console.WriteLine(result[0].GetProperty("searchIndexCreatedDate").ToString());
+Console.WriteLine(result[0].GetProperty("notificationEvent").ToString());
+Console.WriteLine(result[0].GetProperty("notificationCategory").ToString());
+Console.WriteLine(result[0].GetProperty("notificationCreatedDate").ToString());
+Console.WriteLine(result[0].GetProperty("synonymsCount").ToString());
+Console.WriteLine(result[0].GetProperty("notificationsCount").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="CreateUserAsync(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateUserAsync with required parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    username = "<username>",
+    password = "<password>",
+};
+
+Response response = await client.CreateUserAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+This sample shows how to call CreateUserAsync with all parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    username = "<username>",
+    password = "<password>",
+};
+
+Response response = await client.CreateUserAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="CreateUser(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateUser with required parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    username = "<username>",
+    password = "<password>",
+};
+
+Response response = client.CreateUser(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+This sample shows how to call CreateUser with all parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    username = "<username>",
+    password = "<password>",
+};
+
+Response response = client.CreateUser(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="DeleteUserAsync(Guid,Guid,string,RequestContext)">
+<example>
+This sample shows how to call DeleteUserAsync with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.DeleteUserAsync(Guid.NewGuid(), Guid.NewGuid(), "<username>");
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="DeleteUser(Guid,Guid,string,RequestContext)">
+<example>
+This sample shows how to call DeleteUser with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.DeleteUser(Guid.NewGuid(), Guid.NewGuid(), "<username>");
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="UpdateUserStatusAsync(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call UpdateUserStatusAsync with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = await client.UpdateUserStatusAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+This sample shows how to call UpdateUserStatusAsync with all parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    username = "<username>",
+    status = true,
+};
+
+Response response = await client.UpdateUserStatusAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="UpdateUserStatus(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call UpdateUserStatus with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = client.UpdateUserStatus(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+This sample shows how to call UpdateUserStatus with all parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    username = "<username>",
+    status = true,
+};
+
+Response response = client.UpdateUserStatus(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="UpdateUserPasswordAsync(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call UpdateUserPasswordAsync with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = await client.UpdateUserPasswordAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+This sample shows how to call UpdateUserPasswordAsync with all parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    username = "<username>",
+    password = "<password>",
+};
+
+Response response = await client.UpdateUserPasswordAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="UpdateUserPassword(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call UpdateUserPassword with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = client.UpdateUserPassword(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+This sample shows how to call UpdateUserPassword with all parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    username = "<username>",
+    password = "<password>",
+};
+
+Response response = client.UpdateUserPassword(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="GetCredentialsAsync(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetCredentialsAsync with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetCredentialsAsync(Guid.NewGuid(), Guid.NewGuid());
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="GetCredentials(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetCredentials with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetCredentials(Guid.NewGuid(), Guid.NewGuid());
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="GetLatestFeedConfigurationAsync(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetLatestFeedConfigurationAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetLatestFeedConfigurationAsync(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("feedId").ToString());
+Console.WriteLine(result.GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("scheduleCron").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("supersededDate").ToString());
+Console.WriteLine(result.GetProperty("scheduleFriendlyDescription").ToString());
+Console.WriteLine(result.GetProperty("isLatest").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetLatestFeedConfiguration(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetLatestFeedConfiguration with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetLatestFeedConfiguration(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("feedId").ToString());
+Console.WriteLine(result.GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("scheduleCron").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("supersededDate").ToString());
+Console.WriteLine(result.GetProperty("scheduleFriendlyDescription").ToString());
+Console.WriteLine(result.GetProperty("isLatest").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="SaveFeedConfigurationAsync(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call SaveFeedConfigurationAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = await client.SaveFeedConfigurationAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call SaveFeedConfigurationAsync with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    feedType = "<feedType>",
+    scheduleMinutes = 1234,
+};
+
+Response response = await client.SaveFeedConfigurationAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("feedId").ToString());
+Console.WriteLine(result.GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("scheduleCron").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("supersededDate").ToString());
+Console.WriteLine(result.GetProperty("scheduleFriendlyDescription").ToString());
+Console.WriteLine(result.GetProperty("isLatest").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="SaveFeedConfiguration(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call SaveFeedConfiguration with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = client.SaveFeedConfiguration(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call SaveFeedConfiguration with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    feedType = "<feedType>",
+    scheduleMinutes = 1234,
+};
+
+Response response = client.SaveFeedConfiguration(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("feedId").ToString());
+Console.WriteLine(result.GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("scheduleCron").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("supersededDate").ToString());
+Console.WriteLine(result.GetProperty("scheduleFriendlyDescription").ToString());
+Console.WriteLine(result.GetProperty("isLatest").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="UploadFeedFileAsync(Guid,Guid,RequestContent,RequestContext)">
+<example>
+This sample shows how to call UploadFeedFileAsync with required parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = File.OpenRead("<filePath>");
+
+Response response = await client.UploadFeedFileAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data));
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="UploadFeedFile(Guid,Guid,RequestContent,RequestContext)">
+<example>
+This sample shows how to call UploadFeedFile with required parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = File.OpenRead("<filePath>");
+
+Response response = client.UploadFeedFile(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data));
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="GetKeysAsync(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetKeysAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetKeysAsync(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("name").ToString());
+Console.WriteLine(result[0].GetProperty("apiKey").ToString());
+Console.WriteLine(result[0].GetProperty("createdDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetKeys(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetKeys with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetKeys(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("name").ToString());
+Console.WriteLine(result[0].GetProperty("apiKey").ToString());
+Console.WriteLine(result[0].GetProperty("createdDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="CreateKeysAsync(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateKeysAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = await client.CreateKeysAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].ToString());
+]]></code>
+This sample shows how to call CreateKeysAsync with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    customerId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keysToGenerate = new[] {
+        "<String>"
+    },
+};
+
+Response response = await client.CreateKeysAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("name").ToString());
+Console.WriteLine(result[0].GetProperty("apiKey").ToString());
+Console.WriteLine(result[0].GetProperty("createdDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="CreateKeys(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateKeys with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = client.CreateKeys(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].ToString());
+]]></code>
+This sample shows how to call CreateKeys with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    customerId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keysToGenerate = new[] {
+        "<String>"
+    },
+};
+
+Response response = client.CreateKeys(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("name").ToString());
+Console.WriteLine(result[0].GetProperty("apiKey").ToString());
+Console.WriteLine(result[0].GetProperty("createdDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="DeleteKeysAsync(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call DeleteKeysAsync with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = await client.DeleteKeysAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+This sample shows how to call DeleteKeysAsync with all parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    customerId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keysToDelete = new[] {
+        new {
+            name = "<name>",
+            apiKey = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+        }
+    },
+};
+
+Response response = await client.DeleteKeysAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="DeleteKeys(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call DeleteKeys with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = client.DeleteKeys(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+This sample shows how to call DeleteKeys with all parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    customerId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keysToDelete = new[] {
+        new {
+            name = "<name>",
+            apiKey = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+        }
+    },
+};
+
+Response response = client.DeleteKeys(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="GetNotificationRulesAsync(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetNotificationRulesAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetNotificationRulesAsync(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("notificationRuleId").ToString());
+Console.WriteLine(result[0].GetProperty("transmitType").ToString());
+Console.WriteLine(result[0].GetProperty("recipients").ToString());
+Console.WriteLine(result[0].GetProperty("recipientsList")[0].ToString());
+Console.WriteLine(result[0].GetProperty("triggerType").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetNotificationRules(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetNotificationRules with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetNotificationRules(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("notificationRuleId").ToString());
+Console.WriteLine(result[0].GetProperty("transmitType").ToString());
+Console.WriteLine(result[0].GetProperty("recipients").ToString());
+Console.WriteLine(result[0].GetProperty("recipientsList")[0].ToString());
+Console.WriteLine(result[0].GetProperty("triggerType").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="CreateNotificationRuleAsync(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateNotificationRuleAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = await client.CreateNotificationRuleAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call CreateNotificationRuleAsync with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    transmitType = "<transmitType>",
+    recipients = "<recipients>",
+    triggerType = "<triggerType>",
+};
+
+Response response = await client.CreateNotificationRuleAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("notificationRuleId").ToString());
+Console.WriteLine(result.GetProperty("transmitType").ToString());
+Console.WriteLine(result.GetProperty("recipients").ToString());
+Console.WriteLine(result.GetProperty("recipientsList")[0].ToString());
+Console.WriteLine(result.GetProperty("triggerType").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="CreateNotificationRule(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateNotificationRule with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = client.CreateNotificationRule(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call CreateNotificationRule with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    transmitType = "<transmitType>",
+    recipients = "<recipients>",
+    triggerType = "<triggerType>",
+};
+
+Response response = client.CreateNotificationRule(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("notificationRuleId").ToString());
+Console.WriteLine(result.GetProperty("transmitType").ToString());
+Console.WriteLine(result.GetProperty("recipients").ToString());
+Console.WriteLine(result.GetProperty("recipientsList")[0].ToString());
+Console.WriteLine(result.GetProperty("triggerType").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetNotificationRuleByIdAsync(Guid,Guid,int,RequestContext)">
+<example>
+This sample shows how to call GetNotificationRuleByIdAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetNotificationRuleByIdAsync(Guid.NewGuid(), Guid.NewGuid(), 1234);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("notificationRuleId").ToString());
+Console.WriteLine(result.GetProperty("transmitType").ToString());
+Console.WriteLine(result.GetProperty("recipients").ToString());
+Console.WriteLine(result.GetProperty("recipientsList")[0].ToString());
+Console.WriteLine(result.GetProperty("triggerType").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetNotificationRuleById(Guid,Guid,int,RequestContext)">
+<example>
+This sample shows how to call GetNotificationRuleById with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetNotificationRuleById(Guid.NewGuid(), Guid.NewGuid(), 1234);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("notificationRuleId").ToString());
+Console.WriteLine(result.GetProperty("transmitType").ToString());
+Console.WriteLine(result.GetProperty("recipients").ToString());
+Console.WriteLine(result.GetProperty("recipientsList")[0].ToString());
+Console.WriteLine(result.GetProperty("triggerType").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="DeleteNotificationRuleAsync(Guid,Guid,int,RequestContext)">
+<example>
+This sample shows how to call DeleteNotificationRuleAsync with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.DeleteNotificationRuleAsync(Guid.NewGuid(), Guid.NewGuid(), 1234);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="DeleteNotificationRule(Guid,Guid,int,RequestContext)">
+<example>
+This sample shows how to call DeleteNotificationRule with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.DeleteNotificationRule(Guid.NewGuid(), Guid.NewGuid(), 1234);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="GetNotificationsAsync(Guid,Guid,int?,int?,RequestContext)">
+<example>
+This sample shows how to call GetNotificationsAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetNotificationsAsync(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call GetNotificationsAsync with all parameters, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetNotificationsAsync(Guid.NewGuid(), Guid.NewGuid(), 1234, 1234);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("notificationId").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("event").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("category").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("recipients").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("recipientsList")[0].ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("transmitType").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("totalCount").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetNotifications(Guid,Guid,int?,int?,RequestContext)">
+<example>
+This sample shows how to call GetNotifications with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetNotifications(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call GetNotifications with all parameters, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetNotifications(Guid.NewGuid(), Guid.NewGuid(), 1234, 1234);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("notificationId").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("event").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("category").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("recipients").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("recipientsList")[0].ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("transmitType").ToString());
+Console.WriteLine(result.GetProperty("results")[0].GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("totalCount").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="QueryCredentialsAsync(string,RequestContext)">
+<example>
+This sample shows how to call QueryCredentialsAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.QueryCredentialsAsync("<customerEndpoint>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("queryApiKey").ToString());
+Console.WriteLine(result.GetProperty("searchIndexName").ToString());
+Console.WriteLine(result.GetProperty("searchInstanceName").ToString());
+Console.WriteLine(result.GetProperty("searchInstanceEndpoint").ToString());
+Console.WriteLine(result.GetProperty("apiKey").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="QueryCredentials(string,RequestContext)">
+<example>
+This sample shows how to call QueryCredentials with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.QueryCredentials("<customerEndpoint>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("queryApiKey").ToString());
+Console.WriteLine(result.GetProperty("searchIndexName").ToString());
+Console.WriteLine(result.GetProperty("searchInstanceName").ToString());
+Console.WriteLine(result.GetProperty("searchInstanceEndpoint").ToString());
+Console.WriteLine(result.GetProperty("apiKey").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchIndexAsync(Guid,Guid,bool?,RequestContext)">
+<example>
+This sample shows how to call GetSearchIndexAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetSearchIndexAsync(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call GetSearchIndexAsync with all parameters, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetSearchIndexAsync(Guid.NewGuid(), Guid.NewGuid(), true);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("searchInstanceId").ToString());
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("friendlyName").ToString());
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("indexName").ToString());
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("indexType").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("feedId").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("scheduleCron").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("supersededDate").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("scheduleFriendlyDescription").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("isLatest").ToString());
+Console.WriteLine(result.GetProperty("notificationsRules")[0].GetProperty("notificationRuleId").ToString());
+Console.WriteLine(result.GetProperty("notificationsRules")[0].GetProperty("transmitType").ToString());
+Console.WriteLine(result.GetProperty("notificationsRules")[0].GetProperty("recipients").ToString());
+Console.WriteLine(result.GetProperty("notificationsRules")[0].GetProperty("recipientsList")[0].ToString());
+Console.WriteLine(result.GetProperty("notificationsRules")[0].GetProperty("triggerType").ToString());
+Console.WriteLine(result.GetProperty("synonyms")[0].GetProperty("synonymId").ToString());
+Console.WriteLine(result.GetProperty("synonyms")[0].GetProperty("key").ToString());
+Console.WriteLine(result.GetProperty("synonyms")[0].GetProperty("words")[0].ToString());
+Console.WriteLine(result.GetProperty("synonyms")[0].GetProperty("solrFormat").ToString());
+Console.WriteLine(result.GetProperty("searchInterface").GetProperty("searchInterfaceId").ToString());
+Console.WriteLine(result.GetProperty("searchInterface").GetProperty("searchEndpoint").ToString());
+Console.WriteLine(result.GetProperty("searchInterface").GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("searchInterface").GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("searchInterface").GetProperty("bannerStyle").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchIndex(Guid,Guid,bool?,RequestContext)">
+<example>
+This sample shows how to call GetSearchIndex with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetSearchIndex(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call GetSearchIndex with all parameters, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetSearchIndex(Guid.NewGuid(), Guid.NewGuid(), true);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("searchInstanceId").ToString());
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("friendlyName").ToString());
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("indexName").ToString());
+Console.WriteLine(result.GetProperty("searchIndex").GetProperty("indexType").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("feedId").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("scheduleCron").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("supersededDate").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("scheduleFriendlyDescription").ToString());
+Console.WriteLine(result.GetProperty("feed").GetProperty("isLatest").ToString());
+Console.WriteLine(result.GetProperty("notificationsRules")[0].GetProperty("notificationRuleId").ToString());
+Console.WriteLine(result.GetProperty("notificationsRules")[0].GetProperty("transmitType").ToString());
+Console.WriteLine(result.GetProperty("notificationsRules")[0].GetProperty("recipients").ToString());
+Console.WriteLine(result.GetProperty("notificationsRules")[0].GetProperty("recipientsList")[0].ToString());
+Console.WriteLine(result.GetProperty("notificationsRules")[0].GetProperty("triggerType").ToString());
+Console.WriteLine(result.GetProperty("synonyms")[0].GetProperty("synonymId").ToString());
+Console.WriteLine(result.GetProperty("synonyms")[0].GetProperty("key").ToString());
+Console.WriteLine(result.GetProperty("synonyms")[0].GetProperty("words")[0].ToString());
+Console.WriteLine(result.GetProperty("synonyms")[0].GetProperty("solrFormat").ToString());
+Console.WriteLine(result.GetProperty("searchInterface").GetProperty("searchInterfaceId").ToString());
+Console.WriteLine(result.GetProperty("searchInterface").GetProperty("searchEndpoint").ToString());
+Console.WriteLine(result.GetProperty("searchInterface").GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("searchInterface").GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("searchInterface").GetProperty("bannerStyle").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="DeleteSearchIndexAsync(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call DeleteSearchIndexAsync with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.DeleteSearchIndexAsync(Guid.NewGuid(), Guid.NewGuid());
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="DeleteSearchIndex(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call DeleteSearchIndex with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.DeleteSearchIndex(Guid.NewGuid(), Guid.NewGuid());
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchIndexByNameAsync(Guid,string,RequestContext)">
+<example>
+This sample shows how to call GetSearchIndexByNameAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetSearchIndexByNameAsync(Guid.NewGuid(), "<friendlyName>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("searchInstanceId").ToString());
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("friendlyName").ToString());
+Console.WriteLine(result.GetProperty("indexName").ToString());
+Console.WriteLine(result.GetProperty("indexType").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchIndexByName(Guid,string,RequestContext)">
+<example>
+This sample shows how to call GetSearchIndexByName with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetSearchIndexByName(Guid.NewGuid(), "<friendlyName>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("searchInstanceId").ToString());
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("friendlyName").ToString());
+Console.WriteLine(result.GetProperty("indexName").ToString());
+Console.WriteLine(result.GetProperty("indexType").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchIndexPricingAsync(Guid,RequestContext)">
+<example>
+This sample shows how to call GetSearchIndexPricingAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetSearchIndexPricingAsync(Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("skuId").ToString());
+Console.WriteLine(result[0].GetProperty("name").ToString());
+Console.WriteLine(result[0].GetProperty("description").ToString());
+Console.WriteLine(result[0].GetProperty("price").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchIndexPricing(Guid,RequestContext)">
+<example>
+This sample shows how to call GetSearchIndexPricing with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetSearchIndexPricing(Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("skuId").ToString());
+Console.WriteLine(result[0].GetProperty("name").ToString());
+Console.WriteLine(result[0].GetProperty("description").ToString());
+Console.WriteLine(result[0].GetProperty("price").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="CreateSearchIndexAsync(Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateSearchIndexAsync with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = await client.CreateSearchIndexAsync(Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+This sample shows how to call CreateSearchIndexAsync with all parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    customerId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    indexName = "<indexName>",
+    indexType = "<indexType>",
+    configuration = new {
+        location = "<location>",
+        pricingTier = "<pricingTier>",
+        isShared = true,
+    },
+};
+
+Response response = await client.CreateSearchIndexAsync(Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="CreateSearchIndex(Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateSearchIndex with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = client.CreateSearchIndex(Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+This sample shows how to call CreateSearchIndex with all parameters and request content.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    customerId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    indexName = "<indexName>",
+    indexType = "<indexType>",
+    configuration = new {
+        location = "<location>",
+        pricingTier = "<pricingTier>",
+        isShared = true,
+    },
+};
+
+Response response = client.CreateSearchIndex(Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchInsightsSummaryAsync(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetSearchInsightsSummaryAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetSearchInsightsSummaryAsync(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("title").ToString());
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("count").ToString());
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("previousPeriod").ToString());
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("previousPeriodPercentageChange").ToString());
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("isIncreaseFromPreviousPeriod").ToString());
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("hasPreviousPeriod").ToString());
+Console.WriteLine(result.GetProperty("charts")[0].GetProperty("title").ToString());
+Console.WriteLine(result.GetProperty("charts")[0].GetProperty("data")[0].GetProperty("dataCategory").ToString());
+Console.WriteLine(result.GetProperty("charts")[0].GetProperty("data")[0].GetProperty("dataPoint").ToString());
+Console.WriteLine(result.GetProperty("charts")[0].GetProperty("data")[0].GetProperty("count").ToString());
+Console.WriteLine(result.GetProperty("charts")[0].GetProperty("data")[0].GetProperty("date").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSearchInsightsSummary(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetSearchInsightsSummary with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetSearchInsightsSummary(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("title").ToString());
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("count").ToString());
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("previousPeriod").ToString());
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("previousPeriodPercentageChange").ToString());
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("isIncreaseFromPreviousPeriod").ToString());
+Console.WriteLine(result.GetProperty("tiles")[0].GetProperty("hasPreviousPeriod").ToString());
+Console.WriteLine(result.GetProperty("charts")[0].GetProperty("title").ToString());
+Console.WriteLine(result.GetProperty("charts")[0].GetProperty("data")[0].GetProperty("dataCategory").ToString());
+Console.WriteLine(result.GetProperty("charts")[0].GetProperty("data")[0].GetProperty("dataPoint").ToString());
+Console.WriteLine(result.GetProperty("charts")[0].GetProperty("data")[0].GetProperty("count").ToString());
+Console.WriteLine(result.GetProperty("charts")[0].GetProperty("data")[0].GetProperty("date").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetChartByReportNameAsync(Guid,Guid,string,DateTimeOffset?,DateTimeOffset?,RequestContext)">
+<example>
+This sample shows how to call GetChartByReportNameAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetChartByReportNameAsync(Guid.NewGuid(), Guid.NewGuid(), "<reportName>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call GetChartByReportNameAsync with all parameters, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetChartByReportNameAsync(Guid.NewGuid(), Guid.NewGuid(), "<reportName>", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("title").ToString());
+Console.WriteLine(result.GetProperty("data")[0].GetProperty("dataCategory").ToString());
+Console.WriteLine(result.GetProperty("data")[0].GetProperty("dataPoint").ToString());
+Console.WriteLine(result.GetProperty("data")[0].GetProperty("count").ToString());
+Console.WriteLine(result.GetProperty("data")[0].GetProperty("date").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetChartByReportName(Guid,Guid,string,DateTimeOffset?,DateTimeOffset?,RequestContext)">
+<example>
+This sample shows how to call GetChartByReportName with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetChartByReportName(Guid.NewGuid(), Guid.NewGuid(), "<reportName>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call GetChartByReportName with all parameters, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetChartByReportName(Guid.NewGuid(), Guid.NewGuid(), "<reportName>", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("title").ToString());
+Console.WriteLine(result.GetProperty("data")[0].GetProperty("dataCategory").ToString());
+Console.WriteLine(result.GetProperty("data")[0].GetProperty("dataPoint").ToString());
+Console.WriteLine(result.GetProperty("data")[0].GetProperty("count").ToString());
+Console.WriteLine(result.GetProperty("data")[0].GetProperty("date").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetTileByReportNameAsync(Guid,Guid,string,DateTimeOffset?,DateTimeOffset?,bool?,RequestContext)">
+<example>
+This sample shows how to call GetTileByReportNameAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetTileByReportNameAsync(Guid.NewGuid(), Guid.NewGuid(), "<reportName>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call GetTileByReportNameAsync with all parameters, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetTileByReportNameAsync(Guid.NewGuid(), Guid.NewGuid(), "<reportName>", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, true);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("title").ToString());
+Console.WriteLine(result.GetProperty("count").ToString());
+Console.WriteLine(result.GetProperty("previousPeriod").ToString());
+Console.WriteLine(result.GetProperty("previousPeriodPercentageChange").ToString());
+Console.WriteLine(result.GetProperty("isIncreaseFromPreviousPeriod").ToString());
+Console.WriteLine(result.GetProperty("hasPreviousPeriod").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetTileByReportName(Guid,Guid,string,DateTimeOffset?,DateTimeOffset?,bool?,RequestContext)">
+<example>
+This sample shows how to call GetTileByReportName with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetTileByReportName(Guid.NewGuid(), Guid.NewGuid(), "<reportName>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call GetTileByReportName with all parameters, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetTileByReportName(Guid.NewGuid(), Guid.NewGuid(), "<reportName>", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, true);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("title").ToString());
+Console.WriteLine(result.GetProperty("count").ToString());
+Console.WriteLine(result.GetProperty("previousPeriod").ToString());
+Console.WriteLine(result.GetProperty("previousPeriodPercentageChange").ToString());
+Console.WriteLine(result.GetProperty("isIncreaseFromPreviousPeriod").ToString());
+Console.WriteLine(result.GetProperty("hasPreviousPeriod").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetLatestSearchInterfaceAsync(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetLatestSearchInterfaceAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetLatestSearchInterfaceAsync(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchInterfaceId").ToString());
+Console.WriteLine(result.GetProperty("searchEndpoint").ToString());
+Console.WriteLine(result.GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("bannerStyle").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetLatestSearchInterface(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetLatestSearchInterface with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetLatestSearchInterface(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchInterfaceId").ToString());
+Console.WriteLine(result.GetProperty("searchEndpoint").ToString());
+Console.WriteLine(result.GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("bannerStyle").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="CreateSearchInterfaceAsync(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateSearchInterfaceAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = await client.CreateSearchInterfaceAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call CreateSearchInterfaceAsync with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    searchInterfaceType = "<searchInterfaceType>",
+    logoURL = "<logoURL>",
+    bannerStyle = "<bannerStyle>",
+};
+
+Response response = await client.CreateSearchInterfaceAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchInterfaceId").ToString());
+Console.WriteLine(result.GetProperty("searchEndpoint").ToString());
+Console.WriteLine(result.GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("bannerStyle").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="CreateSearchInterface(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateSearchInterface with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = client.CreateSearchInterface(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call CreateSearchInterface with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    searchInterfaceType = "<searchInterfaceType>",
+    logoURL = "<logoURL>",
+    bannerStyle = "<bannerStyle>",
+};
+
+Response response = client.CreateSearchInterface(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("searchInterfaceId").ToString());
+Console.WriteLine(result.GetProperty("searchEndpoint").ToString());
+Console.WriteLine(result.GetProperty("type").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("bannerStyle").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetStatusAsync(RequestContext)">
+<example>
+This sample shows how to call GetStatusAsync.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetStatusAsync();
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="GetStatus(RequestContext)">
+<example>
+This sample shows how to call GetStatus.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetStatus();
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="GetSynonymsAsync(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetSynonymsAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetSynonymsAsync(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("synonymId").ToString());
+Console.WriteLine(result[0].GetProperty("key").ToString());
+Console.WriteLine(result[0].GetProperty("words")[0].ToString());
+Console.WriteLine(result[0].GetProperty("solrFormat").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSynonyms(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetSynonyms with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetSynonyms(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result[0].GetProperty("synonymId").ToString());
+Console.WriteLine(result[0].GetProperty("key").ToString());
+Console.WriteLine(result[0].GetProperty("words")[0].ToString());
+Console.WriteLine(result[0].GetProperty("solrFormat").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="CreateSynonymAsync(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateSynonymAsync with required parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keyWord = "<keyWord>",
+    synonyms = new[] {
+        "<String>"
+    },
+};
+
+Response response = await client.CreateSynonymAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call CreateSynonymAsync with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    synonymId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keyWord = "<keyWord>",
+    synonyms = new[] {
+        "<String>"
+    },
+};
+
+Response response = await client.CreateSynonymAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("synonymId").ToString());
+Console.WriteLine(result.GetProperty("key").ToString());
+Console.WriteLine(result.GetProperty("words")[0].ToString());
+Console.WriteLine(result.GetProperty("solrFormat").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="CreateSynonym(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call CreateSynonym with required parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keyWord = "<keyWord>",
+    synonyms = new[] {
+        "<String>"
+    },
+};
+
+Response response = client.CreateSynonym(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call CreateSynonym with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    synonymId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keyWord = "<keyWord>",
+    synonyms = new[] {
+        "<String>"
+    },
+};
+
+Response response = client.CreateSynonym(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("synonymId").ToString());
+Console.WriteLine(result.GetProperty("key").ToString());
+Console.WriteLine(result.GetProperty("words")[0].ToString());
+Console.WriteLine(result.GetProperty("solrFormat").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSynonymByIdAsync(Guid,Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetSynonymByIdAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetSynonymByIdAsync(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("synonymId").ToString());
+Console.WriteLine(result.GetProperty("key").ToString());
+Console.WriteLine(result.GetProperty("words")[0].ToString());
+Console.WriteLine(result.GetProperty("solrFormat").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetSynonymById(Guid,Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetSynonymById with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetSynonymById(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("synonymId").ToString());
+Console.WriteLine(result.GetProperty("key").ToString());
+Console.WriteLine(result.GetProperty("words")[0].ToString());
+Console.WriteLine(result.GetProperty("solrFormat").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="DeleteSynonymAsync(Guid,Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call DeleteSynonymAsync with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.DeleteSynonymAsync(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="DeleteSynonym(Guid,Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call DeleteSynonym with required parameters.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.DeleteSynonym(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+Console.WriteLine(response.Status);
+]]></code>
+</example>
+    </member>
+    <member name="UpdateSynonymAsync(Guid,Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call UpdateSynonymAsync with required parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keyWord = "<keyWord>",
+    synonyms = new[] {
+        "<String>"
+    },
+};
+
+Response response = await client.UpdateSynonymAsync(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call UpdateSynonymAsync with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    synonymId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keyWord = "<keyWord>",
+    synonyms = new[] {
+        "<String>"
+    },
+};
+
+Response response = await client.UpdateSynonymAsync(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("synonymId").ToString());
+Console.WriteLine(result.GetProperty("key").ToString());
+Console.WriteLine(result.GetProperty("words")[0].ToString());
+Console.WriteLine(result.GetProperty("solrFormat").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="UpdateSynonym(Guid,Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call UpdateSynonym with required parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keyWord = "<keyWord>",
+    synonyms = new[] {
+        "<String>"
+    },
+};
+
+Response response = client.UpdateSynonym(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call UpdateSynonym with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    synonymId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    searchIndexId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    keyWord = "<keyWord>",
+    synonyms = new[] {
+        "<String>"
+    },
+};
+
+Response response = client.UpdateSynonym(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("synonymId").ToString());
+Console.WriteLine(result.GetProperty("key").ToString());
+Console.WriteLine(result.GetProperty("words")[0].ToString());
+Console.WriteLine(result.GetProperty("solrFormat").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetThemeByIdAsync(Guid,Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetThemeByIdAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetThemeByIdAsync(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("themeId").ToString());
+Console.WriteLine(result.GetProperty("primaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("secondaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("navBarHexColour").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("missingImageURL").ToString());
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetThemeById(Guid,Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetThemeById with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetThemeById(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("themeId").ToString());
+Console.WriteLine(result.GetProperty("primaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("secondaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("navBarHexColour").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("missingImageURL").ToString());
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetThemeBySearchIndexIdAsync(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetThemeBySearchIndexIdAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetThemeBySearchIndexIdAsync(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("themeId").ToString());
+Console.WriteLine(result.GetProperty("primaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("secondaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("navBarHexColour").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("missingImageURL").ToString());
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetThemeBySearchIndexId(Guid,Guid,RequestContext)">
+<example>
+This sample shows how to call GetThemeBySearchIndexId with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetThemeBySearchIndexId(Guid.NewGuid(), Guid.NewGuid());
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("themeId").ToString());
+Console.WriteLine(result.GetProperty("primaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("secondaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("navBarHexColour").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("missingImageURL").ToString());
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetThemesByCustomerIdAsync(Guid,string,RequestContext)">
+<example>
+This sample shows how to call GetThemesByCustomerIdAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = await client.GetThemesByCustomerIdAsync(Guid.NewGuid(), "<searchIndexId>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("themeId").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("primaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("secondaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("navBarHexColour").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("missingImageURL").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="GetThemesByCustomerId(Guid,string,RequestContext)">
+<example>
+This sample shows how to call GetThemesByCustomerId with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+Response response = client.GetThemesByCustomerId(Guid.NewGuid(), "<searchIndexId>");
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("themeId").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("primaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("secondaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("navBarHexColour").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("missingImageURL").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("themes")[0].GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="UpdateThemeAsync(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call UpdateThemeAsync with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = await client.UpdateThemeAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call UpdateThemeAsync with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    themeId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    primaryHexColour = "<primaryHexColour>",
+    secondaryHexColour = "<secondaryHexColour>",
+    navBarHexColour = "<navBarHexColour>",
+    logoURL = "<logoURL>",
+    missingImageURL = "<missingImageURL>",
+};
+
+Response response = await client.UpdateThemeAsync(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("themeId").ToString());
+Console.WriteLine(result.GetProperty("primaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("secondaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("navBarHexColour").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("missingImageURL").ToString());
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+    <member name="UpdateTheme(Guid,Guid,RequestContent,ContentType,RequestContext)">
+<example>
+This sample shows how to call UpdateTheme with required parameters and parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {};
+
+Response response = client.UpdateTheme(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.ToString());
+]]></code>
+This sample shows how to call UpdateTheme with all parameters and request content, and how to parse the result.
+<code><![CDATA[
+var client = new S2SearchAPIClient();
+
+var data = new {
+    themeId = "73f411fe-4f43-4b4b-9cbd-6828d8f4cf9a",
+    primaryHexColour = "<primaryHexColour>",
+    secondaryHexColour = "<secondaryHexColour>",
+    navBarHexColour = "<navBarHexColour>",
+    logoURL = "<logoURL>",
+    missingImageURL = "<missingImageURL>",
+};
+
+Response response = client.UpdateTheme(Guid.NewGuid(), Guid.NewGuid(), RequestContent.Create(data), ContentType.ApplicationOctetStream);
+
+JsonElement result = JsonDocument.Parse(response.ContentStream).RootElement;
+Console.WriteLine(result.GetProperty("themeId").ToString());
+Console.WriteLine(result.GetProperty("primaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("secondaryHexColour").ToString());
+Console.WriteLine(result.GetProperty("navBarHexColour").ToString());
+Console.WriteLine(result.GetProperty("logoURL").ToString());
+Console.WriteLine(result.GetProperty("missingImageURL").ToString());
+Console.WriteLine(result.GetProperty("customerId").ToString());
+Console.WriteLine(result.GetProperty("searchIndexId").ToString());
+Console.WriteLine(result.GetProperty("createdDate").ToString());
+Console.WriteLine(result.GetProperty("modifiedDate").ToString());
+]]></code>
+</example>
+    </member>
+  </members>
+</doc>

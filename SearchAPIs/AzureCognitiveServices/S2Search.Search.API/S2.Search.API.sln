@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "S2Search.Common.Models", ".
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "S2Search.Common.Providers", "..\..\..\APIs\S2Search.Admin.API\Common\S2Search.Common.Providers\S2Search.Common.Providers\S2Search.Common.Providers.csproj", "{E535A02C-7569-49C6-AEFD-3A4F65974BCC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "S2SearchAPI.Client", "..\..\..\APIs\S2Search.Admin.API\Clients\S2Search.API.Client\S2SearchAPI.Client.csproj", "{46781E28-309D-42F7-88E5-431BE7DFF6AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{E535A02C-7569-49C6-AEFD-3A4F65974BCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E535A02C-7569-49C6-AEFD-3A4F65974BCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E535A02C-7569-49C6-AEFD-3A4F65974BCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46781E28-309D-42F7-88E5-431BE7DFF6AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46781E28-309D-42F7-88E5-431BE7DFF6AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46781E28-309D-42F7-88E5-431BE7DFF6AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46781E28-309D-42F7-88E5-431BE7DFF6AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
