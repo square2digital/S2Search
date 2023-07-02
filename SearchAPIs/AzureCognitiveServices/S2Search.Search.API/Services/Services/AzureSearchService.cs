@@ -15,7 +15,7 @@ using Domain.AzureSeach.Indexes;
 using Domain.Constants;
 using Services.Services;
 using Newtonsoft.Json;
-using S2Search.ClientConfigurationApi.Client.AutoRest.Models;
+using S2SearchAPI.Client;
 using Domain.Models.Insights;
 
 namespace Services
@@ -112,7 +112,7 @@ namespace Services
         {
             return new SearchInsightMessage()
             {
-                SearchIndexId = targetSearchResource.SearchIndexId.Value,
+                SearchIndexId = targetSearchResource.SearchIndexId,
                 ActualSearchQuery = request.SearchTerm,
                 LuceneSearchQuery = luceneSearch,
                 Filters = request.Filters,

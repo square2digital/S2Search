@@ -12,7 +12,7 @@ using Services.Providers.AzureSearch;
 using Azure.Search.Documents;
 using Services.Interfaces.FacetOverrides;
 using Domain.Constants;
-using S2Search.ClientConfigurationApi.Client.AutoRest.Models;
+using S2SearchAPI.Client;
 using Services.Interfaces.Cache;
 
 namespace Services.Services

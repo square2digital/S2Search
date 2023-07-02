@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using S2Search.ClientConfigurationApi.Client.AutoRest.Models;
+using S2SearchAPI.Client;
 using Services.Helper;
 using Services.Interfaces;
 using System.Collections.Generic;

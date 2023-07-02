@@ -1,8 +1,7 @@
 ﻿using Domain.Constants;
 using Domain.Models.Interfaces;
 using Microsoft.Extensions.Logging;
-using S2Search.ClientConfigurationApi.Client.AutoRest;
-using S2Search.ClientConfigurationApi.Client.AutoRest.Models;
+using S2SearchAPI.Client;
 using Services.Interfaces;
 using System;
 using System.Threading.Tasks;
@@ -15,12 +14,12 @@ namespace Services.Providers
     public class SearchIndexQueryCredentialsProvider : ISearchIndexQueryCredentialsProvider
     {
         private readonly ILogger _logger;
-        private readonly IClientConfigurationApiClient _clientConfigClient;
+        private readonly IS2SearchAPIClient _clientConfigClient;
         private readonly IAppSettings _appSettings;
         private readonly IDistributedCacheService _redisService;        
 
         public SearchIndexQueryCredentialsProvider(ILogger<SearchIndexQueryCredentialsProvider> logger,
-                                                   IClientConfigurationApiClient clientConfigClient,
+                                                   IS2SearchAPIClient clientConfigClient,
                                                    IAppSettings appSettings,
                                                    IDistributedCacheService redisService)
         {
@@ -76,19 +75,20 @@ namespace Services.Providers
         {
             try
             {
-                var header = ApiManagerHelper.GetHeader(_appSettings.ClientConfigurationSettings.HeaderAPISubscriptionName, _appSettings.ClientConfigurationSettings.APISubscriptionKey);
-                var response = await _clientConfigClient.GetSearchIndexQueryCredentialsWithHttpMessagesAsync(callingHost, header);
+                //var header = ApiManagerHelper.GetHeader(_appSettings.ClientConfigurationSettings.HeaderAPISubscriptionName, _appSettings.ClientConfigurationSettings.APISubscriptionKey);
+                var response = await _clientConfigClient.GetSearchIndexQueryCredentialsAsync(callingHost);
 
-                if (!response.Response.IsSuccessStatusCode)
-                {
-                    if (response.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                    {
-                        return null;
-                    }
-                }
+                //if (!response.Response.IsSuccessStatusCode)
+                //{
+                //    if (response.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                //    {
+                //        return null;
+                //    }
+                //}
 
-                var content = await response.Response.Content.ReadAsStringAsync();
-                var queryCredentials = JsonConvert.DeserializeObject<SearchIndexQueryCredentials>(content);
+                //var content = await response.Response.Content.ReadAsStringAsync();
+                //var queryCredentials = JsonConvert.DeserializeObject<SearchIndexQueryCredentials>(content);
+                var queryCredentials = response;
                 var azureSearchResource = new SearchIndexQueryCredentials()
                 {
                     SearchIndexId = queryCredentials.SearchIndexId,

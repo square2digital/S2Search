@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using S2Search.ClientConfigurationApi.Client.AutoRest;
+using S2SearchAPI.Client;
 using Services.Extensions;
 using Services.Helper;
 using Services.Helpers;
@@ -32,7 +32,7 @@ namespace Services
         private static IServiceCollection AddServiceDependencies(this IServiceCollection services)
         {
             services.AddLazyCache();
-            services.AddHttpClient<IClientConfigurationApiClient, ClientConfigurationApiClientExtended>();            
+            services.AddHttpClient<IS2SearchAPIClient, S2SearchAPIClient>();            
             return services;
         }
 
