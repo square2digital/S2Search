@@ -52,7 +52,7 @@ namespace S2Search.Admin.API
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Client Configuration v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "S2 Admin API v1");
             });
 
             app.UseRouting();
@@ -103,7 +103,7 @@ namespace S2Search.Admin.API
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "S2 Search API", Version = "v1.0.0" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "S2 Admin API", Version = "v1.0.0" });
 
                 // Set the comments path for the Swagger JSON and UI.
                 //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
