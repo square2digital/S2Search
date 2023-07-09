@@ -268,3 +268,6 @@ __pycache__/
 # Cake - Uncomment if you are using it
 # tools/
 /APIs/S2Search.Admin.API/S2Search.Admin.API/appsettings.json
+/SearchAPIs/ElasticSearch/S2Search.Elastic.API/Search/appsettings.json
+/SearchAPIs/ElasticSearch/S2Search.Elastic.API/Search/appsettings.Development.json
+/SearchAPIs/ElasticSearch/S2Search.Elastic.API/Search/appsettings.Local_k8s.json
