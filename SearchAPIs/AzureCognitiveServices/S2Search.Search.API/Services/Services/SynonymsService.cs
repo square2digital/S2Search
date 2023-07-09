@@ -3,7 +3,7 @@ using Domain.Models.Interfaces;
 using Domain.Models.Objects;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using S2Search.ClientConfigurationApi.Client.AutoRest;
+using S2SearchAPI.Client;
 using Services.Helpers;
 using Services.Interfaces;
 using Services.Interfaces.Cache;
@@ -16,13 +16,13 @@ namespace Services.Services
     public class SynonymsService : ISynonymsService
     {
         private readonly IAppSettings _appSettings;
-        private readonly IClientConfigurationApiClient _clientConfigClient;
+        private readonly IS2SearchAPIClient _clientConfigClient;
         private readonly IDistributedCacheService _redisService;
         private readonly ILogger _logger;
 
         public SynonymsService(IAppSettings appSettings,
                                ILogger<SynonymsService> logger,
-                               IClientConfigurationApiClient clientConfigClient,
+                               IS2SearchAPIClient clientConfigClient,
                                IDistributedCacheService redisService)
         {
             _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
@@ -59,20 +59,22 @@ namespace Services.Services
             _logger.LogInformation($"Cache miss on {nameof(GetGenericSynomynsFactory)}");
 
             var header = ApiManagerHelper.GetHeader(_appSettings.ClientConfigurationSettings.HeaderAPISubscriptionName, _appSettings.ClientConfigurationSettings.APISubscriptionKey);
-            var response = await _clientConfigClient.GetGenericSynonymsWithHttpMessagesAsync(category, header);
+            var response = await _clientConfigClient.GetGenericSynonymsAsync(category);
 
-            if (!response.Response.IsSuccessStatusCode)
-            {
-                if (response.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-            }
+            //if (!response.Response.IsSuccessStatusCode)
+            //{
+            //    if (response.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            //    {
+            //        return null;
+            //    }
+            //}
 
             var synonymsList = new List<string>();
 
-            var content = await response.Response.Content.ReadAsStringAsync();
-            var synonymsCollection = JsonConvert.DeserializeObject<IEnumerable<GenericSynonyms>>(content);
+            //var content = await response.Response.Content.ReadAsStringAsync();
+            //var synonymsCollection = JsonConvert.DeserializeObject<IEnumerable<GenericSynonyms>>(content);
+
+            var synonymsCollection = response;
 
             foreach (var synonym in synonymsCollection)
             {

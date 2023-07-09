@@ -4,7 +4,7 @@ using Services.Helper;
 using Services.Interfaces;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
-using S2Search.ClientConfigurationApi.Client.AutoRest.Models;
+using S2SearchAPI.Client;
 
 namespace Tests
 {

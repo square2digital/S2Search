@@ -1,5 +1,5 @@
 ﻿using Domain.Models.Facets;
-using S2Search.ClientConfigurationApi.Client.AutoRest.Models;
+using S2SearchAPI.Client;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
