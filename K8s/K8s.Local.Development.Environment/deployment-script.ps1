@@ -13,8 +13,8 @@
 # - replace with your path to use the example commands below 
 #############################################################
 
-# build everything
-# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -deleteS2Namespace $true
+# build everything - exclude includeConfigAPI & includeCRAPI
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $false -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $false -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $false -deleteS2Namespace $true
 
 # build specifc service only - Elastic UI & API in this case
 # cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $false -includeConfigAPI $false -includeSearchAPI $false -includeElasticAPI $false -includeCRAPI $false -includeRedis $false -includeSftpGo $false -includeElastic $false -deleteAllImages $false -deleteS2Namespace $false
@@ -352,26 +352,6 @@ if ($includeElasticAPI) {
     kubectl delete deployment s2elasticapi-deployment --namespace s2
 }
 
-if ($includeConfigAPI) {
-    Set-Location $ApplicationPathClientDockerFile 
-    Write-Color -Text "Building Docker Image - Client Configuration API at location $ApplicationPathClientDockerFile and context $ApplicationPathClientConfigContext" -Color Magenta
-    Write-Color -Text "docker build --pull --rm -f Dockerfile.local -t s2clientconfigurationapi:dev $ApplicationPathClientConfigContext --build-arg PAT=$PatToken" -Color Yellow
-    docker build --pull --rm -f "Dockerfile.local" -t s2clientconfigurationapi:dev $ApplicationPathClientConfigContext --build-arg PAT=$PatToken
-
-    Write-Color -Text "Deleting Deployment 's2clientconfigurationapi-deployment'" -Color Magenta
-    kubectl delete deployment s2clientconfigurationapi-deployment --namespace s2
-}
-
-if ($includeCRAPI) {
-    Set-Location $ApplicationPathCustomerAPIDockerFile
-    Write-Color -Text "Building Docker Image - Customer Resource API at location $ApplicationPathCustomerAPI and context $ApplicationPathCustomerAPIContext" -Color Magenta
-    Write-Color -Text "docker build --pull --rm -f Dockerfile.local -t s2customerresourceapi:dev $ApplicationPathCustomerAPIContext --build-arg PAT=$PatToken" -Color Yellow
-    docker build --pull --rm -f "Dockerfile.local" -t s2customerresourceapi:dev $ApplicationPathCustomerAPIContext --build-arg PAT=$PatToken
-
-    Write-Color -Text "Deleting Deployment 's2customerresourceapi-deployment'" -Color Magenta
-    kubectl delete deployment s2customerresourceapi-deployment --namespace s2
-}
-
 Write-Color -Text "################################" -Color Magenta
 Write-Color -Text "Docker Images build sucessfully" -Color Magenta
 Write-Color -Text "################################" -Color Magenta
@@ -381,9 +361,6 @@ Write-Color -Text "Creating K8s Deployments to local cluster" -Color Green
 Write-Color -Text "################################" -Color Green
 
 # - 3 - deploy each of the services back to k8s
-Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ClientConfigurationApi"
-kubectl apply -f deployment.yml --namespace=$S2Namespace
-
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchAPI"
 kubectl apply -f .\ConfigMaps\configmap-localk8s.yml --namespace=$S2Namespace
 kubectl apply -f deployment.yml --namespace=$S2Namespace
@@ -396,9 +373,6 @@ Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ElasticUI"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchUI"
-kubectl apply -f deployment.yml --namespace=$S2Namespace
-
-Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2CustomerResourceApi"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminUI"
@@ -408,10 +382,6 @@ Write-Color -Text "################################" -Color Green
 Write-Color -Text "Creating K8s Services to local cluster" -Color Green
 Write-Color -Text "################################" -Color Green
 
-Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ClientConfigurationApi"
-kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
-kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
-
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchAPI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
@@ -425,10 +395,6 @@ kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchUI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
-
-Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2CustomerResourceApi"
-kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
-kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
 
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminUI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace

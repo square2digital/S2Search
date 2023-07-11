@@ -7,6 +7,7 @@ using Services.Interfaces.FacetOverrides;
 using Services.Interfaces;
 using Services.Providers;
 using Services.Services;
+using Microsoft.OpenApi.Models;
 
 namespace Search
 {
@@ -23,7 +24,16 @@ namespace Search
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Elastic Search API", Version = "v1.0.0" });
+
+                // Set the comments path for the Swagger JSON and UI.
+                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                //c.IncludeXmlComments(xmlPath);
+                //c.DocumentFilter<AdditionalPropertiesDocumentFilter>();
+            });
 
             ConfigureAppSettings(builder.Services);
             AddDependancies(builder.Services);
@@ -36,7 +46,10 @@ namespace Search
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Elastic Search API v1");
+                });
             }
 
             app.UseHttpsRedirection();
