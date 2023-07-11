@@ -13,7 +13,12 @@ export default function Counter() {
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
         <p>You clicked {count} times</p>
         <p>class name {inter.className}</p>
-        <button onClick={() => setCount(count + 1)}>Click me</button>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+          onClick={() => setCount(count + 1)}
+        >
+          Click me
+        </button>
       </div>
     </div>
   );
