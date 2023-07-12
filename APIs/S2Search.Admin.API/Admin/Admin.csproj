@@ -28,9 +28,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Common\S2Search.Common.Database.Sql.Dapper\S2Search.Common.Database.Sql.Dapper\S2Search.Common.Database.Sql.Dapper.csproj" />
-		<ProjectReference Include="..\Common\S2Search.Common.Models\S2Search.Common.Models\S2Search.Common.Models.csproj" />
-		<ProjectReference Include="..\Common\S2Search.Common.Providers\S2Search.Common.Providers\S2Search.Common.Providers.csproj" />
 		<ProjectReference Include="..\Domain\Domain.csproj" />
 		<ProjectReference Include="..\Services\Services.csproj" />
 	</ItemGroup>

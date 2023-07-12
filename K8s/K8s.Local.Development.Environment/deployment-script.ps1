@@ -13,17 +13,20 @@
 # - replace with your path to use the example commands below 
 #############################################################
 
+# build nothing
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $false -includeSearchUI $false -includeAdminUI $false -includeConfigAPI $false -includeSearchAPI $false -includeElasticAPI $false -includeCRAPI $false -includeRedis $false -includeSftpGo $false -includeElastic $false -deleteAllImages $false -includeAdminAPI $false -deleteS2Namespace $false
+
 # build everything - exclude includeConfigAPI & includeCRAPI
-# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $false -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $false -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $false -deleteS2Namespace $true
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $false -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $false -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $false -includeAdminAPI $true -deleteS2Namespace $true
 
 # build specifc service only - Elastic UI & API in this case
-# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $false -includeConfigAPI $false -includeSearchAPI $false -includeElasticAPI $false -includeCRAPI $false -includeRedis $false -includeSftpGo $false -includeElastic $false -deleteAllImages $false -deleteS2Namespace $false
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $false -includeConfigAPI $false -includeSearchAPI $false -includeElasticAPI $false -includeCRAPI $false -includeRedis $false -includeSftpGo $false -includeElastic $false -deleteAllImages $false -includeAdminAPI $true -deleteS2Namespace $false
 
 #######################
 # debug the elastic UI
 #######################
 # build everything
-# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $false -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $false -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -deleteS2Namespace $true
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $false -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $false -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -includeAdminAPI $true -deleteS2Namespace $true
 
 param (
     [bool]$includeElasticUI = $false,
@@ -36,6 +39,7 @@ param (
     [bool]$includeRedis = $false,
     [bool]$includeSftpGo = $false,
     [bool]$includeElastic = $false,
+    [bool]$includeAdminAPI = $false,
 
     [bool]$deleteAllImages = $false,
     [bool]$deleteS2Namespace = $false
@@ -95,6 +99,7 @@ Output-Parameters -param $includeCRAPI -name "includeCRAPI"
 Output-Parameters -param $includeRedis -name "includeRedis"
 Output-Parameters -param $includeSftpGo -name "includeSftpGo"
 Output-Parameters -param $includeElastic -name "includeElastic"
+Output-Parameters -param $includeAdminAPI -name "includeAdminAPI"
 Output-Parameters -param $deleteAllImages -name "deleteAllImages"
 
 # #############################################################
@@ -151,6 +156,16 @@ Write-Color -Text "The ApplicationPathSearchUI is -> $ApplicationPathSearchUI" -
 
 $ApplicationPathAdminUI = "$DeploymentRoot\SearchUIs\AzureCognitiveServices\S2Search.Admin.NextJS.ReactUI\s2admin"
 Write-Color -Text "The ApplicationPathAdminUI is -> $ApplicationPathAdminUI" -Color Blue
+
+
+
+$ApplicationPathAdminAPIFile = "$DeploymentRoot\APIs\S2Search.Admin.API\Admin"
+Write-Color -Text "The ApplicationPathClientDockerFile is -> $ApplicationPathClientDockerFile" -Color Blue
+
+$ApplicationPathAdminAPIContext = "$DeploymentRoot\APIs\S2Search.Admin.API"
+Write-Color -Text "The ApplicationPathAdminAPIContext is -> $ApplicationPathAdminAPIContext" -Color Blue
+
+
 
 $S2Namespace = "s2"
 
@@ -352,6 +367,16 @@ if ($includeElasticAPI) {
     kubectl delete deployment s2elasticapi-deployment --namespace s2
 }
 
+if ($includeAdminAPI) {
+    Set-Location $ApplicationPathAdminAPIFile 
+    Write-Color -Text "Building Docker Image - Admin API at location $ApplicationPathAdminAPIFile and context $ApplicationPathAdminAPIContext" -Color Magenta
+    Write-Color -Text "docker build --pull --rm -f Dockerfile.local -t s2adminapi:dev $ApplicationPathAdminAPIContext --build-arg PAT=$PatToken" -Color Yellow
+    docker build --pull --rm -f "Dockerfile.local" -t s2adminapi:dev $ApplicationPathAdminAPIContext --build-arg PAT=$PatToken
+
+    Write-Color -Text "Deleting Deployment 's2adminapi-deployment'" -Color Magenta
+    kubectl delete deployment s2adminapi-deployment --namespace s2
+}
+
 Write-Color -Text "################################" -Color Magenta
 Write-Color -Text "Docker Images build sucessfully" -Color Magenta
 Write-Color -Text "################################" -Color Magenta
@@ -378,6 +403,9 @@ kubectl apply -f deployment.yml --namespace=$S2Namespace
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminUI"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminAPI"
+kubectl apply -f deployment.yml --namespace=$S2Namespace
+
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Creating K8s Services to local cluster" -Color Green
 Write-Color -Text "################################" -Color Green
@@ -398,6 +426,10 @@ kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminUI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
+
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminAPI"
+kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
+kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
 
 if ($includeSearchUI -and $includeAdminUI) {
     Write-Color -Text "###########################################################" -Color Yellow

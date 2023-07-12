@@ -1,18 +1,17 @@
-using System.Reflection;
 using Domain.AppSettings;
 using S2Search.ClientConfiguration.API.Filters;
 using Microsoft.OpenApi.Models;
 using CustomerResource.Filters;
 using Services.Configuration.Interfaces.Repositories;
 using Services.Configuration.Repositories;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using S2Search.Common.Database.Sql.Dapper.Providers;
 using Services.Customer.Interfaces.Managers;
 using Services.Customer.Managers;
 using Services.Customer.Interfaces.Providers;
 using Services.Customer.Providers;
 using Services.Customer.Interfaces.Repositories;
 using Services.Customer.Repositories;
+using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
+using Services.Dapper.Providers;
 
 namespace S2Search.Admin.API
 {
