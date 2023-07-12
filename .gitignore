@@ -271,3 +271,5 @@ __pycache__/
 /SearchAPIs/ElasticSearch/S2Search.Elastic.API/Search/appsettings.json
 /SearchAPIs/ElasticSearch/S2Search.Elastic.API/Search/appsettings.Development.json
 /SearchAPIs/ElasticSearch/S2Search.Elastic.API/Search/appsettings.Local_k8s.json
+/APIs/S2Search.Admin.API/Admin/appsettings.json
+/APIs/S2Search.Admin.API/Admin/appsettings.Development.json
