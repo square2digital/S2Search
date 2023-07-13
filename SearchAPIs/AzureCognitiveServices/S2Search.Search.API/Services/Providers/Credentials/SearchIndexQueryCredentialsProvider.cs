@@ -95,7 +95,7 @@ namespace Services.Providers
                     SearchInstanceEndpoint = queryCredentials.SearchInstanceEndpoint,
                     SearchInstanceName = queryCredentials.SearchInstanceName,
                     SearchIndexName = queryCredentials.SearchIndexName,
-                    QueryApiKey = queryCredentials.QueryApiKey
+                    QueryApiKey = queryCredentials.ApiKey
                 };
 
                 return azureSearchResource;

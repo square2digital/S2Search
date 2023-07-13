@@ -26,20 +26,31 @@
 # debug the elastic UI
 #######################
 # build everything
-# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $false -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $false -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -includeAdminAPI $true -deleteS2Namespace $true
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -includeAdminAPI $true -deleteS2Namespace $true
+
+##############################
+## remove currently redundant services
+## ConfigAPI
+## CRAPI
+## SftpGo
+##############################
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $false -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $false -includeRedis $true -includeSftpGo $false -includeElastic $true -deleteAllImages $true -includeAdminAPI $true -deleteS2Namespace $true
 
 param (
     [bool]$includeElasticUI = $false,
     [bool]$includeSearchUI = $false,
     [bool]$includeAdminUI = $false,
-    [bool]$includeConfigAPI = $false,
+    
     [bool]$includeSearchAPI = $false,
     [bool]$includeElasticAPI = $true,
+    [bool]$includeAdminAPI = $false,
+
+    [bool]$includeConfigAPI = $false,
     [bool]$includeCRAPI = $false,
+
     [bool]$includeRedis = $false,
     [bool]$includeSftpGo = $false,
-    [bool]$includeElastic = $false,
-    [bool]$includeAdminAPI = $false,
+    [bool]$includeElastic = $false,    
 
     [bool]$deleteAllImages = $false,
     [bool]$deleteS2Namespace = $false
@@ -441,6 +452,7 @@ if ($includeSearchUI -and $includeAdminUI) {
 if ($includeSearchUI) {
     Write-Color -Text "################################" -Color Yellow
     Write-Color -Text "Test Search UI Page" -Color Yellow
+    Write-Color -Text "endpoint $S2SearchUIURL" -Color Yellow
     Write-Color -Text "################################" -Color Yellow
     Test-Application -Endpoint $S2SearchUIURL -TimeoutMs 10000
 }
@@ -448,6 +460,7 @@ if ($includeSearchUI) {
 if ($includeAdminUI) {
     Write-Color -Text "################################" -Color Yellow
     Write-Color -Text "Test Admin UI Page" -Color Yellow
+    Write-Color -Text "endpoint $S2AdminURL" -Color Yellow
     Write-Color -Text "################################" -Color Yellow
     Test-Application -Endpoint $S2AdminURL -TimeoutMs 10000
 }
@@ -455,6 +468,7 @@ if ($includeAdminUI) {
 if ($includeElasticUI) {
     Write-Color -Text "################################" -Color Yellow
     Write-Color -Text "Test Elastic UI Page" -Color Yellow
+    Write-Color -Text "endpoint $S2ElasticUIURL" -Color Yellow
     Write-Color -Text "################################" -Color Yellow
     Test-Application -Endpoint $S2ElasticUIURL -TimeoutMs 10000
 }

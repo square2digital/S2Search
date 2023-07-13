@@ -33,6 +33,6 @@ spec:
           livenessProbe:
             httpGet:
               path: /vehicletest
-              port: 3000
+              port: 2999
             initialDelaySeconds: 15
             periodSeconds: 10

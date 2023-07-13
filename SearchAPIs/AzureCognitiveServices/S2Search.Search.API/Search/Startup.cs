@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Models.Interfaces;
 using Search.Filters;
 using S2SearchAPI.Client;
+using System.Net.Http;
 
 namespace Search
 {
@@ -71,12 +72,26 @@ namespace Search
             services.AddAPIServices();
             services.AddRedis(appSettings.RedisCacheSettings.RedisConnectionString);
 
+            services.AddHttpClient();
+            var serviceProvider = services.BuildServiceProvider();
+            var httpClient = serviceProvider.GetRequiredService<HttpClient>();
+
+            services.AddSingleton<IS2SearchAPIClient>(provider =>
+            {
+                var baseUrl = appSettings.AdminSettings.AdminEndpoint;
+                var httpClient = provider.GetRequiredService<HttpClient>();
+
+                var s2SearchApiClient = new S2SearchAPIClient(baseUrl, httpClient);
+
+                return s2SearchApiClient;
+            });
+
             // Register the NSwag client
-            services.AddHttpClient<IS2SearchAPIClient, S2SearchAPIClient>()
-                .ConfigureHttpClient((serviceProvider, httpClient) =>
-                {
-                    httpClient.BaseAddress = new Uri(appSettings.AdminSettings.AdminEndpoint);
-                });
+            //services.AddHttpClient<IS2SearchAPIClient, S2SearchAPIClient>()
+            //    .ConfigureHttpClient((serviceProvider, httpClient) =>
+            //    {
+            //        httpClient.BaseAddress = new Uri(appSettings.AdminSettings.AdminEndpoint);
+            //    });
         }
 
         /// <summary>
