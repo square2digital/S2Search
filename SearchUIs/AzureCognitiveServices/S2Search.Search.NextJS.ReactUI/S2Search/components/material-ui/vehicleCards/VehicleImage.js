@@ -45,7 +45,7 @@ const VehicleImage = (props) => {
     if (event) {
       event.target.onerror = null;
       event.target.src = props.missingImageURL;
-      setimageErrored(true);
+      //setimageErrored(true);
     }
   };
 
@@ -58,7 +58,8 @@ const VehicleImage = (props) => {
       }
       src={imageSrc}
       title={props.imageTitle}
-      onError={handleImageError}></img>
+      onError={handleImageError}
+    />
   );
 };
 
