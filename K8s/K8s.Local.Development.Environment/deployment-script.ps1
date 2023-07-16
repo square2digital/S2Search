@@ -65,30 +65,38 @@ function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
 }
 
 function Test-Application {
-    param([string]$ApplicationName, [string]$Endpoint, [int]$TimeoutMs )
+    param(
+        [string]$ApplicationName,
+        [string]$Endpoint,
+        [int]$TimeoutMs
+    )
 
     $DelayMs = 2500
+    $Response = $null
+
     do {
-        Write-Progress -Activity "tesing endpoint in Search UI" -SecondsRemaining ($TimeoutMs / 1000)
+        Write-Progress -Activity "Testing $ApplicationName endpoint" -SecondsRemaining ($TimeoutMs / 1000)
         Start-Sleep -Milliseconds $DelayMs
         $TimeoutMs -= $DelayMs
-        $Response = try {
-            (Invoke-WebRequest -Uri $Endpoint)
-            if ($Response.StatusCode -eq 200) {
-                Write-Color -Text "$ApplicationName on URL $Endpoint responsed with a 200" -Color Green
-            }
 
+        try {
+            $Response = Invoke-WebRequest -Uri $Endpoint
+
+            if ($Response.StatusCode -eq 200) {
+                Write-Host -ForegroundColor Green "$ApplicationName on URL $Endpoint responded with a 200"
+            }
         }
         catch [System.Net.WebException] {
             $_.Exception.Response
         }
     }
-    until ($Response.StatusCode -eq 200 -or $TimeoutMs -lt 0)
+    until ($Response.StatusCode -eq 200 -or $TimeoutMs -le 0)
 
-    if ($TimeoutMs -lt 0) {
-        Write-Error -Message "Testing $ApplicationName with endpoint - $Endpoint timed out" -ErrorAction Stop
-    } 
+    if ($TimeoutMs -le 0) {
+        throw "Testing $ApplicationName with endpoint - $Endpoint timed out"
+    }
 }
+
 
 function Output-Parameters([bool]$param, [String]$name) {
     if ($param) {
@@ -248,9 +256,16 @@ $MySQLPath = "$DeploymentRoot\K8s\K8s.Local.Development.Environment\MySql"
 Write-Color -Text "The SFTPGoPath is -> $SFTPGoPath" -Color Blue
 Write-Color -Text "The MySQLPath is -> $MySQLPath" -Color Blue
 
+# UI tests
 $S2ElasticUIURL = "http://localhost:2999/vehicletest"
 $S2SearchUIURL = "http://localhost:3000/vehicletest"
 $S2AdminURL = "http://localhost:3001/api/probe/ready"
+
+# API tests
+$SearchAPIURL = "http://localhost:6001/api/Status"
+$ElasticSearchAPI = "http://localhost:6004/api/Status"
+$S2AdminAPI = "http://localhost:6006/api/Status"
+
 $Timeout = 2500
 
 Start-Sleep -Milliseconds $Timeout 
@@ -452,7 +467,7 @@ if ($includeSearchUI) {
     Write-Color -Text "Test Search UI Page" -Color Yellow
     Write-Color -Text "endpoint $S2SearchUIURL" -Color Yellow
     Write-Color -Text "################################" -Color Yellow
-    Test-Application -Endpoint $S2SearchUIURL -TimeoutMs 10000
+    Test-Application -ApplicationName "Azure Search UI" -Endpoint $S2SearchUIURL -TimeoutMs 10000
 }
 
 if ($includeAdminUI) {
@@ -460,7 +475,7 @@ if ($includeAdminUI) {
     Write-Color -Text "Test Admin UI Page" -Color Yellow
     Write-Color -Text "endpoint $S2AdminURL" -Color Yellow
     Write-Color -Text "################################" -Color Yellow
-    Test-Application -Endpoint $S2AdminURL -TimeoutMs 10000
+    Test-Application -ApplicationName "Admin UI" -Endpoint $S2AdminURL -TimeoutMs 10000
 }
 
 if ($includeElasticUI) {
@@ -468,7 +483,31 @@ if ($includeElasticUI) {
     Write-Color -Text "Test Elastic UI Page" -Color Yellow
     Write-Color -Text "endpoint $S2ElasticUIURL" -Color Yellow
     Write-Color -Text "################################" -Color Yellow
-    Test-Application -Endpoint $S2ElasticUIURL -TimeoutMs 10000
+    Test-Application -ApplicationName "Elastic UI" -Endpoint $S2ElasticUIURL -TimeoutMs 10000
+}
+
+if ($includeSearchAPI) {
+    Write-Color -Text "################################" -Color Yellow
+    Write-Color -Text "Test Search API Status" -Color Yellow
+    Write-Color -Text "endpoint $SearchAPIURL" -Color Yellow
+    Write-Color -Text "################################" -Color Yellow
+    Test-Application -ApplicationName "Search API" -Endpoint $SearchAPIURL -TimeoutMs 10000
+}
+
+if ($includeElasticAPI) {
+    Write-Color -Text "################################" -Color Yellow
+    Write-Color -Text "Test Elastic Search API Status" -Color Yellow
+    Write-Color -Text "endpoint $ElasticSearchAPI" -Color Yellow
+    Write-Color -Text "################################" -Color Yellow
+    Test-Application -ApplicationName "Elastic Search API" -Endpoint $ElasticSearchAPI -TimeoutMs 10000
+}
+
+if ($includeAdminAPI) {
+    Write-Color -Text "################################" -Color Yellow
+    Write-Color -Text "Test S2 Admin API Status" -Color Yellow
+    Write-Color -Text "endpoint $S2AdminAPI" -Color Yellow
+    Write-Color -Text "################################" -Color Yellow
+    Test-Application -ApplicationName "S2 Admin API" -Endpoint $S2AdminAPI -TimeoutMs 10000
 }
 
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment"
