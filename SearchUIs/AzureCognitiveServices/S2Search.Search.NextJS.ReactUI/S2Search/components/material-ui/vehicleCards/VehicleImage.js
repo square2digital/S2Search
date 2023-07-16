@@ -31,21 +31,15 @@ const useStyles = makeStyles((theme) => ({
 const VehicleImage = (props) => {
   const classes = useStyles();
   const [imageSrc, setImageSrc] = useState("");
-  const [imageErrored, setimageErrored] = useState(false);
 
   useEffect(() => {
-    if (!imageErrored) {
-      setImageSrc(props.imageURL);
-    } else {
-      setImageSrc(props.missingImageURL);
-    }
-  }, [imageErrored, props]);
+    setImageSrc(`${props.imageURL}?${new Date().getTime()}`);
+  }, [props.imageURL]);
 
   const handleImageError = (event) => {
     if (event) {
       event.target.onerror = null;
       event.target.src = props.missingImageURL;
-      //setimageErrored(true);
     }
   };
 
