@@ -16,16 +16,17 @@ go
     IF @InsertDummyData = 1 BEGIN PRINT 'Dummy Data Script - Started' --SearchIndex variables
     DECLARE @CustomerId uniqueidentifier = 'afeb217b-813a-4b9c-82ec-e0221d5e95b1'
     DECLARE @SearchInstanceId uniqueidentifier = '97032266-c1c0-4278-8816-053bbc3a1036'
-    DECLARE @ResourceGroup varchar(255) = 'rg-search-demo-westeu'
+    DECLARE @ResourceGroup varchar(255) = 'S2Search'
     DECLARE @ServiceLocation varchar(50) = 'West Europe'
-    DECLARE @SearchInstanceEndpoint varchar(250) = 'https://search-s2demo-free-demo-westeu.search.windows.net'
-    DECLARE @AdminKey varchar(255) = 'B165D327176C47EE1DC94A75E59FC0A5'
-    DECLARE @SecondaryKey varchar(255) = 'F26405CE382E1588511B7036878951EE'
-    DECLARE @QueryKey varchar(255) = 'C459AADD1242A5CB7BC22DB94077187B'
+    DECLARE @SearchInstanceEndpoint varchar(250) = 'https://s2-search-dev.search.windows.net'
+	DECLARE @StorageURI varchar(250) = 'https://s2storagedev.blob.core.windows.net'
+    DECLARE @AdminKey varchar(255) = 'meh33Ur6Zd7oGUv201TvZAXD5mqTOH9QN1YtFePp86AzSeDwh11h'
+    DECLARE @SecondaryKey varchar(255) = 'Jc6htHDfDNK6MAgGm80ZBFqjsb0RZjkdwfSYxjMh6XAzSeAHeUua'
+    DECLARE @QueryKey varchar(255) = 'JTli3f7UNsq6UP5aarwr6kEuXLziImNklC1EZlI3zSAzSeDZXlvC'
     DECLARE @Replicas int = 1
     DECLARE @Partitions int = 1
     DECLARE @IsShared bit = 1
-    DECLARE @SearchInstanceName varchar(255) = 'search-s2demo-free-demo-westeu'
+    DECLARE @SearchInstanceName varchar(255) = 's2-search-dev'
     DECLARE @SearchIndexName varchar(255) = 'vehicles-' + LEFT(CONVERT(varchar(255), NEWID()), 8) --Feeds
     DECLARE @FeedType varchar(20) = 'FTPS'
     DECLARE @FeedCron varchar(50) = '5 * * * *'
@@ -144,8 +145,8 @@ go
 	-- ********************************************
 	-- use this to override endpoints - useful to setting a search instance to another URL or to localhost
 	-- ********************************************		    
-	--SET @JGilmartinMotorsEndpoint = @LocalDevEndpoint
-	SET @OktetoDevEndpoint = @LocalDevEndpoint
+	SET @JGilmartinMotorsEndpoint = @LocalDevEndpoint
+	--SET @OktetoDevEndpoint = @LocalDevEndpoint
 
 	-- ************************
     -- S2 Demo  - customer 1
@@ -154,8 +155,8 @@ go
 	DECLARE @CustomerIndexName_1 varchar(100) = 's2-demo-vehicles'
 	DECLARE @SearchIndexId_1 uniqueidentifier = '8c663063-4217-4f54-973f-8faec6131b5b'
 	DECLARE @ThemeId_1 uniqueidentifier = '8c663063-4217-4f54-973f-8faec6131b5b' 
-    DECLARE @ThemeLogoURL_1 varchar(1000) = 'https://storages2searchwesteu.blob.core.windows.net/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg'
-	DECLARE @ThemeMissingImageURL_1 varchar(1000) = 'https://storages2searchwesteu.blob.core.windows.net/assets/image-coming-soon.jpg' 
+    DECLARE @ThemeLogoURL_1 varchar(1000) = @StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg'
+	DECLARE @ThemeMissingImageURL_1 varchar(1000) = @StorageURI + '/assets/image-coming-soon.jpg' 
     DECLARE @ThemePrimaryThemeColour_1 varchar(10) = '#006bd1'
     DECLARE @ThemeSecondaryThemeColour_1 varchar(10) = '#003c75'
 	DECLARE @ThemeNavBarColourColour_1 varchar(10) = '#006bd1'   
@@ -167,8 +168,8 @@ go
 	DECLARE @CustomerIndexName_2 varchar(100) = 'jgilmartin-motors-vehicles'
 	DECLARE @SearchIndexId_2 uniqueidentifier = '4cdd1c8a-30f4-4bc7-8de4-3f01ca7bc97f'
 	DECLARE @ThemeId_2 uniqueidentifier = '3f62e01c-4ccf-40bb-9bfb-50372d18c977' 
-	DECLARE @ThemeLogoURL_2 varchar(1000) = 'https://storages2searchwesteu.blob.core.windows.net/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg'
-	DECLARE @ThemeMissingImageURL_2 varchar(1000) = 'https://storages2searchwesteu.blob.core.windows.net/assets/image-coming-soon.jpg' 
+	DECLARE @ThemeLogoURL_2 varchar(1000) = @StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg'
+	DECLARE @ThemeMissingImageURL_2 varchar(1000) = @StorageURI + '/assets/image-coming-soon.jpg' 
 	DECLARE @ThemePrimaryThemeColour_2 varchar(10) = '#006bd1'
 	DECLARE @ThemeSecondaryThemeColour_2 varchar(10) = '#003c75'
 	DECLARE @ThemeNavBarColourColour_2 varchar(10) = '#006bd1'
@@ -180,8 +181,8 @@ go
 	DECLARE @CustomerIndexName_3 varchar(100) = 'dpenaluna-motors-vehicles'
 	DECLARE @SearchIndexId_3 uniqueidentifier = 'e30f4cb5-dbca-450f-a325-8e9bf2ba232b'
 	DECLARE @ThemeId_3 uniqueidentifier = '5b0f357e-4fbf-466c-9f2b-db93fd1fd5ec' 
-    DECLARE @ThemeLogoURL_3 varchar(1000) = 'https://storages2searchwesteu.blob.core.windows.net/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg' 
-	DECLARE @ThemeMissingImageURL_3 varchar(1000) = 'https://storages2searchwesteu.blob.core.windows.net/assets/image-coming-soon.jpg' 
+    DECLARE @ThemeLogoURL_3 varchar(1000) = @StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg' 
+	DECLARE @ThemeMissingImageURL_3 varchar(1000) = @StorageURI + '/assets/image-coming-soon.jpg' 
 	DECLARE @ThemePrimaryThemeColour_3 varchar(10) = '#71538f'
     DECLARE @ThemeSecondaryThemeColour_3 varchar(10) = '#3e056e'
 	DECLARE @ThemeNavBarColourColour_3 varchar(10) = '#7e3cb5'

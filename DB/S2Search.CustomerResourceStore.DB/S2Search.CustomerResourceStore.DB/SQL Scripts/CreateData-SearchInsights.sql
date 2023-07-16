@@ -4,13 +4,13 @@ GO
 	Use this script to generate some sample Search Insights
    ######################################################## */ 
 
-declare @startDate date = '2021-07-01'
-declare @endDate date = '2021-12-31'
+declare @startDate date = '2020-02-01'
+declare @endDate date = '2022-02-08'
 
 declare @totalDays int = DATEDIFF(day, @startDate, @endDate)
 
-declare @randomValueStartNumber int = 999
-declare @randomValueEndNumber int = 10001
+declare @randomValueStartNumber int = 1
+declare @randomValueEndNumber int = 999
 
 declare @dataCategories table 
 (
@@ -219,9 +219,8 @@ declare @searchIndexIds table
 insert into @searchIndexIds
 ( SearchIndexId )
 VALUES
-( '6FB3C6D1-F480-47B5-9934-02E611AEFD02' ),
-( 'F033CE72-9D92-4DEA-B6C5-F0EE57FA3CCC' ),
-( '9AEE3213-DA8A-4D44-A1C8-FB6402AC96BC' )
+( '4cdd1c8a-30f4-4bc7-8de4-3f01ca7bc97f' ),
+( 'e30f4cb5-dbca-450f-a325-8e9bf2ba232b' )
 
 declare @currentSearchIndexId int = 1
 declare @lastSearchIndexId int = (SELECT MAX(Id) FROM @searchIndexIds)
