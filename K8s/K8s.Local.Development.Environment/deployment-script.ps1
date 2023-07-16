@@ -165,10 +165,8 @@ Write-Color -Text "The ApplicationPathElasticUI is -> $ApplicationPathElasticUI"
 $ApplicationPathSearchUI = "$DeploymentRoot\SearchUIs\AzureCognitiveServices\S2Search.Search.NextJS.ReactUI\S2Search"
 Write-Color -Text "The ApplicationPathSearchUI is -> $ApplicationPathSearchUI" -Color Blue
 
-$ApplicationPathAdminUI = "$DeploymentRoot\SearchUIs\AzureCognitiveServices\S2Search.Admin.NextJS.ReactUI\s2admin"
+$ApplicationPathAdminUI = "$DeploymentRoot\AdminUI\S2Search.Admin.NextJS.ReactUI\s2admin"
 Write-Color -Text "The ApplicationPathAdminUI is -> $ApplicationPathAdminUI" -Color Blue
-
-
 
 $ApplicationPathAdminAPIFile = "$DeploymentRoot\APIs\S2Search.Admin.API\Admin"
 Write-Color -Text "The ApplicationPathClientDockerFile is -> $ApplicationPathClientDockerFile" -Color Blue
