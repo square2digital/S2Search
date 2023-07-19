@@ -29,12 +29,11 @@
 # cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -includeAdminAPI $true -deleteS2Namespace $true
 
 ##############################
-## remove currently redundant services
+## remove redundant APIs - superceeded by the AdminAPI
 ## ConfigAPI
 ## CRAPI
-## SftpGo
 ##############################
-# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $false -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $false -includeRedis $true -includeSftpGo $false -includeElastic $true -deleteAllImages $true -includeAdminAPI $true -deleteS2Namespace $true
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $false -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $false -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $false -includeAdminAPI $true -deleteS2Namespace $false
 
 param (
     [bool]$includeElasticUI = $false,
@@ -300,6 +299,8 @@ if ($includeSftpGo) {
 
     Set-Location $MySQLPath
 
+    kubectl delete pv mysql-pv-volume --namespace=$S2Namespace
+    kubectl delete pvc mysql-pv-claim --namespace=$S2Namespace
     kubectl apply -f mysql-deploy.yml --namespace=$S2Namespace
     kubectl apply -f mysql-pv.yml --namespace=$S2Namespace
 

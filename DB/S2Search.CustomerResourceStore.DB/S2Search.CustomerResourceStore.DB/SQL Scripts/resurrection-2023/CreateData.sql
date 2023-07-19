@@ -123,30 +123,35 @@ go
     -- ***********
 	-- Azure B2C Test User ID Guid -> 37a0eb6c-fd38-4b11-9486-e61ed6745953
 
-	-- Test User -> James Conway - user of JGilmartin Motors
-	-- Test User -> Jonathan_Gilmartin - user of S2 Demo
-	-- Test User -> Bradley Stevenson - user of DPMotors Motors
+	-- Test User -> Jonathan Gilmartin - user of S2 Demo
+	-- Test User -> Harley Gilmartin - user of Harley Motors
+	-- Test User -> Harper Gilmartin - user of Haper Motors
 	DECLARE @Azure_B2C_User_Jonathan_Gilmartin uniqueidentifier = '85b3703d-f347-4d50-8f12-3414b0394bec'
-	DECLARE @Azure_B2C_User_James_Conway uniqueidentifier = 'd508e953-8e3c-4dea-be95-96fe1c41ee8a'	
-	DECLARE @Azure_B2C_User_Bradley_Stevenson uniqueidentifier = '412cfaa6-080d-4dcc-8ffc-45db0b57533d'
+	DECLARE @Azure_B2C_User_Harley_Gilmartin uniqueidentifier = 'd508e953-8e3c-4dea-be95-96fe1c41ee8a'	
+	DECLARE @Azure_B2C_User_Harper_Gilmartin uniqueidentifier = '412cfaa6-080d-4dcc-8ffc-45db0b57533d'
 
-	DECLARE @CustomerId_S2_Demo uniqueidentifier = @Azure_B2C_User_Jonathan_Gilmartin
-	DECLARE @CustomerId_JGilmartin_Motors uniqueidentifier = @Azure_B2C_User_James_Conway
-	DECLARE @CustomerId_DPMotors_Motors uniqueidentifier = @Azure_B2C_User_Bradley_Stevenson
+	DECLARE @CustomerId_JGilmartin_Motors uniqueidentifier = @Azure_B2C_User_Jonathan_Gilmartin
+	DECLARE @CustomerId_Harley_Motors uniqueidentifier = @Azure_B2C_User_Harley_Gilmartin
+	DECLARE @CustomerId_Harper_Motors uniqueidentifier = @Azure_B2C_User_Harper_Gilmartin
 		
 	-- ********************************************
 	-- ** S2-Demo Endpoints
 	-- ********************************************	
-	DECLARE @S2DemoEndpoint varchar(100) = 'demo.s2search.co.uk'                               -- BLUE - Corporate colours for Square 2 Digital
-	DECLARE @JGilmartinMotorsEndpoint varchar(100) = 'jgilmartinmotors.s2search.co.uk'         -- Green
-	DECLARE @OktetoDevEndpoint varchar(100) = 's2searchui-service-dp-dev0.cloud.okteto.net'    -- PURPLE
-	DECLARE @LocalDevEndpoint varchar(100) = 'localhost:3000' 	
+	DECLARE @S2DemoEndpoint varchar(100) = 'demo.s2search.co.uk'                        -- BLUE - Corporate colours for Square 2 Digital
+	--DECLARE @JGilmartinMotorsEndpoint varchar(100) = 'jgilmartinmotors.s2search.co.uk'  -- Green
+	DECLARE @HarleyMotorsEndpoint varchar(100) = 'harleygilmartinmotors.s2search.co.uk' -- PURPLE
+	DECLARE @HarperMotorsEndpoint varchar(100) = 'harpergilmartinmotors.s2search.co.uk' -- PURPLE
+	
+	-- endpoint overrides
+	DECLARE @LocalK8sEndpoint varchar(100) = 'localhost:3000'
+	DECLARE @LocalDevEndpoint varchar(100) = 'localhost:2997' 	
 
 	-- ********************************************
 	-- use this to override endpoints - useful to setting a search instance to another URL or to localhost
 	-- ********************************************		    
-	SET @JGilmartinMotorsEndpoint = @LocalDevEndpoint
-	--SET @OktetoDevEndpoint = @LocalDevEndpoint
+	SET @S2DemoEndpoint = @LocalK8sEndpoint
+	SET @HarleyMotorsEndpoint = @LocalDevEndpoint
+	--SET @HarleyMotorsEndpoint = @LocalK8sEndpoint
 
 	-- ************************
     -- S2 Demo  - customer 1
@@ -162,30 +167,30 @@ go
 	DECLARE @ThemeNavBarColourColour_1 varchar(10) = '#006bd1'   
 
 	-- ******************
-    -- jgilmartin motors  - customer 2
+    -- harley gilmartin motors  - customer 2
 	-- ******************    
-    DECLARE @BusinessName_2 varchar(100) = 'JGilmartin Motors'
-	DECLARE @CustomerIndexName_2 varchar(100) = 'jgilmartin-motors-vehicles'
+    DECLARE @BusinessName_2 varchar(100) = 'Harley Motors'
+	DECLARE @CustomerIndexName_2 varchar(100) = 'harley-motors-vehicles'
 	DECLARE @SearchIndexId_2 uniqueidentifier = '4cdd1c8a-30f4-4bc7-8de4-3f01ca7bc97f'
 	DECLARE @ThemeId_2 uniqueidentifier = '3f62e01c-4ccf-40bb-9bfb-50372d18c977' 
 	DECLARE @ThemeLogoURL_2 varchar(1000) = @StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg'
 	DECLARE @ThemeMissingImageURL_2 varchar(1000) = @StorageURI + '/assets/image-coming-soon.jpg' 
-	DECLARE @ThemePrimaryThemeColour_2 varchar(10) = '#006bd1'
-	DECLARE @ThemeSecondaryThemeColour_2 varchar(10) = '#003c75'
-	DECLARE @ThemeNavBarColourColour_2 varchar(10) = '#006bd1'
+	DECLARE @ThemePrimaryThemeColour_2 varchar(10) = '#71538f'
+	DECLARE @ThemeSecondaryThemeColour_2 varchar(10) = '#3e056e'
+	DECLARE @ThemeNavBarColourColour_2 varchar(10) = '#7e3cb5'
 
 	-- ******************
-    -- dpenaluna motors  - customer 3
+    -- Harper motors  - customer 3
 	-- ******************    
-    DECLARE @BusinessName_3 varchar(100) = 'Dpenaluna Motors'
-	DECLARE @CustomerIndexName_3 varchar(100) = 'dpenaluna-motors-vehicles'
+    DECLARE @BusinessName_3 varchar(100) = 'Harper Motors'
+	DECLARE @CustomerIndexName_3 varchar(100) = 'harper-motors-vehicles'
 	DECLARE @SearchIndexId_3 uniqueidentifier = 'e30f4cb5-dbca-450f-a325-8e9bf2ba232b'
 	DECLARE @ThemeId_3 uniqueidentifier = '5b0f357e-4fbf-466c-9f2b-db93fd1fd5ec' 
     DECLARE @ThemeLogoURL_3 varchar(1000) = @StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg' 
 	DECLARE @ThemeMissingImageURL_3 varchar(1000) = @StorageURI + '/assets/image-coming-soon.jpg' 
-	DECLARE @ThemePrimaryThemeColour_3 varchar(10) = '#71538f'
-    DECLARE @ThemeSecondaryThemeColour_3 varchar(10) = '#3e056e'
-	DECLARE @ThemeNavBarColourColour_3 varchar(10) = '#7e3cb5'
+	DECLARE @ThemePrimaryThemeColour_3 varchar(10) = '#006bd1'
+    DECLARE @ThemeSecondaryThemeColour_3 varchar(10) = '#003c75'
+	DECLARE @ThemeNavBarColourColour_3 varchar(10) = '#006bd1'
    
     /***************************************************************************************
      Required Variables
@@ -701,7 +706,7 @@ VALUES
 		)
 	VALUES
 		(
-			@CustomerId_S2_Demo,
+			@CustomerId_JGilmartin_Motors,
 			@BusinessName_1,
 			@Now,
 			NULL
@@ -727,7 +732,7 @@ VALUES
 			@SearchInstanceId,
 			@CustomerIndexName_1,
 			@BusinessName_1,
-			@CustomerId_S2_Demo,
+			@CustomerId_JGilmartin_Motors,
 			@Now,
 			@SkuIdFree
 		) 
@@ -789,7 +794,7 @@ VALUES
 		)
 	VALUES
 		(
-			@CustomerId_JGilmartin_Motors,
+			@CustomerId_Harley_Motors,
 			@BusinessName_2,
 			@Now,
 			NULL
@@ -815,7 +820,7 @@ VALUES
 			@SearchInstanceId,
 			@CustomerIndexName_2,
 			@BusinessName_2,
-			@CustomerId_JGilmartin_Motors,
+			@CustomerId_Harley_Motors,
 			@Now,
 			@SkuIdFree
 		) 
@@ -877,7 +882,7 @@ VALUES
 		)
 	VALUES
 		(
-			@CustomerId_DPMotors_Motors,
+			@CustomerId_Harper_Motors,
 			@BusinessName_3,
 			@Now,
 			NULL
@@ -903,7 +908,7 @@ VALUES
 			@SearchInstanceId,
 			@CustomerIndexName_3,
 			@BusinessName_3,
-			@CustomerId_DPMotors_Motors,
+			@CustomerId_Harper_Motors,
 			@Now,
 			@SkuIdFree
 		) 
@@ -1008,7 +1013,7 @@ VALUES
     )
 
 -- *********************************
--- JGilmartin Motors data - Azure Demo Environment
+-- harley motors data - Local K8s
 -- *********************************
 INSERT INTO
     dbo.SearchInterfaces (
@@ -1024,7 +1029,7 @@ INSERT INTO
 VALUES
     (
         @SearchIndexId_2,
-		@JGilmartinMotorsEndpoint,
+		@HarleyMotorsEndpoint,
         @InterfaceType,
         @InterfaceLogoURL,
 		@IntefaceBannerStyle,
@@ -1035,7 +1040,7 @@ VALUES
 	
 
 -- *********************************
--- dpenaluna motors data - Okteto Environment
+-- harper motors data - Local K8s
 -- *********************************
 INSERT INTO
     dbo.SearchInterfaces (
@@ -1051,7 +1056,7 @@ INSERT INTO
 VALUES
     (
         @SearchIndexId_3,
-		@OktetoDevEndpoint,
+		@HarperMotorsEndpoint,
         @InterfaceType,
         @InterfaceLogoURL,
 		@IntefaceBannerStyle,
@@ -1142,14 +1147,14 @@ INSERT INTO [dbo].[Themes]
         @ThemeNavBarColourColour_1,
 		@ThemeLogoURL_1,
 		@ThemeMissingImageURL_1,
-        @CustomerId_S2_Demo,
+        @CustomerId_JGilmartin_Motors,
         @SearchIndexId_1,
 		@Now,
 		NULL
 	)
 
 	PRINT '********************************'
-	PRINT 'Customer 2 - jgilmartin motors - Theme Details'
+	PRINT 'Customer 2 - harley motors - Theme Details'
 	PRINT '********************************'
 
 	INSERT INTO [dbo].[Themes]
@@ -1173,14 +1178,14 @@ INSERT INTO [dbo].[Themes]
         @ThemeNavBarColourColour_2,
 		@ThemeLogoURL_2,
 		@ThemeMissingImageURL_2,
-        @CustomerId_JGilmartin_Motors,
+        @CustomerId_Harley_Motors,
         @SearchIndexId_2,
 		@Now,
 		NULL
 	)
 
 	PRINT '********************************'
-	PRINT 'Customer 3 - dpenaluna motors - Theme Details'
+	PRINT 'Customer 3 - Harper Motors - Theme Details'
 	PRINT '********************************'
 
 	INSERT INTO [dbo].[Themes]
@@ -1204,7 +1209,7 @@ INSERT INTO [dbo].[Themes]
         @ThemeNavBarColourColour_3,
 		@ThemeLogoURL_3,
 		@ThemeMissingImageURL_3,
-        @CustomerId_DPMotors_Motors,
+        @CustomerId_Harper_Motors,
         @SearchIndexId_3,
 		@Now,
 		NULL
@@ -1377,7 +1382,7 @@ INSERT INTO [dbo].[Themes]
 			   ,null)
 
 	PRINT '*************************************************'
-	PRINT 'Setup jgilmartin motors Configuration Mappings'	
+	PRINT 'Setup harley motors Configuration Mappings'	
 	PRINT '*************************************************'
 
 	INSERT INTO [dbo].[SearchConfigurationMappings]
@@ -1486,7 +1491,7 @@ INSERT INTO [dbo].[Themes]
 			   ,null)
 
 	PRINT '**********************************************'
-	PRINT 'Setup dpenaluna motors Configuration Mappings'	
+	PRINT 'Setup harper motors Configuration Mappings'	
 	PRINT '**********************************************'
 
 	INSERT INTO [dbo].[SearchConfigurationMappings]
