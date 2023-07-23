@@ -103,7 +103,7 @@ go
 	DECLARE @SearchConfigurationOption_PlaceholderText_Text_3 varchar(250) = CONCAT('BMW 7 series Silver', @Separator)
 	DECLARE @SearchConfigurationOption_PlaceholderText_Text_4 varchar(250) = CONCAT('Lexus LS460 Black', @Separator)
 	DECLARE @SearchConfigurationOption_PlaceholderText_Text_5 varchar(250) = CONCAT('Honda Type R Red', @Separator)
-
+	
 	--Search Configuration Mappings VALUES
 	DECLARE @SearchConfigurationMapping_1 uniqueidentifier = '4350fbfb-5b7d-4162-92aa-2a3ec39a4a5f'
 	DECLARE @SearchConfigurationMapping_2 uniqueidentifier = '0d4cb168-5bb9-4e4d-8a18-d39afa249eb6'
@@ -126,9 +126,9 @@ go
 	-- Test User -> Jonathan Gilmartin - user of S2 Demo
 	-- Test User -> Harley Gilmartin - user of Harley Motors
 	-- Test User -> Harper Gilmartin - user of Haper Motors
-	DECLARE @Azure_B2C_User_Jonathan_Gilmartin uniqueidentifier = '85b3703d-f347-4d50-8f12-3414b0394bec'
-	DECLARE @Azure_B2C_User_Harley_Gilmartin uniqueidentifier = 'd508e953-8e3c-4dea-be95-96fe1c41ee8a'	
-	DECLARE @Azure_B2C_User_Harper_Gilmartin uniqueidentifier = '412cfaa6-080d-4dcc-8ffc-45db0b57533d'
+	DECLARE @Azure_B2C_User_Jonathan_Gilmartin uniqueidentifier = 'a870f617-c469-4fdc-b76d-98a990577583'
+	DECLARE @Azure_B2C_User_Harley_Gilmartin uniqueidentifier = 'db3e8082-4aa5-4622-84d3-837c72e389b8'	
+	DECLARE @Azure_B2C_User_Harper_Gilmartin uniqueidentifier = '0a0cc61e-f58c-4f84-bff5-faf0bc3b0bb6'
 
 	DECLARE @CustomerId_JGilmartin_Motors uniqueidentifier = @Azure_B2C_User_Jonathan_Gilmartin
 	DECLARE @CustomerId_Harley_Motors uniqueidentifier = @Azure_B2C_User_Harley_Gilmartin
