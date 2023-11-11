@@ -16,7 +16,7 @@
     "@mui/styles": "^5.11.2",
     "@mui/system": "^5.11.4",
     "autosuggest-highlight": "^3.3.4",
-    "axios": "^1.2.2",
+    "axios": "^1.6.0",
     "next": "^11.1.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
