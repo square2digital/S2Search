@@ -1,7 +1,5 @@
 # S2 Search
 
-# S2 Search
-
 <p align="center"><a href="https://www.square2digital.com/s2-search/" target="_blank" rel="noopener noreferrer"><img src="https://www.square2digital.com/wp-content/uploads/2022/01/Square_2_Logo_Colour_Blue_White_BG.svg" alt="S2 Search Logo" width="30%"></a></p>
 
 ---
