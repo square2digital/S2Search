@@ -1,0 +1,30 @@
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+LABEL author="S2Digital"
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["/nuget.config", ""]
+COPY ["src/api/CustomerResource/CustomerResource.csproj", "src/api/CustomerResource/"]
+COPY ["src/api/Domain/Domain.csproj", "src/api/Domain/"]
+COPY ["src/api/Services/Services.csproj", "src/api/Services/"]
+
+ARG PAT=Token
+RUN sed -i "s|</configuration>|<packageSourceCredentials><S2Search><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"${PAT}\" /></S2Search></packageSourceCredentials></configuration>|" nuget.config
+
+RUN dotnet restore "src/api/CustomerResource/CustomerResource.csproj"
+COPY . .
+WORKDIR "/src/src/api/CustomerResource"
+RUN dotnet build "CustomerResource.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "CustomerResource.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "CustomerResource.dll"]
