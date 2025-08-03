@@ -296,23 +296,20 @@ For detailed contributing guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## 📄 License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under a **Proprietary Commercial License** - see the [LICENSE](LICENSE) file for details.
 
-```
-MIT License
+> **⚠️ Important**: This is proprietary software. Commercial use requires a separate license agreement. Contact [info@square2digital.com](mailto:info@square2digital.com) for licensing inquiries.
 
-Copyright (c) 2023 Jonathan Gilmartin
+**Key License Terms:**
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+- ✅ Viewing and studying source code for educational purposes
+- ✅ Internal evaluation and testing
+- ✅ Bug reporting and security issue disclosure
+- ❌ Commercial use without proper licensing
+- ❌ Distribution, modification, or derivative works
+- ❌ Reverse engineering or competitive use
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
+For complete license terms, see [LICENSE](LICENSE).
 
 ## 👥 Maintainers
 

@@ -1,21 +1,72 @@
-MIT License
+PROPRIETARY SOFTWARE LICENSE AGREEMENT
 
-Copyright (c) 2023 jonathan gilmartin
+S2 Search - Enterprise Search Platform
+Copyright (c) 2023-2025 Jonathan Gilmartin and Square2 Digital Ltd. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+IMPORTANT: READ CAREFULLY BEFORE USING THIS SOFTWARE
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This software and associated documentation files (the "Software") are proprietary
+and confidential to Square2 Digital Ltd and Jonathan Gilmartin (the "Licensors").
+This license grants you specific rights under the terms and conditions set forth below.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+BY ACCESSING, DOWNLOADING, INSTALLING, OR USING THE SOFTWARE, YOU AGREE TO BE
+BOUND BY THE TERMS OF THIS LICENSE AGREEMENT.
+
+1. GRANT OF LICENSE
+   Subject to the terms and conditions of this Agreement, Licensors grant you a
+   limited, non-exclusive, non-transferable, revocable license to:
+   a) View and study the source code for educational and evaluation purposes only
+   b) Use the Software solely for internal business purposes with prior written consent
+   c) Report bugs and security issues to the Licensors
+
+2. RESTRICTIONS
+   You may NOT:
+   a) Copy, modify, distribute, sell, or create derivative works of the Software
+   b) Reverse engineer, decompile, or disassemble the Software
+   c) Remove or alter any proprietary notices, labels, or marks
+   d) Use the Software for commercial purposes without a separate commercial license
+   e) Grant sublicenses or transfer rights to any third party
+   f) Use the Software in any manner that competes with Square2 Digital's business
+
+3. COMMERCIAL USE
+   Commercial use of this Software requires a separate commercial license agreement.
+   Contact info@square2digital.com for commercial licensing terms.
+
+4. INTELLECTUAL PROPERTY
+   All right, title, and interest in and to the Software, including all intellectual
+   property rights, remain with the Licensors. This Agreement does not grant you any
+   rights to trademarks, service marks, or trade names of the Licensors.
+
+5. CONFIDENTIALITY
+   The Software contains trade secrets and confidential information. You agree to
+   maintain the confidentiality of the Software and not disclose it to any third party
+   without prior written consent from the Licensors.
+
+6. TERMINATION
+   This license is effective until terminated. It will terminate automatically if you
+   fail to comply with any term or condition. Upon termination, you must destroy all
+   copies of the Software in your possession.
+
+7. DISCLAIMER OF WARRANTIES
+   THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+   PURPOSE, OR NON-INFRINGEMENT.
+
+8. LIMITATION OF LIABILITY
+   IN NO EVENT SHALL THE LICENSORS BE LIABLE FOR ANY DAMAGES WHATSOEVER, INCLUDING
+   DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, ARISING OUT OF
+   THE USE OR INABILITY TO USE THE SOFTWARE.
+
+9. GOVERNING LAW
+   This Agreement shall be governed by and construed in accordance with the laws of
+   the jurisdiction where Square2 Digital Ltd is incorporated, without regard to
+   conflict of law principles.
+
+10. CONTACT INFORMATION
+    For questions about this license or to request commercial licensing:
+    Square2 Digital Ltd
+    Email: info@square2digital.com
+    Website: https://www.square2digital.com/
+
+Copyright (c) 2023-2025 Jonathan Gilmartin and Square2 Digital Ltd. All rights reserved.
+Unauthorized use, reproduction, or distribution is strictly prohibited.
