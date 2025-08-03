@@ -1,56 +1,40 @@
+using System;
+using System.IO;
 using System.IO.Compression;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
+using System.Threading.Tasks;
 using Domain.Constants;
 using Domain.Models;
-using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Services.Interfaces.Managers;
 
-namespace FunctionsTest
+namespace S2Search.FeedServices.Function
 {
     public class FeedExtractor
     {
-        private readonly BlobServiceClient _blobServiceClient;
         private readonly IZipArchiveValidationManager _zipValidationManager;
-        private readonly ILogger<FeedExtractor> _logger;
 
-        public FeedExtractor(BlobServiceClient blobServiceClient,
-            IZipArchiveValidationManager zipValidationManager,
-            ILogger<FeedExtractor> logger)
+        public FeedExtractor(IZipArchiveValidationManager zipValidationManager)
         {
-            _blobServiceClient = blobServiceClient;
             _zipValidationManager = zipValidationManager ?? throw new ArgumentNullException(nameof(zipValidationManager));
-            _logger = logger;
         }
 
-        [Function(nameof(FeedExtractor))]
-        public async Task Run([QueueTrigger(StorageQueues.Extract, Connection = ConnectionStrings.AzureStorageAccount)] FeedBlob feedBlob)
+        [FunctionName(FunctionNames.FeedExtractor)]
+        public async Task Run([QueueTrigger(StorageQueues.Extract, Connection = ConnectionStrings.AzureStorageAccount)] FeedBlob feedBlob,
+                                    IBinder binder,
+                                    ILogger log)
         {
-            _logger.LogInformation($"Extractor | Extracting FeedBlob - CustomerId: {feedBlob.CustomerId}");
+            log.LogInformation($"Extractor | Extracting FeedBlob - CustomerId: {feedBlob.CustomerId}");
 
             try
             {
-                // Parse the container and blob name from the BlobUri
-                var blobUri = new Uri(feedBlob.BlobUri);
-                var containerName = blobUri.Segments[1].TrimEnd('/'); // Extracts container name
-                var blobName = string.Join("", blobUri.Segments.Skip(2)); // Extracts the blob name (after the container)
+                var zipBlob = await binder.BindAsync<CloudBlockBlob>(new BlobAttribute(feedBlob.BlobUri));
+                string extractedBlobPath = $"{zipBlob.Container.Uri}/{feedBlob.NextDestination}";
 
-                // Initialize the BlobClient for the zip file
-                var blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-                var zipBlobClient = blobContainerClient.GetBlobClient(blobName);
-
-                // Check if the blob exists
-                if (!await zipBlobClient.ExistsAsync())
-                {
-                    _logger.LogError($"Blob does not exist: {feedBlob.BlobUri}");
-                    throw new FileNotFoundException($"Blob does not exist: {feedBlob.BlobUri}");
-                }
-
-                // Download the zip blob to a memory stream
                 using (var zipBlobFileStream = new MemoryStream())
                 {
-                    await zipBlobClient.DownloadToAsync(zipBlobFileStream);
+                    await zipBlob.DownloadToStreamAsync(zipBlobFileStream);
                     await zipBlobFileStream.FlushAsync();
                     zipBlobFileStream.Position = 0;
 
@@ -67,26 +51,19 @@ namespace FunctionsTest
 
                         using (var stream = firstZipEntry.Open())
                         {
-                            // Define the extracted blob path
-                            var extractedBlobPath = $"{feedBlob.NextDestination}/{firstZipEntry.FullName}";
-
-                            // Create a BlobClient for the extracted file
-                            var extractedBlobClient = blobContainerClient.GetBlobClient(extractedBlobPath);
-
-                            // Upload the extracted file
-                            await extractedBlobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = "application/octet-stream" });
+                            var extractBlob = await binder.BindAsync<CloudBlockBlob>(new BlobAttribute($"{extractedBlobPath}/{firstZipEntry.FullName}"));
+                            extractBlob.UploadFromStream(stream);
                         }
                     }
                 }
 
-                _logger.LogInformation($"Extractor | Removing extracted FeedBlob - CustomerId: {feedBlob.CustomerId}");
+                log.LogInformation($"Extractor | Removing extracted FeedBlob - CustomerId: {feedBlob.CustomerId}");
 
-                // Delete the original zip file
-                await zipBlobClient.DeleteIfExistsAsync();
+                await zipBlob.DeleteAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Extractor | Error: {ex.Message}");
+                log.LogError(ex, $"Extractor | Error: {ex.Message}");
                 throw;
             }
         }

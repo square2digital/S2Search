@@ -64,7 +64,7 @@ data:
           "Year": "year, count:9999"
         },
         "ClientConfigurationSettings": {
-          "ClientConfigurationEndpoint": "http://clientconfiguration-api-service",
+          "ClientConfigurationEndpoint": "http://adminapi-api-service",
           "HeaderAPISubscriptionName": "Ocp-Apim-Subscription-Key",
           "APISubscriptionKey": "bc2f460930b049bfb7554e06d280a2c0"          
         },
@@ -77,6 +77,9 @@ data:
         "RedisCacheSettings": {
           "RedisConnectionString": "redis,ssl=false,password=a-very-complex-password-here,abortConnect=false,connectTimeout=15000,responseTimeout=5000",
           "DefaultCacheExpiryInSeconds": 3600
+        },
+        "AdminSettings": {
+          "AdminEndpoint": "http://adminapi-api-service/"
         }
       }
     }

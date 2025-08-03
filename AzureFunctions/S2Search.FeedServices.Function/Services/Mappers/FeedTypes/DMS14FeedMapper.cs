@@ -8,7 +8,6 @@ using Services.Interfaces.Managers;
 using System;
 using Domain.Constants;
 using Services.Interfaces.Mappers;
-using Azure.Storage.Blobs;
 
 namespace Services.Mappers.FeedTypes
 {
@@ -26,12 +25,13 @@ namespace Services.Mappers.FeedTypes
 
         public string FeedDataFormat => FeedDataFormats.DMS14;
 
-        public async Task<IEnumerable<VehicleIndex>> GetDataAsync(BlobClient csvBlobClient)
+        public async Task<IEnumerable<VehicleIndex>> GetDataAsync(CloudBlockBlob csvBlob)
         {
             var vehicleIndexList = new List<VehicleIndex>();
 
-            using (var csvStream = await csvBlobClient.OpenReadAsync())
+            using (var csvStream = new MemoryStream())
             {
+                await csvBlob.DownloadToStreamAsync(csvStream);
                 await csvStream.FlushAsync();
                 csvStream.Position = 0;
 

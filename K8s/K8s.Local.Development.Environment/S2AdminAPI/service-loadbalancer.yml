@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: s2adminapi-loadbalancer
+  labels:
+    app: s2adminapi
+spec:
+  type: LoadBalancer
+  selector:
+    app: s2adminapi
+  ports:
+    - name: "6006"
+      port: 6006
+      targetPort: 80

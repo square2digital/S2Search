@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "S2Search.FeedServices.Function": {
-      "commandName": "Project",
-      "commandLineArgs": "--port 7027",
-      "launchBrowser": false
-    }
-  }
-}

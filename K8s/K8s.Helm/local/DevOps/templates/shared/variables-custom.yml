@@ -1,9 +1,0 @@
-#Using this template will allow you to mix the default variable template with your own custom variables
-parameters:
-  - name: customVariables
-    displayName: An object containing any custom defined variables to set
-    type: object
-    default: {}
-
-variables:
-  ${{ insert }}: ${{ parameters.customVariables }}

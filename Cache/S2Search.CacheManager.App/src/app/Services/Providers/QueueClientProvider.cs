@@ -18,7 +18,6 @@ namespace Services.Providers
             var queueClient = CreateQueueClient(_connectionString.Get(connectionKey), queueName);
             try
             {
-                await queueClient.CreateIfNotExistsAsync();
                 var response = await queueClient.PeekMessageAsync();
                 return true;
             }

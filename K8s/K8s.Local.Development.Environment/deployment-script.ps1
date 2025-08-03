@@ -13,29 +13,43 @@
 # - replace with your path to use the example commands below 
 #############################################################
 
-# build everything
-# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -deleteS2Namespace $true
+# build nothing
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $false -includeSearchUI $false -includeAdminUI $false -includeConfigAPI $false -includeSearchAPI $false -includeElasticAPI $false -includeCRAPI $false -includeRedis $false -includeSftpGo $false -includeElastic $false -deleteAllImages $false -includeAdminAPI $false -deleteS2Namespace $false
+
+# build everything - exclude includeConfigAPI & includeCRAPI
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $false -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $false -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $false -includeAdminAPI $true -deleteS2Namespace $true
 
 # build specifc service only - Elastic UI & API in this case
-# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $false -includeConfigAPI $false -includeSearchAPI $false -includeElasticAPI $false -includeCRAPI $false -includeRedis $false -includeSftpGo $false -includeElastic $false -deleteAllImages $false -deleteS2Namespace $false
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $false -includeConfigAPI $false -includeSearchAPI $false -includeElasticAPI $false -includeCRAPI $false -includeRedis $false -includeSftpGo $false -includeElastic $false -deleteAllImages $false -includeAdminAPI $true -deleteS2Namespace $false
 
 #######################
 # debug the elastic UI
 #######################
 # build everything
-# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $false -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $false -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -deleteS2Namespace $true
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $true -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $true -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $true -includeAdminAPI $true -deleteS2Namespace $true
+
+##############################
+## remove redundant APIs - superceeded by the AdminAPI
+## ConfigAPI
+## CRAPI
+##############################
+# cls; cd "F:\github\Square2 Digital\S2Search\K8s\K8s.Local.Development.Environment"; .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true -includeConfigAPI $false -includeSearchAPI $true -includeElasticAPI $true -includeCRAPI $false -includeRedis $true -includeSftpGo $true -includeElastic $true -deleteAllImages $false -includeAdminAPI $true -deleteS2Namespace $false
 
 param (
     [bool]$includeElasticUI = $false,
     [bool]$includeSearchUI = $false,
     [bool]$includeAdminUI = $false,
-    [bool]$includeConfigAPI = $false,
+    
     [bool]$includeSearchAPI = $false,
     [bool]$includeElasticAPI = $true,
+    [bool]$includeAdminAPI = $false,
+
+    [bool]$includeConfigAPI = $false,
     [bool]$includeCRAPI = $false,
+
     [bool]$includeRedis = $false,
     [bool]$includeSftpGo = $false,
-    [bool]$includeElastic = $false,
+    [bool]$includeElastic = $false,    
 
     [bool]$deleteAllImages = $false,
     [bool]$deleteS2Namespace = $false
@@ -50,30 +64,38 @@ function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
 }
 
 function Test-Application {
-    param([string]$ApplicationName, [string]$Endpoint, [int]$TimeoutMs )
+    param(
+        [string]$ApplicationName,
+        [string]$Endpoint,
+        [int]$TimeoutMs
+    )
 
     $DelayMs = 2500
+    $Response = $null
+
     do {
-        Write-Progress -Activity "tesing endpoint in Search UI" -SecondsRemaining ($TimeoutMs / 1000)
+        Write-Progress -Activity "Testing $ApplicationName endpoint" -SecondsRemaining ($TimeoutMs / 1000)
         Start-Sleep -Milliseconds $DelayMs
         $TimeoutMs -= $DelayMs
-        $Response = try {
-            (Invoke-WebRequest -Uri $Endpoint)
-            if ($Response.StatusCode -eq 200) {
-                Write-Color -Text "$ApplicationName on URL $Endpoint responsed with a 200" -Color Green
-            }
 
+        try {
+            $Response = Invoke-WebRequest -Uri $Endpoint
+
+            if ($Response.StatusCode -eq 200) {
+                Write-Host -ForegroundColor Green "$ApplicationName on URL $Endpoint responded with a 200"
+            }
         }
         catch [System.Net.WebException] {
             $_.Exception.Response
         }
     }
-    until ($Response.StatusCode -eq 200 -or $TimeoutMs -lt 0)
+    until ($Response.StatusCode -eq 200 -or $TimeoutMs -le 0)
 
-    if ($TimeoutMs -lt 0) {
-        Write-Error -Message "Testing $ApplicationName with endpoint - $Endpoint timed out" -ErrorAction Stop
-    } 
+    if ($TimeoutMs -le 0) {
+        throw "Testing $ApplicationName with endpoint - $Endpoint timed out"
+    }
 }
+
 
 function Output-Parameters([bool]$param, [String]$name) {
     if ($param) {
@@ -95,6 +117,7 @@ Output-Parameters -param $includeCRAPI -name "includeCRAPI"
 Output-Parameters -param $includeRedis -name "includeRedis"
 Output-Parameters -param $includeSftpGo -name "includeSftpGo"
 Output-Parameters -param $includeElastic -name "includeElastic"
+Output-Parameters -param $includeAdminAPI -name "includeAdminAPI"
 Output-Parameters -param $deleteAllImages -name "deleteAllImages"
 
 # #############################################################
@@ -149,8 +172,16 @@ Write-Color -Text "The ApplicationPathElasticUI is -> $ApplicationPathElasticUI"
 $ApplicationPathSearchUI = "$DeploymentRoot\SearchUIs\AzureCognitiveServices\S2Search.Search.NextJS.ReactUI\S2Search"
 Write-Color -Text "The ApplicationPathSearchUI is -> $ApplicationPathSearchUI" -Color Blue
 
-$ApplicationPathAdminUI = "$DeploymentRoot\SearchUIs\AzureCognitiveServices\S2Search.Admin.NextJS.ReactUI\s2admin"
+$ApplicationPathAdminUI = "$DeploymentRoot\AdminUI\S2Search.Admin.NextJS.ReactUI\s2admin"
 Write-Color -Text "The ApplicationPathAdminUI is -> $ApplicationPathAdminUI" -Color Blue
+
+$ApplicationPathAdminAPIFile = "$DeploymentRoot\APIs\S2Search.Admin.API\Admin"
+Write-Color -Text "The ApplicationPathClientDockerFile is -> $ApplicationPathClientDockerFile" -Color Blue
+
+$ApplicationPathAdminAPIContext = "$DeploymentRoot\APIs\S2Search.Admin.API"
+Write-Color -Text "The ApplicationPathAdminAPIContext is -> $ApplicationPathAdminAPIContext" -Color Blue
+
+
 
 $S2Namespace = "s2"
 
@@ -224,9 +255,16 @@ $MySQLPath = "$DeploymentRoot\K8s\K8s.Local.Development.Environment\MySql"
 Write-Color -Text "The SFTPGoPath is -> $SFTPGoPath" -Color Blue
 Write-Color -Text "The MySQLPath is -> $MySQLPath" -Color Blue
 
+# UI tests
 $S2ElasticUIURL = "http://localhost:2999/vehicletest"
 $S2SearchUIURL = "http://localhost:3000/vehicletest"
 $S2AdminURL = "http://localhost:3001/api/probe/ready"
+
+# API tests
+$SearchAPIURL = "http://localhost:6001/api/Status"
+$ElasticSearchAPI = "http://localhost:6004/api/Status"
+$S2AdminAPI = "http://localhost:6006/api/Status"
+
 $Timeout = 2500
 
 Start-Sleep -Milliseconds $Timeout 
@@ -261,6 +299,8 @@ if ($includeSftpGo) {
 
     Set-Location $MySQLPath
 
+    kubectl delete pv mysql-pv-volume --namespace=$S2Namespace
+    kubectl delete pvc mysql-pv-claim --namespace=$S2Namespace
     kubectl apply -f mysql-deploy.yml --namespace=$S2Namespace
     kubectl apply -f mysql-pv.yml --namespace=$S2Namespace
 
@@ -352,24 +392,14 @@ if ($includeElasticAPI) {
     kubectl delete deployment s2elasticapi-deployment --namespace s2
 }
 
-if ($includeConfigAPI) {
-    Set-Location $ApplicationPathClientDockerFile 
-    Write-Color -Text "Building Docker Image - Client Configuration API at location $ApplicationPathClientDockerFile and context $ApplicationPathClientConfigContext" -Color Magenta
-    Write-Color -Text "docker build --pull --rm -f Dockerfile.local -t s2clientconfigurationapi:dev $ApplicationPathClientConfigContext --build-arg PAT=$PatToken" -Color Yellow
-    docker build --pull --rm -f "Dockerfile.local" -t s2clientconfigurationapi:dev $ApplicationPathClientConfigContext --build-arg PAT=$PatToken
+if ($includeAdminAPI) {
+    Set-Location $ApplicationPathAdminAPIFile 
+    Write-Color -Text "Building Docker Image - Admin API at location $ApplicationPathAdminAPIFile and context $ApplicationPathAdminAPIContext" -Color Magenta
+    Write-Color -Text "docker build --pull --rm -f Dockerfile.local -t s2adminapi:dev $ApplicationPathAdminAPIContext --build-arg PAT=$PatToken" -Color Yellow
+    docker build --pull --rm -f "Dockerfile.local" -t s2adminapi:dev $ApplicationPathAdminAPIContext --build-arg PAT=$PatToken
 
-    Write-Color -Text "Deleting Deployment 's2clientconfigurationapi-deployment'" -Color Magenta
-    kubectl delete deployment s2clientconfigurationapi-deployment --namespace s2
-}
-
-if ($includeCRAPI) {
-    Set-Location $ApplicationPathCustomerAPIDockerFile
-    Write-Color -Text "Building Docker Image - Customer Resource API at location $ApplicationPathCustomerAPI and context $ApplicationPathCustomerAPIContext" -Color Magenta
-    Write-Color -Text "docker build --pull --rm -f Dockerfile.local -t s2customerresourceapi:dev $ApplicationPathCustomerAPIContext --build-arg PAT=$PatToken" -Color Yellow
-    docker build --pull --rm -f "Dockerfile.local" -t s2customerresourceapi:dev $ApplicationPathCustomerAPIContext --build-arg PAT=$PatToken
-
-    Write-Color -Text "Deleting Deployment 's2customerresourceapi-deployment'" -Color Magenta
-    kubectl delete deployment s2customerresourceapi-deployment --namespace s2
+    Write-Color -Text "Deleting Deployment 's2adminapi-deployment'" -Color Magenta
+    kubectl delete deployment s2adminapi-deployment --namespace s2
 }
 
 Write-Color -Text "################################" -Color Magenta
@@ -381,9 +411,6 @@ Write-Color -Text "Creating K8s Deployments to local cluster" -Color Green
 Write-Color -Text "################################" -Color Green
 
 # - 3 - deploy each of the services back to k8s
-Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ClientConfigurationApi"
-kubectl apply -f deployment.yml --namespace=$S2Namespace
-
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchAPI"
 kubectl apply -f .\ConfigMaps\configmap-localk8s.yml --namespace=$S2Namespace
 kubectl apply -f deployment.yml --namespace=$S2Namespace
@@ -398,20 +425,16 @@ kubectl apply -f deployment.yml --namespace=$S2Namespace
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchUI"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2CustomerResourceApi"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminUI"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminUI"
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminAPI"
 kubectl apply -f deployment.yml --namespace=$S2Namespace
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Creating K8s Services to local cluster" -Color Green
 Write-Color -Text "################################" -Color Green
 
-Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2ClientConfigurationApi"
-kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
-kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
-
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchAPI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
@@ -426,12 +449,12 @@ kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2SearchUI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
 
-Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2CustomerResourceApi"
-kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
-kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
-
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminUI"
 kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
+
+Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment\S2AdminAPI"
+kubectl apply -f service-loadbalancer.yml --namespace=$S2Namespace
+kubectl apply -f service-clusterip.yml --namespace=$S2Namespace
 
 if ($includeSearchUI -and $includeAdminUI) {
     Write-Color -Text "###########################################################" -Color Yellow
@@ -443,22 +466,49 @@ if ($includeSearchUI -and $includeAdminUI) {
 if ($includeSearchUI) {
     Write-Color -Text "################################" -Color Yellow
     Write-Color -Text "Test Search UI Page" -Color Yellow
+    Write-Color -Text "endpoint $S2SearchUIURL" -Color Yellow
     Write-Color -Text "################################" -Color Yellow
-    Test-Application -Endpoint $S2SearchUIURL -TimeoutMs 10000
+    Test-Application -ApplicationName "Azure Search UI" -Endpoint $S2SearchUIURL -TimeoutMs 10000
 }
 
 if ($includeAdminUI) {
     Write-Color -Text "################################" -Color Yellow
     Write-Color -Text "Test Admin UI Page" -Color Yellow
+    Write-Color -Text "endpoint $S2AdminURL" -Color Yellow
     Write-Color -Text "################################" -Color Yellow
-    Test-Application -Endpoint $S2AdminURL -TimeoutMs 10000
+    Test-Application -ApplicationName "Admin UI" -Endpoint $S2AdminURL -TimeoutMs 10000
 }
 
 if ($includeElasticUI) {
     Write-Color -Text "################################" -Color Yellow
     Write-Color -Text "Test Elastic UI Page" -Color Yellow
+    Write-Color -Text "endpoint $S2ElasticUIURL" -Color Yellow
     Write-Color -Text "################################" -Color Yellow
-    Test-Application -Endpoint $S2ElasticUIURL -TimeoutMs 10000
+    Test-Application -ApplicationName "Elastic UI" -Endpoint $S2ElasticUIURL -TimeoutMs 10000
+}
+
+if ($includeSearchAPI) {
+    Write-Color -Text "################################" -Color Yellow
+    Write-Color -Text "Test Search API Status" -Color Yellow
+    Write-Color -Text "endpoint $SearchAPIURL" -Color Yellow
+    Write-Color -Text "################################" -Color Yellow
+    Test-Application -ApplicationName "Search API" -Endpoint $SearchAPIURL -TimeoutMs 10000
+}
+
+if ($includeElasticAPI) {
+    Write-Color -Text "################################" -Color Yellow
+    Write-Color -Text "Test Elastic Search API Status" -Color Yellow
+    Write-Color -Text "endpoint $ElasticSearchAPI" -Color Yellow
+    Write-Color -Text "################################" -Color Yellow
+    Test-Application -ApplicationName "Elastic Search API" -Endpoint $ElasticSearchAPI -TimeoutMs 10000
+}
+
+if ($includeAdminAPI) {
+    Write-Color -Text "################################" -Color Yellow
+    Write-Color -Text "Test S2 Admin API Status" -Color Yellow
+    Write-Color -Text "endpoint $S2AdminAPI" -Color Yellow
+    Write-Color -Text "################################" -Color Yellow
+    Test-Application -ApplicationName "S2 Admin API" -Endpoint $S2AdminAPI -TimeoutMs 10000
 }
 
 Set-Location "$DeploymentRoot\K8s\K8s.Local.Development.Environment"
