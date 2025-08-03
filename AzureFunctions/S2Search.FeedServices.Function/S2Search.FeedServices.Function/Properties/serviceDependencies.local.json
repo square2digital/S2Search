@@ -1,8 +1,26 @@
 {
   "dependencies": {
+    "appInsights1": {
+      "type": "appInsights.sdk"
+    },
+    "secrets1": {
+      "type": "secrets.user"
+    },
+    "storage2": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ServiceLinker/locations/northeurope/connectors/AzureStorageAccount_5CCBCB22E2",
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/s2storagedev",
+      "type": "storage.azure",
+      "connectionId": "AzureStorageAccount",
+      "dynamicId": null
+    },
     "storage1": {
-      "type": "storage.emulator",
-      "connectionId": "AzureWebJobsStorage"
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ServiceLinker/locations/northeurope/connectors/AzureStorageAccount_6EA76FA9C1",
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/s2storagedev",
+      "type": "storage.azure",
+      "connectionId": "AzureStorageAccount",
+      "dynamicId": null
     }
   }
 }

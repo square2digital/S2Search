@@ -1,8 +1,10 @@
-apiVersion: batch/v1
+apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: $env:SERVICENAME-cronjob
 spec:
+  suspend: $env:SUSPENDJOB
+  concurrencyPolicy: Forbid
   schedule: $env:CRONSCHEDULE
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3

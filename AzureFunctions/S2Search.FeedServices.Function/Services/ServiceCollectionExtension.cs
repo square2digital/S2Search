@@ -15,10 +15,10 @@ namespace Services
     {
         public static IServiceCollection AddFunctionServices(this IServiceCollection services) =>
             services.AddServiceDependencies()
-                    .AddManagers()
-                    .AddProviders()
-                    .AddRepositories()
-                    .AddMappers();
+            .AddManagers()
+            .AddProviders()
+            .AddRepositories()
+            .AddMappers();
 
         private static IServiceCollection AddServiceDependencies(this IServiceCollection services) =>
             services

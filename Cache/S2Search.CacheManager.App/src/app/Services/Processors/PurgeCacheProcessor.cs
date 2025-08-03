@@ -66,7 +66,12 @@ namespace Services.Processors
 
             try
             {
-                var purgeCacheMessage = JsonSerializer.Deserialize<PurgeCacheMessage>(decodedMessage);
+                var jsonSerializerOptions = new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                var purgeCacheMessage = JsonSerializer.Deserialize<PurgeCacheMessage>(decodedMessage, jsonSerializerOptions);
                 var hostCacheKey = S2SearchCacheKeyGenerationManager.Generate(purgeCacheMessage.Host);
 
                 logger.LogInformation($"Deleting Cache for {hostCacheKey}");

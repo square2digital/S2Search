@@ -1,59 +1,75 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Domain.Constants;
 using Domain.Exceptions;
 using Domain.Models;
-using Microsoft.Azure.Storage.Blob;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Services.Interfaces.Managers;
 using Services.Interfaces.Providers;
 using Services.Interfaces.Repositories;
 
-namespace S2Search.FeedServices.Function
+namespace FunctionsTest
 {
     public class FeedValidator
     {
+        private readonly BlobServiceClient _blobServiceClient;
         private readonly IFeedRepository _feedRepo;
         private readonly IFeedMapperProvider _feedMapperProvider;
         private readonly IFeedProcessingManager _feedProcessingManager;
+        private readonly ILogger<FeedValidator> _logger;
 
-        public FeedValidator(IFeedRepository feedRepo,
+        public FeedValidator(BlobServiceClient blobServiceClient,
+                             IFeedRepository feedRepo,
                              IFeedMapperProvider feedMapperProvider,
-                             IFeedProcessingManager feedProcessingManager)
+                             IFeedProcessingManager feedProcessingManager,
+                             ILoggerFactory loggerFactory)
         {
+            _blobServiceClient = blobServiceClient;
             _feedRepo = feedRepo ?? throw new ArgumentNullException(nameof(feedRepo));
             _feedMapperProvider = feedMapperProvider ?? throw new ArgumentNullException(nameof(feedMapperProvider));
             _feedProcessingManager = feedProcessingManager ?? throw new ArgumentNullException(nameof(feedProcessingManager));
+            _logger = loggerFactory.CreateLogger<FeedValidator>();
         }
 
-        [FunctionName(FunctionNames.FeedValidator)]
-        public async Task Run([QueueTrigger(StorageQueues.Validate, Connection = ConnectionStrings.AzureStorageAccount)] FeedBlob feedBlob,
-                                IBinder binder,
-                                ILogger logger)
+        [Function(FunctionNames.FeedValidator)]
+        public async Task Run(
+            [QueueTrigger(StorageQueues.Validate, Connection = ConnectionStrings.AzureStorageAccount)] FeedBlob feedBlob,
+            FunctionContext context)
         {
-            logger.LogInformation($"Validator | Validating FeedBlob - CustomerId: {feedBlob.CustomerId}");
+            _logger.LogInformation($"Validator | Validating FeedBlob - CustomerId: {feedBlob.CustomerId}");
 
             try
             {
                 var customerId = Guid.Parse(feedBlob.CustomerId);
-                var csvBlob = await binder.BindAsync<CloudBlockBlob>(new BlobAttribute(feedBlob.BlobUri));
-                var feedDataFormat = await GetFeedDataFormat(customerId, feedBlob, logger);
-                var feedMapper = _feedMapperProvider.GetMapper(feedDataFormat);
-                var feedData = await feedMapper.GetDataAsync(csvBlob);
 
-                var hasFeedData = HasFeedData(feedData, logger);
+                // Parse the container and blob name from the BlobUri
+                var blobUri = new Uri(feedBlob.BlobUri);
+                var containerName = blobUri.Segments[1].TrimEnd('/'); // Extracts container name
+                var blobName = string.Join("", blobUri.Segments.Skip(2)); // Extracts the blob name (after the container)
+
+                // Initialize BlobClient to access the blob
+                //var blobServiceClient = new BlobServiceClient(Environment.GetEnvironmentVariable(ConnectionStrings.AzureStorageAccount));
+                //var blobContainerClient = blobServiceClient.GetBlobContainerClient(new Uri(feedBlob.BlobUri).Segments[1]);
+                //var csvBlobClient = blobContainerClient.GetBlobClient(feedBlob.BlobUri);
+
+                var blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+                var csvBlobClient = blobContainerClient.GetBlobClient(blobName);
+
+                // Download blob and process feed data
+                var feedDataFormat = await GetFeedDataFormat(customerId, feedBlob, _logger);
+                var feedMapper = _feedMapperProvider.GetMapper(feedDataFormat);
+                var feedData = await feedMapper.GetDataAsync(csvBlobClient);
+
+                var hasFeedData = HasFeedData(feedData, _logger);
                 if (hasFeedData)
                 {
-                    await _feedProcessingManager.MoveCsvBlobAsync(csvBlob, feedBlob);
+                    await _feedProcessingManager.MoveCsvBlobAsync(csvBlobClient, feedBlob);
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Validator | Error: {ex.Message}");
+                _logger.LogError(ex, $"Validator | Error: {ex.Message}");
             }
         }
 
@@ -74,24 +90,17 @@ namespace S2Search.FeedServices.Function
         }
 
         /// <summary>
-        /// returns the feed data format for the customerId & searchindex name
-        /// if its null it will logs a critical error and throw an exception
+        /// Returns the feed data format for the customerId & search index name
+        /// If null, logs a critical error and throws an exception
         /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="feedBlob"></param>
-        /// <param name="logger"></param>
-        /// <returns></returns>
         private async Task<string> GetFeedDataFormat(Guid customerId, FeedBlob feedBlob, ILogger logger)
         {
             var feedDataFormat = await _feedRepo.GetDataFormatAsync(customerId, feedBlob.SearchIndexName);
 
             if (string.IsNullOrEmpty(feedDataFormat))
             {
-                // if the feedDataFormat is null it means that there is a config issue for the customer
-                // start by investigating the "KeyPrefix" in SFTPgo for this user
-
+                // Log detailed information and throw an exception
                 StringBuilder sb = new StringBuilder();
-
                 sb.AppendLine($"CustomerId:{customerId}");
                 sb.AppendLine($"FeedBlob customerId:{feedBlob.CustomerId}");
                 sb.AppendLine($"SearchIndexName:{feedBlob.SearchIndexName}");
@@ -100,7 +109,6 @@ namespace S2Search.FeedServices.Function
                 sb.AppendLine($"CurrentFeedArea:{feedBlob.CurrentFeedArea}");
 
                 var message = $"GetFeedDataFormat returned null | Error: {sb.ToString()}";
-
                 logger.LogError(message);
                 throw new FeedDataFormatException(message);
             }

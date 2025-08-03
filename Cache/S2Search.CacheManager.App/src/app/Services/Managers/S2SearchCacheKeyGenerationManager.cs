@@ -4,7 +4,8 @@
     {
         public static string Generate(string host)
         {
-            return $"{host}:";
+            var formattedHost = host.Replace(":", string.Empty);
+            return $"{formattedHost}:";
         }
     }
 }

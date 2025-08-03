@@ -1,6 +1,7 @@
-﻿using Domain.AzureSearch.Index;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
+using Domain.AzureSearch.Index;
 using Domain.Models;
-using Microsoft.Azure.Storage.Blob;
 using Services.Helpers;
 using Services.Interfaces.Managers;
 using Services.Interfaces.Repositories;
@@ -47,10 +48,20 @@ namespace Services.Managers
             await azureSearchManager.ApplySynonynMapToIndexAsync(searchIndexCredentials, genericSynonymsCategory, genericSynonymsTargetFields);
         }
 
-        public Task MoveCsvBlobAsync(CloudBlockBlob csvBlob, FeedBlob feedBlob)
+        public async Task MoveCsvBlobAsync(BlobClient csvBlobClient, FeedBlob feedBlob)
         {
-            var nextDestination = $"{feedBlob.NextDestination}/{feedBlob.FileName}";
-            return csvBlob.MoveToFolderAsync(nextDestination);
+            // Define the new destination for the blob (the "move" operation)
+            var nextDestinationPath = $"{feedBlob.NextDestination}/{feedBlob.FileName}";
+
+            // Get a BlobClient for the destination blob
+            BlobContainerClient containerClient = csvBlobClient.GetParentBlobContainerClient();
+            BlobClient destinationBlobClient = containerClient.GetBlobClient(nextDestinationPath);
+
+            // Start the copy operation
+            await destinationBlobClient.StartCopyFromUriAsync(csvBlobClient.Uri);
+
+            // Wait for the copy to complete (optional: check the status of the copy if needed)
+            await csvBlobClient.DeleteAsync(); // Delete the original blob after copy is complete
         }
 
         public async Task ProcessFeedDataAsync(IEnumerable<VehicleIndex> feedData, SearchIndexCredentials searchIndexCredentials)
