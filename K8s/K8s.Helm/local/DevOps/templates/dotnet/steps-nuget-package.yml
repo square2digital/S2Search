@@ -1,0 +1,21 @@
+parameters:
+  - name: targetPackageProject
+    type: string
+    default: ""
+  - name: vstsFeed
+    type: string
+    default: ""
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: Dotnet Pack
+    inputs:
+      command: "pack"
+      packagesToPack: "${{ parameters.targetPackageProject }}"
+      versioningScheme: "byBuildNumber"
+
+  - task: DotNetCoreCLI@2
+    displayName: Nuget Push
+    inputs:
+      command: "push"
+      publishVstsFeed: "${{ parameters.vstsFeed }}"

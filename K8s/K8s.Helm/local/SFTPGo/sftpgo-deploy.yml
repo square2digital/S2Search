@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sftpgo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "1Gi"
+  storageClassName: "default"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sftpgo-deployment
+  labels:
+    app: sftpgo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sftpgo
+  template:
+    metadata:
+      labels:
+        app: sftpgo
+    spec:
+      initContainers:
+        - name: init-set-permissions
+          image: busybox
+          command: ["sh", "-c", "chmod -R 755 /var/lib/sftpgo"]
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/sftpgo
+      containers:
+        - name: sftpgo
+          image: drakkan/sftpgo:v2.6.2
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 2022
+              name: sftp
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/sftpgo
+            - name: data
+              mountPath: /var/lib/sftpgo
+      volumes:
+        - name: config
+          configMap:
+            name: sftpgo-configmap
+        - name: data
+          persistentVolumeClaim:
+            claimName: sftpgo-pvc

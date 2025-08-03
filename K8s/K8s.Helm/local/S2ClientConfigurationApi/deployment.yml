@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s2clientconfigurationapi-deployment
+  labels:
+    app: s2clientconfigurationapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s2clientconfigurationapi
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: s2clientconfigurationapi
+    spec:
+      containers:
+        - name: s2clientconfigurationapi
+          image: registry.gitlab.com/dp-dev0/s2search/s2clientconfigurationapi:latest
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "128Mi" #128 MB
+              cpu: "200m" #200 millicpu (.2 cpu or 20% of the cpu)
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /api/Status
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/Status
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+      imagePullSecrets:
+        - name: gitlab-registry-secret

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: s2searchui-loadbalancer
+  labels:
+    app: s2searchui
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-ssl-ports: "443"
+spec:
+  type: LoadBalancer
+  selector:
+    app: s2searchui
+  ports:
+    - name: "2999"
+      port: 2999
+      targetPort: 2999
+    - name: "https"
+      port: 443
+      targetPort: 2999
+    - name: "http"
+      port: 80
+      targetPort: 2999

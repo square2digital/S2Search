@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: s2searchui-clusterip
+  labels:
+    app: s2searchui
+spec:
+  type: ClusterIP
+  selector:
+    app: s2searchui
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s2searchui-deployment
+  labels:
+    app: s2searchui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s2searchui
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: s2searchui
+    spec:
+      containers:
+        - name: s2searchui
+          image: registry.gitlab.com/dp-dev0/s2search/s2searchui:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "128Mi" #128 MB
+              cpu: "200m" #200 millicpu (.2 cpu or 20% of the cpu)
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /vehicletest
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+      imagePullSecrets:
+        - name: gitlab-registry-secret

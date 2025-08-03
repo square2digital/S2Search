@@ -1,0 +1,203 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sftpgo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: { { .Values.storage.persistentVolumes.sftpgo } }
+  storageClassName: { { .Values.storageClass.default } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sftpgo-service
+  labels:
+    app: sftpgo
+spec:
+  type: ClusterIP
+  selector:
+    app: sftpgo
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sftpgo-deployment
+  labels:
+    app: sftpgo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sftpgo
+  template:
+    metadata:
+      labels:
+        app: sftpgo
+    spec:
+      containers:
+        - name: sftpgo
+          image: drakkan/sftpgo:v2.2.0
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 2022
+              name: sftp
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/sftpgo
+            - name: data
+              mountPath: /var/lib/sftpgo # Adjust this path as needed
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+      volumes:
+        - name: config
+          configMap:
+            name: sftpgo-configmap
+        - name: data
+          persistentVolumeClaim:
+            claimName: sftpgo-pvc
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sftpgo-configmap
+  labels:
+    app: sftpgo
+data:
+  sftpgo.json: |
+    {
+      "common": {
+        "idle_timeout": 15,
+        "upload_mode": 0,
+        "actions": {
+          "execute_on": [],
+          "hook": ""
+        },
+        "setstat_mode": 0,
+        "proxy_protocol": 0,
+        "proxy_allowed": [],
+        "post_connect_hook": ""
+      },
+      "sftpd": {
+        "bind_port": 2022,
+        "bind_address": "",
+        "max_auth_tries": 0,
+        "banner": "",
+        "host_keys": [],
+        "kex_algorithms": [],
+        "ciphers": [],
+        "macs": [],
+        "trusted_user_ca_keys": [],
+        "login_banner_file": "",
+        "enabled_ssh_commands": [
+          "md5sum",
+          "sha1sum",
+          "cd",
+          "pwd",
+          "scp"
+        ],
+        "keyboard_interactive_auth_hook": "",
+        "password_authentication": true
+      },
+      "ftpd": {
+        "bind_port": 0,
+        "bind_address": "",
+        "banner": "",
+        "banner_file": "",
+        "active_transfers_port_non_20": false,
+        "force_passive_ip": "",
+        "passive_port_range": {
+          "start": 50000,
+          "end": 50100
+        },
+        "certificate_file": "",
+        "certificate_key_file": "",
+        "tls_mode": 0
+      },
+      "webdavd": {
+        "bind_port": 0,
+        "bind_address": "",
+        "certificate_file": "",
+        "certificate_key_file": "",
+        "cors": {
+          "enabled": false,
+          "allowed_origins": [],
+          "allowed_methods": [],
+          "allowed_headers": [],
+          "exposed_headers": [],
+          "allow_credentials": false,
+          "max_age": 0
+        },
+        "cache": {
+          "users": {
+            "expiration_time": 0,
+            "max_size": 50
+          },
+          "mime_types": {
+            "enabled": true,
+            "max_size": 1000
+          }
+        }
+      },
+      "data_provider": {
+        "driver": "mysql",
+        "name": "mysql",
+        "host": "mysql",
+        "port": 3306,
+        "username": "root",
+        "password": "password",
+        "sslmode": 0,
+        "connection_string": "",
+        "sql_tables_prefix": "",
+        "manage_users": 1,
+        "track_quota": 2,
+        "pool_size": 0,
+        "users_base_dir": "/srv/sftpgo/data",
+        "actions": {
+          "execute_on": [],
+          "hook": ""
+        },
+        "external_auth_hook": "",
+        "external_auth_scope": 0,
+        "credentials_path": "credentials",
+        "prefer_database_credentials": false,
+        "pre_login_hook": "",
+        "post_login_hook": "",
+        "post_login_scope": 0,
+        "check_password_hook": "",
+        "check_password_scope": 0,
+        "password_hashing": {
+          "argon2_options": {
+            "memory": 65536,
+            "iterations": 1,
+            "parallelism": 2
+          }
+        },
+        "update_mode": 0
+      },
+      "httpd": {
+        "bind_port": 8080,
+        "bind_address": "",
+        "templates_path": "templates",
+        "static_files_path": "static",
+        "backups_path": "/srv/sftpgo/backups",
+        "auth_user_file": "",
+        "certificate_file": "",
+        "certificate_key_file": ""
+      },
+      "http": {
+        "timeout": 20,
+        "ca_certificates": [],
+        "skip_tls_verify": false
+      }
+    }

@@ -1,0 +1,54 @@
+domain: "demo.datadetect.com"
+subDomain: "k8s"
+environment: "Development"
+servicePorts:
+  detectservicesSwagger: 30000
+  postgresLoadbalancer: 5432
+  natsLoadbalancer: 4222
+acr:
+  datadetect: "datadetectregistry"
+replicas:
+  neo4j: 1
+containers:
+  rolodex: "latest"
+storage:
+  persistentVolumes:
+    sftpgo: "100Mi"
+    mysql: "100Mi"
+  storageClass:
+    default: "default"
+    azurefile: "azurefile"
+liveness:
+  timeoutSeconds: 30
+  initialDelaySeconds: 30
+  periodSeconds: 30
+resources:
+  low:
+    limits:
+      cpu: "1000m" # 25% of one vCPU
+      memory: "4Gi" # 25% of total memory
+    requests:
+      cpu: "250m" # 6.25% of one vCPU
+      memory: "1Gi" # 6.25% of total memory
+  medium:
+    limits:
+      cpu: "2000m" # 50% of one vCPU
+      memory: "8Gi" # 50% of total memory
+    requests:
+      cpu: "500m" # 12.5% of one vCPU
+      memory: "2Gi" # 12.5% of total memory
+  high:
+    limits:
+      cpu: "4000m" # 100% of one vCPU
+      memory: "16Gi" # 100% of total memory
+    requests:
+      cpu: "1000m" # 25% of one vCPU
+      memory: "4Gi" # 25% of total memory
+logging:
+  minimumLevel: "Warning"
+  printDebugStatements: "false"
+  levelSwitches:
+    aiLogLevel: "Information"
+    debugLogLevel: "Warning"
+    fileLogLevel: "Debug"
+    consoleLogLevel: "Debug"

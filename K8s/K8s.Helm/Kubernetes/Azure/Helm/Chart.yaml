@@ -1,0 +1,8 @@
+apiVersion: v1
+name: S2Search
+description: A generated Helm Chart for S2Search
+
+version: 1.0.0
+appVersion: 1.0.0
+keywords:
+  - S2Search
