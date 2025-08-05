@@ -3,7 +3,7 @@ using Domain.SearchResources.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Services.Configuration.Interfaces.Repositories;
 
-namespace S2Search.ClientConfiguration.API.Controllers
+namespace Admin.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

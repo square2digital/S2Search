@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace S2Search.ClientConfiguration.API.Controllers
+namespace Admin.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

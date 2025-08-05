@@ -2,7 +2,7 @@ using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace S2Search.ClientConfiguration.API.Filters
+namespace Admin.Filters
 {
     public class ProbeEndpointFilter : ITelemetryProcessor
     {

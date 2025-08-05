@@ -1,5 +1,4 @@
 using Domain.AppSettings;
-using S2Search.ClientConfiguration.API.Filters; // Ensure ProbeEndpointFilter exists in this namespace
 using Microsoft.OpenApi.Models;
 using Services.Configuration.Interfaces.Repositories;
 using Services.Configuration.Repositories;
