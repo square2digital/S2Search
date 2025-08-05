@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -11,19 +11,21 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
-	  <PackageReference Include="Azure.Storage.Queues" Version="12.14.0" />
-	  <PackageReference Include="CronExpressionDescriptor" Version="2.20.0" />
-	  <PackageReference Include="Dapper" Version="2.0.35" />
+	  <PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
+	  <PackageReference Include="Azure.Storage.Queues" Version="12.23.0" />
+	  <PackageReference Include="CronExpressionDescriptor" Version="2.44.0" />
+	  <PackageReference Include="Dapper" Version="2.1.66" />
 	  <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+	  <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
 	  <PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />
 	  <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-	  <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.8" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" />
-	  <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-	  <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.8" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
+	  <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	  <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+	  <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 
 </Project>

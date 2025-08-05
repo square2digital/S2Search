@@ -1,7 +1,6 @@
 using Domain.AppSettings;
 using S2Search.ClientConfiguration.API.Filters;
 using Microsoft.OpenApi.Models;
-using CustomerResource.Filters;
 using Services.Configuration.Interfaces.Repositories;
 using Services.Configuration.Repositories;
 using Services.Customer.Interfaces.Managers;
@@ -108,7 +107,7 @@ namespace S2Search.Admin.API
                 //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 //c.IncludeXmlComments(xmlPath);
-                c.DocumentFilter<AdditionalPropertiesDocumentFilter>();
+                //c.DocumentFilter<AdditionalPropertiesDocumentFilter>();
             });
 
             services.AddHttpContextAccessor();
