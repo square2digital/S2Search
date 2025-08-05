@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development PORT=2997 next dev",
-    "build": "next build",
+    "dev": "cross-env NODE_ENV=development PORT=2997 NODE_OPTIONS='--openssl-legacy-provider' next dev",
+    "build": "cross-env NODE_OPTIONS='--openssl-legacy-provider' next build",
     "start": "next start"
   },
   "dependencies": {
@@ -17,9 +17,9 @@
     "@mui/system": "^5.11.4",
     "autosuggest-highlight": "^3.3.4",
     "axios": "^1.2.2",
-    "next": "^11.1.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "next": "^13.5.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-redux": "^7.2.8"
   },
   "devDependencies": {
