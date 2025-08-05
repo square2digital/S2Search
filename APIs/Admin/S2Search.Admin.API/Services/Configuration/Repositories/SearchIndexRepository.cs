@@ -2,10 +2,11 @@
 using Domain.Customer.Constants;
 using Domain.Customer.Enums;
 using Domain.Customer.SearchResources.CustomerPricing;
-using Domain.Customer.SearchResources.SearchIndex;
+using Domain.Customer.SearchResources.SearchIndex;              
 using Domain.Customer.SearchResources.SearchInstanceKeys;
 using Domain.Customer.Shared;
 using Domain.SearchResources;
+using Microsoft.Extensions.Configuration;
 using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 using Services.Configuration.Interfaces.Repositories;
 using Services.Customer.Interfaces.Managers;
@@ -15,11 +16,21 @@ namespace Services.Configuration.Repositories
     public class SearchIndexRepository : ISearchIndexRepository
     {
         private readonly IDbContextProvider _dbContext;
-        private readonly IQueueManager _queueManager;
+        private readonly IQueueManager? _queueManager;
+        private readonly IConfiguration _configuration;
 
-        public SearchIndexRepository(IDbContextProvider dbContext)
+        // Only one public constructor for DI
+        public SearchIndexRepository(IDbContextProvider dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        }
+
+        // If you need the other constructor for manual use, make it private
+        private SearchIndexRepository(IDbContextProvider dbContext, IQueueManager queueManager)
+        {
+            _dbContext = dbContext;
+            _queueManager = queueManager;
         }
 
         public async Task<SearchIndexQueryCredentials> GetQueryCredentialsAsync(string customerEndpoint)
@@ -29,9 +40,12 @@ namespace Services.Configuration.Repositories
                 { "CustomerEndpoint", customerEndpoint }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexQueryCredentials>(ConnectionStrings.CustomerResourceStore,
-                                                                                 StoredProcedures.GetSearchIndexQueryCredentials,
-                                                                                 parameters);
+            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+
+            var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexQueryCredentials>(
+                connectionString,
+                StoredProcedures.GetSearchIndexQueryCredentials,
+                parameters);
 
             return result;
         }
@@ -48,12 +62,6 @@ namespace Services.Configuration.Repositories
                                                                                  parameters);
 
             return result;
-        }
-
-        public SearchIndexRepository(IDbContextProvider dbContext, IQueueManager queueManager)
-        {
-            _dbContext = dbContext;
-            _queueManager = queueManager;
         }
 
         public void Create(SearchIndexRequest resourceRequest)

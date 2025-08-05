@@ -4,16 +4,19 @@ using Domain.Customer.SearchResources.Themes;
 using Domain.SearchResources;
 using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 using Services.Configuration.Interfaces.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace Services.Configuration.Repositories
 {
     public class ThemeRepository : IThemeRepository
     {
         private readonly IDbContextProvider _dbContext;
+        private readonly IConfiguration _configuration;
 
-        public ThemeRepository(IDbContextProvider dbContext)
+        public ThemeRepository(IDbContextProvider dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public async Task<Theme> GetThemeAsync(string customerEndpoint)
@@ -23,9 +26,13 @@ namespace Services.Configuration.Repositories
                 { "CustomerEndpoint", customerEndpoint }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(ConnectionStrings.CustomerResourceStore,
-                                                                           StoredProcedures.GetTheme,
-                                                                           parameters);
+            // Pass the key, not the value
+            var connectionStringKey = "CustomerResourceStore";
+
+            var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
+                connectionStringKey,
+                StoredProcedures.GetTheme,
+                parameters);
 
             return result;
         }
@@ -37,7 +44,12 @@ namespace Services.Configuration.Repositories
                 { "ThemeId", themeId }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(ConnectionStrings.CustomerResourceStore, StoredProcedures.GetThemeById, parameters);
+            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+
+            var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
+                connectionString,
+                StoredProcedures.GetThemeById,
+                parameters);
 
             return result;
         }
@@ -49,7 +61,12 @@ namespace Services.Configuration.Repositories
                 { "CustomerId", customerId }
             };
 
-            var result = await _dbContext.QueryMultipleAsync<ThemeCollection>(ConnectionStrings.CustomerResourceStore, StoredProcedures.GetThemeByCustomerId, parameters);
+            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+
+            var result = await _dbContext.QueryMultipleAsync<ThemeCollection>(
+                connectionString,
+                StoredProcedures.GetThemeByCustomerId,
+                parameters);
 
             return result;
         }
@@ -61,7 +78,12 @@ namespace Services.Configuration.Repositories
                 { "SearchIndexId", searchIndexId }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(ConnectionStrings.CustomerResourceStore, StoredProcedures.GetThemeBySearchIndexId, parameters);
+            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+
+            var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
+                connectionString,
+                StoredProcedures.GetThemeBySearchIndexId,
+                parameters);
 
             return result;
         }
@@ -78,7 +100,12 @@ namespace Services.Configuration.Repositories
                 { "MissingImageURL", theme.MissingImageURL }
             };
 
-            var result = await _dbContext.ExecuteAsync(ConnectionStrings.CustomerResourceStore, StoredProcedures.UpdateTheme, parameters);
+            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+
+            var result = await _dbContext.ExecuteAsync(
+                connectionString,
+                StoredProcedures.UpdateTheme,
+                parameters);
 
             return result;
         }
