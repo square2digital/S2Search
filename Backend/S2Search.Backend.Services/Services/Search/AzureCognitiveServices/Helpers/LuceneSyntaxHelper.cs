@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
-using Domain.Models.Facets;
 using System.Text.Json;
 using System.Globalization;
 using Microsoft.Extensions.Logging;

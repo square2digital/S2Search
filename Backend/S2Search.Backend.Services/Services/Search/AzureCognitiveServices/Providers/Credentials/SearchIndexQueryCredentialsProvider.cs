@@ -2,27 +2,24 @@
 using Newtonsoft.Json;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
-using S2Search.Backend.Services.Services.Search.Elastic.Helpers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
 using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
 using S2Search.Backend.Domain.Interfaces;
+using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
 
 namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Providers.Credentials
 {
     public class SearchIndexQueryCredentialsProvider : ISearchIndexQueryCredentialsProvider
     {
         private readonly ILogger _logger;
-        private readonly IS2SearchAPIClient _clientConfigClient;
         private readonly IAppSettings _appSettings;
         private readonly IDistributedCacheService _redisService;        
 
         public SearchIndexQueryCredentialsProvider(ILogger<SearchIndexQueryCredentialsProvider> logger,
-                                                   IS2SearchAPIClient clientConfigClient,
                                                    IAppSettings appSettings,
                                                    IDistributedCacheService redisService)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _clientConfigClient = clientConfigClient ?? throw new ArgumentNullException(nameof(clientConfigClient));
             _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
             _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }

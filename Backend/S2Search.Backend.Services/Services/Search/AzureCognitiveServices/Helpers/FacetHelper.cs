@@ -1,11 +1,5 @@
-﻿using Domain.Models.Facets;
+﻿using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Domain.Models.Facets;
-using S2Search.Backend.Domain.Models.Interfaces;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text.Json;
 

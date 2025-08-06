@@ -1,11 +1,8 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using S2Search.Backend.Domain.Models.Interfaces;
 using S2Search.Backend.Domain.Models.Request;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
+using S2Search.Backend.Domain.Interfaces;
 
 namespace Services.Providers
 {

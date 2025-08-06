@@ -1,5 +1,4 @@
-﻿using Domain.Constants;
-using S2Search.Backend.Domain.Admin.Customer.Constants;
+﻿using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
 
 namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories

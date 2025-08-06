@@ -1,5 +1,4 @@
-﻿using Domain.Models.Facets;
-using S2Search.Backend.Domain.Interfaces.FacetOverrides;
+﻿using S2Search.Backend.Domain.Interfaces.FacetOverrides;
 using S2Search.Backend.Domain.Models.Facets;
 using System;
 

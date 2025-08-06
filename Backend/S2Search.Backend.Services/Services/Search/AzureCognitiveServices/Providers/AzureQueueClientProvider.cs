@@ -1,7 +1,6 @@
 ﻿using Azure.Storage.Queues;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
-using System;
-using System.Threading.Tasks;
+using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 
 namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Providers
 {

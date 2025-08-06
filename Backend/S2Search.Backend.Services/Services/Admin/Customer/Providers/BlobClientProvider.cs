@@ -1,5 +1,5 @@
 ﻿using Azure.Storage.Blobs;
-using S2Search.Backend.Domain.Admin.Customer.Constants;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
 using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 

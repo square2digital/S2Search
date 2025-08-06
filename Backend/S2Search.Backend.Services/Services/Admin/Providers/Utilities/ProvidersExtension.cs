@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Services.Providers.AzureSearch;
+using S2Search.Backend.Services.Services.Admin.Providers.AzureSearch;
 
 namespace S2Search.Backend.Services.Services.Admin.Providers.Utilities
 {

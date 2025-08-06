@@ -1,8 +1,5 @@
 ﻿using S2Search.Backend.Domain.Models.Dapper;
-using S2Search.Common.Database.Sql.Dapper.Models;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers

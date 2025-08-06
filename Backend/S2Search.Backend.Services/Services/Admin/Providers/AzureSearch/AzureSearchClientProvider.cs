@@ -1,5 +1,7 @@
-﻿using LazyCache;
-using Microsoft.Azure.Search;
+﻿using Azure;
+using Azure.Search.Documents;
+using Azure.Search.Documents.Indexes;
+using LazyCache;
 
 namespace S2Search.Backend.Services.Services.Admin.Providers.AzureSearch
 {
@@ -12,22 +14,30 @@ namespace S2Search.Backend.Services.Services.Admin.Providers.AzureSearch
             _clientCache = clientCache;
         }
 
-        public ISearchIndexClient GetIndexClient(string searchServiceName, string indexName, string apiKey)
+        public SearchClient GetSearchClient(string searchServiceName, string indexName, string apiKey)
         {
-            var client = GetServiceClient(searchServiceName, apiKey);
-            var indexClient = client.Indexes.GetClient(indexName);
+            var endpoint = GetEndpoint(searchServiceName);
+            var credential = new AzureKeyCredential(apiKey);
 
-            return indexClient;
+            // Optionally cache by endpoint+indexName+apiKey
+            var cacheKey = $"{endpoint}-{indexName}-{apiKey}";
+            return _clientCache.GetOrAdd(cacheKey, () => new SearchClient(endpoint, indexName, credential));
         }
 
-        public ISearchServiceClient GetServiceClient(string searchServiceName, string apiKey)
+        public SearchIndexClient GetSearchIndexClient(string searchServiceName, string apiKey)
         {
-            return _clientCache.GetOrAdd(searchServiceName, () => CreateServiceClient(searchServiceName, apiKey));
+            var endpoint = GetEndpoint(searchServiceName);
+            var credential = new AzureKeyCredential(apiKey);
+
+            // Optionally cache by endpoint+apiKey
+            var cacheKey = $"{endpoint}-indexclient-{apiKey}";
+            return _clientCache.GetOrAdd(cacheKey, () => new SearchIndexClient(endpoint, credential));
         }
 
-        private static ISearchServiceClient CreateServiceClient(string searchServiceName, string apiKey)
+        private static Uri GetEndpoint(string searchServiceName)
         {
-            return new SearchServiceClient(searchServiceName, new SearchCredentials(apiKey));
+            // Azure Search endpoint format: https://<service-name>.search.windows.net
+            return new Uri($"https://{searchServiceName}.search.windows.net");
         }
     }
 }

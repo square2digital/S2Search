@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
-using S2Search.Backend.Domain.Models.Interfaces;
+using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
 using System;
 

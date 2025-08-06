@@ -5,6 +5,9 @@ namespace S2Search.Backend.Domain.Models
 {
     public class AppSettings : IAppSettings
     {
+        public bool UseGenericResponse { get; set; }
+        public bool Development { get; set; }
+
         public DemoSearchCredentials DemoSearchCredentials { get; set; }
         public SearchSettings SearchSettings { get; set; }
         public FacetSettings FacetSettings { get; set; }
