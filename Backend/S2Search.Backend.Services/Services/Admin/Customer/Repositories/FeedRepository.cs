@@ -1,10 +1,10 @@
 ﻿using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.Feeds;
+using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Backend.Services.Admin.Customer.Interfaces.Managers;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Providers;
 
 namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 {

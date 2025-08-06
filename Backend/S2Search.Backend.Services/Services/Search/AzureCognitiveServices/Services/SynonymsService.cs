@@ -47,19 +47,19 @@ namespace Services.Services
 
         private async Task<List<string>> GetGenericSynomynsFactory(string category)
         {
-            _logger.LogInformation($"Cache miss on {nameof(GetGenericSynomynsFactory)}");
+            //_logger.LogInformation($"Cache miss on {nameof(GetGenericSynomynsFactory)}");
 
-            var header = ApiManagerHelper.GetHeader(_appSettings.ClientConfigurationSettings.HeaderAPISubscriptionName, _appSettings.ClientConfigurationSettings.APISubscriptionKey);
-            var response = await _clientConfigClient.GetGenericSynonymsAsync(category);
+            //var header = ApiManagerHelper.GetHeader(_appSettings.ClientConfigurationSettings.HeaderAPISubscriptionName, _appSettings.ClientConfigurationSettings.APISubscriptionKey);
+            //var response = await _clientConfigClient.GetGenericSynonymsAsync(category);
 
             var synonymsList = new List<string>();
 
-            var synonymsCollection = response;
+            //var synonymsCollection = response;
 
-            foreach (var synonym in synonymsCollection)
-            {
-                synonymsList.Add(synonym.SolrFormat);
-            }
+            //foreach (var synonym in synonymsCollection)
+            //{
+            //    synonymsList.Add(synonym.SolrFormat);
+            //}
 
             return synonymsList;
         }

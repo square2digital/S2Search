@@ -1,16 +1,13 @@
-﻿using Dapper;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using System.Collections.Generic;
+﻿using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 using System.Data;
-using System.Threading.Tasks;
-using System;
 using System.Dynamic;
 using S2Search.Backend.Domain.Models.Dapper;
-using S2Search.Backend.Common.S2Search.Common.Database.Sql.Dapper.S2Search.Common.Database.Sql.Dapper.Models;
+using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Backend.Services.Services.Admin.Dapper.Helpers;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Providers;
+using Dapper;
+using static Dapper.SqlMapper;
 
-namespace S2Search.Backend.Common.S2Search.Common.Database.Sql.Dapper.S2Search.Common.Database.Sql.Dapper.Providers
+namespace S2Search.Backend.Services.Services
 {
     public class DbContextProvider : IDbContextProvider
     {

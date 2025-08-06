@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Providers;
+using S2Search.Backend.Domain.Interfaces.Providers;
 using Services.Dapper.Providers;
 using System.Data.SqlClient;
 

@@ -2,8 +2,8 @@
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.Notifications;
 using S2Search.Backend.Domain.Customer.Shared;
+using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Providers;
 
 namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 {

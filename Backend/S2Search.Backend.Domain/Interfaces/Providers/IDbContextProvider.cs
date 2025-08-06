@@ -1,4 +1,4 @@
-﻿namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Providers
+﻿namespace S2Search.Backend.Domain.Interfaces.Providers
 {
     public interface IDbContextProvider
     {

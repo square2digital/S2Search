@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.SearchConfiguration;
 using S2Search.Backend.Domain.Interfaces.Repositories;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Providers;
+using S2Search.Backend.Domain.Interfaces.Providers;
 
 namespace S2Search.Backend.Services.Admin.Configuration.Repositories
 {

@@ -66,40 +66,40 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Provi
             }
         }
 
-        private async Task<SearchIndexQueryCredentials> GetQueryCredentialsAsync(string callingHost)
-        {
-            try
-            {
-                //var header = ApiManagerHelper.GetHeader(_appSettings.ClientConfigurationSettings.HeaderAPISubscriptionName, _appSettings.ClientConfigurationSettings.APISubscriptionKey);
-                var response = await _clientConfigClient.GetSearchIndexQueryCredentialsAsync(callingHost);
+        //private async Task<SearchIndexQueryCredentials> GetQueryCredentialsAsync(string callingHost)
+        //{
+        //    try
+        //    {
+        //        //var header = ApiManagerHelper.GetHeader(_appSettings.ClientConfigurationSettings.HeaderAPISubscriptionName, _appSettings.ClientConfigurationSettings.APISubscriptionKey);
+        //        var response = await _clientConfigClient.GetSearchIndexQueryCredentialsAsync(callingHost);
 
-                //if (!response.Response.IsSuccessStatusCode)
-                //{
-                //    if (response.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                //    {
-                //        return null;
-                //    }
-                //}
+        //        //if (!response.Response.IsSuccessStatusCode)
+        //        //{
+        //        //    if (response.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        //        //    {
+        //        //        return null;
+        //        //    }
+        //        //}
 
-                //var content = await response.Response.Content.ReadAsStringAsync();
-                //var queryCredentials = JsonConvert.DeserializeObject<SearchIndexQueryCredentials>(content);
-                var queryCredentials = response;
-                var azureSearchResource = new SearchIndexQueryCredentials()
-                {
-                    SearchIndexId = queryCredentials.SearchIndexId,
-                    SearchInstanceEndpoint = queryCredentials.SearchInstanceEndpoint,
-                    SearchInstanceName = queryCredentials.SearchInstanceName,
-                    SearchIndexName = queryCredentials.SearchIndexName,
-                    QueryApiKey = queryCredentials.ApiKey
-                };
+        //        //var content = await response.Response.Content.ReadAsStringAsync();
+        //        //var queryCredentials = JsonConvert.DeserializeObject<SearchIndexQueryCredentials>(content);
+        //        var queryCredentials = response;
+        //        var azureSearchResource = new SearchIndexQueryCredentials()
+        //        {
+        //            SearchIndexId = queryCredentials.SearchIndexId,
+        //            SearchInstanceEndpoint = queryCredentials.SearchInstanceEndpoint,
+        //            SearchInstanceName = queryCredentials.SearchInstanceName,
+        //            SearchIndexName = queryCredentials.SearchIndexName,
+        //            QueryApiKey = queryCredentials.ApiKey
+        //        };
 
-                return azureSearchResource;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error on {nameof(GetQueryCredentialsAsync)} | CallingHost: {callingHost} | Message: {ex.Message}");
-                throw;
-            }
-        }
+        //        return azureSearchResource;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, $"Error on {nameof(GetQueryCredentialsAsync)} | CallingHost: {callingHost} | Message: {ex.Message}");
+        //        throw;
+        //    }
+        //}
     }
 }

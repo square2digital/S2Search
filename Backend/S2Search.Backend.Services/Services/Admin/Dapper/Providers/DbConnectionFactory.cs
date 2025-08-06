@@ -1,6 +1,6 @@
-﻿using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
+﻿using Microsoft.Data.SqlClient;
+using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace S2Search.Backend.Services.Services.Admin.Dapper.Providers
 {

@@ -7,9 +7,10 @@ using S2Search.Backend.Domain.Customer.Enums;
 using S2Search.Backend.Domain.Customer.SearchResources.CustomerPricing;
 using S2Search.Backend.Domain.Customer.SearchResources.SearchIndex;
 using S2Search.Backend.Domain.Customer.SearchResources.SearchInstanceKeys;
+using S2Search.Backend.Domain.Customer.Shared;
+using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Backend.Domain.Interfaces.Repositories;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Providers;
 
 namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
 {
