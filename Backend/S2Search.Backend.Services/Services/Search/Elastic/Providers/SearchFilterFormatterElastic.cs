@@ -1,0 +1,139 @@
+﻿using System.Text;
+
+namespace S2Search.Backend.Services.Services.Search.Elastic.Providers
+{
+    public static class SearchFilterFormatterElastic
+    {
+        private static string _and = "AND";
+        private static string _or = "OR";
+
+        public static string Format(IEnumerable<string> unformattedFilters)
+        {
+            var newFilters = new List<string>();
+
+            if (unformattedFilters != null && unformattedFilters.All(x => x != null))
+            {
+                foreach (var filter in unformattedFilters)
+                {
+                    if (filter.IndexOf('|') != -1)
+                    {
+                        var newFilter = filter.Split('|').ToList();
+                        newFilters.AddRange(newFilter.Where(x => !string.IsNullOrEmpty(x)));
+                    }
+                    else
+                    {
+                        newFilters.Add(filter);
+                    }
+                }
+
+                unformattedFilters = newFilters;
+            }
+
+            var filterList = GroupFilters(unformattedFilters);
+
+            var filterStringNew = string.Join("", filterList);
+
+            return filterStringNew;
+        }
+
+        private static List<string> GroupFilters(IEnumerable<string> filters)
+        {
+            List<string> filterList = new List<string>();
+            Dictionary<string, int> occurances = new Dictionary<string, int>();
+
+            foreach (var filter in filters)
+            {
+                if (string.IsNullOrEmpty(filter)) continue;
+
+                var categoryName = filter.Substring(0, filter.IndexOf(':'));
+
+                if (occurances.Count == 0 || !occurances.ContainsKey(categoryName))
+                {
+                    occurances.Add(categoryName, 1);
+                    continue;
+                }
+
+                if (occurances.ContainsKey(categoryName))
+                {
+                    int count = occurances[categoryName];
+                    occurances[categoryName] = (count + 1);
+                }
+            }
+
+            foreach (var kvp in occurances)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                int i = 1;
+                foreach (var filter in filters)
+                {
+                    var categoryName = filter.Substring(0, filter.IndexOf(':'));
+                    if (categoryName != kvp.Key) continue;
+
+                    string keyword = string.Empty;
+
+                    if (kvp.Value % 2 == 0)
+                    {
+                        keyword = $" {_or} ";
+                    }
+                    else
+                    {
+                        keyword = $" {_and} ";
+                    }
+
+                    if (i == 1 && i != kvp.Value)
+                    {
+                        sb.Append("(" + filter);
+                        i++;
+                        continue;
+                    }
+                    if (i == 1 && i == kvp.Value)
+                    {
+                        sb.Append(filter);
+                        i++;
+                        continue;
+                    }
+                    if (i > 1 && i != kvp.Value)
+                    {
+                        sb.Append($" {_or} " + filter);
+                        i++;
+                        continue;
+                    }
+                    if (i > 1 && i == kvp.Value)
+                    {
+                        sb.Append($" {_or} " + filter + ")");
+                        i++;
+                        continue;
+                    }
+                    if (i == kvp.Value)
+                    {
+                        sb.Append(filter + ")");
+                        i++;
+                        continue;
+                    }
+                }
+
+                filterList.Add(sb.ToString());
+            }
+
+            List<string> filterListCopy = new List<string>();
+
+            int index = 1;
+            foreach (string filter in filterList)
+            {
+                if (index != filterList.Count)
+                {
+                    filterListCopy.Add(filter + $" {_and} ");
+                }
+                else
+                {
+                    filterListCopy.Add(filter);
+                }
+
+                index++;
+            }
+
+            return filterListCopy;
+        }
+    }
+}
