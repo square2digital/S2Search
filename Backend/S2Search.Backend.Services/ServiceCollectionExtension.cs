@@ -10,6 +10,8 @@ using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Backend.Domain.Interfaces.Repositories;
 using S2Search.Backend.Domain.Models;
 using S2Search.Backend.Services.Admin.Configuration.Repositories;
+using S2Search.Backend.Services.Admin.Customer.Interfaces.Managers;
+using S2Search.Backend.Services.Admin.Customer.Managers;
 using S2Search.Backend.Services.Services;
 using S2Search.Backend.Services.Services.Admin.Configuration.Repositories;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
@@ -113,7 +115,16 @@ namespace S2Search.Backend.Services
                 .AddSingleton<IDashboardRepository, DashboardRepository>()
                 .AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>()
                 .AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>()
-                .AddSingleton<ISearchInsightsReportRepository, SearchInsightsReportRepository>();
+                .AddSingleton<ISearchInsightsReportRepository, SearchInsightsReportRepository>()
+                .AddSingleton<IFeedRepository, FeedRepository>();
+
+            services.AddSingleton<IFeedSettingsValidationManager, FeedSettingsValidationManager>();
+            services.AddSingleton<ICronDescriptionManager, CronDescriptionManager>();
+            services.AddSingleton<INotificationRuleValidationManager, NotificationRuleValidationManager>();
+            services.AddSingleton<ISearchInterfaceValidationManager, SearchInterfaceValidationManager>();
+            services.AddSingleton<ISolrFormatConversionManager, SolrFormatConversionManager>();
+            services.AddSingleton<ISynonymValidationManager, SynonymValidationManager>();
+
 
             return services;
         }
