@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Configuration;
+using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);

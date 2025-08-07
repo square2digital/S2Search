@@ -1,8 +1,9 @@
 ﻿using LazyCache;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Domain.Interfaces.FacetOverrides;
-using S2Search.Backend.Domain.Interfaces.Repositories;
+using Microsoft.Extensions.Options;
 using S2Search.Backend.Domain.Models;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers.FacetOverrides;
@@ -21,6 +22,9 @@ namespace S2Search.Backend.Services
 {
     public static class ServiceCollectionExtension
     {
+        // Make Configuration nullable and settable
+        public static IConfiguration? Configuration { get; set; }
+
         public static IServiceCollection AddAPIServices(this IServiceCollection services)
         {
             // Register LazyCache
@@ -29,7 +33,9 @@ namespace S2Search.Backend.Services
             // Register your IAppSettings implementation
             services.AddSingleton<IAppSettings, AppSettings>();
 
-            return services.AddRedis()
+            var appSettings = LoadAppSettings(services);
+
+            return services.AddRedis(appSettings.RedisCacheSettings.RedisConnectionString)
                             .AddServiceDependencies()
                            .AddServices()
                            .AddProviders();
@@ -75,6 +81,16 @@ namespace S2Search.Backend.Services
             services.AddSingleton<IAzureQueueClientProvider, AzureQueueClientProvider>();
             services.AddSingleton<IConnectionStringProvider, ConnectionStringProvider>();
             return services;
+        }
+
+        private static IAppSettings LoadAppSettings(IServiceCollection services)
+        {
+            IAppSettings appSettings = new AppSettings();
+            appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
+
+            services.AddSingleton(appSettings);
+
+            return appSettings;
         }
     }
 }
