@@ -6,12 +6,12 @@ namespace S2Search.Backend.Controllers.Admin
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StatusController : ControllerBase
+    public class AdminStatusController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly IDbContextProvider _dbContextProvider;
 
-        public StatusController(IConfiguration configuration, IDbContextProvider dbContextProvider)
+        public AdminStatusController(IConfiguration configuration, IDbContextProvider dbContextProvider)
         {
             _configuration = configuration;
             _dbContextProvider = dbContextProvider;

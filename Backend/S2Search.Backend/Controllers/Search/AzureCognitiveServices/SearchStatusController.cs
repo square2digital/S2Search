@@ -6,12 +6,12 @@ namespace Search.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StatusController : ControllerBase
+    public class SearchStatusController : ControllerBase
     {
         private readonly ILogger _logger;
         private readonly IAppSettings _appSettings;
 
-        public StatusController(ILogger<StatusController> logger,
+        public SearchStatusController(ILogger<SearchStatusController> logger,
                                 IAppSettings appSettings)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
