@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Domain.Customer.Enums;
+using Microsoft.AspNetCore.Http;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
-using S2Search.Backend.Domain.Customer.Enums;
 using S2Search.Backend.Domain.Customer.SearchResources.Notifications;
 using S2Search.Backend.Domain.Interfaces.Repositories;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
+using S2Search.Common.Models.SearchResource.Enums;
 
 namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
 {

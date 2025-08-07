@@ -1,6 +1,6 @@
-﻿using S2Search.Backend.Domain.Customer.Enums;
-using S2Search.Backend.Domain.Customer.SearchResources.NotificationRules;
+﻿using S2Search.Backend.Domain.Customer.SearchResources.NotificationRules;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
+using S2Search.Common.Models.SearchResource.Enums;
 
 namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
 {

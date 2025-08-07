@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Domain.Customer.Enums;
+using Microsoft.Extensions.Configuration;
 using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
 using S2Search.Backend.Domain.Configuration.SearchResources.Synonyms;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
-using S2Search.Backend.Domain.Customer.Enums;
 using S2Search.Backend.Domain.Customer.SearchResources.CustomerPricing;
 using S2Search.Backend.Domain.Customer.SearchResources.SearchIndex;
 using S2Search.Backend.Domain.Customer.SearchResources.SearchInstanceKeys;

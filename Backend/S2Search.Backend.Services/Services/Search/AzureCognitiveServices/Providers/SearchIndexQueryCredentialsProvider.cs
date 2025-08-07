@@ -1,23 +1,24 @@
-﻿using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Interfaces;
+using S2Search.Backend.Domain.Interfaces.Repositories;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
 using Services.Interfaces;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Services.Providers
 {
     public class SearchIndexQueryCredentialsProvider : ISearchIndexQueryCredentialsProvider
     {
         private readonly ILogger _logger;
-        private readonly IS2SearchAPIClient _clientConfigClient;
+        private readonly ISearchIndexRepository _clientConfigClient;
         private readonly IAppSettings _appSettings;
         private readonly IDistributedCacheService _redisService;
 
         public SearchIndexQueryCredentialsProvider(ILogger<SearchIndexQueryCredentialsProvider> logger,
-                                                   IS2SearchAPIClient clientConfigClient,
+                                                   ISearchIndexRepository clientConfigClient,
                                                    IAppSettings appSettings,
                                                    IDistributedCacheService redisService)
         {
@@ -73,20 +74,7 @@ namespace Services.Providers
         {
             try
             {
-                //var header = ApiManagerHelper.GetHeader(_appSettings.ClientConfigurationSettings.HeaderAPISubscriptionName, _appSettings.ClientConfigurationSettings.APISubscriptionKey);
-                var response = await _clientConfigClient.GetSearchIndexQueryCredentialsAsync(callingHost);
-
-                //if (!response.Response.IsSuccessStatusCode)
-                //{
-                //    if (response.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                //    {
-                //        return null;
-                //    }
-                //}
-
-                //var content = await response.Response.Content.ReadAsStringAsync();
-                //var queryCredentials = JsonConvert.DeserializeObject<SearchIndexQueryCredentials>(content);
-                var queryCredentials = response;
+                var queryCredentials = await _clientConfigClient.GetQueryCredentialsAsync(callingHost);
                 var azureSearchResource = new SearchIndexQueryCredentials()
                 {
                     SearchIndexId = queryCredentials.SearchIndexId,

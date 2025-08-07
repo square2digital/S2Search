@@ -1,4 +1,4 @@
-﻿using S2Search.Backend.Domain.SearchResource.Enums;
+﻿using S2Search.Common.Models.SearchResource.Enums;
 
 namespace S2Search.Backend.Domain.SearchResource;
 

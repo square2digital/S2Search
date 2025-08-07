@@ -10,7 +10,9 @@ public class Synonym
     public string SolrFormat
     {
         get
-        { return _solrFormat; }
+        {
+            return _solrFormat;
+        }
         set
         {
             _solrFormat = value;

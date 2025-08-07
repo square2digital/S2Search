@@ -1,6 +1,12 @@
-﻿namespace S2Search.Common.Models.SearchResource.Enums;
+﻿using System.ComponentModel;
+
+namespace S2Search.Common.Models.SearchResource.Enums;
 
 public enum NotificationTransmitType
 {
-    Email
+    [Description("Email")]
+    Email,
+
+    [Description("System")]
+    System
 }

@@ -2,6 +2,7 @@
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.NotificationRules;
 using S2Search.Backend.Domain.Interfaces.Providers;
+using S2Search.Backend.Domain.SearchResource;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
 
