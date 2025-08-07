@@ -7,6 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Search\AzureCognitiveServices\Extensions\**" />
+    <Compile Remove="Services\Search\AzureCognitiveServices\Providers\Credentials\**" />
+    <Compile Remove="Services\Search\AzureCognitiveServices\Providers\Dapper\**" />
+    <EmbeddedResource Remove="Services\Search\AzureCognitiveServices\Extensions\**" />
+    <EmbeddedResource Remove="Services\Search\AzureCognitiveServices\Providers\Credentials\**" />
+    <EmbeddedResource Remove="Services\Search\AzureCognitiveServices\Providers\Dapper\**" />
+    <None Remove="Services\Search\AzureCognitiveServices\Extensions\**" />
+    <None Remove="Services\Search\AzureCognitiveServices\Providers\Credentials\**" />
+    <None Remove="Services\Search\AzureCognitiveServices\Providers\Dapper\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
     <PackageReference Include="CronExpressionDescriptor" Version="2.44.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
@@ -25,9 +37,6 @@
 
   <ItemGroup>
     <Folder Include="Services\Admin\Dapper\Models\" />
-    <Folder Include="Services\Search\AzureCognitiveServices\Extensions\" />
-    <Folder Include="Services\Search\AzureCognitiveServices\Providers\Credentials\" />
-    <Folder Include="Services\Search\AzureCognitiveServices\Providers\Dapper\" />
   </ItemGroup>
 
 </Project>

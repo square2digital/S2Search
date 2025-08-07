@@ -1,8 +1,11 @@
-﻿using System.Text;
-using S2Search.Backend.Domain.Interfaces;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
+﻿using S2Search.Backend.Domain.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Providers
+namespace S2Search.Backend.Services
 {
     public class SearchFilterFormatter : ISearchFilterFormatter
     {
@@ -55,7 +58,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Provi
                 if (occurances.ContainsKey(categoryName))
                 {
                     int count = occurances[categoryName];
-                    occurances[categoryName] = count + 1;
+                    occurances[categoryName] = (count + 1);
                 }
             }
 
@@ -118,9 +121,9 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Provi
             List<string> filterListCopy = new List<string>();
 
             int index = 1;
-            foreach(string filter in filterList)
+            foreach (string filter in filterList)
             {
-                if(index != filterList.Count)
+                if (index != filterList.Count)
                 {
                     filterListCopy.Add(filter + " and ");
                 }

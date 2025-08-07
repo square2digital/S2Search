@@ -14,7 +14,7 @@ using Services.Interfaces;
 using Services.Providers;
 using Services.Services;
 
-namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices
+namespace S2Search.Backend.Services
 {
     public static class ServiceCollectionExtension
     {
@@ -37,12 +37,12 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices
             services.AddSingleton<IAzureFacetService, AzureFacetService>();
             services.AddSingleton<IFacetHelper, FacetHelper>();
             services.AddSingleton<IDisplayTextFormatHelper, DisplayTextFormatHelper>();
-            services.AddSingleton<ISearchFilterFormatter, SearchFilterFormatterElastic>();
+            services.AddSingleton<ISearchFilterFormatter, Services.Search.AzureCognitiveServices.Providers.SearchFilterFormatter>();
             services.AddSingleton<IFacetOverride, EngineSizeOverride>();
             services.AddSingleton<IFacetOverride, MileageOverride>();
             services.AddSingleton<IFacetOverride, DoorsOverride>();
             services.AddSingleton<IFacetOverrideProvider, FacetOverrideProvider>();
-            services.AddSingleton<ISynonymsService, SynonymsService>();            
+            services.AddSingleton<ISynonymsService, SynonymsService>();
             services.AddSingleton<IAzureQueueService, AzureQueueService>();
             services.AddSingleton<IFireForgetService<IAzureQueueService>, FireForgetService<IAzureQueueService>>();
             return services;
@@ -50,7 +50,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices
 
         private static IServiceCollection AddProviders(this IServiceCollection services)
         {
-            services.AddSingleton<ISearchIndexQueryCredentialsProvider, SearchIndexQueryCredentialsProvider>(); 
+            services.AddSingleton<ISearchIndexQueryCredentialsProvider, SearchIndexQueryCredentialsProvider>();
             services.AddSingleton<IAzureAutoSuggestOptionsProvider, AzureAutoSuggestOptionsProvider>();
             services.AddSingleton<IAzureSearchDocumentsClientProvider, AzureSearchDocumentsClientProvider>();
             services.AddSingleton<ISearchOptionsProvider, SearchOptionsProvider>();

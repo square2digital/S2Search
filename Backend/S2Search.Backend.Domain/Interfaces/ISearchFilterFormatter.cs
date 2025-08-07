@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
-
-public interface ISearchFilterFormatter
+namespace S2Search.Backend.Domain.Interfaces
 {
-    string Format(List<string> unformattedFilters);
+    public interface ISearchFilterFormatter
+    {
+        string Format(List<string> unformattedFilters);
+    }
 }
