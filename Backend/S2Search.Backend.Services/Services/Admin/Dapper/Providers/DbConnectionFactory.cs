@@ -6,16 +6,9 @@ namespace S2Search.Backend.Services.Services.Admin.Dapper.Providers
 {
     public class DbConnectionFactory : IDbConnectionFactory
     {
-        private readonly IConnectionStringProvider _connectionString;
-
-        public DbConnectionFactory(IConnectionStringProvider connectionString)
+        public IDbConnection Create(string connectionString)
         {
-            _connectionString = connectionString;
-        }
-
-        public IDbConnection Create(string connectionName)
-        {
-            return new SqlConnection(_connectionString.Get(connectionName));
+            return new SqlConnection(connectionString);
         }
     }
 }

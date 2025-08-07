@@ -10,7 +10,6 @@ namespace S2Search.Backend.Services.Services.Admin.Dapper.Utilities
     {
         public static IServiceCollection AddSqlDapperAbstractions(this IServiceCollection services)
         {
-            services.AddSingleton<IConnectionStringProvider, ConnectionStringProvider>();
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
             services.AddSingleton<IDbContextProvider, DbContextProvider>();
             return services;

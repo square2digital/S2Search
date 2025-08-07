@@ -7,16 +7,9 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Providers
 {
     public class BlobClientProvider : IBlobClientProvider
     {
-        private readonly IConnectionStringProvider _connectionString;
-
-        public BlobClientProvider(IConnectionStringProvider connectionString)
+        public BlobClient Get(string connectionString, string containerName, string blobName)
         {
-            _connectionString = connectionString;
-        }
-
-        public BlobClient Get(string connectionKey, string containerName, string blobName)
-        {
-            return new BlobClient(_connectionString.Get(ConnectionStrings.BlobStorage), containerName, blobName);
+            return new BlobClient(connectionString, containerName, blobName);
         }
     }
 }

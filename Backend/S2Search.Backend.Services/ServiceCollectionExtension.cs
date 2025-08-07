@@ -88,7 +88,6 @@ namespace S2Search.Backend.Services
             services.AddSingleton<IAzureQueueService, AzureQueueService>();
             services.AddSingleton<IFireForgetService<IAzureQueueService>, FireForgetService<IAzureQueueService>>();
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
-            services.AddSingleton<IConnectionStringProvider, ConnectionStringProvider>();
             services.AddSingleton(RedisConnectionMultiplexer(Configuration));
             services.AddSingleton<IQueueClientProvider, QueueClientProvider>();
             //services.AddSingleton<ICacheManager, RedisCacheManager>();
@@ -97,6 +96,7 @@ namespace S2Search.Backend.Services
             services.AddSingleton<IAzureSearchClientProvider, AzureSearchClientProvider>();
             services.AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>();
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            services.AddSingleton<IDashboardManager, DashboardManager>();
             //services.AddSingleton<IDateTimeCategoryProvider, DateTimeCategoryProvider>();
             //services.AddSingleton<ISearchInsightsManager, SearchInsightsManager>()
             //services.AddSingleton<ISearchFacetsFormatManager, SearchFacetsFormatManager>()
@@ -137,7 +137,6 @@ namespace S2Search.Backend.Services
             services.AddSingleton<ISearchOptionsProvider, SearchOptionsProvider>();
             services.AddSingleton<ISynonymsHelper, SynonymsHelper>();
             services.AddSingleton<IAzureQueueClientProvider, AzureQueueClientProvider>();
-            services.AddSingleton<IConnectionStringProvider, ConnectionStringProvider>();
             return services;
         }
 

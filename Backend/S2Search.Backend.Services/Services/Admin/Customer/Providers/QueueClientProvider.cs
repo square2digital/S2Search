@@ -6,16 +6,9 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Providers
 {
     public class QueueClientProvider : IQueueClientProvider
     {
-        private readonly IConnectionStringProvider _connectionString;
-
-        public QueueClientProvider(IConnectionStringProvider connectionString)
+        public async Task<QueueClient> GetAsync(string connectionString, string queueName)
         {
-            _connectionString = connectionString;
-        }
-
-        public async Task<QueueClient> GetAsync(string connectionKey, string queueName)
-        {
-            var queueClient = CreateQueueClient(_connectionString.Get(connectionKey), queueName);
+            var queueClient = CreateQueueClient(connectionString, queueName);
             await queueClient.CreateIfNotExistsAsync();
 
             return queueClient;

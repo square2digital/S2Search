@@ -6,16 +6,9 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Provi
 {
     public class AzureQueueClientProvider : IAzureQueueClientProvider
     {
-        private readonly IConnectionStringProvider _connectionString;
-
-        public AzureQueueClientProvider(IConnectionStringProvider connectionString)
+        public async Task<QueueClient> GetAsync(string connectionString, string queueName)
         {
-            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-        }
-
-        public async Task<QueueClient> GetAsync(string connectionName, string queueName)
-        {
-            var queueClient = CreateQueueClient(_connectionString.Get(connectionName), queueName);
+            var queueClient = CreateQueueClient(connectionString, queueName);
             await queueClient.CreateIfNotExistsAsync();
 
             return queueClient;
