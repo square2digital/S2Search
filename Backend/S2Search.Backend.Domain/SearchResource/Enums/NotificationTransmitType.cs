@@ -1,7 +1,6 @@
-﻿namespace S2Search.Backend.Domain.SearchResource.Enums
+﻿namespace S2Search.Backend.Domain.SearchResource.Enums;
+
+public enum NotificationTransmitType
 {
-    public enum NotificationTransmitType
-    {
-        Email
-    }
+    Email
 }

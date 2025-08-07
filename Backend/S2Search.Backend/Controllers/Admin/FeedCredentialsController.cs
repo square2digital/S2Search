@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using S2Search.Backend.Domain.Customer.AppSettings;
+using S2Search.Backend.Domain.Customer.SearchResources.FeedCredentials;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
 
 namespace S2Search.Backend.Controllers.Admin

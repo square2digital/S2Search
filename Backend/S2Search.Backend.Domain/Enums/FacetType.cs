@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace S2Search.Backend.Domain.Enums
+﻿namespace Domain.Enums
 {
     public enum FacetType
     {
@@ -12,4 +6,5 @@ namespace S2Search.Backend.Domain.Enums
         histogram,
         range
     }
+
 }

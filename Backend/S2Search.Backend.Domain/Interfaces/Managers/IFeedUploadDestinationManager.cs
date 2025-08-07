@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers
+namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
+
+public interface IFeedUploadDestinationManager
 {
-    public interface IFeedUploadDestinationManager
-    {
-        string GetDestination(Guid customerId, string searchIndexName, bool isZipFile, bool isManualUpload);
-    }
+    string GetDestination(Guid customerId, string searchIndexName, bool isZipFile, bool isManualUpload);
 }

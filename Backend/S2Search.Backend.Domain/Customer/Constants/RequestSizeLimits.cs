@@ -1,7 +1,6 @@
-﻿namespace S2Search.Backend.Domain.Customer.Constants
+﻿namespace S2Search.Backend.Domain.Customer.Constants;
+
+public class RequestSizeLimits
 {
-    public class RequestSizeLimits
-    {
-        public const long MaxFileSizeBytes = 15000000;
-    }
+    public const long MaxFileSizeBytes = 15000000;
 }

@@ -1,7 +1,6 @@
-﻿namespace S2Search.Common.Database.Sql.Dapper.Interfaces.Providers
+﻿namespace S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
+
+public interface IConnectionStringProvider
 {
-    public interface IConnectionStringProvider
-    {
-        string Get(string connectionName);
-    }
+    string Get(string connectionName);
 }

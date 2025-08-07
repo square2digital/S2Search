@@ -1,11 +1,10 @@
 ﻿using S2Search.Backend.Domain.Models.Facets;
 
-namespace S2Search.Backend.Domain.Interfaces
+namespace S2Search.Backend.Domain.Interfaces;
+
+public interface IFacetHelper
 {
-    public interface IFacetHelper
-    {
-        IList<FacetGroup> SetFacetOrder(IList<FacetGroup> Facets);
-        IList<FacetGroup> GetDefaultFacetsFromLocal();
-        IList<FacetGroup> GetDefaultFacetsFromOneDrive();
-    }
+    IList<FacetGroup> SetFacetOrder(IList<FacetGroup> Facets);
+    IList<FacetGroup> GetDefaultFacetsFromLocal();
+    IList<FacetGroup> GetDefaultFacetsFromOneDrive();
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using S2Search.Backend.Common.S2Search.Common.Models.SearchResource;
 using S2Search.Backend.Domain.Admin.Customer.SearchResources.SearchInterfaces;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
 

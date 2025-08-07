@@ -1,9 +1,8 @@
 ﻿using S2Search.Backend.Domain.Customer.SearchResources.Synonyms;
 
-namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers
+namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
+
+public interface ISynonymValidationManager
 {
-    public interface ISynonymValidationManager
-    {
-        bool IsValid(SynonymRequest synonymRequest, out string errorMessage);
-    }
+    bool IsValid(SynonymRequest synonymRequest, out string errorMessage);
 }

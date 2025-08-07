@@ -1,7 +1,6 @@
-﻿namespace S2Search.Backend.Domain.Constants
+﻿namespace S2Search.Backend.Domain.Constants;
+
+public static class StorageQueues
 {
-    public static class StorageQueues
-    {
-        public const string SearchInsightsProcessing = "searchinsights-process";
-    }
+    public const string SearchInsightsProcessing = "searchinsights-process";
 }

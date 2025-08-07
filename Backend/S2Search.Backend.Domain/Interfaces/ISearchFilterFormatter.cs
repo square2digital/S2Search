@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces
+namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
+
+public interface ISearchFilterFormatter
 {
-    public interface ISearchFilterFormatter
-    {
-        string Format(List<string> unformattedFilters);
-    }
+    string Format(List<string> unformattedFilters);
 }

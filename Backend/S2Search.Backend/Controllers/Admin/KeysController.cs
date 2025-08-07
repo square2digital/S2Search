@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using S2Search.Backend.Domain.Admin.Customer.SearchResources.SearchIndex;
-using S2Search.Backend.Services.Services.Admin.Configuration.Interfaces.Repositories;
+using S2Search.Backend.Domain.Customer.SearchResources.SearchIndex;
+using S2Search.Backend.Domain.Interfaces.Repositories;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
-using Services.Customer.Interfaces.Repositories;
 
 namespace S2Search.Backend.Controllers.Admin
 {

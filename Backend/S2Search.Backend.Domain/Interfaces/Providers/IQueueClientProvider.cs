@@ -1,10 +1,9 @@
 ﻿using Azure.Storage.Queues;
 using System.Threading.Tasks;
 
-namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers
+namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
+
+public interface IQueueClientProvider
 {
-    public interface IQueueClientProvider
-    {
-        Task<QueueClient> GetAsync(string connectionKey, string queueName);
-    }
+    Task<QueueClient> GetAsync(string connectionKey, string queueName);
 }

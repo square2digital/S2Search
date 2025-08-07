@@ -1,10 +1,9 @@
 ﻿using Azure.Search.Documents;
 using S2Search.Backend.Domain.Models.Request;
 
-namespace S2Search.Backend.Domain.Interfaces
+namespace S2Search.Backend.Domain.Interfaces;
+
+public interface ISearchOptionsProvider
 {
-    public interface ISearchOptionsProvider
-    {
-        SearchOptions CreateSearchOptions(SearchRequest request);
-    }
+    SearchOptions CreateSearchOptions(SearchRequest request);
 }

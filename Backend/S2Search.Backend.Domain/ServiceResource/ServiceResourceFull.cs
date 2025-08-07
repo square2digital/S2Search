@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace S2Search.Backend.Domain.ServiceResource
+namespace S2Search.Backend.Domain.ServiceResource;
+
+public class ServiceResourceFull
 {
-    public class ServiceResourceFull
-    {
-        public ServiceResource ServiceResource { get; set; }
-        public ServiceResourceCapacity ServiceResourceCapacity { get; set; }
-        public IEnumerable<ServiceResourceKey> ServiceResourceKeys { get; set; }
-    }
+    public ServiceResource ServiceResource { get; set; }
+    public ServiceResourceCapacity ServiceResourceCapacity { get; set; }
+    public IEnumerable<ServiceResourceKey> ServiceResourceKeys { get; set; }
 }

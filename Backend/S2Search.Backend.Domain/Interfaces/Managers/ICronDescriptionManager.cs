@@ -1,7 +1,6 @@
-﻿namespace S2Search.Backend.Services.Admin.Customer.Interfaces.Managers
+﻿namespace S2Search.Backend.Services.Admin.Customer.Interfaces.Managers;
+
+public interface ICronDescriptionManager
 {
-    public interface ICronDescriptionManager
-    {
-        string Get(string cronExpression);
-    }
+    string Get(string cronExpression);
 }

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace S2Search.Backend.Domain.Customer.Customer
+namespace S2Search.Backend.Domain.Customer.Customer;
+
+internal class Class1
 {
-    internal class Class1
-    {
-    }
 }

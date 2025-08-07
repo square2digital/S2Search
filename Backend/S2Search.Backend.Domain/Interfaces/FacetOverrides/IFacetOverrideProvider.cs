@@ -1,9 +1,8 @@
 ﻿using S2Search.Backend.Domain.Models.Facets;
 
-namespace S2Search.Backend.Domain.Interfaces.FacetOverrides
+namespace S2Search.Backend.Domain.Interfaces.FacetOverrides;
+
+public interface IFacetOverrideProvider
 {
-    public interface IFacetOverrideProvider
-    {
-        FacetItem Override(string facetName, FacetItem item);
-    }
+    FacetItem Override(string facetName, FacetItem item);
 }

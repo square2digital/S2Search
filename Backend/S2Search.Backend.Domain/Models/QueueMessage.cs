@@ -1,14 +1,13 @@
-﻿namespace S2Search.Backend.Domain.Models
-{
-    public class QueuedMessage
-    {
-        public string TargetQueue { get; }
-        public object Data { get; }
+﻿namespace S2Search.Backend.Domain.Models;
 
-        public QueuedMessage(string targetQueue, object data)
-        {
-            TargetQueue = targetQueue;
-            Data = data;
-        }
+public class QueuedMessage
+{
+    public string TargetQueue { get; }
+    public object Data { get; }
+
+    public QueuedMessage(string targetQueue, object data)
+    {
+        TargetQueue = targetQueue;
+        Data = data;
     }
 }

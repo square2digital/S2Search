@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using S2Search.Backend.Domain.Admin.Customer.SearchResources.NotificationRules;
+﻿using Microsoft.AspNetCore.Mvc;
+using S2Search.Backend.Domain.SearchResource;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
 
 namespace S2Search.Backend.Controllers.Admin

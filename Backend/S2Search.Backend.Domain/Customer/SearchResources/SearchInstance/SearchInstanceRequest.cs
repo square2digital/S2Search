@@ -1,9 +1,8 @@
-﻿namespace S2Search.Backend.Domain.Customer.SearchResources.SearchInstance
+﻿namespace S2Search.Backend.Domain.Customer.SearchResources.SearchInstance;
+
+public class SearchInstanceRequest
 {
-    public class SearchInstanceRequest
-    {
-        public string Location { get; set; }
-        public string PricingTier { get; set; }
-        public bool IsShared { get; set; }
-    }
+    public string Location { get; set; }
+    public string PricingTier { get; set; }
+    public bool IsShared { get; set; }
 }

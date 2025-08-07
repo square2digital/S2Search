@@ -1,8 +1,7 @@
-﻿namespace S2Search.Backend.Domain.SearchResource.Enums
+﻿namespace S2Search.Backend.Domain.SearchResource.Enums;
+
+public enum NotificationTriggerType
 {
-    public enum NotificationTriggerType
-    {
-        Feed_Success,
-        Feed_Failure
-    }
+    Feed_Success,
+    Feed_Failure
 }

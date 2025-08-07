@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers
+namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
+
+public interface IGuidProvider
 {
-    public interface IGuidProvider
-    {
-        Guid NewGuid();
-    }
+    Guid NewGuid();
 }

@@ -1,7 +1,6 @@
-﻿namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers
+﻿namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
+
+public interface IQueryKeyNameValidationManager
 {
-    public interface IQueryKeyNameValidationManager
-    {
-        bool IsValid(string name, out string errorMessage);
-    }
+    bool IsValid(string name, out string errorMessage);
 }

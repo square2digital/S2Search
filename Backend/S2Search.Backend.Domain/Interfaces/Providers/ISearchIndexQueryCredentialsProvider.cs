@@ -1,9 +1,8 @@
 ﻿using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
 
-namespace Services.Interfaces
+namespace Services.Interfaces;
+
+public interface ISearchIndexQueryCredentialsProvider
 {
-    public interface ISearchIndexQueryCredentialsProvider
-    {
-        Task<SearchIndexQueryCredentials> GetAsync(string callingHost);
-    }
+    Task<SearchIndexQueryCredentials> GetAsync(string callingHost);
 }

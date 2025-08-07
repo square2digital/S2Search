@@ -1,7 +1,6 @@
-﻿namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories
+﻿namespace S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
+
+public interface ISearchInsightsReportRepository
 {
-    public interface ISearchInsightsReportRepository
-    {
-        bool Exists(string reportName);
-    }
+    bool Exists(string reportName);
 }

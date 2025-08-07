@@ -1,9 +1,8 @@
 ﻿using System.Data;
 
-namespace S2Search.Common.Database.Sql.Dapper.Interfaces.Providers
+namespace S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
+
+public interface IDbConnectionFactory
 {
-    public interface IDbConnectionFactory
-    {
-        IDbConnection Create(string connectionName);
-    }
+    IDbConnection Create(string connectionName);
 }

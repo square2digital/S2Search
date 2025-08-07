@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +30,7 @@
   <ItemGroup>
     <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\Models\" />
     <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\Providers\" />
+    <Folder Include="Common\S2Search.Common.Models\SearchResource\" />
   </ItemGroup>
 
 </Project>

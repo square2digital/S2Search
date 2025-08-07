@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using S2Search.Backend.Domain.Interfaces.Providers;
-using Services.Dapper.Providers;
 using System.Data.SqlClient;
 
 namespace S2Search.Backend.Controllers.Admin

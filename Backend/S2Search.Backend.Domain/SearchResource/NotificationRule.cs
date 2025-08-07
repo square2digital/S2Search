@@ -1,25 +1,24 @@
-﻿using S2Search.Backend.Domain.Customer.Enums;
+﻿using S2Search.Backend.Domain.SearchResource.Enums;
 
-namespace S2Search.Backend.Domain.SearchResource
+namespace S2Search.Backend.Domain.SearchResource;
+
+public class NotificationRule
 {
-    public class NotificationRule
+    public int NotificationRuleId { get; set; }
+    public NotificationTransmitType TransmitType { get; set; }
+    
+    private string _recipients;
+    public string Recipients
     {
-        public int NotificationRuleId { get; set; }
-        public NotificationTransmitType TransmitType { get; set; }
-        
-        private string _recipients;
-        public string Recipients
+        get { return _recipients; }
+        set
         {
-            get { return _recipients; }
-            set
-            {
-                _recipients = value;
-                char splitter = ';';
-                RecipientsList = _recipients.Split(splitter);
-            }
+            _recipients = value;
+            char splitter = ';';
+            RecipientsList = _recipients.Split(splitter);
         }
-
-        public IEnumerable<string> RecipientsList { get; private set; }
-        public NotificationTriggerType TriggerType { get; set; }
     }
+
+    public IEnumerable<string> RecipientsList { get; private set; }
+    public NotificationTriggerType TriggerType { get; set; }
 }

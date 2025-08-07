@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using S2Search.Backend.Domain.Admin.Customer.SearchResources.Notifications;
-using S2Search.Backend.Domain.Admin.Customer.Shared;
+using S2Search.Backend.Domain.Customer.SearchResources.Notifications;
+using S2Search.Backend.Domain.Customer.Shared;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
 
 namespace S2Search.Backend.Controllers.Admin

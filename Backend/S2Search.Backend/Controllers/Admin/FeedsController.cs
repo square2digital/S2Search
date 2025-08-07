@@ -1,6 +1,5 @@
-﻿using AutoWrapper.Filters;
-using Microsoft.AspNetCore.Mvc;
-using S2Search.Backend.Domain.Admin.Customer.SearchResources.Feeds;
+﻿using Microsoft.AspNetCore.Mvc;
+using S2Search.Backend.Domain.Customer.SearchResources.Feeds;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
 
