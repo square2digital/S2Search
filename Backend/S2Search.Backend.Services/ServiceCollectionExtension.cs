@@ -29,7 +29,8 @@ namespace S2Search.Backend.Services
             // Register your IAppSettings implementation
             services.AddSingleton<IAppSettings, AppSettings>();
 
-            return services.AddServiceDependencies()
+            return services.AddRedis()
+                            .AddServiceDependencies()
                            .AddServices()
                            .AddProviders();
         }

@@ -1,18 +1,19 @@
-﻿using Microsoft.Extensions.Logging;
-using Azure.Search.Documents;
+﻿using Azure.Search.Documents;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using S2Search.Backend.Domain.AzureSearch.Indexes;
+using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
 using S2Search.Backend.Domain.Constants;
+using S2Search.Backend.Domain.Interfaces;
+using S2Search.Backend.Domain.Interfaces.FacetOverrides;
 using S2Search.Backend.Domain.Models.Facets;
 using S2Search.Backend.Domain.Models.Insights;
 using S2Search.Backend.Domain.Models.Objects;
 using S2Search.Backend.Domain.Models.Request;
 using S2Search.Backend.Domain.Models.Response;
-using S2Search.Backend.Domain.AzureSearch.Indexes;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Providers.AzureSearch;
+using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
-using S2Search.Backend.Domain.Interfaces;
-using S2Search.Backend.Domain.Interfaces.FacetOverrides;
-using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
+using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Providers.AzureSearch;
 
 namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Services
 {
@@ -23,7 +24,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
         private readonly IAzureSearchDocumentsClientProvider _searchClientProvider;
         private readonly IDisplayTextFormatHelper _displayTextFormatHelper;
         private readonly ISearchOptionsProvider _searchOptionsProvider;
-        private readonly ILuceneSyntaxHelper _luceneSyntaxHelper;
+        //private readonly ILuceneSyntaxHelper _luceneSyntaxHelper;
         private readonly IFacetHelper _facetHelper;
         private readonly IAzureAutoSuggestOptionsProvider _autoSuggestOptionsProvider;
 
@@ -32,7 +33,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                                   ISearchOptionsProvider searchCriteriaProvider,
                                   IDisplayTextFormatHelper displayTextFormatHelper,
                                   IAzureSearchDocumentsClientProvider searchClientProvider,
-                                  ILuceneSyntaxHelper luceneSyntaxHelper,
+                                  //ILuceneSyntaxHelper luceneSyntaxHelper,
                                   IFacetHelper facetHelper,
                                   IFacetOverrideProvider facetOverrideProvider,
                                   IAzureAutoSuggestOptionsProvider autoSuggestOptionsProvider) : base(appSettings,
@@ -46,7 +47,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             _searchClientProvider = searchClientProvider ?? throw new ArgumentNullException(nameof(searchClientProvider));
             _displayTextFormatHelper = displayTextFormatHelper ?? throw new ArgumentNullException(nameof(displayTextFormatHelper));
             _searchOptionsProvider = searchCriteriaProvider ?? throw new ArgumentNullException(nameof(searchCriteriaProvider));
-            _luceneSyntaxHelper = luceneSyntaxHelper ?? throw new ArgumentNullException(nameof(luceneSyntaxHelper));
+            //_luceneSyntaxHelper = luceneSyntaxHelper ?? throw new ArgumentNullException(nameof(luceneSyntaxHelper));
             _facetHelper = facetHelper ?? throw new ArgumentNullException(nameof(facetHelper));
             _autoSuggestOptionsProvider = autoSuggestOptionsProvider ?? throw new ArgumentNullException(nameof(autoSuggestOptionsProvider));
         }
@@ -60,13 +61,13 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
 
             try
             {
-                if (_luceneSyntaxHelper.ContainsSpecialCharacters(request.SearchTerm))
+                if (LuceneSyntaxHelper.ContainsSpecialCharacters(request.SearchTerm))
                 {
-                    request.SearchTerm = _luceneSyntaxHelper.EscapeLuceneSpecialCharacters(request.SearchTerm);
+                    request.SearchTerm = LuceneSyntaxHelper.EscapeLuceneSpecialCharacters(request.SearchTerm);
                 }
 
                 searchOptions = _searchOptionsProvider.CreateSearchOptions(request);
-                luceneSearch = _luceneSyntaxHelper.GenerateLuceneSearchString(request.SearchTerm, request.CallingHost);
+                luceneSearch = LuceneSyntaxHelper.GenerateLuceneSearchString(request.SearchTerm);
 
                 var result = await GetSearchClient(targetSearchResource).SearchAsync<SearchVehicle>(string.Join(" ", luceneSearch), searchOptions).ConfigureAwait(false);
                 var facetGroups = result.Value.Facets;
