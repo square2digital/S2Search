@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using LazyCache;
+using Microsoft.Extensions.DependencyInjection;
 using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Domain.Interfaces.FacetOverrides;
+using S2Search.Backend.Domain.Interfaces.Repositories;
+using S2Search.Backend.Domain.Models;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers.FacetOverrides;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
@@ -20,13 +23,26 @@ namespace S2Search.Backend.Services
     {
         public static IServiceCollection AddAPIServices(this IServiceCollection services)
         {
-            return services.AddServices()
+            // Register LazyCache
+            services.AddSingleton<IAppCache, CachingService>();
+
+            // Register your IAppSettings implementation
+            services.AddSingleton<IAppSettings, AppSettings>();
+
+            return services.AddServiceDependencies()
+                           .AddServices()
                            .AddProviders();
         }
 
         public static IServiceCollection AddRedis(this IServiceCollection services, string connectionString)
         {
             services.AddSingleton<IDistributedCacheService>(x => new RedisService(connectionString));
+            return services;
+        }
+
+        private static IServiceCollection AddServiceDependencies(this IServiceCollection services)
+        {
+            //services.AddLazyCache();
             return services;
         }
 
