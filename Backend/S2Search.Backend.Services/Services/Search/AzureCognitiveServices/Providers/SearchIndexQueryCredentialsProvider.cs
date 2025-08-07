@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
+﻿using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
 using Services.Interfaces;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Services.Providers
 {

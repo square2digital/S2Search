@@ -1,10 +1,10 @@
-﻿using S2Search.Backend.Common.S2Search.Common.Models.S2Search.Common.Models.ServiceResource;
+﻿using S2Search.Backend.Common.S2Search.Common.Models.ServiceResource;
 using S2Search.Backend.Domain.SearchResource;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace S2Search.Backend.Common.S2Search.Common.Models.S2Search.Common.Models.SearchResource
+namespace S2Search.Backend.Common.S2Search.Common.Models.SearchResource
 {
     public class SearchResourceRequest
     {

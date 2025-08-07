@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using S2Search.Backend.Domain.Admin.Customer.Dashboard;
+﻿using Microsoft.AspNetCore.Mvc;
+using S2Search.Backend.Domain.Customer.Dashboard;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace S2Search.Backend.Controllers.Admin
 {

@@ -3,7 +3,7 @@ using S2Search.Backend.Domain.Configuration.SearchResources;
 using S2Search.Backend.Domain.Configuration.SearchResources.Configuration;
 using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
 using S2Search.Backend.Domain.Configuration.SearchResources.Synonyms;
-using S2Search.Backend.Services.Services.Admin.Configuration.Interfaces.Repositories;
+using S2Search.Backend.Domain.Interfaces.Repositories;
 
 namespace S2Search.Backend.Controllers.Admin
 {

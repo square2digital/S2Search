@@ -27,8 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\S2Search.Common.Database.Sql.Dapper\Models\" />
-    <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\S2Search.Common.Database.Sql.Dapper\Providers\" />
+    <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\Models\" />
+    <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\Providers\" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace S2Search.Backend.Common.S2Search.Common.Models.S2Search.Common.Models.ServiceResource
+namespace S2Search.Backend.Common.S2Search.Common.Models.ServiceResource
 {
     public class ServiceResourceCapacity
     {
