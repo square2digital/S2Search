@@ -4,6 +4,9 @@ using S2Search.Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Set the static Configuration property
+ServiceCollectionExtension.Configuration = builder.Configuration;
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

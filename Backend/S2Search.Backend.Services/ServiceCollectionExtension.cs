@@ -1,10 +1,15 @@
 ﻿using LazyCache;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options; // Add this for configuration binding extensions
 using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Domain.Interfaces.FacetOverrides;
-using Microsoft.Extensions.Options;
+using S2Search.Backend.Domain.Interfaces.Providers;
+using S2Search.Backend.Domain.Interfaces.Repositories;
 using S2Search.Backend.Domain.Models;
+using S2Search.Backend.Services.Services;
+using S2Search.Backend.Services.Services.Admin.Configuration.Repositories;
+using S2Search.Backend.Services.Services.Admin.Dapper.Providers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers.FacetOverrides;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
@@ -55,6 +60,8 @@ namespace S2Search.Backend.Services
 
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddSingleton<IDbContextProvider, DbContextProvider>();
+            services.AddSingleton<ISearchIndexRepository, SearchIndexRepository>();
             services.AddSingleton<IMemoryCacheService, LazyCacheService>();
             services.AddSingleton<IAzureSearchService, AzureSearchService>();
             services.AddSingleton<IAzureFacetService, AzureFacetService>();
@@ -68,6 +75,7 @@ namespace S2Search.Backend.Services
             services.AddSingleton<ISynonymsService, SynonymsService>();
             services.AddSingleton<IAzureQueueService, AzureQueueService>();
             services.AddSingleton<IFireForgetService<IAzureQueueService>, FireForgetService<IAzureQueueService>>();
+            services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
             return services;
         }
 
@@ -85,8 +93,14 @@ namespace S2Search.Backend.Services
 
         private static IAppSettings LoadAppSettings(IServiceCollection services)
         {
-            IAppSettings appSettings = new AppSettings();
-            appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
+            // Use the Microsoft.Extensions.Options.ConfigurationExtensions package for .Get<T>()
+            if (Configuration == null)
+                throw new InvalidOperationException("Configuration must be set before calling AddAPIServices.");
+
+            var appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
+
+            if (appSettings == null)
+                throw new InvalidOperationException("AppSettings section is missing or invalid in configuration.");
 
             services.AddSingleton(appSettings);
 
