@@ -1,184 +1,162 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
-using System.Text.Json;
-using System.Globalization;
-using Microsoft.Extensions.Logging;
+﻿using Newtonsoft.Json;
 using S2Search.Backend.Domain.Models.Facets;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
-using S2Search.Backend.Domain.Interfaces;
+using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers
 {
-    public class LuceneSyntaxHelper : ILuceneSyntaxHelper
+    public static class LuceneSyntaxHelper
     {
-        private readonly ILogger _logger;
-        private readonly IAppSettings _appSettings;
-        private readonly Dictionary<int, string> _nonExactTermContainer;
-        private readonly List<int> _termIndexsCompletedContainer;
-        private readonly IEnumerable<string> _facetGroupNamesToMatch;
-        private readonly ISynonymsHelper _synonymsHelper;
-        private readonly IEnumerable<char> _luceneSpecialCharacters = new char[] { '+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', '\\' };
-        private readonly IAzureFacetService _azureFacetService;
-        private readonly ISynonymsService _synonymsService;
+        private static readonly Dictionary<int, string> _nonExactTermContainer = new Dictionary<int, string>();
+        private static readonly List<int> _termIndexsCompletedContainer = new List<int>();
+        private static readonly IEnumerable<string> _facetGroupNamesToMatch = new List<string> { "make", "model", "transmission", "Fuel Type", "year", "colour", "Body Style" };
+        private static readonly IEnumerable<char> _luceneSpecialCharacters = new char[] { '+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', '\\' };
+        private static Dictionary<int, string> _searchTermContainer = new Dictionary<int, string>();
+        private static string _fullSearchTerm = string.Empty;
 
-        private Dictionary<int, string> _searchTermContainer;
-        private List<FacetEdgeCase> _facetEdgeCases;
-        private string _fullSearchTerm;
+        private static IList<FacetGroup> _defaultFacets = null;
 
-        public LuceneSyntaxHelper(ILoggerFactory loggerFactory,
-            IAppSettings appSettings,
-            ISynonymsHelper SynonymsHelper,
-            IAzureFacetService azureFacetService,
-            ISynonymsService synonymsService)
+        private static IList<FacetGroup> FacetsFromLocalFile()
         {
-            _logger = loggerFactory.CreateLogger<LuceneSyntaxHelper>();
-            _appSettings = appSettings;
+            if (_defaultFacets == null)
+            {
+                var json = File.ReadAllText(@"DefaultFacets.json");
+                _defaultFacets = JsonConvert.DeserializeObject<IList<FacetGroup>>(json);
+            }
 
-            _searchTermContainer = new Dictionary<int, string>();
-            _nonExactTermContainer = new Dictionary<int, string>();
-            _termIndexsCompletedContainer = new List<int>();
-
-            _facetGroupNamesToMatch = _appSettings.SearchSettings.FacetNamesToMatchList;
-            _facetEdgeCases = JsonSerializer.Deserialize<List<FacetEdgeCase>>(_appSettings.SearchSettings.FacetEdgeCases);
-            _synonymsHelper = SynonymsHelper ?? throw new ArgumentNullException(nameof(SynonymsHelper));
-            _azureFacetService = azureFacetService ?? throw new ArgumentNullException(nameof(azureFacetService));
-            _synonymsService = synonymsService ?? throw new ArgumentNullException(nameof(synonymsService));
+            return _defaultFacets;
         }
 
-        public string GenerateLuceneSearchString(string searchTerm, string callingHost)
+        public static string GenerateLuceneSearchString(string searchTerm)
         {
-            try
+            FacetsFromLocalFile();
+            ClearObjects();
+
+            if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                ClearObjects();
-
-                if (string.IsNullOrWhiteSpace(searchTerm))
-                {
-                    return string.Empty;
-                }
-
-                searchTerm = searchTerm.Trim();
-                _fullSearchTerm = searchTerm;
-
-                StringBuilder SearchTermBuilder = new StringBuilder();
-
-                string NewSearchTerm = Regex.Replace(searchTerm, @"\s+", " ");
-
-                var genericSynonyms = _synonymsService.GetGenericSynonyms(callingHost).GetAwaiter().GetResult();
-                var synonyms = _synonymsHelper.GetSynonymsDictionary(genericSynonyms);
-
-                if (synonyms != null && synonyms.Any())
-                {
-                    if (DoesSearchTermExactMatchInSynonym(NewSearchTerm, synonyms))
-                    {
-                        BuildSearchTerm(NewSearchTerm, SearchTermBuilder);
-                        return SearchTermBuilder.ToString();
-                    }
-                }
-
-                // initially exact match the term before splitting - eg "4 series"
-                if (DoesSearchTermExactMatchInFacet(NewSearchTerm, callingHost))
-                {
-                    BuildSearchTerm(NewSearchTerm, SearchTermBuilder);
-                    return SearchTermBuilder.ToString();
-                }
-
-                List<string> TermSplit = NewSearchTerm.Split(' ').ToList();
-
-                // add the terms to the dictionary
-                int i = 0;
-                foreach (var term in TermSplit)
-                {
-                    _searchTermContainer.TryAdd(i, term);
-                    i++;
-                }
-
-                // ***************************************************
-                // Single Search String         
-                // ***************************************************
-                if (_searchTermContainer.Count == 1)
-                {
-                    string comparisonStr = _searchTermContainer.First().Value;
-
-                    if (DoesSearchTermExactMatchInFacet(comparisonStr, callingHost))
-                    {
-                        SearchTermBuilder.Append(comparisonStr);
-                    }
-                    else
-                    {
-                        SearchTermBuilder.Append(comparisonStr).Append("*");
-                    }
-
-                    return SearchTermBuilder.ToString();
-                }
-
-                // ***************************************************
-                // Multi Strings
-                // ***************************************************
-                Dictionary<int, string> searchTermContainer_copy = new Dictionary<int, string>(_searchTermContainer);
-                _searchTermContainer.Clear();
-
-                foreach (KeyValuePair<int, string> term in searchTermContainer_copy)
-                {
-                    if (DoesSearchTermExactMatchInFacet(term.Value, callingHost) || DoesSearchTermExactMatchInSynonym(term.Value, synonyms))
-                    {
-                        _searchTermContainer.TryAdd(term.Key, term.Value);
-                    }
-                    else
-                    {
-                        _nonExactTermContainer.TryAdd(term.Key, term.Value);
-                    }
-                }
-
-                Dictionary<int, string> nonExactTermContainer_copy = new Dictionary<int, string>(_nonExactTermContainer);
-                foreach (KeyValuePair<int, string> term in nonExactTermContainer_copy)
-                {
-                    if (_termIndexsCompletedContainer.Contains(term.Key)) continue;
-
-                    if (_nonExactTermContainer.ContainsKey(term.Key + 1))
-                    {
-                        string FirstValue = _nonExactTermContainer[term.Key];
-                        string SecondValue = _nonExactTermContainer[term.Key + 1];
-
-                        string TermConcatinated = $"{FirstValue} {SecondValue}";
-                        if (DoesSearchTermExactMatchInFacet(TermConcatinated, callingHost))
-                        {
-                            UpdateDictionaries(term, TermConcatinated);
-                            continue;
-                        }
-
-                        string seatsRegExPattern = @"(?i)\d+ seat?[s]{0,1}";
-                        if (TestForRegExInSearchTerm(term, seatsRegExPattern, TermConcatinated, "seat"))
-                        {
-                            continue;
-                        }
-
-                        string doorsRegExPattern = @"(?i)\d+ door?[s]{0,1}";
-                        if (TestForRegExInSearchTerm(term, doorsRegExPattern, TermConcatinated, "door"))
-                        {
-                            continue;
-                        }
-
-                        _searchTermContainer.TryAdd(term.Key, term.Value);
-                    }
-                    else
-                    {
-                        _searchTermContainer.TryAdd(term.Key, term.Value);
-                    }
-                }
-
-                _searchTermContainer = _searchTermContainer.OrderBy(x => x.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
-
-                ConcatResults(SearchTermBuilder, synonyms, callingHost);
-                return CleanLuceneString(SearchTermBuilder.ToString());
+                return string.Empty;
             }
-            catch (Exception ex)
+
+            searchTerm = searchTerm.Trim();
+            _fullSearchTerm = searchTerm;
+
+            StringBuilder SearchTermBuilder = new StringBuilder();
+
+            string NewSearchTerm = Regex.Replace(searchTerm, @"\s+", " ");
+
+            //var genericSynonyms = _synonymsService.GetGenericSynonyms().GetAwaiter().GetResult();
+            //var synonyms = _synonymsHelper.GetSynonymsDictionary(genericSynonyms);
+
+            //if (synonyms != null && synonyms.Any())
+            //{
+            //    if (DoesSearchTermExactMatchInSynonym(NewSearchTerm, synonyms))
+            //    {
+            //        BuildSearchTerm(NewSearchTerm, SearchTermBuilder);
+            //        return SearchTermBuilder.ToString();
+            //    }
+            //}
+
+            // initially exact match the term before splitting - eg "4 series"
+            if (DoesSearchTermExactMatchInFacet(NewSearchTerm))
             {
-                _logger.LogError(ex, $"Error on {nameof(GenerateLuceneSearchString)} | searchTerm : {searchTerm} | Message: {ex.Message}");
-                throw;
+                BuildSearchTerm(NewSearchTerm, SearchTermBuilder);
+                return SearchTermBuilder.ToString();
             }
+
+            List<string> TermSplit = NewSearchTerm.Split(' ').ToList();
+
+            // add the terms to the dictionary
+            int i = 0;
+            foreach (var term in TermSplit)
+            {
+                _searchTermContainer.TryAdd(i, term);
+                i++;
+            }
+
+            // ***************************************************
+            // Single Search String         
+            // ***************************************************
+            if (_searchTermContainer.Count == 1)
+            {
+                string comparisonStr = _searchTermContainer.First().Value;
+
+                if (DoesSearchTermExactMatchInFacet(comparisonStr))
+                {
+                    SearchTermBuilder.Append(comparisonStr);
+                }
+                else
+                {
+                    SearchTermBuilder.Append(comparisonStr).Append("*");
+                }
+
+                return SearchTermBuilder.ToString();
+            }
+
+            // ***************************************************
+            // Multi Strings
+            // ***************************************************
+            Dictionary<int, string> searchTermContainer_copy = new Dictionary<int, string>(_searchTermContainer);
+            _searchTermContainer.Clear();
+
+            foreach (KeyValuePair<int, string> term in searchTermContainer_copy)
+            {
+                // if (DoesSearchTermExactMatchInFacet(term.Value) || DoesSearchTermExactMatchInSynonym(term.Value, synonyms))
+                if (DoesSearchTermExactMatchInFacet(term.Value))
+                {
+                    _searchTermContainer.TryAdd(term.Key, term.Value);
+                }
+                else
+                {
+                    _nonExactTermContainer.TryAdd(term.Key, term.Value);
+                }
+            }
+
+            Dictionary<int, string> nonExactTermContainer_copy = new Dictionary<int, string>(_nonExactTermContainer);
+            foreach (KeyValuePair<int, string> term in nonExactTermContainer_copy)
+            {
+                if (_termIndexsCompletedContainer.Contains(term.Key)) continue;
+
+                if (_nonExactTermContainer.ContainsKey(term.Key + 1))
+                {
+                    string FirstValue = _nonExactTermContainer[term.Key];
+                    string SecondValue = _nonExactTermContainer[term.Key + 1];
+
+                    string TermConcatinated = $"{FirstValue} {SecondValue}";
+                    if (DoesSearchTermExactMatchInFacet(TermConcatinated))
+                    {
+                        UpdateDictionaries(term, TermConcatinated);
+                        continue;
+                    }
+
+                    string seatsRegExPattern = @"(?i)\d+ seat?[s]{0,1}";
+                    if (TestForRegExInSearchTerm(term, seatsRegExPattern, TermConcatinated, "seat"))
+                    {
+                        continue;
+                    }
+
+                    string doorsRegExPattern = @"(?i)\d+ door?[s]{0,1}";
+                    if (TestForRegExInSearchTerm(term, doorsRegExPattern, TermConcatinated, "door"))
+                    {
+                        continue;
+                    }
+
+                    _searchTermContainer.TryAdd(term.Key, term.Value);
+                }
+                else
+                {
+                    _searchTermContainer.TryAdd(term.Key, term.Value);
+                }
+            }
+
+            _searchTermContainer = _searchTermContainer.OrderBy(x => x.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            ConcatResults(SearchTermBuilder);
+            return CleanLuceneString(SearchTermBuilder.ToString());
+
         }
 
-        public bool ContainsSpecialCharacters(string searchTerm)
+        public static bool ContainsSpecialCharacters(string searchTerm)
         {
             if (string.IsNullOrEmpty(searchTerm)) return false;
 
@@ -200,7 +178,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
         /// To escape these characters use the \ before the character.For example to search for (1+1):2 use the query:
         /// \(1\+1\)\:2
         /// </summary>
-        public string EscapeLuceneSpecialCharacters(string searchTerm)
+        public static string EscapeLuceneSpecialCharacters(string searchTerm)
         {
             if (string.IsNullOrEmpty(searchTerm)) return searchTerm;
 
@@ -225,7 +203,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             return sb.ToString().Replace(@"\\", @"\");
         }
 
-        private void BuildSearchTerm(string NewSearchTerm, StringBuilder SearchTermBuilder)
+        private static void BuildSearchTerm(string NewSearchTerm, StringBuilder SearchTermBuilder)
         {
             if (NewSearchTerm.Contains(" ") || NewSearchTerm.Contains("-"))
             {
@@ -237,7 +215,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             }
         }
 
-        private bool TestForRegExInSearchTerm(KeyValuePair<int, string> term, string regExPattern, string termConcatinated, string regRexTerm)
+        private static bool TestForRegExInSearchTerm(KeyValuePair<int, string> term, string regExPattern, string termConcatinated, string regRexTerm)
         {
             if (Regex.IsMatch(termConcatinated, regExPattern))
             {
@@ -258,7 +236,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             return false;
         }
 
-        private void ConcatResults(StringBuilder SearchTermBuilder, IDictionary<string, List<string>> synonyms, string callingHost)
+        private static void ConcatResults(StringBuilder SearchTermBuilder)
         {
             // ***************************************************
             // Concat the results
@@ -267,9 +245,12 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             Dictionary<int, string> searchTermContainer_copy = new Dictionary<int, string>(_searchTermContainer);
             foreach (KeyValuePair<int, string> term in searchTermContainer_copy)
             {
+                if (string.IsNullOrEmpty(term.Value)) continue;
+
                 string testTerm = term.Value.Replace("\"", "");
 
-                if (DoesSearchTermExactMatchInFacet(testTerm, callingHost) || DoesSearchTermExactMatchInSynonym(testTerm, synonyms))
+                // if (DoesSearchTermExactMatchInFacet(testTerm) || DoesSearchTermExactMatchInSynonym(testTerm, synonyms))
+                if (DoesSearchTermExactMatchInFacet(testTerm))
                 {
                     if (testTerm.Contains(" ") || testTerm.Contains("-"))
                     {
@@ -292,7 +273,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
                     }
                 }
 
-                if (i != _searchTermContainer.Count - 1)
+                if (i != (_searchTermContainer.Count - 1))
                 {
                     SearchTermBuilder.Append(" AND ");
                 }
@@ -301,7 +282,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             }
         }
 
-        private void UpdateDictionaries(KeyValuePair<int, string> term, string SearchTerm)
+        private static void UpdateDictionaries(KeyValuePair<int, string> term, string SearchTerm)
         {
             _searchTermContainer.Remove(term.Key);
             _searchTermContainer.Remove(term.Key + 1);
@@ -312,7 +293,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             _searchTermContainer.TryAdd(term.Key, $"\"{SearchTerm}\"");
         }
 
-        private string RegExTest(string searchTerm, string regExPattern)
+        private static string RegExTest(string searchTerm, string regExPattern)
         {
             string RegExMatch = string.Empty;
 
@@ -324,18 +305,16 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             return RegExMatch;
         }
 
-        private bool DoesSearchTermExactMatchInFacet(string searchTerm, string callingHost)
+        private static bool DoesSearchTermExactMatchInFacet(string searchTerm)
         {
-            searchTerm = searchTerm.Trim();
+            searchTerm = searchTerm?.Trim();
 
-            if (HandleEdgeCases(searchTerm))
-            {
-                return false;
-            }
+            //if (HandleEdgeCases(searchTerm))
+            //{
+            //    return false;
+            //}
 
-            var defaultFacets = _azureFacetService.GetOrSetDefaultFacets(callingHost, _queryCredentialsProvider.GetAsync(callingHost).GetAwaiter().GetResult());
-
-            foreach (FacetGroup facetGroup in defaultFacets)
+            foreach (FacetGroup facetGroup in _defaultFacets)
             {
                 if (_facetGroupNamesToMatch.Any(x => x.ToUpper(CultureInfo.InvariantCulture) == facetGroup.FacetKey.ToUpper(CultureInfo.InvariantCulture)))
                 {
@@ -364,12 +343,12 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             return false;
         }
 
-        private bool DoesSearchTermExactMatchInSynonym(string searchTerm, IDictionary<string, List<string>> synonyms)
+        private static bool DoesSearchTermExactMatchInSynonym(string searchTerm, IDictionary<string, List<string>> synonyms)
         {
-            if (HandleEdgeCases(searchTerm))
-            {
-                return false;
-            }
+            //if (HandleEdgeCases(searchTerm))
+            //{
+            //    return false;
+            //}
 
             foreach (var Synonyms_KVP in synonyms)
             {
@@ -387,18 +366,18 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             return false;
         }
 
-        private bool HandleEdgeCases(string searchTerm)
-        {
-            foreach (var edgeCase in _facetEdgeCases)
-            {
-                if (searchTerm == edgeCase.SearchTerm && _fullSearchTerm.Contains(edgeCase.FullSearchTerm, StringComparison.OrdinalIgnoreCase))
-                {
-                    return edgeCase.Result;
-                }
-            }
+        //private static bool HandleEdgeCases(string searchTerm)
+        //{
+        //    foreach (var edgeCase in _facetEdgeCases)
+        //    {
+        //        if (searchTerm == edgeCase.SearchTerm && _fullSearchTerm.Contains(edgeCase.FullSearchTerm, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            return edgeCase.Result;
+        //        }
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         /// <summary>
         /// used to clean the result of a lucence string - they can become corrupted with high throughput of search API calls
@@ -407,7 +386,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
         /// </summary>
         /// <param name="luceneString"></param>
         /// <returns></returns>
-        private string CleanLuceneString(string luceneString)
+        private static string CleanLuceneString(string luceneString)
         {
             luceneString = luceneString.Trim();
 
@@ -421,7 +400,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             return luceneString;
         }
 
-        private void ClearObjects()
+        private static void ClearObjects()
         {
             _searchTermContainer.Clear();
             _nonExactTermContainer.Clear();

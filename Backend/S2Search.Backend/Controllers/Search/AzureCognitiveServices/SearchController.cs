@@ -1,20 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Newtonsoft.Json;
-using Domain.Models.Insights;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Models.Insights;
-using S2Search.Backend.Domain.Models.Interfaces;
 using S2Search.Backend.Domain.Models.Request;
 using S2Search.Backend.Domain.Models.Response;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
-using S2Search.Backend.Services.Services.Search.Elastic.Helpers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
+using S2Search.Backend.Domain.Interfaces;
+using Services.Interfaces;
+using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
 
 namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
 {

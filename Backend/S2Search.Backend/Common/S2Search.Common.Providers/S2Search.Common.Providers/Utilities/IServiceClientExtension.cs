@@ -6,7 +6,7 @@ namespace S2Search.Backend.Common.S2Search.Common.Providers.S2Search.Common.Prov
     {
         public static IServiceCollection AddS2SearchProviders(this IServiceCollection services)
         {
-            services.AddLazyCache();
+            //services.AddLazyCache();
             services.AddProviders();
             return services;
         }

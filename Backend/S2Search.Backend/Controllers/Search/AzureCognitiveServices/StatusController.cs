@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using S2Search.Backend.Domain.Models.Interfaces;
-using System;
+using S2Search.Backend.Domain.Interfaces;
 
 namespace Search.Controllers
 {

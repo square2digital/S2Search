@@ -85,7 +85,6 @@ namespace S2Search.Backend.Controllers.Admin
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [RequestDataLogIgnore]
         public async Task<IActionResult> Upload(Guid customerId, Guid searchIndexId, IFormFile feedFile)
         {
             try

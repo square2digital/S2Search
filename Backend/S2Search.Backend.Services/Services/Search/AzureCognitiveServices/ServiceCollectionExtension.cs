@@ -35,7 +35,6 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices
             services.AddSingleton<IMemoryCacheService, LazyCacheService>();
             services.AddSingleton<IAzureSearchService, AzureSearchService>();
             services.AddSingleton<IAzureFacetService, AzureFacetService>();
-            services.AddTransient<ILuceneSyntaxHelper, LuceneSyntaxHelper>();
             services.AddSingleton<IFacetHelper, FacetHelper>();
             services.AddSingleton<IDisplayTextFormatHelper, DisplayTextFormatHelper>();
             services.AddSingleton<ISearchFilterFormatter, SearchFilterFormatterElastic>();
