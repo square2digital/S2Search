@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+using S2Search.Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAPIServices();
 
 var app = builder.Build();
 

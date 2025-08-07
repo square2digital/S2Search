@@ -37,7 +37,7 @@ namespace S2Search.Backend.Services
             services.AddSingleton<IAzureFacetService, AzureFacetService>();
             services.AddSingleton<IFacetHelper, FacetHelper>();
             services.AddSingleton<IDisplayTextFormatHelper, DisplayTextFormatHelper>();
-            services.AddSingleton<ISearchFilterFormatter, Services.Search.AzureCognitiveServices.Providers.SearchFilterFormatter>();
+            services.AddSingleton<ISearchFilterFormatter, SearchFilterFormatter>();
             services.AddSingleton<IFacetOverride, EngineSizeOverride>();
             services.AddSingleton<IFacetOverride, MileageOverride>();
             services.AddSingleton<IFacetOverride, DoorsOverride>();
