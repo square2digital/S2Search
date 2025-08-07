@@ -26,6 +26,7 @@
   <ItemGroup>
     <Folder Include="Services\Admin\Dapper\Models\" />
     <Folder Include="Services\Search\AzureCognitiveServices\Extensions\" />
+    <Folder Include="Services\Search\AzureCognitiveServices\Providers\Credentials\" />
     <Folder Include="Services\Search\AzureCognitiveServices\Providers\Dapper\" />
   </ItemGroup>
 

@@ -21,7 +21,6 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
         private readonly IAzureSearchDocumentsClientProvider _searchClientProvider;
         private readonly ISearchOptionsProvider _searchOptionsProvider;
         private readonly IMemoryCacheService _memoryCacheService;
-        private readonly ISearchIndexQueryCredentialsProvider _queryCredentialsProvider;
 
         public AzureFacetService(IAppSettings appSettings,
                                 ILoggerFactory loggerFactory,
@@ -30,8 +29,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                                 IAzureSearchDocumentsClientProvider searchClientProvider,
                                 IFacetHelper facetHelper,
                                 IFacetOverrideProvider facetOverrideProvider,
-                                IMemoryCacheService memoryCacheService,
-                                ISearchIndexQueryCredentialsProvider queryCredentialsProvider)
+                                IMemoryCacheService memoryCacheService)
 
             : base(appSettings, loggerFactory, displayTextFormatHelper, facetHelper, facetOverrideProvider)
         {
@@ -40,7 +38,6 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             _searchClientProvider = searchClientProvider;
             _searchOptionsProvider = searchCriteriaProvider;
             _memoryCacheService = memoryCacheService ?? throw new ArgumentNullException(nameof(memoryCacheService));
-            _queryCredentialsProvider = queryCredentialsProvider ?? throw new ArgumentNullException(nameof(queryCredentialsProvider));
         }
 
         /// <summary>

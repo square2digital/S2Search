@@ -1,25 +1,28 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using S2Search.Backend.Domain.Constants;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
 using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
+using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
+using Services.Interfaces;
 
-namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Providers.Credentials
+namespace Services.Providers
 {
     public class SearchIndexQueryCredentialsProvider : ISearchIndexQueryCredentialsProvider
     {
         private readonly ILogger _logger;
+        private readonly IS2SearchAPIClient _clientConfigClient;
         private readonly IAppSettings _appSettings;
-        private readonly IDistributedCacheService _redisService;        
+        private readonly IDistributedCacheService _redisService;
 
         public SearchIndexQueryCredentialsProvider(ILogger<SearchIndexQueryCredentialsProvider> logger,
+                                                   IS2SearchAPIClient clientConfigClient,
                                                    IAppSettings appSettings,
                                                    IDistributedCacheService redisService)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _clientConfigClient = clientConfigClient ?? throw new ArgumentNullException(nameof(clientConfigClient));
             _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
             _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
@@ -52,7 +55,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Provi
 
                 var result = await GetQueryCredentialsAsync(callingHost);
 
-                if(result != null)
+                if (result != null)
                 {
                     await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
                 }
@@ -66,40 +69,40 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Provi
             }
         }
 
-        //private async Task<SearchIndexQueryCredentials> GetQueryCredentialsAsync(string callingHost)
-        //{
-        //    try
-        //    {
-        //        //var header = ApiManagerHelper.GetHeader(_appSettings.ClientConfigurationSettings.HeaderAPISubscriptionName, _appSettings.ClientConfigurationSettings.APISubscriptionKey);
-        //        var response = await _clientConfigClient.GetSearchIndexQueryCredentialsAsync(callingHost);
+        private async Task<SearchIndexQueryCredentials> GetQueryCredentialsAsync(string callingHost)
+        {
+            try
+            {
+                //var header = ApiManagerHelper.GetHeader(_appSettings.ClientConfigurationSettings.HeaderAPISubscriptionName, _appSettings.ClientConfigurationSettings.APISubscriptionKey);
+                var response = await _clientConfigClient.GetSearchIndexQueryCredentialsAsync(callingHost);
 
-        //        //if (!response.Response.IsSuccessStatusCode)
-        //        //{
-        //        //    if (response.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
-        //        //    {
-        //        //        return null;
-        //        //    }
-        //        //}
+                //if (!response.Response.IsSuccessStatusCode)
+                //{
+                //    if (response.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                //    {
+                //        return null;
+                //    }
+                //}
 
-        //        //var content = await response.Response.Content.ReadAsStringAsync();
-        //        //var queryCredentials = JsonConvert.DeserializeObject<SearchIndexQueryCredentials>(content);
-        //        var queryCredentials = response;
-        //        var azureSearchResource = new SearchIndexQueryCredentials()
-        //        {
-        //            SearchIndexId = queryCredentials.SearchIndexId,
-        //            SearchInstanceEndpoint = queryCredentials.SearchInstanceEndpoint,
-        //            SearchInstanceName = queryCredentials.SearchInstanceName,
-        //            SearchIndexName = queryCredentials.SearchIndexName,
-        //            QueryApiKey = queryCredentials.ApiKey
-        //        };
+                //var content = await response.Response.Content.ReadAsStringAsync();
+                //var queryCredentials = JsonConvert.DeserializeObject<SearchIndexQueryCredentials>(content);
+                var queryCredentials = response;
+                var azureSearchResource = new SearchIndexQueryCredentials()
+                {
+                    SearchIndexId = queryCredentials.SearchIndexId,
+                    SearchInstanceEndpoint = queryCredentials.SearchInstanceEndpoint,
+                    SearchInstanceName = queryCredentials.SearchInstanceName,
+                    SearchIndexName = queryCredentials.SearchIndexName,
+                    QueryApiKey = queryCredentials.ApiKey
+                };
 
-        //        return azureSearchResource;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"Error on {nameof(GetQueryCredentialsAsync)} | CallingHost: {callingHost} | Message: {ex.Message}");
-        //        throw;
-        //    }
-        //}
+                return azureSearchResource;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error on {nameof(GetQueryCredentialsAsync)} | CallingHost: {callingHost} | Message: {ex.Message}");
+                throw;
+            }
+        }
     }
 }

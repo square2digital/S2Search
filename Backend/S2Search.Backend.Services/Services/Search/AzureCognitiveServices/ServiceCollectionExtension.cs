@@ -7,7 +7,6 @@ using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interface
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Providers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Providers.AzureSearch;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Providers.Credentials;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Services;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Services.Cache;
 using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;

@@ -19,7 +19,6 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
         private readonly ISynonymsHelper _synonymsHelper;
         private readonly IEnumerable<char> _luceneSpecialCharacters = new char[] { '+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', '\\' };
         private readonly IAzureFacetService _azureFacetService;
-        private readonly ISearchIndexQueryCredentialsProvider _queryCredentialsProvider;
         private readonly ISynonymsService _synonymsService;
 
         private Dictionary<int, string> _searchTermContainer;
@@ -30,7 +29,6 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             IAppSettings appSettings,
             ISynonymsHelper SynonymsHelper,
             IAzureFacetService azureFacetService,
-            ISearchIndexQueryCredentialsProvider queryCredentialsProvider,
             ISynonymsService synonymsService)
         {
             _logger = loggerFactory.CreateLogger<LuceneSyntaxHelper>();
@@ -44,7 +42,6 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             _facetEdgeCases = JsonSerializer.Deserialize<List<FacetEdgeCase>>(_appSettings.SearchSettings.FacetEdgeCases);
             _synonymsHelper = SynonymsHelper ?? throw new ArgumentNullException(nameof(SynonymsHelper));
             _azureFacetService = azureFacetService ?? throw new ArgumentNullException(nameof(azureFacetService));
-            _queryCredentialsProvider = queryCredentialsProvider ?? throw new ArgumentNullException(nameof(queryCredentialsProvider));
             _synonymsService = synonymsService ?? throw new ArgumentNullException(nameof(synonymsService));
         }
 
