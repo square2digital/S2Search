@@ -7,7 +7,34 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Domain\**" />
+    <Content Remove="Domain\**" />
+    <EmbeddedResource Remove="Domain\**" />
+    <None Remove="Domain\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="LazyCache" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\S2Search.Backend.Domain\S2Search.Backend.Domain.csproj" />
+    <ProjectReference Include="..\S2Search.Backend.Services\S2Search.Backend.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\Models\" />
+    <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\Providers\" />
+    <Folder Include="Common\S2Search.Common.Models\SearchResource\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,10 @@
 const axios = require("axios");
+const https = require("https");
+
+// Create an HTTPS agent that ignores SSL certificate errors for development
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false, // Only use this in development!
+});
 
 const configWithApiKey = () => {
   const key = getApiSubscriptionKey();
@@ -9,6 +15,7 @@ const configWithApiKey = () => {
       "Content-Type": "application/json",
       "Ocp-Apim-Subscription-Key": key,
     },
+    httpsAgent: httpsAgent, // Add HTTPS agent to ignore self-signed certificates
   };
 };
 
@@ -17,6 +24,7 @@ const configNoApiKey = {
     Accept: "application/json",
     "Content-Type": "application/json",
   },
+  httpsAgent: httpsAgent, // Add HTTPS agent to ignore self-signed certificates
 };
 
 const cancelRequest = (configHeaders) => {
@@ -63,7 +71,13 @@ const AxiosPost = async (request, url) => {
       return response;
     })
     .catch(function (error) {
-      return error;
+      console.log(`error on AxiosPost - url ${url}`, error);
+      return {
+        code: error.code || "UNKNOWN_ERROR",
+        message: error.message,
+        response: error.response,
+        isError: true,
+      };
     });
 };
 
@@ -103,10 +117,22 @@ const axiosCall = async (url, configHeaders, cancellation) => {
     .catch(function (error) {
       if (axios.isCancel(error)) {
         console.log("Request canceled", error.message);
+        return {
+          code: "REQUEST_CANCELLED",
+          message: "Request was cancelled",
+          cancelled: true,
+        };
       } else {
         console.log(`error on axiosCall - url ${url}`, error, configHeaders);
+
+        // Return a structured error object that genericAPI can handle
+        return {
+          code: error.code || "UNKNOWN_ERROR",
+          message: error.message,
+          response: error.response,
+          isError: true,
+        };
       }
-      return error;
     });
 };
 
