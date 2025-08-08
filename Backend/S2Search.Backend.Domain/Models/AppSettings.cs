@@ -143,6 +143,7 @@ public class MemoryCacheSettings
 
 public class RedisCacheSettings
 {
+    public bool EnableRedisCache { get; set; }
     public string RedisConnectionString { get; set; }
     public int DefaultCacheExpiryInSeconds { get; set; }        
 }

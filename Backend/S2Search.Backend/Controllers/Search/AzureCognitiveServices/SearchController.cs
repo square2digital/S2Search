@@ -66,13 +66,26 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
             try
             {
                 request.CallingHost = StringHelpers.FormatCallingHost(request.CallingHost);
-                var redisKey = _redisService.CreateRedisKey(request.CallingHost, "search", HashHelper.GetXXHashString(JsonConvert.SerializeObject(request)));
-                var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
+                var redisEnabled = _appSettings.RedisCacheSettings?.EnableRedisCache ?? true;
+                string redisKey = null;
+                string redisValue = null;
+
+                if (redisEnabled)
+                {
+                    try
+                    {
+                        redisKey = _redisService.CreateRedisKey(request.CallingHost, "search", HashHelper.GetXXHashString(JsonConvert.SerializeObject(request)));
+                        redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Redis unavailable, skipping cache for search.");
+                    }
+                }
 
                 if (redisValue != null)
                 {
                     var searchResults = JsonConvert.DeserializeObject<SearchResultRoot>(redisValue);
-
                     LogSearchInsight(searchResults.SearchInsightMessage);
                     return Ok(searchResults.SearchProductResult);
                 }
@@ -86,8 +99,18 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
 
                 result = await _azureSearchService.InvokeSearchRequest(request, queryCredentials);
                 Response.Headers.Add("Total-Results", result.SearchProductResult.TotalResults.ToString());
-                
-                await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
+
+                if (redisEnabled && redisKey != null)
+                {
+                    try
+                    {
+                        await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Redis unavailable, skipping cache set for search.");
+                    }
+                }
 
                 LogSearchInsight(result.SearchInsightMessage);
                 return Ok(result.SearchProductResult);

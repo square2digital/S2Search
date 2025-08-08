@@ -30,7 +30,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
 
         public static string GenerateLuceneSearchString(string searchTerm)
         {
-            FacetsFromLocalFile();
+            //FacetsFromLocalFile();
             ClearObjects();
 
             if (string.IsNullOrWhiteSpace(searchTerm))

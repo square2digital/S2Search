@@ -55,14 +55,19 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
 
         public async Task<string> GetFromRedisIfExistsAsync(string redisKey)
         {
-            var redisValue = await GetValueAsync(redisKey);
-
-            if (redisValue.HasValue)
+            try
             {
-                return redisValue.ToString();
+                var redisValue = await GetValueAsync(redisKey);
+                if (redisValue.HasValue)
+                {
+                    return redisValue.ToString();
+                }
+                return null;
             }
-
-            return null;
+            catch
+            {
+                return null;
+            }
         }
     }
 }
