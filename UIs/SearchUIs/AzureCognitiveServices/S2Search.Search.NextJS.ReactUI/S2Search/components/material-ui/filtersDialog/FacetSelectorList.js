@@ -23,6 +23,29 @@ import {
 const FacetSelectionList = props => {
   const [facetState, setfacetState] = useState({});
 
+  const handleChecked = useCallback((theFacet) => {
+    let theFacetUpdated = theFacet;
+    const updatedFacetItems = [];
+
+    theFacet.facetItems.map(facetItem => {
+      if (
+        props.reduxFacetSelectors.some(
+          f => f.facetDisplayText === facetItem.facetDisplayText
+        )
+      ) {
+        updatedFacetItems.push({ ...facetItem, selected: true });
+      } else {
+        updatedFacetItems.push({ ...facetItem, selected: false });
+      }
+    });
+
+    if (updatedFacetItems.length > 0) {
+      theFacetUpdated = { ...theFacetUpdated, facetItems: updatedFacetItems };
+    }
+
+    return theFacetUpdated;
+  }, [props.reduxFacetSelectors]);
+
   const generateFacetSelectors = useCallback((facetKeyName) => {
     let theFacet = {};
     let currentFacet = {};
@@ -94,29 +117,6 @@ const FacetSelectionList = props => {
       generateFacetSelectors(props.reduxSelectedFacet);
     }
   }, [props.reduxSelectedFacet, generateFacetSelectors]);
-
-  const handleChecked = useCallback((theFacet) => {
-    let theFacetUpdated = theFacet;
-    const updatedFacetItems = [];
-
-    theFacet.facetItems.map(facetItem => {
-      if (
-        props.reduxFacetSelectors.some(
-          f => f.facetDisplayText === facetItem.facetDisplayText
-        )
-      ) {
-        updatedFacetItems.push({ ...facetItem, selected: true });
-      } else {
-        updatedFacetItems.push({ ...facetItem, selected: false });
-      }
-    });
-
-    if (updatedFacetItems.length > 0) {
-      theFacetUpdated = { ...theFacetUpdated, facetItems: updatedFacetItems };
-    }
-
-    return theFacetUpdated;
-  }, [props.reduxFacetSelectors]);
 
   return (
     <main
