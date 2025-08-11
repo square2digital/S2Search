@@ -1,4 +1,5 @@
-const { genericAPI } = require("../shared/genericAPI");
-module.exports = async function (req, res, cancellation) {
-  return await genericAPI(req, res, "search", "", false, cancellation);
-};
+const { genericAPI } = require('../shared/genericAPI');
+
+export default async function handler(req, res, cancellation) {
+  return await genericAPI(req, res, 'search', '', false, cancellation);
+}

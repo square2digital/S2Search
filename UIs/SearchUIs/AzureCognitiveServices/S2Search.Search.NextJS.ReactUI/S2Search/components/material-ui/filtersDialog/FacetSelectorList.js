@@ -1,34 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import FacetSelector from "../filtersDialog/FacetSelector";
-import Grid from "@mui/material/Grid";
-import { makeStyles } from "@mui/styles";
-import facetActions from "../../../redux/actions/facetActions";
-import componentActions from "../../../redux/actions/componentActions";
-import searchActions from "../../../redux/actions/searchActions";
-import { StaticFacets } from "../../../common/Constants";
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import FacetSelector from '../filtersDialog/FacetSelector';
+import Grid from '@mui/material/Grid';
+import facetActions from '../../../redux/actions/facetActions';
+import componentActions from '../../../redux/actions/componentActions';
+import searchActions from '../../../redux/actions/searchActions';
+import { StaticFacets } from '../../../common/Constants';
 import {
   getDefaultFacetsWithSelections,
   isSelectFacetMenuAlreadySelected,
-} from "../../../common/functions/FacetFunctions";
+} from '../../../common/functions/FacetFunctions';
 
-const useStyles = makeStyles((theme) => ({
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(1),
-  },
-}));
-
-const FacetSelectionList = (props) => {
-  const classes = useStyles();
+const FacetSelectionList = props => {
   const [facetState, setfacetState] = useState({});
 
   useEffect(() => {
     generateFacetSelectors(props.reduxSelectedFacet);
   }, [props.reduxFacetData]);
 
-  const generateFacetSelectors = (facetKeyName) => {
+  const generateFacetSelectors = facetKeyName => {
     let theFacet = {};
     let currentFacet = {};
     let facetData = [];
@@ -65,7 +56,7 @@ const FacetSelectionList = (props) => {
       }
     }
 
-    facetData = facetsToLoad.filter((x) => x.facetKey === facetKeyName);
+    facetData = facetsToLoad.filter(x => x.facetKey === facetKeyName);
 
     currentFacet = facetData[0];
 
@@ -88,14 +79,14 @@ const FacetSelectionList = (props) => {
     }
   };
 
-  const handleChecked = (theFacet) => {
+  const handleChecked = theFacet => {
     let theFacetUpdated = theFacet;
     const updatedFacetItems = [];
 
-    theFacet.facetItems.map((facetItem) => {
+    theFacet.facetItems.map(facetItem => {
       if (
         props.reduxFacetSelectors.some(
-          (f) => f.facetDisplayText === facetItem.facetDisplayText
+          f => f.facetDisplayText === facetItem.facetDisplayText
         )
       ) {
         updatedFacetItems.push({ ...facetItem, selected: true });
@@ -112,7 +103,13 @@ const FacetSelectionList = (props) => {
   };
 
   return (
-    <main className={classes.content} style={{ paddingTop: "75px" }}>
+    <main
+      sx={{
+        flexGrow: 1,
+        padding: 1,
+      }}
+      style={{ paddingTop: '75px' }}
+    >
       <Grid container>
         {facetState.facetItems !== undefined ? (
           facetState.facetItems.map((facetSelectorItem, index) => {
@@ -133,25 +130,25 @@ const FacetSelectionList = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveVehicleData: (vehicleData) =>
+    saveVehicleData: vehicleData =>
       dispatch(searchActions.saveVehicleData(vehicleData)),
-    savePageNumber: (pageNumber) =>
+    savePageNumber: pageNumber =>
       dispatch(searchActions.savePageNumber(pageNumber)),
-    saveFacetSelectors: (resetFacetArray) =>
+    saveFacetSelectors: resetFacetArray =>
       dispatch(facetActions.saveFacetSelectors(resetFacetArray)),
-    saveSearchTerm: (searchTerm) =>
+    saveSearchTerm: searchTerm =>
       dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveOrderby: (orderBy) => dispatch(searchActions.saveOrderby(orderBy)),
-    saveDialogOpen: (dialogOpen) =>
+    saveOrderby: orderBy => dispatch(searchActions.saveOrderby(orderBy)),
+    saveDialogOpen: dialogOpen =>
       dispatch(componentActions.saveDialogOpen(dialogOpen)),
-    saveSelectedFacet: (facetName) =>
+    saveSelectedFacet: facetName =>
       dispatch(componentActions.saveSelectedFacet(facetName)),
   };
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
     reduxSearchTerm: reduxState.searchReducer.searchTerm,
     reduxSearchCount: reduxState.searchReducer.searchCount,

@@ -1,29 +1,29 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableRow from "@mui/material/TableRow";
-import Box from "@mui/material/Box";
-import { green, common, grey, yellow, orange } from "@mui/material/colors";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import CommuteIcon from "@mui/icons-material/Commute";
-import EvStationIcon from "@mui/icons-material/EvStation";
-import TimeToLeaveIcon from "@mui/icons-material/TimeToLeave";
-import PaletteIcon from "@mui/icons-material/Palette";
-import { withStyles, makeStyles } from "@mui/styles";
-import Divider from "@mui/material/Divider";
-import Link from "@mui/material/Link";
-import { MobileMaxWidth } from "../../../common/Constants";
-import VehicleImage from "./VehicleImage";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableRow from '@mui/material/TableRow';
+import Box from '@mui/material/Box';
+import { green, common, grey, yellow, orange } from '@mui/material/colors';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import CommuteIcon from '@mui/icons-material/Commute';
+import EvStationIcon from '@mui/icons-material/EvStation';
+import TimeToLeaveIcon from '@mui/icons-material/TimeToLeave';
+import PaletteIcon from '@mui/icons-material/Palette';
+import { withStyles, makeStyles } from '@mui/styles';
+import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
+import { MobileMaxWidth, DefaultTheme } from '../../../common/Constants';
+import VehicleImage from './VehicleImage';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const BlackTextTypography = withStyles({
   root: {
@@ -31,50 +31,50 @@ const BlackTextTypography = withStyles({
   },
 })(Typography);
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
   },
   paper: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('sm')]: {
       paddingTop: theme.spacing(1),
     },
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up('sm')]: {
       paddingTop: theme.spacing(1),
-      paddingLeft: "2px",
-      paddingRight: "2px",
-      paddingBottom: "2px",
+      paddingLeft: '2px',
+      paddingRight: '2px',
+      paddingBottom: '2px',
     },
 
-    textAlign: "center",
+    textAlign: 'center',
     color: theme.palette.text.primary,
   },
   table: {
     marginTop: 10,
   },
   tableCell: {
-    border: "none !important",
+    border: 'none !important',
   },
   vehicleCardContainer: {
-    paddingLeft: "10px",
-    paddingRight: "10px",
-    marginBottom: "10px",
+    paddingLeft: '10px',
+    paddingRight: '10px',
+    marginBottom: '10px',
   },
   cardVehicleImage: {
-    boxShadow: "4px 5px 8px 0px #c2c2c2",
-    padding: "1px",
-    marginBottom: "5px",
+    boxShadow: '4px 5px 8px 0px #c2c2c2',
+    padding: '1px',
+    marginBottom: '5px',
 
-    [theme.breakpoints.down("sm")]: {
-      width: "100%",
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
     },
-    [theme.breakpoints.up("md")]: {
-      width: "95%",
+    [theme.breakpoints.up('md')]: {
+      width: '95%',
     },
   },
 }));
 
-const setPriceText = (vehicleData) => {
+const setPriceText = vehicleData => {
   const PriceStr = Number(vehicleData.price.toFixed(2)).toLocaleString();
   const PerMonthStr = Number(
     vehicleData.monthlyPrice.toFixed(2)
@@ -95,7 +95,7 @@ const setPriceText = (vehicleData) => {
   }
 };
 
-const setMilageText = (vehicleData) => {
+const setMilageText = vehicleData => {
   const mileage = Number(vehicleData.mileage.toFixed(2)).toLocaleString();
 
   if (vehicleData.mileage > 0) {
@@ -113,40 +113,40 @@ const setMilageText = (vehicleData) => {
   }
 };
 
-const setFuelAttribute = (fuelType) => {
+const setFuelAttribute = fuelType => {
   switch (fuelType) {
-    case "Diesel": {
+    case 'Diesel': {
       return (
         <LocalGasStationIcon style={{ color: common.black }} fontSize="small" />
       );
     }
-    case "Petrol": {
+    case 'Petrol': {
       return (
         <LocalGasStationIcon style={{ color: green[500] }} fontSize="small" />
       );
     }
-    case "Hybrid": {
+    case 'Hybrid': {
       return <EvStationIcon style={{ color: orange[700] }} fontSize="small" />;
     }
-    case "Electric": {
+    case 'Electric': {
       return <EvStationIcon style={{ color: yellow[300] }} fontSize="small" />;
     }
     default:
-      return "";
+      return '';
   }
 };
 
-const setMobileTransmissionText = (transmission) => {
+const setMobileTransmissionText = transmission => {
   switch (transmission) {
-    case "Automatic": {
-      return "Auto";
+    case 'Automatic': {
+      return 'Auto';
     }
     default:
       return transmission;
   }
 };
 
-const VehicleCard = (props) => {
+const VehicleCard = props => {
   const classes = useStyles();
 
   const [windowWidth, setwindowWidth] = useState(window.innerWidth);
@@ -156,9 +156,9 @@ const VehicleCard = (props) => {
       setwindowWidth(window.innerWidth);
     };
 
-    window.addEventListener("resize", updateWindowDimensions);
+    window.addEventListener('resize', updateWindowDimensions);
 
-    return () => window.removeEventListener("resize", updateWindowDimensions);
+    return () => window.removeEventListener('resize', updateWindowDimensions);
   }, []);
 
   const vehicleData = props;
@@ -169,10 +169,16 @@ const VehicleCard = (props) => {
   const theme = createTheme({
     palette: {
       primary: {
-        main: props.reduxPrimaryColour,
+        main:
+          props.reduxPrimaryColour ||
+          DefaultTheme.primaryHexColour ||
+          '#616161',
       },
       secondary: {
-        main: props.reduxSecondaryColour,
+        main:
+          props.reduxSecondaryColour ||
+          DefaultTheme.secondaryHexColour ||
+          '#303f9f',
       },
     },
   });
@@ -187,21 +193,24 @@ const VehicleCard = (props) => {
                 mobile={false}
                 imageURL={imageURL}
                 imageTitle={imageTitle}
-                missingImageURL={props.missingImageURL}></VehicleImage>
+                missingImageURL={props.missingImageURL}
+              ></VehicleImage>
             </Link>
             <div className={classes.vehicleCardContainer}>
-              <Divider style={{ marginTop: "7px", marginBottom: "7px" }} />
+              <Divider style={{ marginTop: '7px', marginBottom: '7px' }} />
 
               <Link
                 underline="hover"
                 target="_blank"
                 rel="noreferrer"
-                href={vehicleData.pageUrl}>
+                href={vehicleData.pageUrl}
+              >
                 <Typography
                   variant="h6"
                   component="h2"
                   color="primary"
-                  align="left">
+                  align="left"
+                >
                   {title}
                 </Typography>
               </Link>
@@ -210,31 +219,35 @@ const VehicleCard = (props) => {
                 variant="caption"
                 color="textSecondary"
                 component="p"
-                align="left">
+                align="left"
+              >
                 {vehicleData.variant}
               </Typography>
               <Typography
                 variant="caption"
                 color="textSecondary"
                 component="p"
-                align="left">
+                align="left"
+              >
                 {setPriceText(vehicleData)}
               </Typography>
               <Typography
                 variant="caption"
                 color="textSecondary"
                 component="p"
-                align="left">
-                Mileage: <b>{setMilageText(vehicleData)}</b> - Location:{" "}
+                align="left"
+              >
+                Mileage: <b>{setMilageText(vehicleData)}</b> - Location:{' '}
                 <b>{vehicleData.location}</b>
               </Typography>
 
-              <TableContainer style={{ overflow: "hidden" }}>
+              <TableContainer style={{ overflow: 'hidden' }}>
                 <Table
                   className={classes.table}
                   size="small"
                   padding="none"
-                  aria-label="simple table">
+                  aria-label="simple table"
+                >
                   <TableBody>
                     <TableRow>
                       <TableCell className={classes.tableCell}>
@@ -242,7 +255,8 @@ const VehicleCard = (props) => {
                           display="flex"
                           flexDirection="row"
                           overflow="hidden"
-                          bgcolor="background.paper">
+                          bgcolor="background.paper"
+                        >
                           <Box>
                             <SettingsIcon
                               style={{ color: grey[500] }}
@@ -253,7 +267,8 @@ const VehicleCard = (props) => {
                             <BlackTextTypography
                               variant="caption"
                               color="textSecondary"
-                              component="p">
+                              component="p"
+                            >
                               {vehicleData.transmission}
                             </BlackTextTypography>
                           </Box>
@@ -264,13 +279,15 @@ const VehicleCard = (props) => {
                           display="flex"
                           flexDirection="row"
                           overflow="hidden"
-                          bgcolor="background.paper">
+                          bgcolor="background.paper"
+                        >
                           <Box>{setFuelAttribute(vehicleData.fuelType)}</Box>
                           <Box>
                             <BlackTextTypography
                               variant="caption"
                               color="textSecondary"
-                              component="p">
+                              component="p"
+                            >
                               {vehicleData.fuelType}
                             </BlackTextTypography>
                           </Box>
@@ -283,7 +300,8 @@ const VehicleCard = (props) => {
                           display="flex"
                           flexDirection="row"
                           overflow="hidden"
-                          bgcolor="background.paper">
+                          bgcolor="background.paper"
+                        >
                           <Box>
                             <DateRangeIcon
                               style={{ color: grey[500] }}
@@ -294,7 +312,8 @@ const VehicleCard = (props) => {
                             <BlackTextTypography
                               variant="caption"
                               color="textSecondary"
-                              component="p">
+                              component="p"
+                            >
                               {vehicleData.year}
                             </BlackTextTypography>
                           </Box>
@@ -312,7 +331,8 @@ const VehicleCard = (props) => {
                             <BlackTextTypography
                               variant="caption"
                               color="textSecondary"
-                              component="p">
+                              component="p"
+                            >
                               {vehicleData.bodyStyle}
                             </BlackTextTypography>
                           </Box>
@@ -325,7 +345,8 @@ const VehicleCard = (props) => {
                           display="flex"
                           flexDirection="row"
                           overflow="hidden"
-                          bgcolor="background.paper">
+                          bgcolor="background.paper"
+                        >
                           <Box>
                             <TimeToLeaveIcon
                               style={{ color: grey[500] }}
@@ -336,7 +357,8 @@ const VehicleCard = (props) => {
                             <BlackTextTypography
                               variant="caption"
                               color="textSecondary"
-                              component="p">
+                              component="p"
+                            >
                               {`${(
                                 Number(vehicleData.engineSize) / Number(1000)
                               ).toFixed(1)} Ltr`}
@@ -355,7 +377,8 @@ const VehicleCard = (props) => {
                           <Box>
                             <BlackTextTypography
                               variant="caption"
-                              component="p">
+                              component="p"
+                            >
                               {vehicleData.colour}
                             </BlackTextTypography>
                           </Box>
@@ -382,29 +405,33 @@ const VehicleCard = (props) => {
                 mobile={true}
                 imageURL={imageURL}
                 imageTitle={imageTitle}
-                missingImageURL={props.missingImageURL}></VehicleImage>
+                missingImageURL={props.missingImageURL}
+              ></VehicleImage>
             </Link>
           </Box>
           <Box>
             <div
               style={{
-                paddingLeft: "10px",
-                paddingRight: "10px",
-                marginBottom: "0px",
-                position: "relative",
+                paddingLeft: '10px',
+                paddingRight: '10px',
+                marginBottom: '0px',
+                position: 'relative',
                 bottom: 5,
                 zIndex: -1,
-              }}>
+              }}
+            >
               <Link
                 underline="hover"
                 target="_blank"
                 rel="noreferrer"
-                href={vehicleData.pageUrl}>
+                href={vehicleData.pageUrl}
+              >
                 <Typography
                   variant="subtitle1"
                   color="textSecondary"
                   component="p"
-                  align="left">
+                  align="left"
+                >
                   {title}
                 </Typography>
               </Link>
@@ -412,7 +439,8 @@ const VehicleCard = (props) => {
                 variant="caption"
                 color="textSecondary"
                 component="p"
-                align="left">
+                align="left"
+              >
                 {vehicleData.variant}
               </Typography>
 
@@ -420,24 +448,27 @@ const VehicleCard = (props) => {
                 variant="caption"
                 color="textSecondary"
                 component="p"
-                align="left">
+                align="left"
+              >
                 {setPriceText(vehicleData)}
               </Typography>
               <Typography
                 variant="caption"
                 color="textSecondary"
                 component="p"
-                align="left">
+                align="left"
+              >
                 Mileage: <b>{setMilageText(vehicleData)}</b>
               </Typography>
 
-              <Box display="flex" style={{ position: "relative", top: 5 }}>
+              <Box display="flex" style={{ position: 'relative', top: 5 }}>
                 <Box>{setFuelAttribute(vehicleData.fuelType)}</Box>
                 <Box>
                   <BlackTextTypography
                     variant="caption"
                     color="textSecondary"
-                    component="p">
+                    component="p"
+                  >
                     {vehicleData.fuelType}
                   </BlackTextTypography>
                 </Box>
@@ -448,7 +479,8 @@ const VehicleCard = (props) => {
                   <BlackTextTypography
                     variant="caption"
                     color="textSecondary"
-                    component="p">
+                    component="p"
+                  >
                     {setMobileTransmissionText(vehicleData.transmission)}
                   </BlackTextTypography>
                 </Box>
@@ -462,7 +494,8 @@ const VehicleCard = (props) => {
                   <BlackTextTypography
                     variant="caption"
                     color="textSecondary"
-                    component="p">
+                    component="p"
+                  >
                     {vehicleData.year}
                   </BlackTextTypography>
                 </Box>
@@ -506,7 +539,7 @@ VehicleCard.propTypes = {
   missingImageURL: PropTypes.string,
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
     reduxPrimaryColour: reduxState.themeReducer.primaryColour,
     reduxSecondaryColour: reduxState.themeReducer.secondaryColour,

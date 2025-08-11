@@ -1,20 +1,19 @@
-import React from "react";
-import PropTypes from "prop-types";
-import Dialog from "@mui/material/Dialog";
-import Slide from "@mui/material/Slide";
-import { connect } from "react-redux";
-import componentActions from "../../../redux/actions/componentActions";
-import { makeStyles } from "@mui/styles";
-import FacetAppBar from "../filtersDialog/FacetAppBar";
-import FacetSelectionMenu from "../filtersDialog/FacetSelectionMenu";
-import FacetSelectionList from "../filtersDialog/FacetSelectorList";
-import { LogDetails } from "../../../helpers/LogDetails";
+import React from 'react';
+import PropTypes from 'prop-types';
+import Dialog from '@mui/material/Dialog';
+import Slide from '@mui/material/Slide';
+import { connect } from 'react-redux';
+import componentActions from '../../../redux/actions/componentActions';
+import FacetAppBar from '../filtersDialog/FacetAppBar';
+import FacetSelectionMenu from '../filtersDialog/FacetSelectionMenu';
+import FacetSelectionList from '../filtersDialog/FacetSelectorList';
+import { LogDetails } from '../../../helpers/LogDetails';
 
-const useStyles = makeStyles(() => ({
+const styles = {
   root: {
-    display: "flex",
+    display: 'flex',
   },
-}));
+};
 
 // *********************************************************************************************************************
 // ** - WARNING
@@ -24,9 +23,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const FacetFullScreenDialog = (props) => {
-  const classes = useStyles();
-
+const FacetFullScreenDialog = props => {
   const handleClose = () => {
     props.saveDialogOpen(false);
   };
@@ -38,8 +35,9 @@ const FacetFullScreenDialog = (props) => {
         fullScreen
         open={props.reduxDialogOpen}
         onClose={handleClose}
-        TransitionComponent={Transition}>
-        <div className={classes.root}>
+        TransitionComponent={Transition}
+      >
+        <div style={styles.root}>
           <FacetAppBar />
           <FacetSelectionMenu />
           <FacetSelectionList />
@@ -49,16 +47,16 @@ const FacetFullScreenDialog = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
     reduxDialogOpen: reduxState.componentReducer.dialogOpen,
     defaultFacetData: reduxState.facetReducer.defaultFacetData,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveDialogOpen: (dialogOpen) =>
+    saveDialogOpen: dialogOpen =>
       dispatch(componentActions.saveDialogOpen(dialogOpen)),
   };
 };

@@ -1,9 +1,9 @@
-const { GenerateAPIError } = require("../shared/apiFunctions/apiHelpers");
-const { DefaultTheme } = require("../../../common/Constants");
+const { GenerateAPIError } = require('../shared/apiFunctions/apiHelpers');
+const { DefaultTheme } = require('../../../common/Constants');
 
-module.exports = async function (req, res) {
-  const { invokeAPI } = require("../shared/invokeAPI");
-  const axiosResponse = await invokeAPI(req, res, "theme", "theme", true);
+export default async function handler(req, res) {
+  const { invokeAPI } = require('../shared/invokeAPI');
+  const axiosResponse = await invokeAPI(req, res, 'theme', 'theme', true);
 
   if (axiosResponse) {
     if (axiosResponse.status === 200) {
@@ -22,4 +22,4 @@ module.exports = async function (req, res) {
     console.log(`error calling Theme API - axiosResponse is null or undefined`);
     res.end(JSON.stringify(DefaultTheme));
   }
-};
+}

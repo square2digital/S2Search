@@ -1,55 +1,29 @@
-import React from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import componentActions from "../../../redux/actions/componentActions";
-import RotateLeftIcon from "@mui/icons-material/RotateLeft";
-import facetActions from "../../../redux/actions/facetActions";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import { makeStyles } from "@mui/styles";
-import { setSelectedFacetButton } from "../../../common/functions/FacetFunctions";
-import searchActions from "../../../redux/actions/searchActions";
-import Typography from "@mui/material/Typography";
-import { GenerateUniqueID } from "../../../common/functions/SharedFunctions";
+import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
+import componentActions from '../../../redux/actions/componentActions';
+import RotateLeftIcon from '@mui/icons-material/RotateLeft';
+import facetActions from '../../../redux/actions/facetActions';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import { setSelectedFacetButton } from '../../../common/functions/FacetFunctions';
+import searchActions from '../../../redux/actions/searchActions';
+import Typography from '@mui/material/Typography';
+import { GenerateUniqueID } from '../../../common/functions/SharedFunctions';
 
 const drawerWidth_xs = 143;
 const drawerWidth_sm = 180;
 
-const useStyles = makeStyles((theme) => ({
-  drawer: {
-    [theme.breakpoints.up("xs")]: {
-      width: drawerWidth_xs,
-    },
-    [theme.breakpoints.up("sm")]: {
-      width: drawerWidth_sm,
-    },
-    flexShrink: 0,
-  },
-  // necessary for content to be below app bar
-  toolbar: theme.mixins.toolbar,
-  drawerPaper: {
-    [theme.breakpoints.up("xs")]: {
-      width: drawerWidth_xs,
-    },
-    [theme.breakpoints.up("sm")]: {
-      width: drawerWidth_sm,
-    },
-    zIndex: 0,
-  },
-}));
-
-const FacetSelectionMenu = (props) => {
-  const classes = useStyles();
-
+const FacetSelectionMenu = props => {
   const resetFilters = () => {
     props.saveResetFacets(true);
   };
 
-  const facetMenuClick = (facetKey) => {
+  const facetMenuClick = facetKey => {
     props.saveSelectedFacet(facetKey);
 
     let arr = [...props.reduxFacetSelectedKeys];
@@ -58,24 +32,40 @@ const FacetSelectionMenu = (props) => {
   };
 
   return (
-    <nav className={classes.drawer}>
+    <nav
+      sx={{
+        width: {
+          xs: drawerWidth_xs,
+          sm: drawerWidth_sm,
+        },
+        flexShrink: 0,
+      }}
+    >
       <Drawer
-        classes={{
-          paper: classes.drawerPaper,
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: {
+              xs: drawerWidth_xs,
+              sm: drawerWidth_sm,
+            },
+            zIndex: 0,
+          },
         }}
         variant="permanent"
-        open>
+        open
+      >
         <div>
-          <div className={classes.toolbar} />
+          <div sx={theme => theme.mixins.toolbar} />
           <Divider />
           <List>
-            {props.defaultFacetData.map((facet) => (
+            {props.defaultFacetData.map(facet => (
               <React.Fragment key={GenerateUniqueID()}>
                 <ListItem
                   button
                   onClick={() => {
                     facetMenuClick(facet.facetKey);
-                  }}>
+                  }}
+                >
                   <ListItemText
                     disableTypography
                     primary={
@@ -96,7 +86,7 @@ const FacetSelectionMenu = (props) => {
             <ListItem button key={GenerateUniqueID()} onClick={resetFilters}>
               <ListItemText
                 primary={
-                  <Typography variant="body2" style={{ fontWeight: "bold" }}>
+                  <Typography variant="body2" style={{ fontWeight: 'bold' }}>
                     Reset
                   </Typography>
                 }
@@ -112,7 +102,7 @@ const FacetSelectionMenu = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
     searchCount: reduxState.searchReducer.searchCount,
     reduxResultsCount: reduxState.searchReducer.searchCount,
@@ -127,24 +117,24 @@ const mapStateToProps = (reduxState) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveVehicleData: (vehicleData) =>
+    saveVehicleData: vehicleData =>
       dispatch(searchActions.saveVehicleData(vehicleData)),
-    savePageNumber: (pageNumber) =>
+    savePageNumber: pageNumber =>
       dispatch(searchActions.savePageNumber(pageNumber)),
-    saveFacetSelectors: (resetFacetArray) =>
+    saveFacetSelectors: resetFacetArray =>
       dispatch(facetActions.saveFacetSelectors(resetFacetArray)),
-    saveFacetSelectedKeys: (facetSelectedKeys) =>
+    saveFacetSelectedKeys: facetSelectedKeys =>
       dispatch(facetActions.saveFacetSelectedKeys(facetSelectedKeys)),
-    saveSearchTerm: (searchTerm) =>
+    saveSearchTerm: searchTerm =>
       dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveOrderby: (orderBy) => dispatch(searchActions.saveOrderby(orderBy)),
-    saveDialogOpen: (dialogOpen) =>
+    saveOrderby: orderBy => dispatch(searchActions.saveOrderby(orderBy)),
+    saveDialogOpen: dialogOpen =>
       dispatch(componentActions.saveDialogOpen(dialogOpen)),
-    saveSelectedFacet: (facet) =>
+    saveSelectedFacet: facet =>
       dispatch(componentActions.saveSelectedFacet(facet)),
-    saveResetFacets: (resetFacets) =>
+    saveResetFacets: resetFacets =>
       dispatch(facetActions.saveResetFacets(resetFacets)),
   };
 };

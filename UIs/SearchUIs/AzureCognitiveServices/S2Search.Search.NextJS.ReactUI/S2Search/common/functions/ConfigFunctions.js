@@ -1,4 +1,4 @@
-import { DefaultPlaceholderText } from "../Constants";
+import { DefaultPlaceholderText } from '../Constants';
 
 export const getConfigValueByKey = (config, key) => {
   for (const item of config) {
@@ -8,11 +8,11 @@ export const getConfigValueByKey = (config, key) => {
   }
 };
 
-export const getPlaceholdersArray = (configData) => {
+export const getPlaceholdersArray = configData => {
   const arr = [];
 
-  configData.forEach((element) => {
-    if (element.key.includes("PlaceholderText")) {
+  configData.forEach(element => {
+    if (element.key.includes('PlaceholderText')) {
       if (element) {
         arr.push(element);
       }
@@ -20,26 +20,26 @@ export const getPlaceholdersArray = (configData) => {
   });
 
   if (arr.length === 0) {
-    arr = DefaultPlaceholderText;
+    return DefaultPlaceholderText;
   }
 
   return arr;
 };
 
-export const getValuesFromConfigArray = (configData) => {
+export const getValuesFromConfigArray = configData => {
   const arr = [];
 
-  configData.forEach((element) => {
+  configData.forEach(element => {
     arr.push(element.value);
   });
 
   return arr;
 };
 
-export const getKeysFromConfigArray = (configData) => {
+export const getKeysFromConfigArray = configData => {
   const arr = [];
 
-  configData.forEach((element) => {
+  configData.forEach(element => {
     arr.push(element.key);
   });
 

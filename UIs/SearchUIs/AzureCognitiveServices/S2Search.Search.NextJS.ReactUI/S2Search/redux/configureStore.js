@@ -1,6 +1,15 @@
-import { createStore } from "redux";
-import rootReducer from "./reducers/rootReducer";
+import { configureStore } from '@reduxjs/toolkit';
+import rootReducer from './reducers/rootReducer';
 
-export default function configureStore() {
-  return createStore(rootReducer);
+export default function store() {
+  return configureStore({
+    reducer: rootReducer,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: ['persist/PERSIST'],
+        },
+      }),
+    devTools: process.env.NODE_ENV !== 'production',
+  });
 }

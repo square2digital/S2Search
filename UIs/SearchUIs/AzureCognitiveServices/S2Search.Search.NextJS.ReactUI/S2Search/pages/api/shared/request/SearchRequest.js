@@ -1,7 +1,7 @@
 ﻿import {
   DefaultPageNumber,
   DefaultPageSize,
-} from "../../../../common/Constants";
+} from '../../../../common/Constants';
 
 class SearchRequest {
   constructor(
@@ -13,8 +13,8 @@ class SearchRequest {
     numberOfExistingResults,
     callingHost
   ) {
-    if (searchTerm === undefined || searchTerm === null || searchTerm === " ") {
-      this.searchTerm = "";
+    if (searchTerm === undefined || searchTerm === null || searchTerm === ' ') {
+      this.searchTerm = '';
     } else {
       this.searchTerm = searchTerm;
     }
@@ -26,7 +26,7 @@ class SearchRequest {
     }
 
     if (orderBy === undefined || orderBy === null) {
-      this.orderBy = ["price desc"];
+      this.orderBy = ['price desc'];
     } else {
       this.orderBy = orderBy;
     }
@@ -58,6 +58,33 @@ class SearchRequest {
     } else {
       this.callingHost = callingHost;
     }
+  }
+
+  // Convert SearchRequest instance to a plain object for Redux serialization
+  toPlainObject() {
+    return {
+      searchTerm: this.searchTerm,
+      filters: this.filters,
+      orderBy: this.orderBy,
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize,
+      numberOfExistingResults: this.numberOfExistingResults,
+      callingHost: this.callingHost,
+    };
+  }
+
+  // Create SearchRequest instance from plain object
+  static fromPlainObject(obj) {
+    if (!obj) return null;
+    return new SearchRequest(
+      obj.searchTerm,
+      obj.filters,
+      obj.orderBy,
+      obj.pageNumber,
+      obj.pageSize,
+      obj.numberOfExistingResults,
+      obj.callingHost
+    );
   }
 }
 

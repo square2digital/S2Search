@@ -1,43 +1,42 @@
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import { makeStyles } from "@mui/styles";
-import Chip from "@mui/material/Chip";
-import Paper from "@mui/material/Paper";
-import { connect } from "react-redux";
-import facetActions from "../../../redux/actions/facetActions";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
+import Chip from '@mui/material/Chip';
+import Paper from '@mui/material/Paper';
+import { connect } from 'react-redux';
+import facetActions from '../../../redux/actions/facetActions';
+import { DefaultTheme } from '../../../common/Constants';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-    justifyContent: "left",
-    flexWrap: "wrap",
-    listStyle: "none",
+// Modern styles object
+const styles = {
+  root: theme => ({
+    display: 'flex',
+    justifyContent: 'left',
+    flexWrap: 'wrap',
+    listStyle: 'none',
     marginTop: theme.spacing(1.5),
-    marginLeft: "-40px",
-  },
+    marginLeft: '-40px',
+  }),
   chip: {
-    paddingRight: "10px",
-    paddingTop: "5px",
+    paddingRight: '10px',
+    paddingTop: '5px',
   },
-}));
+};
 
-const FacetChips = (props) => {
-  const classes = useStyles();
-
+const FacetChips = props => {
   useEffect(() => {
     reduxFacetSelectors(props);
   }, [props.reduxFacetSelectors]);
 
-  const reduxFacetSelectors = (props) => {
+  const reduxFacetSelectors = props => {
     if (props.reduxFacetSelectors.length > 0) {
       props.saveFacetSelectors(props.reduxFacetSelectors);
     }
   };
 
-  const handleDelete = (facetChipToDelete) => () => {
+  const handleDelete = facetChipToDelete => () => {
     let updatedArray = props.reduxFacetSelectors.filter(
-      (facet) => facet.facetDisplayText !== facetChipToDelete.facetDisplayText
+      facet => facet.facetDisplayText !== facetChipToDelete.facetDisplayText
     );
 
     props.saveFacetSelectors(updatedArray);
@@ -47,19 +46,26 @@ const FacetChips = (props) => {
   const theme = createTheme({
     palette: {
       primary: {
-        main: props.reduxPrimaryColour,
+        main:
+          props.reduxPrimaryColour ||
+          DefaultTheme.primaryHexColour ||
+          '#616161',
       },
       secondary: {
+        main:
+          props.reduxSecondaryColour ||
+          DefaultTheme.secondaryHexColour ||
+          '#303f9f',
         main: props.reduxSecondaryColour,
       },
     },
   });
 
   return (
-    <Paper elevation={0} component="ul" className={classes.root}>
+    <Paper elevation={0} component="ul" sx={styles.root}>
       {props.reduxFacetSelectors.map((data, index) => {
         return (
-          <li key={index} className={classes.chip}>
+          <li key={index} style={styles.chip}>
             <ThemeProvider theme={theme}>
               <Chip
                 key={index}
@@ -76,7 +82,7 @@ const FacetChips = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
     reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
     reduxFacetChipDeleted: reduxState.facetReducer.facetChipDeleted,
@@ -85,11 +91,11 @@ const mapStateToProps = (reduxState) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveFacetSelectors: (facetSelectorArray) =>
+    saveFacetSelectors: facetSelectorArray =>
       dispatch(facetActions.saveFacetSelectors(facetSelectorArray)),
-    saveFacetChipDeleted: (facetChipDeleted) =>
+    saveFacetChipDeleted: facetChipDeleted =>
       dispatch(facetActions.saveFacetChipDeleted(facetChipDeleted)),
   };
 };

@@ -1,31 +1,28 @@
-import React from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import componentActions from "../../../redux/actions/componentActions";
-import Button from "@mui/material/Button";
-import facetActions from "../../../redux/actions/facetActions";
-import { DefaultTheme } from "../../../common/Constants";
-import { makeStyles } from "@mui/styles";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import componentActions from '../../../redux/actions/componentActions';
+import Button from '@mui/material/Button';
+import facetActions from '../../../redux/actions/facetActions';
+import { DefaultTheme } from '../../../common/Constants';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-const useStyles = makeStyles((theme) => ({
+const styles = {
   root: {
-    display: "flex",
+    display: 'flex',
   },
-  menuButton: {
+  menuButton: theme => ({
     marginRight: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {},
-  },
+    [theme.breakpoints.up('sm')]: {},
+  }),
   // necessary for content to be below app bar
-  toolbar: theme.mixins.toolbar,
-}));
+  toolbar: theme => theme.mixins.toolbar,
+};
 
-const FacetAppBar = (props) => {
-  const classes = useStyles();
-
+const FacetAppBar = props => {
   const handleClose = () => {
     props.saveDialogOpen(false);
   };
@@ -33,33 +30,42 @@ const FacetAppBar = (props) => {
   const theme = createTheme({
     palette: {
       primary: {
-        main: props.reduxPrimaryColour,
+        main:
+          props.reduxPrimaryColour ||
+          DefaultTheme.primaryHexColour ||
+          '#616161',
       },
       secondary: {
-        main: props.reduxSecondaryColour,
+        main:
+          props.reduxSecondaryColour ||
+          DefaultTheme.secondaryHexColour ||
+          '#303f9f',
       },
     },
   });
 
   return (
-    <div className={classes.root}>
+    <div style={styles.root}>
       <AppBar
         style={{
           background: props.reduxNavBarColour
             ? props.reduxNavBarColour
             : DefaultTheme.navBarHexColour,
-        }}>
+        }}
+      >
         <Toolbar>
           <Typography
             variant="subtitle1"
             onClick={handleClose}
-            style={{ flex: 1 }}></Typography>
+            style={{ flex: 1 }}
+          ></Typography>
           <ThemeProvider theme={theme}>
             <Button
               size="small"
               variant="contained"
               color="secondary"
-              onClick={handleClose}>
+              onClick={handleClose}
+            >
               Show Results
             </Button>
           </ThemeProvider>
@@ -69,7 +75,7 @@ const FacetAppBar = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
     searchCount: reduxState.searchReducer.searchCount,
     reduxNavBarColour: reduxState.themeReducer.navBarColour,
@@ -78,11 +84,11 @@ const mapStateToProps = (reduxState) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveDialogOpen: (dialogOpen) =>
+    saveDialogOpen: dialogOpen =>
       dispatch(componentActions.saveDialogOpen(dialogOpen)),
-    saveResetFacets: (resetFacets) =>
+    saveResetFacets: resetFacets =>
       dispatch(facetActions.saveResetFacets(resetFacets)),
   };
 };

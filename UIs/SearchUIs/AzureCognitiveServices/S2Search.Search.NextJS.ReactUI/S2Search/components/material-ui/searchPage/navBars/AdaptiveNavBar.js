@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import facetActions from "../../../../redux/actions/facetActions";
 import ComponentActions from "../../../../redux/actions/componentActions";
-import { withStyles, makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import { DefaultTheme, MobileMaxWidth } from "../../../../common/Constants";
 import Button from "@mui/material/Button";
@@ -15,12 +14,13 @@ import DriveEtaIcon from "@mui/icons-material/DriveEta";
 import Badge from "@mui/material/Badge";
 import SearchBar from "../../../../components/material-ui/searchPage/searchBars/SearchBar";
 import AutoSuggest from "../searchBars/AutoSuggest";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import UseWindowSize from "../../../../common/hooks/UseWindowSize";
 
 const s2logoWidth = 57;
 
-const useStyles = makeStyles((theme) => ({
+// Inline styles object (converted from makeStyles)
+const styles = {
   root: {
     flexGrow: 1,
   },
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
   input: {
-    marginLeft: theme.spacing(1),
+    marginLeft: 8, // theme.spacing(1) = 8px
     flex: 1,
   },
   iconButton: {
@@ -53,31 +53,21 @@ const useStyles = makeStyles((theme) => ({
     margin: 4,
   },
   menuButton: {
-    marginRight: theme.spacing(2),
+    marginRight: 16, // theme.spacing(2) = 16px
   },
   firstBadgeContainer: {
-    [theme.breakpoints.up("xs")]: {
-      marginLeft: theme.spacing(0.25),
-    },
+    marginLeft: 2, // theme.spacing(0.25) = 2px
   },
   badgeContainer: {
-    [theme.breakpoints.up("xs")]: {
-      marginLeft: theme.spacing(0.25),
-    },
+    marginLeft: 2, // theme.spacing(0.25) = 2px
   },
   topMargin: {
-    marginTop: theme.spacing(2.25),
+    marginTop: 18, // theme.spacing(2.25) = 18px
   },
-}));
-
-const LightTooltip = withStyles((theme) => ({
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: "rgba(0, 0, 0, 0.87)",
-    boxShadow: theme.shadows[1],
-    fontSize: 11,
+  resultsText: {
+    fontSize: "0.875rem",
   },
-}))(Tooltip);
+};
 
 const openDialog = (open, props) => (event) => {
   if (
@@ -91,27 +81,16 @@ const openDialog = (open, props) => (event) => {
 };
 
 const AdaptiveNavBar = (props) => {
-  const classes = useStyles();
   const [windowWidth, windowHeight] = UseWindowSize();
+  const theme = useTheme();
 
   const resetFilters = () => {
     props.saveResetFacets(true);
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: props.reduxPrimaryColour,
-      },
-      secondary: {
-        main: props.reduxSecondaryColour,
-      },
-    },
-  });
-
   const desktopNavBar = () => {
     return (
-      <ThemeProvider theme={theme}>
+      
         <div
           style={{
             position: "fixed",
@@ -123,8 +102,8 @@ const AdaptiveNavBar = (props) => {
               : DefaultTheme.navBarHexColour,
             zIndex: 1,
           }}>
-          <div className={classes.root}>
-            <Box className={classes.paper}>
+          <div style={styles.root}>
+            <Box style={styles.paper}>
               <Box container display="flex">
                 <Box p={1} style={{ textAlign: "left" }}>
                   <img
@@ -145,15 +124,19 @@ const AdaptiveNavBar = (props) => {
                 ) : (
                   <>
                     <Box p={1} item style={{ textAlign: "left" }}>
-                      <LightTooltip
+                      <Tooltip
                         placement="bottom"
                         title="Number of vehicles in this search"
                         aria-label="Number of vehicles in this search">
                         <div
-                          className={`${classes.topMargin} ${classes.firstBadgeContainer} ${classes.badgeContainer}`}>
+                          style={{
+                            ...styles.topMargin,
+                            ...styles.firstBadgeContainer,
+                            ...styles.badgeContainer,
+                          }}>
                           <Typography
                             variant="body2"
-                            className={classes.resultsText}>
+                            style={styles.resultsText}>
                             <Badge
                               anchorOrigin={{
                                 vertical: "top",
@@ -165,18 +148,21 @@ const AdaptiveNavBar = (props) => {
                             </Badge>
                           </Typography>
                         </div>
-                      </LightTooltip>
+                      </Tooltip>
                     </Box>
                     <Box p={1} style={{ textAlign: "left" }}>
-                      <LightTooltip
+                      <Tooltip
                         placement="bottom"
                         title="Total Number of Vehicles"
                         aria-label="Total Number of Vehicles">
                         <div
-                          className={`${classes.topMargin} ${classes.badgeContainer}`}>
+                          style={{
+                            ...styles.topMargin,
+                            ...styles.badgeContainer,
+                          }}>
                           <Typography
                             variant="body2"
-                            className={classes.resultsText}>
+                            style={styles.resultsText}>
                             <Badge
                               anchorOrigin={{
                                 vertical: "top",
@@ -189,7 +175,7 @@ const AdaptiveNavBar = (props) => {
                             </Badge>
                           </Typography>
                         </div>
-                      </LightTooltip>
+                      </Tooltip>
                     </Box>
                   </>
                 )}
@@ -235,13 +221,13 @@ const AdaptiveNavBar = (props) => {
             </Box>
           </div>
         </div>
-      </ThemeProvider>
+      
     );
   };
 
   const mobileNavBar = () => {
     return (
-      <ThemeProvider theme={theme}>
+      
         <div
           style={{
             position: "fixed",
@@ -270,14 +256,19 @@ const AdaptiveNavBar = (props) => {
               />
             </Box>
             <Box>
-              <LightTooltip
+              <Tooltip
                 placement="bottom"
                 title="Number of vehicles in this search"
                 aria-label="Number of vehicles in this search">
                 <div
-                  className={`${classes.firstBadgeContainer} ${classes.badgeContainer}`}
-                  style={{ position: "relative", top: 8, right: 2 }}>
-                  <Typography variant="body2" className={classes.resultsText}>
+                  style={{
+                    ...styles.firstBadgeContainer,
+                    ...styles.badgeContainer,
+                    position: "relative",
+                    top: 8,
+                    right: 2,
+                  }}>
+                  <Typography variant="body2" style={styles.resultsText}>
                     <Badge
                       anchorOrigin={{
                         vertical: "top",
@@ -289,15 +280,19 @@ const AdaptiveNavBar = (props) => {
                     </Badge>
                   </Typography>
                 </div>
-              </LightTooltip>
-              <LightTooltip
+              </Tooltip>
+              <Tooltip
                 placement="bottom"
                 title="Total Number of Vehicles"
                 aria-label="Total Number of Vehicles">
                 <div
-                  className={`${classes.badgeContainer}`}
-                  style={{ position: "relative", top: 15, right: 2 }}>
-                  <Typography variant="body2" className={classes.resultsText}>
+                  style={{
+                    ...styles.badgeContainer,
+                    position: "relative",
+                    top: 15,
+                    right: 2,
+                  }}>
+                  <Typography variant="body2" style={styles.resultsText}>
                     <Badge
                       anchorOrigin={{
                         vertical: "top",
@@ -310,7 +305,7 @@ const AdaptiveNavBar = (props) => {
                     </Badge>
                   </Typography>
                 </div>
-              </LightTooltip>
+              </Tooltip>
             </Box>
             <Box
               flexGrow={1}
@@ -344,7 +339,7 @@ const AdaptiveNavBar = (props) => {
             </Box>
           </Box>
         </div>
-      </ThemeProvider>
+      
     );
   };
 
