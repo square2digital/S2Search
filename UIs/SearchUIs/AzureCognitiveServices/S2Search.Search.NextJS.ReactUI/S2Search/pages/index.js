@@ -52,7 +52,6 @@ const Home = props => {
           content="S2 Search - Modern search interface"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="emotion-insertion-point" content="" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ReduxProvider store={reduxStore}>
