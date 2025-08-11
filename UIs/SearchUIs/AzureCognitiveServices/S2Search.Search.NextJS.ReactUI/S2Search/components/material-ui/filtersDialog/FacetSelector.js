@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import SelectedFacetData from '../../objects/SelectedFacetData';
 import Checkbox from '@mui/material/Checkbox';
 import {
   FormatStringOrNumeric,
@@ -53,12 +52,12 @@ const FacetSelector = props => {
   };
 
   const buildFacetSelectors = isChecked => {
-    let selectedFacetData = new SelectedFacetData(
-      props.selectedFacet,
-      props.facet.facetDisplayText,
-      '',
-      isChecked
-    );
+    let selectedFacetData = {
+      facetKey: props.selectedFacet,
+      facetDisplayText: props.facet.facetDisplayText,
+      luceneExpression: '',
+      checked: isChecked,
+    };
 
     if (props.facet.type === 'Range') {
       selectedFacetData.luceneExpression = `${

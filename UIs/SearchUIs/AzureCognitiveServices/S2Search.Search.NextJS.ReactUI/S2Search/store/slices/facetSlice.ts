@@ -13,7 +13,7 @@ interface SelectedFacetData {
   facetKey: string;
   facetDisplayText: string;
   luceneExpression: string;
-  isChecked: boolean;
+  checked: boolean;
 }
 
 interface FacetState {
@@ -46,10 +46,8 @@ const facetSlice = createSlice({
     addFacetSelector: (state, action: PayloadAction<SelectedFacetData>) => {
       state.facetSelectors.push(action.payload);
     },
-    removeFacetSelector: (state, action: PayloadAction<string>) => {
-      state.facetSelectors = state.facetSelectors.filter(
-        facet => facet.luceneExpression !== action.payload
-      );
+    removeFacetSelector: (state, action: PayloadAction<SelectedFacetData[]>) => {
+      state.facetSelectors = action.payload;
     },
     setFacetSelectedKeys: (state, action: PayloadAction<string[]>) => {
       state.facetSelectedKeys = action.payload;

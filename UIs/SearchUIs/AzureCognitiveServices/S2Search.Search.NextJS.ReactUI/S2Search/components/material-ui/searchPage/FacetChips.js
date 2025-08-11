@@ -4,7 +4,7 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import { connect } from 'react-redux';
 import {
-  removeFacetSelector,
+  setFacetSelectors,
   setFacetChipDeleted,
 } from '../../../store/slices/facetSlice';
 import { DefaultTheme } from '../../../common/Constants';
@@ -79,7 +79,7 @@ const mapStateToProps = reduxState => {
 const mapDispatchToProps = dispatch => {
   return {
     saveFacetSelectors: facetSelectorArray =>
-      dispatch(removeFacetSelector(facetSelectorArray)),
+      dispatch(setFacetSelectors(facetSelectorArray)),
     saveFacetChipDeleted: facetChipDeleted =>
       dispatch(setFacetChipDeleted(facetChipDeleted)),
   };

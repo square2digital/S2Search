@@ -23,94 +23,100 @@ import {
 const FacetSelectionList = props => {
   const [facetState, setfacetState] = useState({});
 
-  const handleChecked = useCallback((theFacet) => {
-    let theFacetUpdated = theFacet;
-    const updatedFacetItems = [];
+  const handleChecked = useCallback(
+    theFacet => {
+      let theFacetUpdated = theFacet;
+      const updatedFacetItems = [];
 
-    theFacet.facetItems.map(facetItem => {
-      if (
-        props.reduxFacetSelectors.some(
-          f => f.facetDisplayText === facetItem.facetDisplayText
-        )
-      ) {
-        updatedFacetItems.push({ ...facetItem, selected: true });
-      } else {
-        updatedFacetItems.push({ ...facetItem, selected: false });
+      theFacet.facetItems.map(facetItem => {
+        if (
+          props.reduxFacetSelectors.some(
+            f => f.facetDisplayText === facetItem.facetDisplayText
+          )
+        ) {
+          updatedFacetItems.push({ ...facetItem, selected: true });
+        } else {
+          updatedFacetItems.push({ ...facetItem, selected: false });
+        }
+      });
+
+      if (updatedFacetItems.length > 0) {
+        theFacetUpdated = { ...theFacetUpdated, facetItems: updatedFacetItems };
       }
-    });
 
-    if (updatedFacetItems.length > 0) {
-      theFacetUpdated = { ...theFacetUpdated, facetItems: updatedFacetItems };
-    }
+      return theFacetUpdated;
+    },
+    [props.reduxFacetSelectors]
+  );
 
-    return theFacetUpdated;
-  }, [props.reduxFacetSelectors]);
+  const generateFacetSelectors = useCallback(
+    facetKeyName => {
+      let theFacet = {};
+      let currentFacet = {};
+      let facetData = [];
+      let selectedFacetData = [];
 
-  const generateFacetSelectors = useCallback((facetKeyName) => {
-    let theFacet = {};
-    let currentFacet = {};
-    let facetData = [];
-    let selectedFacetData = [];
+      // ****************
+      // facets To Load - default or from Search Results?
+      // ****************
+      // on the first load or if reduxFacetSelectors is empty we need to load the defaultFacets.
+      // when a facet is selected, from that point the facets returned from search will be displayed
 
-    // ****************
-    // facets To Load - default or from Search Results?
-    // ****************
-    // on the first load or if reduxFacetSelectors is empty we need to load the defaultFacets.
-    // when a facet is selected, from that point the facets returned from search will be displayed
-
-    let facetsToLoad = [];
-    if (props.reduxSearchTerm) {
-      facetsToLoad = props.reduxFacetData;
-    } else if (
-      props.reduxFacetSelectors.length === 0 &&
-      StaticFacets.includes(facetKeyName)
-    ) {
-      facetsToLoad = props.reduxDefaultFacetData;
-    } else {
-      if (
-        isSelectFacetMenuAlreadySelected(
-          props.reduxFacetSelectors,
-          facetKeyName
-        )
-      ) {
-        facetsToLoad = getDefaultFacetsWithSelections(
-          facetKeyName,
-          props.reduxDefaultFacetData,
-          props.reduxFacetSelectors
-        );
-      } else {
+      let facetsToLoad = [];
+      if (props.reduxSearchTerm) {
         facetsToLoad = props.reduxFacetData;
+      } else if (
+        props.reduxFacetSelectors.length === 0 &&
+        StaticFacets.includes(facetKeyName)
+      ) {
+        facetsToLoad = props.reduxDefaultFacetData;
+      } else {
+        if (
+          isSelectFacetMenuAlreadySelected(
+            props.reduxFacetSelectors,
+            facetKeyName
+          )
+        ) {
+          facetsToLoad = getDefaultFacetsWithSelections(
+            facetKeyName,
+            props.reduxDefaultFacetData,
+            props.reduxFacetSelectors
+          );
+        } else {
+          facetsToLoad = props.reduxFacetData;
+        }
       }
-    }
 
-    facetData = facetsToLoad.filter(x => x.facetKey === facetKeyName);
+      facetData = facetsToLoad.filter(x => x.facetKey === facetKeyName);
 
-    currentFacet = facetData[0];
+      currentFacet = facetData[0];
 
-    theFacet = { ...currentFacet, enabled: false };
-
-    // check if the facet is enabled
-    if (props.reduxFacetData.length > 0) {
-      if (selectedFacetData.length > 0) {
-        theFacet = { ...currentFacet, enabled: selectedFacetData[0].enabled };
-      }
-    } else {
       theFacet = { ...currentFacet, enabled: false };
-    }
 
-    if (props.reduxFacetSelectors.length > 0) {
-      let theFacetUpdated = handleChecked(theFacet);
-      setfacetState(theFacetUpdated);
-    } else {
-      setfacetState(theFacet);
-    }
-  }, [
-    props.reduxSearchTerm,
-    props.reduxFacetData,
-    props.reduxFacetSelectors,
-    props.reduxDefaultFacetData,
-    handleChecked
-  ]);
+      // check if the facet is enabled
+      if (props.reduxFacetData.length > 0) {
+        if (selectedFacetData.length > 0) {
+          theFacet = { ...currentFacet, enabled: selectedFacetData[0].enabled };
+        }
+      } else {
+        theFacet = { ...currentFacet, enabled: false };
+      }
+
+      if (props.reduxFacetSelectors.length > 0) {
+        let theFacetUpdated = handleChecked(theFacet);
+        setfacetState(theFacetUpdated);
+      } else {
+        setfacetState(theFacet);
+      }
+    },
+    [
+      props.reduxSearchTerm,
+      props.reduxFacetData,
+      props.reduxFacetSelectors,
+      props.reduxDefaultFacetData,
+      handleChecked,
+    ]
+  );
 
   useEffect(() => {
     if (props.reduxSelectedFacet) {

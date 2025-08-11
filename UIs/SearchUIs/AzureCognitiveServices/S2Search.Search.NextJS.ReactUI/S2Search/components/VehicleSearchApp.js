@@ -188,8 +188,7 @@ const VehicleSearchApp = props => {
     props.reduxPageNumber,
     props.reduxFacetChipDeleted,
     props.reduxFacetSelectedKeys,
-    queryStringParams,
-    props.reduxCancellationToken,
+    router.query,
   ]);
 
   const getThemeFromAPI = () => {
