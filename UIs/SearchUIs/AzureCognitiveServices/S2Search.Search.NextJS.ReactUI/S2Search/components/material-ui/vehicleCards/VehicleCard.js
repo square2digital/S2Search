@@ -457,10 +457,7 @@ const VehicleCard = props => {
                 </Typography>
               </Box>
               <Box style={{ marginLeft: 5 }}>
-                <DateRangeIcon
-                  style={{ color: grey[500] }}
-                  fontSize="small"
-                />
+                <DateRangeIcon style={{ color: grey[500] }} fontSize="small" />
               </Box>
               <Box>
                 <Typography

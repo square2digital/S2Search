@@ -1,13 +1,13 @@
-import React from "react";
-import { useTheme } from "@mui/material/styles";
-import PropTypes from "prop-types";
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import searchActions from "../../../../redux/actions/searchActions";
-import { GetOrderByData } from "../../../../common/Constants";
-import { connect } from "react-redux";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
+import React from 'react';
+import { useTheme } from '@mui/material/styles';
+import PropTypes from 'prop-types';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import searchActions from '../../../../redux/actions/searchActions';
+import { GetOrderByData } from '../../../../common/Constants';
+import { connect } from 'react-redux';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 
 // Inline styles object (converted from makeStyles)
 const styles = {
@@ -17,9 +17,9 @@ const styles = {
   },
 };
 
-const OrderByRadios = (props) => {
+const OrderByRadios = props => {
   const theme = useTheme();
-  const [orderBy, setOrderBy] = React.useState("");
+  const [orderBy, setOrderBy] = React.useState('');
 
   const GenerateRadios = () => {
     const dropdownArray = [];
@@ -42,7 +42,7 @@ const OrderByRadios = (props) => {
     return dropdownArray;
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     setOrderBy(event.target.value);
     props.saveOrderby(event.target.value);
   };
@@ -55,7 +55,8 @@ const OrderByRadios = (props) => {
           label="Order By"
           name="Order By"
           value={orderBy}
-          onChange={handleChange}>
+          onChange={handleChange}
+        >
           {GenerateRadios()}
         </RadioGroup>
       </FormControl>
@@ -63,16 +64,16 @@ const OrderByRadios = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
     reduxSearchTerm: reduxState.searchReducer.searchTerm,
     reduxOrderBy: reduxState.searchReducer.orderBy,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveOrderby: (orderBy) => dispatch(searchActions.saveOrderby(orderBy)),
+    saveOrderby: orderBy => dispatch(searchActions.saveOrderby(orderBy)),
   };
 };
 

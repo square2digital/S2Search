@@ -50,21 +50,21 @@ const FloatingTopButton = props => {
         <Tooltip title="Back to Top" aria-label="Back to Top">
           <Fab
             size={setSize(width)}
-              color="secondary"
-              aria-label="add"
-              sx={{
-                margin: 1,
-                position: 'fixed',
-                bottom: 2,
-                right: 3,
-                zIndex: 999,
-              }}
-              onClick={handleClick}
-            >
-              <NavigationIcon />
-            </Fab>
-          </Tooltip>
-        </Zoom>
+            color="secondary"
+            aria-label="add"
+            sx={{
+              margin: 1,
+              position: 'fixed',
+              bottom: 2,
+              right: 3,
+              zIndex: 999,
+            }}
+            onClick={handleClick}
+          >
+            <NavigationIcon />
+          </Fab>
+        </Tooltip>
+      </Zoom>
     </div>
   );
 };

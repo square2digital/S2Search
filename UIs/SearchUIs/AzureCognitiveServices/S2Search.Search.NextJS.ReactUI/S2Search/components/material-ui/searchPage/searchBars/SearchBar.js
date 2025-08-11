@@ -1,22 +1,22 @@
-﻿import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import searchActions from "../../../../redux/actions/searchActions";
-import facetActions from "../../../../redux/actions/facetActions";
-import { DefaultLoadSpeed } from "../../../../common/Constants";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import InputBase from "@mui/material/InputBase";
-import Divider from "@mui/material/Divider";
-import RotateLeftIcon from "@mui/icons-material/RotateLeft";
-import { MobileMaxWidth } from "../../../../common/Constants";
+﻿import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import searchActions from '../../../../redux/actions/searchActions';
+import facetActions from '../../../../redux/actions/facetActions';
+import { DefaultLoadSpeed } from '../../../../common/Constants';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import Divider from '@mui/material/Divider';
+import RotateLeftIcon from '@mui/icons-material/RotateLeft';
+import { MobileMaxWidth } from '../../../../common/Constants';
 import {
   checkForEnter,
   generatePlaceholder,
   resetFilters,
   disableResetFiltersButton,
   updateSearchTerm,
-} from "./searchBarSharedFunctions";
+} from './searchBarSharedFunctions';
 
 // Inline styles object (converted from makeStyles)
 const styles = {
@@ -26,7 +26,7 @@ const styles = {
   },
 };
 
-export const SearchBar = (props) => {
+export const SearchBar = props => {
   const [windowWidth, setwindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -34,12 +34,12 @@ export const SearchBar = (props) => {
       setwindowWidth(window.innerWidth);
     };
 
-    window.addEventListener("resize", updateWindowDimensions);
+    window.addEventListener('resize', updateWindowDimensions);
 
-    return () => window.removeEventListener("resize", updateWindowDimensions);
+    return () => window.removeEventListener('resize', updateWindowDimensions);
   }, []);
 
-  const updateSearch = (event) => {
+  const updateSearch = event => {
     updateSearchTerm(event.target.value, props);
   };
 
@@ -56,10 +56,11 @@ export const SearchBar = (props) => {
       <Paper
         component="form"
         style={{
-          padding: "2px 4px",
-          display: "flex",
+          padding: '2px 4px',
+          display: 'flex',
           height: 45,
-        }}>
+        }}
+      >
         <InputBase
           style={{
             marginLeft: 1,
@@ -77,7 +78,8 @@ export const SearchBar = (props) => {
           color="primary"
           onClick={reset}
           disabled={disableResetButton()}
-          aria-label="directions">
+          aria-label="directions"
+        >
           <RotateLeftIcon />
         </IconButton>
       </Paper>
@@ -85,7 +87,7 @@ export const SearchBar = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
     reduxSearchTerm: reduxState.searchReducer.searchTerm,
     reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
@@ -93,11 +95,11 @@ const mapStateToProps = (reduxState) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveSearchTerm: (searchTerm) =>
+    saveSearchTerm: searchTerm =>
       dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveResetFacets: (resetFacets) =>
+    saveResetFacets: resetFacets =>
       dispatch(facetActions.saveResetFacets(resetFacets)),
     saveVehicleData: () => dispatch(searchActions.saveVehicleData([])),
     savePageNumber: () => dispatch(searchActions.savePageNumber(0)),

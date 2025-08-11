@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import Button from "@mui/material/Button";
-import { useTheme } from "@mui/material/styles";
-import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import searchActions from "../../../redux/actions/searchActions";
-import { connect } from "react-redux";
-import { MobileMaxWidth } from "../../../common/Constants";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import searchActions from '../../../redux/actions/searchActions';
+import { connect } from 'react-redux';
+import { MobileMaxWidth } from '../../../common/Constants';
 
 // Inline styles object (converted from makeStyles)
 const styles = {
@@ -15,7 +15,7 @@ const styles = {
   },
 };
 
-const LoadMoreResultsButton = (props) => {
+const LoadMoreResultsButton = props => {
   const theme = useTheme();
 
   const [windowWidth, setwindowWidth] = useState(0);
@@ -25,16 +25,16 @@ const LoadMoreResultsButton = (props) => {
       setwindowWidth(window.innerWidth);
     };
 
-    window.addEventListener("resize", updateWindowDimensions);
+    window.addEventListener('resize', updateWindowDimensions);
 
-    return () => window.removeEventListener("resize", updateWindowDimensions);
+    return () => window.removeEventListener('resize', updateWindowDimensions);
   }, [windowWidth]);
 
   const toggleLoadMore = () => {
     props.savePageNumber(props.reduxPageNumber + 1);
   };
 
-  const getLoadMoreButtonStyle = (width) => {
+  const getLoadMoreButtonStyle = width => {
     if (width > 0 && width <= MobileMaxWidth) {
       return {
         fontSize: 16,
@@ -81,7 +81,8 @@ const LoadMoreResultsButton = (props) => {
             ) : (
               <CloudDownloadIcon style={{ color: props.reduxPrimaryColour }} />
             )
-          }>
+          }
+        >
           {props.reduxLoading ? <>Loading...</> : <>Load more</>}
         </Button>
       ) : (
@@ -91,7 +92,7 @@ const LoadMoreResultsButton = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
     reduxSearchCount: reduxState.searchReducer.searchCount,
     reduxPageNumber: reduxState.searchReducer.pageNumber,
@@ -103,9 +104,9 @@ const mapStateToProps = (reduxState) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    savePageNumber: (pageNumber) =>
+    savePageNumber: pageNumber =>
       dispatch(searchActions.savePageNumber(pageNumber)),
   };
 };

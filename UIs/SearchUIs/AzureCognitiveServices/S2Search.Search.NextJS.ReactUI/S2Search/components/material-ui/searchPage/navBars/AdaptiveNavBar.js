@@ -1,21 +1,21 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import facetActions from "../../../../redux/actions/facetActions";
-import ComponentActions from "../../../../redux/actions/componentActions";
-import Typography from "@mui/material/Typography";
-import { DefaultTheme, MobileMaxWidth } from "../../../../common/Constants";
-import Button from "@mui/material/Button";
-import OrderByDialog from "../orderBy/OrderByDialog";
-import Tooltip from "@mui/material/Tooltip";
-import Box from "@mui/material/Box";
-import searchActions from "../../../../redux/actions/searchActions";
-import DriveEtaIcon from "@mui/icons-material/DriveEta";
-import Badge from "@mui/material/Badge";
-import SearchBar from "../../../../components/material-ui/searchPage/searchBars/SearchBar";
-import AutoSuggest from "../searchBars/AutoSuggest";
-import { useTheme } from "@mui/material/styles";
-import UseWindowSize from "../../../../common/hooks/UseWindowSize";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import facetActions from '../../../../redux/actions/facetActions';
+import ComponentActions from '../../../../redux/actions/componentActions';
+import Typography from '@mui/material/Typography';
+import { DefaultTheme, MobileMaxWidth } from '../../../../common/Constants';
+import Button from '@mui/material/Button';
+import OrderByDialog from '../orderBy/OrderByDialog';
+import Tooltip from '@mui/material/Tooltip';
+import Box from '@mui/material/Box';
+import searchActions from '../../../../redux/actions/searchActions';
+import DriveEtaIcon from '@mui/icons-material/DriveEta';
+import Badge from '@mui/material/Badge';
+import SearchBar from '../../../../components/material-ui/searchPage/searchBars/SearchBar';
+import AutoSuggest from '../searchBars/AutoSuggest';
+import { useTheme } from '@mui/material/styles';
+import UseWindowSize from '../../../../common/hooks/UseWindowSize';
 
 const s2logoWidth = 57;
 
@@ -25,21 +25,21 @@ const styles = {
     flexGrow: 1,
   },
   paper: {
-    margin: "auto",
+    margin: 'auto',
   },
   image: {
     width: 128,
     height: 128,
   },
   img: {
-    margin: "auto",
-    display: "block",
-    maxWidth: "100%",
-    maxHeight: "100%",
+    margin: 'auto',
+    display: 'block',
+    maxWidth: '100%',
+    maxHeight: '100%',
   },
   searchBarRoot: {
-    padding: "2px 4px",
-    display: "flex",
+    padding: '2px 4px',
+    display: 'flex',
   },
   input: {
     marginLeft: 8, // theme.spacing(1) = 8px
@@ -65,14 +65,14 @@ const styles = {
     marginTop: 18, // theme.spacing(2.25) = 18px
   },
   resultsText: {
-    fontSize: "0.875rem",
+    fontSize: '0.875rem',
   },
 };
 
-const openDialog = (open, props) => (event) => {
+const openDialog = (open, props) => event => {
   if (
-    event.type === "keydown" &&
-    (event.key === "Tab" || event.key === "Shift")
+    event.type === 'keydown' &&
+    (event.key === 'Tab' || event.key === 'Shift')
   ) {
     return;
   } else {
@@ -80,7 +80,7 @@ const openDialog = (open, props) => (event) => {
   }
 };
 
-const AdaptiveNavBar = (props) => {
+const AdaptiveNavBar = props => {
   const [windowWidth, windowHeight] = UseWindowSize();
   const theme = useTheme();
 
@@ -90,263 +90,275 @@ const AdaptiveNavBar = (props) => {
 
   const desktopNavBar = () => {
     return (
-      
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            right: 0,
-            width: "100%",
-            background: props.reduxNavBarColour
-              ? props.reduxNavBarColour
-              : DefaultTheme.navBarHexColour,
-            zIndex: 1,
-          }}>
-          <div style={styles.root}>
-            <Box style={styles.paper}>
-              <Box container display="flex">
-                <Box p={1} style={{ textAlign: "left" }}>
-                  <img
-                    data-href="/"
-                    onClick={resetFilters}
-                    src={
-                      props.reduxLogoURL
-                        ? props.reduxLogoURL
-                        : DefaultTheme.logoURL
-                    }
-                    width={s2logoWidth}
-                    style={{ position: "relative", top: 3 }}
-                  />
-                </Box>
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          width: '100%',
+          background: props.reduxNavBarColour
+            ? props.reduxNavBarColour
+            : DefaultTheme.navBarHexColour,
+          zIndex: 1,
+        }}
+      >
+        <div style={styles.root}>
+          <Box style={styles.paper}>
+            <Box container display="flex">
+              <Box p={1} style={{ textAlign: 'left' }}>
+                <img
+                  data-href="/"
+                  onClick={resetFilters}
+                  src={
+                    props.reduxLogoURL
+                      ? props.reduxLogoURL
+                      : DefaultTheme.logoURL
+                  }
+                  width={s2logoWidth}
+                  style={{ position: 'relative', top: 3 }}
+                />
+              </Box>
 
-                {props.reduxHideIconVehicleCounts ? (
-                  <></>
-                ) : (
-                  <>
-                    <Box p={1} item style={{ textAlign: "left" }}>
-                      <Tooltip
-                        placement="bottom"
-                        title="Number of vehicles in this search"
-                        aria-label="Number of vehicles in this search">
-                        <div
-                          style={{
-                            ...styles.topMargin,
-                            ...styles.firstBadgeContainer,
-                            ...styles.badgeContainer,
-                          }}>
-                          <Typography
-                            variant="body2"
-                            style={styles.resultsText}>
-                            <Badge
-                              anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "left",
-                              }}
-                              badgeContent={props.reduxVehicleData.length}
-                              color="secondary">
-                              <DriveEtaIcon />
-                            </Badge>
-                          </Typography>
-                        </div>
-                      </Tooltip>
-                    </Box>
-                    <Box p={1} style={{ textAlign: "left" }}>
-                      <Tooltip
-                        placement="bottom"
-                        title="Total Number of Vehicles"
-                        aria-label="Total Number of Vehicles">
-                        <div
-                          style={{
-                            ...styles.topMargin,
-                            ...styles.badgeContainer,
-                          }}>
-                          <Typography
-                            variant="body2"
-                            style={styles.resultsText}>
-                            <Badge
-                              anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "left",
-                              }}
-                              badgeContent={props.reduxTotalDocumentCount}
-                              max={99999}
-                              color="secondary">
-                              <DriveEtaIcon />
-                            </Badge>
-                          </Typography>
-                        </div>
-                      </Tooltip>
-                    </Box>
-                  </>
-                )}
-
-                <Box
-                  flexGrow={1}
-                  style={{
-                    textAlign: "left",
-                    marginTop: "15px",
-                    paddingRight: "15px",
-                  }}>
-                  <Box style={{ textAlign: "left" }}>
-                    {props.autoCompleteSearchBar === true ? (
-                      <AutoSuggest placeholderText="Start typing to search..." />
-                    ) : (
-                      <SearchBar placeholderText="Start typing to search..." />
-                    )}
+              {props.reduxHideIconVehicleCounts ? (
+                <></>
+              ) : (
+                <>
+                  <Box p={1} item style={{ textAlign: 'left' }}>
+                    <Tooltip
+                      placement="bottom"
+                      title="Number of vehicles in this search"
+                      aria-label="Number of vehicles in this search"
+                    >
+                      <div
+                        style={{
+                          ...styles.topMargin,
+                          ...styles.firstBadgeContainer,
+                          ...styles.badgeContainer,
+                        }}
+                      >
+                        <Typography variant="body2" style={styles.resultsText}>
+                          <Badge
+                            anchorOrigin={{
+                              vertical: 'top',
+                              horizontal: 'left',
+                            }}
+                            badgeContent={props.reduxVehicleData.length}
+                            color="secondary"
+                          >
+                            <DriveEtaIcon />
+                          </Badge>
+                        </Typography>
+                      </div>
+                    </Tooltip>
                   </Box>
+                  <Box p={1} style={{ textAlign: 'left' }}>
+                    <Tooltip
+                      placement="bottom"
+                      title="Total Number of Vehicles"
+                      aria-label="Total Number of Vehicles"
+                    >
+                      <div
+                        style={{
+                          ...styles.topMargin,
+                          ...styles.badgeContainer,
+                        }}
+                      >
+                        <Typography variant="body2" style={styles.resultsText}>
+                          <Badge
+                            anchorOrigin={{
+                              vertical: 'top',
+                              horizontal: 'left',
+                            }}
+                            badgeContent={props.reduxTotalDocumentCount}
+                            max={99999}
+                            color="secondary"
+                          >
+                            <DriveEtaIcon />
+                          </Badge>
+                        </Typography>
+                      </div>
+                    </Tooltip>
+                  </Box>
+                </>
+              )}
+
+              <Box
+                flexGrow={1}
+                style={{
+                  textAlign: 'left',
+                  marginTop: '15px',
+                  paddingRight: '15px',
+                }}
+              >
+                <Box style={{ textAlign: 'left' }}>
+                  {props.autoCompleteSearchBar === true ? (
+                    <AutoSuggest placeholderText="Start typing to search..." />
+                  ) : (
+                    <SearchBar placeholderText="Start typing to search..." />
+                  )}
                 </Box>
-                <Box>
-                  <Box
-                    display="flex"
-                    flexDirection="row-reverse"
-                    style={{ marginTop: 25 }}>
-                    <Box>
-                      <Box style={{ textAlign: "right" }}>
-                        <Button
-                          size="small"
-                          onClick={openDialog(true, props)}
-                          color="secondary"
-                          variant="contained"
-                          style={{ marginRight: "10px" }}>
-                          Filter
-                        </Button>
-                      </Box>
+              </Box>
+              <Box>
+                <Box
+                  display="flex"
+                  flexDirection="row-reverse"
+                  style={{ marginTop: 25 }}
+                >
+                  <Box>
+                    <Box style={{ textAlign: 'right' }}>
+                      <Button
+                        size="small"
+                        onClick={openDialog(true, props)}
+                        color="secondary"
+                        variant="contained"
+                        style={{ marginRight: '10px' }}
+                      >
+                        Filter
+                      </Button>
                     </Box>
-                    <Box style={{ position: "relative", right: 5 }}>
-                      <OrderByDialog />
-                    </Box>
+                  </Box>
+                  <Box style={{ position: 'relative', right: 5 }}>
+                    <OrderByDialog />
                   </Box>
                 </Box>
               </Box>
             </Box>
-          </div>
+          </Box>
         </div>
-      
+      </div>
     );
   };
 
   const mobileNavBar = () => {
     return (
-      
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            right: 0,
-            width: "100%",
-            minWidth: "260px",
-            background: props.reduxNavBarColour
-              ? props.reduxNavBarColour
-              : DefaultTheme.navBarHexColour,
-            zIndex: 1,
-          }}>
-          <Box
-            display="flex"
-            p={1}
-            style={{ flexGrow: "1", justifyContent: "space-between" }}>
-            <Box>
-              <img
-                data-href="/"
-                onClick={resetFilters}
-                src={
-                  props.reduxLogoURL ? props.reduxLogoURL : DefaultTheme.logoURL
-                }
-                width={s2logoWidth}
-                style={{ position: "relative", top: 3 }}
-              />
-            </Box>
-            <Box>
-              <Tooltip
-                placement="bottom"
-                title="Number of vehicles in this search"
-                aria-label="Number of vehicles in this search">
-                <div
-                  style={{
-                    ...styles.firstBadgeContainer,
-                    ...styles.badgeContainer,
-                    position: "relative",
-                    top: 8,
-                    right: 2,
-                  }}>
-                  <Typography variant="body2" style={styles.resultsText}>
-                    <Badge
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      badgeContent={props.reduxVehicleData.length}
-                      color="secondary">
-                      <DriveEtaIcon />
-                    </Badge>
-                  </Typography>
-                </div>
-              </Tooltip>
-              <Tooltip
-                placement="bottom"
-                title="Total Number of Vehicles"
-                aria-label="Total Number of Vehicles">
-                <div
-                  style={{
-                    ...styles.badgeContainer,
-                    position: "relative",
-                    top: 15,
-                    right: 2,
-                  }}>
-                  <Typography variant="body2" style={styles.resultsText}>
-                    <Badge
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      badgeContent={props.reduxTotalDocumentCount}
-                      max={99999}
-                      color="secondary">
-                      <DriveEtaIcon />
-                    </Badge>
-                  </Typography>
-                </div>
-              </Tooltip>
-            </Box>
-            <Box
-              flexGrow={1}
-              style={{
-                textAlign: "left",
-                paddingLeft: "5px",
-                marginLeft: "15px",
-                marginRight: "8px",
-                paddingBottom: "5px",
-                paddingTop: "7px",
-              }}>
-              <Box style={{ textAlign: "left" }}>
-                {props.autoCompleteSearchBar === true ? (
-                  <AutoSuggest placeholderText="Search..." />
-                ) : (
-                  <SearchBar placeholderText="Search..." />
-                )}
-              </Box>
-            </Box>
-            <Box style={{ position: "relative", bottom: 2, left: 3 }}>
-              <Button
-                size="small"
-                onClick={openDialog(true, props)}
-                color="secondary"
-                variant="contained">
-                Filter
-              </Button>
-              <div style={{ position: "relative", top: 4 }}>
-                <OrderByDialog />
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          width: '100%',
+          minWidth: '260px',
+          background: props.reduxNavBarColour
+            ? props.reduxNavBarColour
+            : DefaultTheme.navBarHexColour,
+          zIndex: 1,
+        }}
+      >
+        <Box
+          display="flex"
+          p={1}
+          style={{ flexGrow: '1', justifyContent: 'space-between' }}
+        >
+          <Box>
+            <img
+              data-href="/"
+              onClick={resetFilters}
+              src={
+                props.reduxLogoURL ? props.reduxLogoURL : DefaultTheme.logoURL
+              }
+              width={s2logoWidth}
+              style={{ position: 'relative', top: 3 }}
+            />
+          </Box>
+          <Box>
+            <Tooltip
+              placement="bottom"
+              title="Number of vehicles in this search"
+              aria-label="Number of vehicles in this search"
+            >
+              <div
+                style={{
+                  ...styles.firstBadgeContainer,
+                  ...styles.badgeContainer,
+                  position: 'relative',
+                  top: 8,
+                  right: 2,
+                }}
+              >
+                <Typography variant="body2" style={styles.resultsText}>
+                  <Badge
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    badgeContent={props.reduxVehicleData.length}
+                    color="secondary"
+                  >
+                    <DriveEtaIcon />
+                  </Badge>
+                </Typography>
               </div>
+            </Tooltip>
+            <Tooltip
+              placement="bottom"
+              title="Total Number of Vehicles"
+              aria-label="Total Number of Vehicles"
+            >
+              <div
+                style={{
+                  ...styles.badgeContainer,
+                  position: 'relative',
+                  top: 15,
+                  right: 2,
+                }}
+              >
+                <Typography variant="body2" style={styles.resultsText}>
+                  <Badge
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    badgeContent={props.reduxTotalDocumentCount}
+                    max={99999}
+                    color="secondary"
+                  >
+                    <DriveEtaIcon />
+                  </Badge>
+                </Typography>
+              </div>
+            </Tooltip>
+          </Box>
+          <Box
+            flexGrow={1}
+            style={{
+              textAlign: 'left',
+              paddingLeft: '5px',
+              marginLeft: '15px',
+              marginRight: '8px',
+              paddingBottom: '5px',
+              paddingTop: '7px',
+            }}
+          >
+            <Box style={{ textAlign: 'left' }}>
+              {props.autoCompleteSearchBar === true ? (
+                <AutoSuggest placeholderText="Search..." />
+              ) : (
+                <SearchBar placeholderText="Search..." />
+              )}
             </Box>
           </Box>
-        </div>
-      
+          <Box style={{ position: 'relative', bottom: 2, left: 3 }}>
+            <Button
+              size="small"
+              onClick={openDialog(true, props)}
+              color="secondary"
+              variant="contained"
+            >
+              Filter
+            </Button>
+            <div style={{ position: 'relative', top: 4 }}>
+              <OrderByDialog />
+            </div>
+          </Box>
+        </Box>
+      </div>
     );
   };
 
   return windowWidth < MobileMaxWidth ? mobileNavBar() : desktopNavBar();
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
     reduxSearchTerm: reduxState.searchReducer.searchTerm,
     reduxSearchCount: reduxState.searchReducer.searchCount,
@@ -367,12 +379,12 @@ const mapStateToProps = (reduxState) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveDialogOpen: (open) => dispatch(ComponentActions.saveDialogOpen(open)),
-    saveResetFacets: (resetFacets) =>
+    saveDialogOpen: open => dispatch(ComponentActions.saveDialogOpen(open)),
+    saveResetFacets: resetFacets =>
       dispatch(facetActions.saveResetFacets(resetFacets)),
-    saveSearchTerm: (searchTerm) =>
+    saveSearchTerm: searchTerm =>
       dispatch(searchActions.saveSearchTerm(searchTerm)),
     saveVehicleData: () => dispatch(searchActions.saveVehicleData([])),
     savePageNumber: () => dispatch(searchActions.savePageNumber(0)),
