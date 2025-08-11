@@ -5,7 +5,7 @@ import Paper from '@mui/material/Paper';
 import { connect } from 'react-redux';
 import facetActions from '../../../redux/actions/facetActions';
 import { DefaultTheme } from '../../../common/Constants';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 
 // Modern styles object
 const styles = {
@@ -43,38 +43,20 @@ const FacetChips = props => {
     props.saveFacetChipDeleted(props.reduxFacetChipDeleted + 1);
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main:
-          props.reduxPrimaryColour ||
-          DefaultTheme.primaryHexColour ||
-          '#616161',
-      },
-      secondary: {
-        main:
-          props.reduxSecondaryColour ||
-          DefaultTheme.secondaryHexColour ||
-          '#303f9f',
-        main: props.reduxSecondaryColour,
-      },
-    },
-  });
+  const theme = useTheme();
 
   return (
     <Paper elevation={0} component="ul" sx={styles.root}>
       {props.reduxFacetSelectors.map((data, index) => {
         return (
           <li key={index} style={styles.chip}>
-            <ThemeProvider theme={theme}>
-              <Chip
-                key={index}
-                clickable
-                label={data.facetDisplayText}
-                onDelete={handleDelete(data)}
-                color="secondary"
-              />
-            </ThemeProvider>
+            <Chip
+              key={index}
+              clickable
+              label={data.facetDisplayText}
+              onDelete={handleDelete(data)}
+              color="secondary"
+            />
           </li>
         );
       })}

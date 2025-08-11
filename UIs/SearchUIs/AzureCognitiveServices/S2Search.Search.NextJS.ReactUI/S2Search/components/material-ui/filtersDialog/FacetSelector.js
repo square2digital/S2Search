@@ -13,12 +13,13 @@ import searchActions from '../../../redux/actions/searchActions';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 
 const facetWidth_xs = 180;
 const facetWidth_sm = 180;
 
 const FacetSelector = props => {
+  const theme = useTheme();
   const [checked, setChecked] = useState(props.isChecked);
 
   const checkboxFacetNameAsString = `${props.facet.facetDisplayText}`;
@@ -121,27 +122,6 @@ const FacetSelector = props => {
     return `${count} Vehicles`;
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main:
-          props.reduxPrimaryColour ||
-          DefaultTheme.primaryHexColour ||
-          '#616161',
-      },
-      secondary: {
-        main:
-          props.reduxSecondaryColour ||
-          DefaultTheme.secondaryHexColour ||
-          '#303f9f',
-      },
-    },
-    typography: {
-      fontFamily: `"Roboto", "Helvetica", "Arial", sans-serif`,
-      fontSize: 11,
-    },
-  });
-
   return (
     <>
       <List
@@ -168,18 +148,16 @@ const FacetSelector = props => {
             marginTop: 0,
           }}
         >
-          <ThemeProvider theme={theme}>
-            <Checkbox
-              onChange={FacetOnClick}
-              name={`${checkboxFacetNameAsString}`}
-              checked={checked}
-            />
+          <Checkbox
+            onChange={FacetOnClick}
+            name={`${checkboxFacetNameAsString}`}
+            checked={checked}
+          />
 
-            <ListItemText
-              primary={formattedFacetName}
-              secondary={<>{renderVehicleCount(props.facet.count)}</>}
-            />
-          </ThemeProvider>
+          <ListItemText
+            primary={formattedFacetName}
+            secondary={<>{renderVehicleCount(props.facet.count)}</>}
+          />
         </ListItem>
       </List>
     </>

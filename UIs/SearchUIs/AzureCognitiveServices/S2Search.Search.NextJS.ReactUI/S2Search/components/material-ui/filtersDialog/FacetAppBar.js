@@ -8,7 +8,7 @@ import componentActions from '../../../redux/actions/componentActions';
 import Button from '@mui/material/Button';
 import facetActions from '../../../redux/actions/facetActions';
 import { DefaultTheme } from '../../../common/Constants';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 
 const styles = {
   root: {
@@ -23,26 +23,11 @@ const styles = {
 };
 
 const FacetAppBar = props => {
+  const theme = useTheme();
+
   const handleClose = () => {
     props.saveDialogOpen(false);
   };
-
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main:
-          props.reduxPrimaryColour ||
-          DefaultTheme.primaryHexColour ||
-          '#616161',
-      },
-      secondary: {
-        main:
-          props.reduxSecondaryColour ||
-          DefaultTheme.secondaryHexColour ||
-          '#303f9f',
-      },
-    },
-  });
 
   return (
     <div style={styles.root}>
@@ -59,16 +44,14 @@ const FacetAppBar = props => {
             onClick={handleClose}
             style={{ flex: 1 }}
           ></Typography>
-          <ThemeProvider theme={theme}>
-            <Button
-              size="small"
-              variant="contained"
-              color="secondary"
-              onClick={handleClose}
-            >
-              Show Results
-            </Button>
-          </ThemeProvider>
+          <Button
+            size="small"
+            variant="contained"
+            color="secondary"
+            onClick={handleClose}
+          >
+            Show Results
+          </Button>
         </Toolbar>
       </AppBar>
     </div>
