@@ -15,7 +15,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
         private static Dictionary<int, string> _searchTermContainer = new Dictionary<int, string>();
         private static string _fullSearchTerm = string.Empty;
 
-        private static IList<FacetGroup> _defaultFacets = null;
+        private static IList<FacetGroup> _defaultFacets = FacetsFromLocalFile();
 
         private static IList<FacetGroup> FacetsFromLocalFile()
         {
