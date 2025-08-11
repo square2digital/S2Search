@@ -18,7 +18,6 @@ export default function App(props) {
     <CacheProvider value={emotionCache}>
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
-        <meta name="emotion-insertion-point" content="" />
       </Head>
       <CssBaseline />
       <Component {...pageProps} />
