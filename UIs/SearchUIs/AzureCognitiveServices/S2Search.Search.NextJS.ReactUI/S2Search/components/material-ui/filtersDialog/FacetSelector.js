@@ -166,11 +166,11 @@ const FacetSelector = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxDialogOpen: reduxState.componentReducer.dialogOpen,
-    reduxResultsCount: reduxState.searchReducer.searchCount,
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxPrimaryColour: reduxState.themeReducer.primaryColour,
-    reduxSecondaryColour: reduxState.themeReducer.secondaryColour,
+    reduxDialogOpen: reduxState.ui.isDialogOpen,
+    reduxResultsCount: reduxState.search.searchCount,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxPrimaryColour: reduxState.theme.primaryColour,
+    reduxSecondaryColour: reduxState.theme.secondaryColour,
   };
 };
 

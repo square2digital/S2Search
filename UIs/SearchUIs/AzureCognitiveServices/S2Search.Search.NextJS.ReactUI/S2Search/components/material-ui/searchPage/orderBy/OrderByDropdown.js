@@ -5,7 +5,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import searchActions from '../../../../redux/actions/searchActions';
+import { setOrderBy } from '../../../../store/slices/searchSlice';
 import { GetOrderByData } from '../../../../common/Constants';
 import { connect } from 'react-redux';
 
@@ -74,14 +74,14 @@ const OrderByDropdown = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxOrderBy: reduxState.searchReducer.orderBy,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxOrderBy: reduxState.search.orderBy,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveOrderby: orderBy => dispatch(searchActions.saveOrderby(orderBy)),
+    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
   };
 };
 

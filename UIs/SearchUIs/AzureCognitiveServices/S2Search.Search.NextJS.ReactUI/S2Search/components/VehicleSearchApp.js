@@ -7,10 +7,32 @@ import FacetChips from './material-ui/searchPage/FacetChips';
 import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import { connect } from 'react-redux';
 import SearchRequest from '../pages/api/shared/request/SearchRequest';
-import searchActions from '../redux/actions/searchActions';
-import facetActions from '../redux/actions/facetActions';
-import themeActions from '../redux/actions/themeActions';
-import configActions from '../redux/actions/configActions';
+
+// New RTK action imports
+import {
+  setVehicleData,
+  setPageNumber,
+  setTotalDocumentCount,
+  setPreviousRequest,
+  setNetworkError,
+  setSearchCount,
+} from '../store/slices/searchSlice';
+import { setFacetData, setDefaultFacetData } from '../store/slices/facetSlice';
+import { setLoading, setCancellationToken } from '../store/slices/uiSlice';
+import {
+  setPrimaryColour,
+  setSecondaryColour,
+  setNavBarColour,
+  setLogoURL,
+  setMissingImageURL,
+} from '../store/slices/themeSlice';
+import {
+  setConfigData,
+  setEnableAutoComplete,
+  setHideIconVehicleCounts,
+  setPlaceholderArray,
+} from '../store/slices/configSlice';
+
 import { getSelectedFacets } from '../common/functions/FacetFunctions';
 import {
   getConfigValueByKey,
@@ -23,7 +45,6 @@ import {
   LogString,
 } from '../common/functions/SharedFunctions';
 import { LogDetails } from '../helpers/LogDetails';
-import componentActions from '../redux/actions/componentActions';
 import Box from '@mui/material/Box';
 import HelperFunctions from '../helpers/HelperFunctions';
 import { grey, red } from '@mui/material/colors';
@@ -248,7 +269,8 @@ const VehicleSearchApp = props => {
                 let vehicleSearchData = [];
 
                 if (
-                  props.reduxPageNumber != props.reduxPreviousRequest.pageNumber
+                  props.reduxPageNumber !=
+                  (props.reduxPreviousRequest?.pageNumber || 0)
                 ) {
                   vehicleSearchData = HelperFunctions.RemoveDuplicates([
                     ...props.reduxVehicleData,
@@ -385,65 +407,58 @@ const VehicleSearchApp = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxSearchCount: reduxState.searchReducer.searchCount,
-    reduxVehicleData: reduxState.searchReducer.vehicleData,
-    reduxOrderBy: reduxState.searchReducer.orderBy,
-    reduxPageNumber: reduxState.searchReducer.pageNumber,
-    reduxNetworkError: reduxState.searchReducer.networkError,
-    reduxPreviousRequest: reduxState.searchReducer.previousRequest,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxSearchCount: reduxState.search.searchCount,
+    reduxVehicleData: reduxState.search.vehicleData,
+    reduxOrderBy: reduxState.search.orderBy,
+    reduxPageNumber: reduxState.search.pageNumber,
+    reduxNetworkError: reduxState.search.networkError,
+    reduxPreviousRequest: reduxState.search.previousRequest,
 
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxFacetSelectedKeys: reduxState.facetReducer.facetSelectedKeys,
-    defaultFacetData: reduxState.facetReducer.defaultFacetData,
-    reduxSelectedFacet: reduxState.facetReducer.selectedFacet,
-    reduxFacetChipDeleted: reduxState.facetReducer.facetChipDeleted,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxFacetSelectedKeys: reduxState.facet.facetSelectedKeys,
+    defaultFacetData: reduxState.facet.defaultFacetData,
+    reduxSelectedFacet: reduxState.facet.selectedFacet,
+    reduxFacetChipDeleted: reduxState.facet.facetChipDeleted,
 
-    reduxLoading: reduxState.componentReducer.loading,
-    reduxCancellationToken: reduxState.componentReducer.enableToken,
-    reduxDialogOpen: reduxState.componentReducer.dialogOpen,
-    reduxConfigData: reduxState.configReducer.configData,
+    reduxLoading: reduxState.ui.isLoading,
+    reduxCancellationToken: reduxState.ui.cancellationToken,
+    reduxDialogOpen: reduxState.ui.isDialogOpen,
+    reduxConfigData: reduxState.config.configData,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveVehicleData: vehicleData =>
-      dispatch(searchActions.saveVehicleData(vehicleData)),
-    savePageNumber: pageNumber =>
-      dispatch(searchActions.savePageNumber(pageNumber)),
+    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
+    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
     saveTotalDocumentCount: documentCount =>
-      dispatch(searchActions.saveTotalDocumentCount(documentCount)),
+      dispatch(setTotalDocumentCount(documentCount)),
     savePreviousRequest: searchRequestObj =>
-      dispatch(searchActions.savePreviousRequest(searchRequestObj)),
-    saveNetworkError: enable =>
-      dispatch(searchActions.saveNetworkError(enable)),
-    saveSearchCount: searchCount =>
-      dispatch(searchActions.saveSearchCount(searchCount)),
-    saveFacetData: facets => dispatch(facetActions.saveFacetData(facets)),
+      dispatch(setPreviousRequest(searchRequestObj)),
+    saveNetworkError: enable => dispatch(setNetworkError(enable)),
+    saveSearchCount: searchCount => dispatch(setSearchCount(searchCount)),
+    saveFacetData: facets => dispatch(setFacetData(facets)),
     saveDefaultFacetData: defaultFacets =>
-      dispatch(facetActions.saveDefaultFacetData(defaultFacets)),
-    saveLoading: loading => dispatch(componentActions.saveLoading(loading)),
-    saveCancellationToken: enable =>
-      dispatch(componentActions.saveCancellationToken(enable)),
+      dispatch(setDefaultFacetData(defaultFacets)),
+    saveLoading: loading => dispatch(setLoading(loading)),
+    saveCancellationToken: enable => dispatch(setCancellationToken(enable)),
 
     savePrimaryColour: primaryHexColour =>
-      dispatch(themeActions.savePrimaryColour(primaryHexColour)),
+      dispatch(setPrimaryColour(primaryHexColour)),
     saveSecondaryColour: secondaryHexColour =>
-      dispatch(themeActions.saveSecondaryColour(secondaryHexColour)),
+      dispatch(setSecondaryColour(secondaryHexColour)),
     saveNavBarColour: navBarHexColour =>
-      dispatch(themeActions.saveNavBarColour(navBarHexColour)),
-    saveLogoURL: logoURL => dispatch(themeActions.saveLogoURL(logoURL)),
-    saveMissingImageURL: logoURL =>
-      dispatch(themeActions.saveMissingImageURL(logoURL)),
-    saveConfigData: configData =>
-      dispatch(configActions.saveConfigData(configData)),
+      dispatch(setNavBarColour(navBarHexColour)),
+    saveLogoURL: logoURL => dispatch(setLogoURL(logoURL)),
+    saveMissingImageURL: logoURL => dispatch(setMissingImageURL(logoURL)),
+    saveConfigData: configData => dispatch(setConfigData(configData)),
     saveEnableAutoComplete: enableAutoComplete =>
-      dispatch(configActions.saveEnableAutoComplete(enableAutoComplete)),
+      dispatch(setEnableAutoComplete(enableAutoComplete)),
     saveHideIconVehicleCounts: hideIconVehicleCounts =>
-      dispatch(configActions.saveHideIconVehicleCounts(hideIconVehicleCounts)),
+      dispatch(setHideIconVehicleCounts(hideIconVehicleCounts)),
     savePlaceholderArray: placeholderText =>
-      dispatch(configActions.savePlaceholderArray(placeholderText)),
+      dispatch(setPlaceholderArray(placeholderText)),
   };
 };
 

@@ -8,7 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Backdrop from '@mui/material/Backdrop';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import searchActions from '../../../redux/actions/searchActions';
+import { setNetworkError } from '../../../store/slices/searchSlice';
 import { connect } from 'react-redux';
 
 const NetworkErrorDialog = props => {
@@ -66,14 +66,13 @@ const NetworkErrorDialog = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxNetworkError: reduxState.searchReducer.networkError,
+    reduxNetworkError: reduxState.search.networkError,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveNetworkError: enable =>
-      dispatch(searchActions.saveNetworkError(enable)),
+    saveNetworkError: enable => dispatch(setNetworkError(enable)),
   };
 };
 

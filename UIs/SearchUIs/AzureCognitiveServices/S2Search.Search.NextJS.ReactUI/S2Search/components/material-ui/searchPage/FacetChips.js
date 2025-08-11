@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import { connect } from 'react-redux';
-import facetActions from '../../../redux/actions/facetActions';
+import {
+  removeFacetSelector,
+  setFacetChipDeleted,
+} from '../../../store/slices/facetSlice';
 import { DefaultTheme } from '../../../common/Constants';
 import { useTheme } from '@mui/material/styles';
 
@@ -66,19 +69,19 @@ const FacetChips = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxFacetChipDeleted: reduxState.facetReducer.facetChipDeleted,
-    reduxPrimaryColour: reduxState.themeReducer.primaryColour,
-    reduxSecondaryColour: reduxState.themeReducer.secondaryColour,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxFacetChipDeleted: reduxState.facet.facetChipDeleted,
+    reduxPrimaryColour: reduxState.theme.primaryColour,
+    reduxSecondaryColour: reduxState.theme.secondaryColour,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     saveFacetSelectors: facetSelectorArray =>
-      dispatch(facetActions.saveFacetSelectors(facetSelectorArray)),
+      dispatch(removeFacetSelector(facetSelectorArray)),
     saveFacetChipDeleted: facetChipDeleted =>
-      dispatch(facetActions.saveFacetChipDeleted(facetChipDeleted)),
+      dispatch(setFacetChipDeleted(facetChipDeleted)),
   };
 };
 

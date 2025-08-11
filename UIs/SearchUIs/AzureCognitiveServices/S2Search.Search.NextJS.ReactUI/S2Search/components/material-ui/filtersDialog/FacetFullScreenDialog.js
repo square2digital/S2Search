@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Dialog from '@mui/material/Dialog';
 import Slide from '@mui/material/Slide';
 import { connect } from 'react-redux';
-import componentActions from '../../../redux/actions/componentActions';
+import { setDialogOpen } from '../../../store/slices/uiSlice';
 import FacetAppBar from '../filtersDialog/FacetAppBar';
 import FacetSelectionMenu from '../filtersDialog/FacetSelectionMenu';
 import FacetSelectionList from '../filtersDialog/FacetSelectorList';
@@ -49,15 +49,14 @@ const FacetFullScreenDialog = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxDialogOpen: reduxState.componentReducer.dialogOpen,
-    defaultFacetData: reduxState.facetReducer.defaultFacetData,
+    reduxDialogOpen: reduxState.ui.isDialogOpen,
+    defaultFacetData: reduxState.facet.defaultFacetData,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveDialogOpen: dialogOpen =>
-      dispatch(componentActions.saveDialogOpen(dialogOpen)),
+    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
   };
 };
 

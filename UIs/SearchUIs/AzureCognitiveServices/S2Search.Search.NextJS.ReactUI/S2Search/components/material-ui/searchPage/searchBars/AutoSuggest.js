@@ -1,35 +1,35 @@
-﻿import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import { AutoSuggestAPI } from "../../../../pages/api/helper/SearchAPI";
-import searchActions from "../../../../redux/actions/searchActions";
-import facetActions from "../../../../redux/actions/facetActions";
-import InputBase from "@mui/material/InputBase";
-import Autocomplete from "@mui/material/Autocomplete";
-import Popper from "@mui/material/Popper";
-import parse from "autosuggest-highlight/parse";
-import match from "autosuggest-highlight/match";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import Divider from "@mui/material/Divider";
-import RotateLeftIcon from "@mui/icons-material/RotateLeft";
-import { MobileMaxWidth } from "../../../../common/Constants";
+﻿import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { AutoSuggestAPI } from '../../../../pages/api/helper/SearchAPI';
+import searchActions from '../../../../redux/actions/searchActions';
+import facetActions from '../../../../redux/actions/facetActions';
+import InputBase from '@mui/material/InputBase';
+import Autocomplete from '@mui/material/Autocomplete';
+import Popper from '@mui/material/Popper';
+import parse from 'autosuggest-highlight/parse';
+import match from 'autosuggest-highlight/match';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import Divider from '@mui/material/Divider';
+import RotateLeftIcon from '@mui/icons-material/RotateLeft';
+import { MobileMaxWidth } from '../../../../common/Constants';
 import {
   checkForEnter,
   generatePlaceholder,
   resetFilters,
   disableResetFiltersButton,
   updateSearchTerm,
-} from "./searchBarSharedFunctions";
+} from './searchBarSharedFunctions';
 
-export const AutoSuggest = (props) => {
+export const AutoSuggest = props => {
   const [options, setOptions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [windowWidth, setwindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
-    window.addEventListener("resize", updateWindowDimensions);
-    window.removeEventListener("resize", updateWindowDimensions);
+    window.addEventListener('resize', updateWindowDimensions);
+    window.removeEventListener('resize', updateWindowDimensions);
   }, []);
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export const AutoSuggest = (props) => {
     resetFilters(props);
   };
 
-  const saveOnChange = (event) => {
+  const saveOnChange = event => {
     updateSearchTerm(event.target.value, props);
   };
 
@@ -81,7 +81,7 @@ export const AutoSuggest = (props) => {
   const PopperOverride = function (props) {
     const styles = () => ({
       popper: {
-        width: "fit-content",
+        width: 'fit-content',
       },
     });
 
@@ -116,25 +116,27 @@ export const AutoSuggest = (props) => {
                   key={index}
                   style={{
                     fontWeight: !part.highlight ? 700 : 400,
-                  }}>
-                  {part.text.replace(/ /g, "\u00a0")}
+                  }}
+                >
+                  {part.text.replace(/ /g, '\u00a0')}
                 </span>
               ))}
             </span>
           </div>
         );
       }}
-      renderInput={(params) => {
+      renderInput={params => {
         const { ...rest } = params;
         return (
           <>
             <Paper
               component="form"
               style={{
-                padding: "2px 4px",
-                display: "flex",
+                padding: '2px 4px',
+                display: 'flex',
                 height: 45,
-              }}>
+              }}
+            >
               <InputBase
                 {...params.InputProps}
                 {...rest}
@@ -164,7 +166,8 @@ export const AutoSuggest = (props) => {
                 color="primary"
                 onClick={reset}
                 disabled={disableResetButton()}
-                aria-label="directions">
+                aria-label="directions"
+              >
                 <RotateLeftIcon />
               </IconButton>
             </Paper>
@@ -175,25 +178,25 @@ export const AutoSuggest = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxConfigPlaceholders: reduxState.configReducer.placeholderText,
-    reduxCancellationToken: reduxState.componentReducer.enableToken,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxConfigPlaceholders: reduxState.config.placeholderArray,
+    reduxCancellationToken: reduxState.ui.cancellationToken,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveSearchTerm: (searchTerm) =>
+    saveSearchTerm: searchTerm =>
       dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveResetFacets: (resetFacets) =>
+    saveResetFacets: resetFacets =>
       dispatch(facetActions.saveResetFacets(resetFacets)),
     saveVehicleData: () => dispatch(searchActions.saveVehicleData([])),
     savePageNumber: () => dispatch(searchActions.savePageNumber(0)),
     saveFacetSelectors: () => dispatch(facetActions.saveFacetSelectors([])),
-    saveCancellationToken: (enable) =>
+    saveCancellationToken: enable =>
       dispatch(componentActions.saveCancellationToken(enable)),
   };
 };

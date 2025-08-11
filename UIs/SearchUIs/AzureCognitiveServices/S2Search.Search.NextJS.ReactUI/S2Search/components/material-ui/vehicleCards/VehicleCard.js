@@ -510,8 +510,8 @@ VehicleCard.propTypes = {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxPrimaryColour: reduxState.themeReducer.primaryColour,
-    reduxSecondaryColour: reduxState.themeReducer.secondaryColour,
+    reduxPrimaryColour: reduxState.theme.primaryColour,
+    reduxSecondaryColour: reduxState.theme.secondaryColour,
   };
 };
 

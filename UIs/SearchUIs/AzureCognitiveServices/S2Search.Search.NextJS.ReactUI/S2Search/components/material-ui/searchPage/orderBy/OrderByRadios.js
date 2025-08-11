@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import searchActions from '../../../../redux/actions/searchActions';
+import { setOrderBy } from '../../../../store/slices/searchSlice';
 import { GetOrderByData } from '../../../../common/Constants';
 import { connect } from 'react-redux';
 import Radio from '@mui/material/Radio';
@@ -66,14 +66,14 @@ const OrderByRadios = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxOrderBy: reduxState.searchReducer.orderBy,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxOrderBy: reduxState.search.orderBy,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveOrderby: orderBy => dispatch(searchActions.saveOrderby(orderBy)),
+    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
   };
 };
 

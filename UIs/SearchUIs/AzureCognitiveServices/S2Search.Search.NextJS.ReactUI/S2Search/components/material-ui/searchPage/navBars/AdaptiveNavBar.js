@@ -1,15 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import facetActions from '../../../../redux/actions/facetActions';
-import ComponentActions from '../../../../redux/actions/componentActions';
+import {
+  setResetFacets,
+  setFacetSelectors,
+} from '../../../../store/slices/facetSlice';
+import { setDialogOpen } from '../../../../store/slices/uiSlice';
 import Typography from '@mui/material/Typography';
 import { DefaultTheme, MobileMaxWidth } from '../../../../common/Constants';
 import Button from '@mui/material/Button';
 import OrderByDialog from '../orderBy/OrderByDialog';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
-import searchActions from '../../../../redux/actions/searchActions';
+import {
+  setSearchTerm,
+  setVehicleData,
+  setPageNumber,
+} from '../../../../store/slices/searchSlice';
 import DriveEtaIcon from '@mui/icons-material/DriveEta';
 import Badge from '@mui/material/Badge';
 import SearchBar from '../../../../components/material-ui/searchPage/searchBars/SearchBar';
@@ -360,35 +367,33 @@ const AdaptiveNavBar = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxSearchCount: reduxState.searchReducer.searchCount,
-    reduxTotalDocumentCount: reduxState.searchReducer.totalDocumentCount,
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxDialogOpen: reduxState.componentReducer.dialogOpen,
-    reduxLoading: reduxState.componentReducer.loading,
-    reduxVehicleData: reduxState.searchReducer.vehicleData,
-    reduxNavBarColour: reduxState.themeReducer.navBarColour,
-    reduxLogoURL: reduxState.themeReducer.logoURL,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxSearchCount: reduxState.search.searchCount,
+    reduxTotalDocumentCount: reduxState.search.totalDocumentCount,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxDialogOpen: reduxState.ui.isDialogOpen,
+    reduxLoading: reduxState.ui.isLoading,
+    reduxVehicleData: reduxState.search.vehicleData,
+    reduxNavBarColour: reduxState.theme.navBarColour,
+    reduxLogoURL: reduxState.theme.logoURL,
 
-    reduxConfigData: reduxState.configReducer.configData,
-    reduxEnableAutoComplete: reduxState.configReducer.enableAutoComplete,
-    reduxHideIconVehicleCounts: reduxState.configReducer.hideIconVehicleCounts,
-    reduxPlaceholderText: reduxState.configReducer.placeholderText,
-    reduxPrimaryColour: reduxState.themeReducer.primaryColour,
-    reduxSecondaryColour: reduxState.themeReducer.secondaryColour,
+    reduxConfigData: reduxState.config.configData,
+    reduxEnableAutoComplete: reduxState.config.enableAutoComplete,
+    reduxHideIconVehicleCounts: reduxState.config.hideIconVehicleCounts,
+    reduxPlaceholderText: reduxState.config.placeholderText,
+    reduxPrimaryColour: reduxState.theme.primaryColour,
+    reduxSecondaryColour: reduxState.theme.secondaryColour,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveDialogOpen: open => dispatch(ComponentActions.saveDialogOpen(open)),
-    saveResetFacets: resetFacets =>
-      dispatch(facetActions.saveResetFacets(resetFacets)),
-    saveSearchTerm: searchTerm =>
-      dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveVehicleData: () => dispatch(searchActions.saveVehicleData([])),
-    savePageNumber: () => dispatch(searchActions.savePageNumber(0)),
-    saveFacetSelectors: () => dispatch(facetActions.saveFacetSelectors([])),
+    saveDialogOpen: open => dispatch(setDialogOpen(open)),
+    saveResetFacets: resetFacets => dispatch(setResetFacets(resetFacets)),
+    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
+    saveVehicleData: () => dispatch(setVehicleData([])),
+    savePageNumber: () => dispatch(setPageNumber(0)),
+    saveFacetSelectors: () => dispatch(setFacetSelectors([])),
   };
 };
 

@@ -3,9 +3,17 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import FacetSelector from '../filtersDialog/FacetSelector';
 import Grid from '@mui/material/Grid';
-import facetActions from '../../../redux/actions/facetActions';
-import componentActions from '../../../redux/actions/componentActions';
-import searchActions from '../../../redux/actions/searchActions';
+import {
+  setVehicleData,
+  setPageNumber,
+  setSearchTerm,
+  setOrderBy,
+} from '../../../store/slices/searchSlice';
+import {
+  setFacetSelectors,
+  setSelectedFacet,
+} from '../../../store/slices/facetSlice';
+import { setDialogOpen } from '../../../store/slices/uiSlice';
 import { StaticFacets } from '../../../common/Constants';
 import {
   getDefaultFacetsWithSelections,
@@ -132,38 +140,33 @@ const FacetSelectionList = props => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveVehicleData: vehicleData =>
-      dispatch(searchActions.saveVehicleData(vehicleData)),
-    savePageNumber: pageNumber =>
-      dispatch(searchActions.savePageNumber(pageNumber)),
+    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
+    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
     saveFacetSelectors: resetFacetArray =>
-      dispatch(facetActions.saveFacetSelectors(resetFacetArray)),
-    saveSearchTerm: searchTerm =>
-      dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveOrderby: orderBy => dispatch(searchActions.saveOrderby(orderBy)),
-    saveDialogOpen: dialogOpen =>
-      dispatch(componentActions.saveDialogOpen(dialogOpen)),
-    saveSelectedFacet: facetName =>
-      dispatch(componentActions.saveSelectedFacet(facetName)),
+      dispatch(setFacetSelectors(resetFacetArray)),
+    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
+    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
+    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
+    saveSelectedFacet: facetName => dispatch(setSelectedFacet(facetName)),
   };
 };
 
 const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxSearchCount: reduxState.searchReducer.searchCount,
-    reduxVehicleData: reduxState.searchReducer.vehicleData,
-    reduxOrderBy: reduxState.searchReducer.orderBy,
-    reduxPageNumber: reduxState.searchReducer.pageNumber,
-    reduxNetworkError: reduxState.searchReducer.networkError,
-    reduxPreviousRequest: reduxState.searchReducer.previousRequest,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxSearchCount: reduxState.search.searchCount,
+    reduxVehicleData: reduxState.search.vehicleData,
+    reduxOrderBy: reduxState.search.orderBy,
+    reduxPageNumber: reduxState.search.pageNumber,
+    reduxNetworkError: reduxState.search.networkError,
+    reduxPreviousRequest: reduxState.search.previousRequest,
 
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxDefaultFacetData: reduxState.facetReducer.defaultFacetData,
-    reduxFacetData: reduxState.facetReducer.facetData,
-    reduxDialogOpen: reduxState.componentReducer.dialogOpen,
-    reduxSelectedFacet: reduxState.facetReducer.selectedFacet,
-    reduxFacetSelectedKeys: reduxState.facetReducer.facetSelectedKeys,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxDefaultFacetData: reduxState.facet.defaultFacetData,
+    reduxFacetData: reduxState.facet.facetData,
+    reduxDialogOpen: reduxState.ui.isDialogOpen,
+    reduxSelectedFacet: reduxState.facet.selectedFacet,
+    reduxFacetSelectedKeys: reduxState.facet.facetSelectedKeys,
   };
 };
 

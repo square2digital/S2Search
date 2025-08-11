@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import componentActions from '../../../redux/actions/componentActions';
+import { setDialogOpen } from '../../../store/slices/uiSlice';
 import Button from '@mui/material/Button';
-import facetActions from '../../../redux/actions/facetActions';
+import { resetFacets } from '../../../store/slices/facetSlice';
 import { DefaultTheme } from '../../../common/Constants';
 import { useTheme } from '@mui/material/styles';
 
@@ -60,19 +60,17 @@ const FacetAppBar = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    searchCount: reduxState.searchReducer.searchCount,
-    reduxNavBarColour: reduxState.themeReducer.navBarColour,
-    reduxPrimaryColour: reduxState.themeReducer.primaryColour,
-    reduxSecondaryColour: reduxState.themeReducer.secondaryColour,
+    searchCount: reduxState.search.searchCount,
+    reduxNavBarColour: reduxState.theme.navBarColour,
+    reduxPrimaryColour: reduxState.theme.primaryColour,
+    reduxSecondaryColour: reduxState.theme.secondaryColour,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveDialogOpen: dialogOpen =>
-      dispatch(componentActions.saveDialogOpen(dialogOpen)),
-    saveResetFacets: resetFacets =>
-      dispatch(facetActions.saveResetFacets(resetFacets)),
+    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
+    saveResetFacets: resetFacets => dispatch(resetFacets(resetFacets)),
   };
 };
 

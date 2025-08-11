@@ -1,10 +1,10 @@
-﻿import React from "react";
-import PropTypes from "prop-types";
-import VehicleCard from "./VehicleCard";
-import Grid from "@mui/material/Grid";
-import { connect } from "react-redux";
+﻿import React from 'react';
+import PropTypes from 'prop-types';
+import VehicleCard from './VehicleCard';
+import Grid from '@mui/material/Grid';
+import { connect } from 'react-redux';
 
-const VehicleCardList = (props) => {
+const VehicleCardList = props => {
   return (
     <Grid container>
       {props.vehicleData.map((vehicleData, i) => (
@@ -18,10 +18,10 @@ const VehicleCardList = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    vehicleData: reduxState.searchReducer.vehicleData,
-    missingImageURL: reduxState.themeReducer.missingImageURL,
+    vehicleData: reduxState.search.vehicleData,
+    missingImageURL: reduxState.theme.missingImageURL,
   };
 };
 

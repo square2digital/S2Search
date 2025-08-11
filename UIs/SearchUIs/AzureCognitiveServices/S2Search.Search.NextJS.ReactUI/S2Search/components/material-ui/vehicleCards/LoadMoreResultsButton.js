@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import searchActions from '../../../redux/actions/searchActions';
+import { setPageNumber } from '../../../store/slices/searchSlice';
 import { connect } from 'react-redux';
 import { MobileMaxWidth } from '../../../common/Constants';
 
@@ -94,20 +94,19 @@ const LoadMoreResultsButton = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxSearchCount: reduxState.searchReducer.searchCount,
-    reduxPageNumber: reduxState.searchReducer.pageNumber,
-    reduxVehicleData: reduxState.searchReducer.vehicleData,
-    reduxLoading: reduxState.componentReducer.loading,
-    reduxNavBarColour: reduxState.themeReducer.navBarColour,
-    reduxPrimaryColour: reduxState.themeReducer.primaryColour,
-    reduxSecondaryColour: reduxState.themeReducer.secondaryColour,
+    reduxSearchCount: reduxState.search.searchCount,
+    reduxPageNumber: reduxState.search.pageNumber,
+    reduxVehicleData: reduxState.search.vehicleData,
+    reduxLoading: reduxState.ui.isLoading,
+    reduxNavBarColour: reduxState.theme.navBarColour,
+    reduxPrimaryColour: reduxState.theme.primaryColour,
+    reduxSecondaryColour: reduxState.theme.secondaryColour,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    savePageNumber: pageNumber =>
-      dispatch(searchActions.savePageNumber(pageNumber)),
+    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
   };
 };
 

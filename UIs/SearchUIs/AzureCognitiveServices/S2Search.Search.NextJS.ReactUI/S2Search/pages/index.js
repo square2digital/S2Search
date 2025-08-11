@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import App from '../components/App';
 import { Provider as ReduxProvider } from 'react-redux';
-import configureStore from '../redux/configureStore';
+import { store } from '../store';
 import { ThemeProvider } from '@mui/material/styles';
 import { DefaultTheme } from '../common/Constants';
 import ThemeColours from '../common/ThemeColours';
@@ -35,8 +35,6 @@ export async function getServerSideProps() {
 }
 
 const Home = props => {
-  const reduxStore = configureStore();
-
   // Create theme using the modern theme factory
   const theme = createAppTheme(
     props.data?.palette?.primary?.main || DefaultTheme.primaryHexColour,
@@ -54,7 +52,7 @@ const Home = props => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <ReduxProvider store={reduxStore}>
+      <ReduxProvider store={store}>
         <App />
       </ReduxProvider>
     </ThemeProvider>

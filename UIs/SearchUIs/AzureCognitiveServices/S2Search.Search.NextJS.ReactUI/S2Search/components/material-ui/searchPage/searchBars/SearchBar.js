@@ -89,9 +89,9 @@ export const SearchBar = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxConfigPlaceholders: reduxState.configReducer.placeholderText,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxConfigPlaceholders: reduxState.config.placeholderArray,
   };
 };
 

@@ -104,16 +104,16 @@ const FacetSelectionMenu = props => {
 
 const mapStateToProps = reduxState => {
   return {
-    searchCount: reduxState.searchReducer.searchCount,
-    reduxResultsCount: reduxState.searchReducer.searchCount,
-    vehicleData: reduxState.searchReducer.vehicleData,
+    searchCount: reduxState.search.searchCount,
+    reduxResultsCount: reduxState.search.searchCount,
+    vehicleData: reduxState.search.vehicleData,
 
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxFacetSelectedKeys: reduxState.facetReducer.facetSelectedKeys,
-    defaultFacetData: reduxState.facetReducer.defaultFacetData,
-    facetData: reduxState.facetReducer.facetData,
-    reduxSelectedFacet: reduxState.facetReducer.selectedFacet,
-    reduxLoading: reduxState.componentReducer.loading,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxFacetSelectedKeys: reduxState.facet.facetSelectedKeys,
+    defaultFacetData: reduxState.facet.defaultFacetData,
+    facetData: reduxState.facet.facetData,
+    reduxSelectedFacet: reduxState.facet.selectedFacet,
+    reduxLoading: reduxState.ui.isLoading,
   };
 };
 
