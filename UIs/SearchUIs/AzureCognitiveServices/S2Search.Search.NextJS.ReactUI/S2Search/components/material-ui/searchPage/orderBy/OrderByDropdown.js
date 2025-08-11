@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
+import { useTheme } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -9,15 +9,16 @@ import searchActions from "../../../../redux/actions/searchActions";
 import { GetOrderByData } from "../../../../common/Constants";
 import { connect } from "react-redux";
 
-const useStyles = makeStyles((theme) => ({
+// Inline styles object (converted from makeStyles)
+const styles = {
   formControl: {
-    margin: theme.spacing(0),
+    margin: 0, // theme.spacing(0)
     minWidth: 120,
   },
-}));
+};
 
 const OrderByDropdown = (props) => {
-  const classes = useStyles();
+  const theme = useTheme();
   const [orderBy, setOrderBy] = React.useState("");
   const [open, setOpen] = React.useState(false);
 
@@ -50,7 +51,7 @@ const OrderByDropdown = (props) => {
 
   return (
     <div>
-      <FormControl variant="outlined" className={classes.formControl}>
+      <FormControl variant="outlined" style={styles.formControl}>
         <InputLabel htmlFor="demo-customized-select-native" color="secondary">
           Order By
         </InputLabel>

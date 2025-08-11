@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
+import { useTheme } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -9,15 +9,16 @@ import { connect } from "react-redux";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 
-const useStyles = makeStyles((theme) => ({
+// Inline styles object (converted from makeStyles)
+const styles = {
   formControl: {
-    margin: theme.spacing(0),
+    margin: 0, // theme.spacing(0)
     minWidth: 120,
   },
-}));
+};
 
 const OrderByRadios = (props) => {
-  const classes = useStyles();
+  const theme = useTheme();
   const [orderBy, setOrderBy] = React.useState("");
 
   const GenerateRadios = () => {
@@ -48,7 +49,7 @@ const OrderByRadios = (props) => {
 
   return (
     <div>
-      <FormControl variant="outlined" className={classes.formControl}>
+      <FormControl variant="outlined" style={styles.formControl}>
         <RadioGroup
           color="secondary"
           label="Order By"

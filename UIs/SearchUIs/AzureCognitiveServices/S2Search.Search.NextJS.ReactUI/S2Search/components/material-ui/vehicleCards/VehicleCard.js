@@ -18,36 +18,23 @@ import CommuteIcon from '@mui/icons-material/Commute';
 import EvStationIcon from '@mui/icons-material/EvStation';
 import TimeToLeaveIcon from '@mui/icons-material/TimeToLeave';
 import PaletteIcon from '@mui/icons-material/Palette';
-import { withStyles, makeStyles } from '@mui/styles';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
 import { MobileMaxWidth, DefaultTheme } from '../../../common/Constants';
 import VehicleImage from './VehicleImage';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 
-const BlackTextTypography = withStyles({
-  root: {
-    color: grey[900],
-  },
-})(Typography);
-
-const useStyles = makeStyles(theme => ({
+// Inline styles object (converted from makeStyles and withStyles)
+const styles = {
   root: {
     flexGrow: 1,
   },
   paper: {
-    [theme.breakpoints.down('sm')]: {
-      paddingTop: theme.spacing(1),
-    },
-    [theme.breakpoints.up('sm')]: {
-      paddingTop: theme.spacing(1),
-      paddingLeft: '2px',
-      paddingRight: '2px',
-      paddingBottom: '2px',
-    },
-
     textAlign: 'center',
-    color: theme.palette.text.primary,
+    paddingTop: 8, // theme.spacing(1)
+    paddingLeft: '2px',
+    paddingRight: '2px',
+    paddingBottom: '2px',
   },
   table: {
     marginTop: 10,
@@ -64,15 +51,12 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '4px 5px 8px 0px #c2c2c2',
     padding: '1px',
     marginBottom: '5px',
-
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
-    },
-    [theme.breakpoints.up('md')]: {
-      width: '95%',
-    },
+    width: '95%',
   },
-}));
+  blackText: {
+    color: grey[900],
+  },
+};
 
 const setPriceText = vehicleData => {
   const PriceStr = Number(vehicleData.price.toFixed(2)).toLocaleString();
@@ -147,7 +131,7 @@ const setMobileTransmissionText = transmission => {
 };
 
 const VehicleCard = props => {
-  const classes = useStyles();
+  const theme = useTheme();
 
   const [windowWidth, setwindowWidth] = useState(window.innerWidth);
 
@@ -166,344 +150,332 @@ const VehicleCard = props => {
   const title = `${vehicleData.make} ${vehicleData.model}`;
   const imageTitle = `${title} ${vehicleData.variant}`;
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main:
-          props.reduxPrimaryColour ||
-          DefaultTheme.primaryHexColour ||
-          '#616161',
-      },
-      secondary: {
-        main:
-          props.reduxSecondaryColour ||
-          DefaultTheme.secondaryHexColour ||
-          '#303f9f',
-      },
-    },
-  });
-
   const desktopVehicleCard = () => {
     return (
-      <ThemeProvider theme={theme}>
-        <Grid item xs={12} sm={6} md={4} lg={2}>
-          <Paper elevation={0} className={classes.paper}>
-            <Link target="_blank" rel="noreferrer" href={vehicleData.pageUrl}>
-              <VehicleImage
-                mobile={false}
-                imageURL={imageURL}
-                imageTitle={imageTitle}
-                missingImageURL={props.missingImageURL}
-              ></VehicleImage>
+      <Grid item xs={12} sm={6} md={4} lg={2}>
+        <Paper elevation={0} style={styles.paper}>
+          <Link target="_blank" rel="noreferrer" href={vehicleData.pageUrl}>
+            <VehicleImage
+              mobile={false}
+              imageURL={imageURL}
+              imageTitle={imageTitle}
+              missingImageURL={props.missingImageURL}
+            ></VehicleImage>
+          </Link>
+          <div style={styles.vehicleCardContainer}>
+            <Divider style={{ marginTop: '7px', marginBottom: '7px' }} />
+
+            <Link
+              underline="hover"
+              target="_blank"
+              rel="noreferrer"
+              href={vehicleData.pageUrl}
+            >
+              <Typography
+                variant="h6"
+                component="h2"
+                color="primary"
+                align="left"
+              >
+                {title}
+              </Typography>
             </Link>
-            <div className={classes.vehicleCardContainer}>
-              <Divider style={{ marginTop: '7px', marginBottom: '7px' }} />
 
-              <Link
-                underline="hover"
-                target="_blank"
-                rel="noreferrer"
-                href={vehicleData.pageUrl}
-              >
-                <Typography
-                  variant="h6"
-                  component="h2"
-                  color="primary"
-                  align="left"
-                >
-                  {title}
-                </Typography>
-              </Link>
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              component="p"
+              align="left"
+            >
+              {vehicleData.variant}
+            </Typography>
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              component="p"
+              align="left"
+            >
+              {setPriceText(vehicleData)}
+            </Typography>
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              component="p"
+              align="left"
+            >
+              Mileage: <b>{setMilageText(vehicleData)}</b> - Location:{' '}
+              <b>{vehicleData.location}</b>
+            </Typography>
 
-              <Typography
-                variant="caption"
-                color="textSecondary"
-                component="p"
-                align="left"
+            <TableContainer style={{ overflow: 'hidden' }}>
+              <Table
+                style={styles.table}
+                size="small"
+                padding="none"
+                aria-label="simple table"
               >
-                {vehicleData.variant}
-              </Typography>
-              <Typography
-                variant="caption"
-                color="textSecondary"
-                component="p"
-                align="left"
-              >
-                {setPriceText(vehicleData)}
-              </Typography>
-              <Typography
-                variant="caption"
-                color="textSecondary"
-                component="p"
-                align="left"
-              >
-                Mileage: <b>{setMilageText(vehicleData)}</b> - Location:{' '}
-                <b>{vehicleData.location}</b>
-              </Typography>
-
-              <TableContainer style={{ overflow: 'hidden' }}>
-                <Table
-                  className={classes.table}
-                  size="small"
-                  padding="none"
-                  aria-label="simple table"
-                >
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className={classes.tableCell}>
-                        <Box
-                          display="flex"
-                          flexDirection="row"
-                          overflow="hidden"
-                          bgcolor="background.paper"
-                        >
-                          <Box>
-                            <SettingsIcon
-                              style={{ color: grey[500] }}
-                              fontSize="small"
-                            />
-                          </Box>
-                          <Box>
-                            <BlackTextTypography
-                              variant="caption"
-                              color="textSecondary"
-                              component="p"
-                            >
-                              {vehicleData.transmission}
-                            </BlackTextTypography>
-                          </Box>
+                <TableBody>
+                  <TableRow>
+                    <TableCell style={styles.tableCell}>
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        overflow="hidden"
+                        bgcolor="background.paper"
+                      >
+                        <Box>
+                          <SettingsIcon
+                            style={{ color: grey[500] }}
+                            fontSize="small"
+                          />
                         </Box>
-                      </TableCell>
-                      <TableCell align="right" className={classes.tableCell}>
-                        <Box
-                          display="flex"
-                          flexDirection="row"
-                          overflow="hidden"
-                          bgcolor="background.paper"
-                        >
-                          <Box>{setFuelAttribute(vehicleData.fuelType)}</Box>
-                          <Box>
-                            <BlackTextTypography
-                              variant="caption"
-                              color="textSecondary"
-                              component="p"
-                            >
-                              {vehicleData.fuelType}
-                            </BlackTextTypography>
-                          </Box>
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="textSecondary"
+                            component="p"
+                            style={styles.blackText}
+                          >
+                            {vehicleData.transmission}
+                          </Typography>
                         </Box>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className={classes.tableCell}>
-                        <Box
-                          display="flex"
-                          flexDirection="row"
-                          overflow="hidden"
-                          bgcolor="background.paper"
-                        >
-                          <Box>
-                            <DateRangeIcon
-                              style={{ color: grey[500] }}
-                              fontSize="small"
-                            />
-                          </Box>
-                          <Box>
-                            <BlackTextTypography
-                              variant="caption"
-                              color="textSecondary"
-                              component="p"
-                            >
-                              {vehicleData.year}
-                            </BlackTextTypography>
-                          </Box>
+                      </Box>
+                    </TableCell>
+                    <TableCell align="right" style={styles.tableCell}>
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        overflow="hidden"
+                        bgcolor="background.paper"
+                      >
+                        <Box>{setFuelAttribute(vehicleData.fuelType)}</Box>
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="textSecondary"
+                            component="p"
+                            style={styles.blackText}
+                          >
+                            {vehicleData.fuelType}
+                          </Typography>
                         </Box>
-                      </TableCell>
-                      <TableCell align="right" className={classes.tableCell}>
-                        <Box display="flex">
-                          <Box>
-                            <CommuteIcon
-                              style={{ color: grey[500] }}
-                              fontSize="small"
-                            />
-                          </Box>
-                          <Box>
-                            <BlackTextTypography
-                              variant="caption"
-                              color="textSecondary"
-                              component="p"
-                            >
-                              {vehicleData.bodyStyle}
-                            </BlackTextTypography>
-                          </Box>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell style={styles.tableCell}>
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        overflow="hidden"
+                        bgcolor="background.paper"
+                      >
+                        <Box>
+                          <DateRangeIcon
+                            style={{ color: grey[500] }}
+                            fontSize="small"
+                          />
                         </Box>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className={classes.tableCell}>
-                        <Box
-                          display="flex"
-                          flexDirection="row"
-                          overflow="hidden"
-                          bgcolor="background.paper"
-                        >
-                          <Box>
-                            <TimeToLeaveIcon
-                              style={{ color: grey[500] }}
-                              fontSize="small"
-                            />
-                          </Box>
-                          <Box>
-                            <BlackTextTypography
-                              variant="caption"
-                              color="textSecondary"
-                              component="p"
-                            >
-                              {`${(
-                                Number(vehicleData.engineSize) / Number(1000)
-                              ).toFixed(1)} Ltr`}
-                            </BlackTextTypography>
-                          </Box>
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="textSecondary"
+                            component="p"
+                            style={styles.blackText}
+                          >
+                            {vehicleData.year}
+                          </Typography>
                         </Box>
-                      </TableCell>
-                      <TableCell align="right" className={classes.tableCell}>
-                        <Box display="flex">
-                          <Box>
-                            <PaletteIcon
-                              style={{ color: grey[500] }}
-                              fontSize="small"
-                            />
-                          </Box>
-                          <Box>
-                            <BlackTextTypography
-                              variant="caption"
-                              component="p"
-                            >
-                              {vehicleData.colour}
-                            </BlackTextTypography>
-                          </Box>
+                      </Box>
+                    </TableCell>
+                    <TableCell align="right" style={styles.tableCell}>
+                      <Box display="flex">
+                        <Box>
+                          <CommuteIcon
+                            style={{ color: grey[500] }}
+                            fontSize="small"
+                          />
                         </Box>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </div>
-          </Paper>
-        </Grid>
-      </ThemeProvider>
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="textSecondary"
+                            component="p"
+                            style={styles.blackText}
+                          >
+                            {vehicleData.bodyStyle}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell style={styles.tableCell}>
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        overflow="hidden"
+                        bgcolor="background.paper"
+                      >
+                        <Box>
+                          <TimeToLeaveIcon
+                            style={{ color: grey[500] }}
+                            fontSize="small"
+                          />
+                        </Box>
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="textSecondary"
+                            component="p"
+                            style={styles.blackText}
+                          >
+                            {`${(
+                              Number(vehicleData.engineSize) / Number(1000)
+                            ).toFixed(1)} Ltr`}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </TableCell>
+                    <TableCell align="right" style={styles.tableCell}>
+                      <Box display="flex">
+                        <Box>
+                          <PaletteIcon
+                            style={{ color: grey[500] }}
+                            fontSize="small"
+                          />
+                        </Box>
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            component="p"
+                            style={styles.blackText}
+                          >
+                            {vehicleData.colour}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+        </Paper>
+      </Grid>
     );
   };
 
   const mobileVehicleCard = () => {
     return (
-      <ThemeProvider theme={theme}>
-        <Box display="flex" style={{ marginTop: 20 }}>
-          <Box>
-            <Link target="_blank" rel="noreferrer" href={vehicleData.pageUrl}>
-              <VehicleImage
-                mobile={true}
-                imageURL={imageURL}
-                imageTitle={imageTitle}
-                missingImageURL={props.missingImageURL}
-              ></VehicleImage>
-            </Link>
-          </Box>
-          <Box>
-            <div
-              style={{
-                paddingLeft: '10px',
-                paddingRight: '10px',
-                marginBottom: '0px',
-                position: 'relative',
-                bottom: 5,
-                zIndex: -1,
-              }}
+      <Box display="flex" style={{ marginTop: 20 }}>
+        <Box>
+          <Link target="_blank" rel="noreferrer" href={vehicleData.pageUrl}>
+            <VehicleImage
+              mobile={true}
+              imageURL={imageURL}
+              imageTitle={imageTitle}
+              missingImageURL={props.missingImageURL}
+            ></VehicleImage>
+          </Link>
+        </Box>
+        <Box>
+          <div
+            style={{
+              paddingLeft: '10px',
+              paddingRight: '10px',
+              marginBottom: '0px',
+              position: 'relative',
+              bottom: 5,
+              zIndex: -1,
+            }}
+          >
+            <Link
+              underline="hover"
+              target="_blank"
+              rel="noreferrer"
+              href={vehicleData.pageUrl}
             >
-              <Link
-                underline="hover"
-                target="_blank"
-                rel="noreferrer"
-                href={vehicleData.pageUrl}
+              <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                component="p"
+                align="left"
               >
+                {title}
+              </Typography>
+            </Link>
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              component="p"
+              align="left"
+            >
+              {vehicleData.variant}
+            </Typography>
+
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              component="p"
+              align="left"
+            >
+              {setPriceText(vehicleData)}
+            </Typography>
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              component="p"
+              align="left"
+            >
+              Mileage: <b>{setMilageText(vehicleData)}</b>
+            </Typography>
+
+            <Box display="flex" style={{ position: 'relative', top: 5 }}>
+              <Box>{setFuelAttribute(vehicleData.fuelType)}</Box>
+              <Box>
                 <Typography
-                  variant="subtitle1"
+                  variant="caption"
                   color="textSecondary"
                   component="p"
-                  align="left"
+                  style={styles.blackText}
                 >
-                  {title}
+                  {vehicleData.fuelType}
                 </Typography>
-              </Link>
-              <Typography
-                variant="caption"
-                color="textSecondary"
-                component="p"
-                align="left"
-              >
-                {vehicleData.variant}
-              </Typography>
-
-              <Typography
-                variant="caption"
-                color="textSecondary"
-                component="p"
-                align="left"
-              >
-                {setPriceText(vehicleData)}
-              </Typography>
-              <Typography
-                variant="caption"
-                color="textSecondary"
-                component="p"
-                align="left"
-              >
-                Mileage: <b>{setMilageText(vehicleData)}</b>
-              </Typography>
-
-              <Box display="flex" style={{ position: 'relative', top: 5 }}>
-                <Box>{setFuelAttribute(vehicleData.fuelType)}</Box>
-                <Box>
-                  <BlackTextTypography
-                    variant="caption"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {vehicleData.fuelType}
-                  </BlackTextTypography>
-                </Box>
-                <Box style={{ marginLeft: 5 }}>
-                  <SettingsIcon style={{ color: grey[400] }} fontSize="small" />
-                </Box>
-                <Box>
-                  <BlackTextTypography
-                    variant="caption"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {setMobileTransmissionText(vehicleData.transmission)}
-                  </BlackTextTypography>
-                </Box>
-                <Box style={{ marginLeft: 5 }}>
-                  <DateRangeIcon
-                    style={{ color: grey[500] }}
-                    fontSize="small"
-                  />
-                </Box>
-                <Box>
-                  <BlackTextTypography
-                    variant="caption"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {vehicleData.year}
-                  </BlackTextTypography>
-                </Box>
               </Box>
-            </div>
-          </Box>
+              <Box style={{ marginLeft: 5 }}>
+                <SettingsIcon style={{ color: grey[400] }} fontSize="small" />
+              </Box>
+              <Box>
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  component="p"
+                  style={styles.blackText}
+                >
+                  {setMobileTransmissionText(vehicleData.transmission)}
+                </Typography>
+              </Box>
+              <Box style={{ marginLeft: 5 }}>
+                <DateRangeIcon
+                  style={{ color: grey[500] }}
+                  fontSize="small"
+                />
+              </Box>
+              <Box>
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  component="p"
+                  style={styles.blackText}
+                >
+                  {vehicleData.year}
+                </Typography>
+              </Box>
+            </Box>
+          </div>
         </Box>
-      </ThemeProvider>
+      </Box>
     );
   };
 

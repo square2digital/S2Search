@@ -8,7 +8,6 @@ import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
-import { makeStyles } from "@mui/styles";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
 import { MobileMaxWidth } from "../../../../common/Constants";
 import {
@@ -19,17 +18,16 @@ import {
   updateSearchTerm,
 } from "./searchBarSharedFunctions";
 
-const useStyles = makeStyles(() => ({
+// Inline styles object (converted from makeStyles)
+const styles = {
   divider: {
     height: 28,
     margin: 4,
   },
-}));
+};
 
 export const SearchBar = (props) => {
   const [windowWidth, setwindowWidth] = useState(window.innerWidth);
-
-  const classes = useStyles();
 
   useEffect(() => {
     const updateWindowDimensions = () => {
@@ -73,7 +71,7 @@ export const SearchBar = (props) => {
           onChange={updateSearch}
           value={props.reduxSearchTerm}
         />
-        <Divider className={classes.divider} orientation="vertical" />
+        <Divider style={styles.divider} orientation="vertical" />
         <IconButton
           style={{ paddingLeft: 2, paddingRight: 2 }}
           color="primary"

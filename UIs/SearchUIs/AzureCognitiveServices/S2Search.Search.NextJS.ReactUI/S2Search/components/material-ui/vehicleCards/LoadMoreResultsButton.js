@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
-import { makeStyles } from "@mui/styles";
+import { useTheme } from "@mui/material/styles";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import searchActions from "../../../redux/actions/searchActions";
 import { connect } from "react-redux";
 import { MobileMaxWidth } from "../../../common/Constants";
 
-const useStyles = makeStyles((theme) => ({
+// Inline styles object (converted from makeStyles)
+const styles = {
   button: {
-    margin: theme.spacing(5),
-    color: theme.palette.primary,
+    margin: 40, // theme.spacing(5) = 5 * 8 = 40px
   },
-}));
+};
 
 const LoadMoreResultsButton = (props) => {
-  const classes = useStyles();
+  const theme = useTheme();
 
   const [windowWidth, setwindowWidth] = useState(0);
 
@@ -69,8 +69,11 @@ const LoadMoreResultsButton = (props) => {
           onClick={toggleLoadMore}
           size="large"
           variant="outlined"
-          className={classes.button}
-          style={getLoadMoreButtonStyle(windowWidth)}
+          style={{
+            ...styles.button,
+            ...getLoadMoreButtonStyle(windowWidth),
+            color: theme.palette.primary.main,
+          }}
           disableElevation
           startIcon={
             props.reduxLoading ? (
