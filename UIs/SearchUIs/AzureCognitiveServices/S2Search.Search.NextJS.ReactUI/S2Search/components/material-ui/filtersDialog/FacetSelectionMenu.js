@@ -30,7 +30,7 @@ const drawerWidth_sm = 180;
 
 const FacetSelectionMenu = props => {
   const resetFilters = () => {
-    props.saveResetFacets(true);
+    props.saveResetFacets();
   };
 
   const facetMenuClick = facetKey => {
@@ -139,7 +139,7 @@ const mapDispatchToProps = dispatch => {
     saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
     saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
     saveSelectedFacet: facet => dispatch(setSelectedFacet(facet)),
-    saveResetFacets: resetFacetsFlag => dispatch(resetFacets()),
+    saveResetFacets: () => dispatch(resetFacets()),
   };
 };
 

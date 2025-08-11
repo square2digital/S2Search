@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import FacetSelector from '../filtersDialog/FacetSelector';
@@ -23,11 +23,7 @@ import {
 const FacetSelectionList = props => {
   const [facetState, setfacetState] = useState({});
 
-  useEffect(() => {
-    generateFacetSelectors(props.reduxSelectedFacet);
-  }, [props.reduxFacetData]);
-
-  const generateFacetSelectors = facetKeyName => {
+  const generateFacetSelectors = useCallback((facetKeyName) => {
     let theFacet = {};
     let currentFacet = {};
     let facetData = [];
@@ -85,9 +81,21 @@ const FacetSelectionList = props => {
     } else {
       setfacetState(theFacet);
     }
-  };
+  }, [
+    props.reduxSearchTerm,
+    props.reduxFacetData,
+    props.reduxFacetSelectors,
+    props.reduxDefaultFacetData,
+    handleChecked
+  ]);
 
-  const handleChecked = theFacet => {
+  useEffect(() => {
+    if (props.reduxSelectedFacet) {
+      generateFacetSelectors(props.reduxSelectedFacet);
+    }
+  }, [props.reduxSelectedFacet, generateFacetSelectors]);
+
+  const handleChecked = useCallback((theFacet) => {
     let theFacetUpdated = theFacet;
     const updatedFacetItems = [];
 
@@ -108,7 +116,7 @@ const FacetSelectionList = props => {
     }
 
     return theFacetUpdated;
-  };
+  }, [props.reduxFacetSelectors]);
 
   return (
     <main
