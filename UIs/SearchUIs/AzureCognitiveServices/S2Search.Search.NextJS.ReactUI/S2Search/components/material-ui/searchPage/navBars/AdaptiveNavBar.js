@@ -111,7 +111,7 @@ const AdaptiveNavBar = props => {
       >
         <div style={styles.root}>
           <Box style={styles.paper}>
-            <Box container display="flex">
+            <Box display="flex">
               <Box p={1} style={{ textAlign: 'left' }}>
                 <img
                   data-href="/"
@@ -130,7 +130,7 @@ const AdaptiveNavBar = props => {
                 <></>
               ) : (
                 <>
-                  <Box p={1} item style={{ textAlign: 'left' }}>
+                  <Box p={1} style={{ textAlign: 'left' }}>
                     <Tooltip
                       placement="bottom"
                       title="Number of vehicles in this search"
