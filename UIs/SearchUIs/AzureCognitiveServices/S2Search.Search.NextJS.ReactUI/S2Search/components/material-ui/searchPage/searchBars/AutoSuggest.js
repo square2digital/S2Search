@@ -2,8 +2,15 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { AutoSuggestAPI } from '../../../../pages/api/helper/SearchAPI';
-import searchActions from '../../../../redux/actions/searchActions';
-import facetActions from '../../../../redux/actions/facetActions';
+import {
+  setSearchTerm,
+  setVehicleData,
+  setPageNumber,
+} from '../../../../store/slices/searchSlice';
+import {
+  resetFacets,
+  setFacetSelectors,
+} from '../../../../store/slices/facetSlice';
 import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
 import Popper from '@mui/material/Popper';
@@ -189,15 +196,13 @@ const mapStateToProps = reduxState => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveSearchTerm: searchTerm =>
-      dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveResetFacets: resetFacets =>
-      dispatch(facetActions.saveResetFacets(resetFacets)),
-    saveVehicleData: () => dispatch(searchActions.saveVehicleData([])),
-    savePageNumber: () => dispatch(searchActions.savePageNumber(0)),
-    saveFacetSelectors: () => dispatch(facetActions.saveFacetSelectors([])),
-    saveCancellationToken: enable =>
-      dispatch(componentActions.saveCancellationToken(enable)),
+    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
+    saveResetFacets: resetFacets => dispatch(resetFacets(resetFacets)),
+    saveVehicleData: () => dispatch(setVehicleData([])),
+    savePageNumber: () => dispatch(setPageNumber(0)),
+    saveFacetSelectors: () => dispatch(setFacetSelectors([])),
+    // Note: saveCancellationToken might need to be implemented in uiSlice if still needed
+    // saveCancellationToken: enable => dispatch(setCancellationToken(enable)),
   };
 };
 

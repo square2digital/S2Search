@@ -1,8 +1,15 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import searchActions from '../../../../redux/actions/searchActions';
-import facetActions from '../../../../redux/actions/facetActions';
+import {
+  setSearchTerm,
+  setVehicleData,
+  setPageNumber,
+} from '../../../../store/slices/searchSlice';
+import {
+  resetFacets,
+  setFacetSelectors,
+} from '../../../../store/slices/facetSlice';
 import { DefaultLoadSpeed } from '../../../../common/Constants';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
@@ -97,13 +104,11 @@ const mapStateToProps = reduxState => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveSearchTerm: searchTerm =>
-      dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveResetFacets: resetFacets =>
-      dispatch(facetActions.saveResetFacets(resetFacets)),
-    saveVehicleData: () => dispatch(searchActions.saveVehicleData([])),
-    savePageNumber: () => dispatch(searchActions.savePageNumber(0)),
-    saveFacetSelectors: () => dispatch(facetActions.saveFacetSelectors([])),
+    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
+    saveResetFacets: resetFacets => dispatch(resetFacets(resetFacets)),
+    saveVehicleData: () => dispatch(setVehicleData([])),
+    savePageNumber: () => dispatch(setPageNumber(0)),
+    saveFacetSelectors: () => dispatch(setFacetSelectors([])),
   };
 };
 
