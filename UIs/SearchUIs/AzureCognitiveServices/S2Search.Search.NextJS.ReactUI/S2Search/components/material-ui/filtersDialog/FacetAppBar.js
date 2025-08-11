@@ -70,7 +70,7 @@ const mapStateToProps = reduxState => {
 const mapDispatchToProps = dispatch => {
   return {
     saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
-    saveResetFacets: resetFacets => dispatch(resetFacets(resetFacets)),
+    saveResetFacets: resetFacetsFlag => dispatch(resetFacets()),
   };
 };
 

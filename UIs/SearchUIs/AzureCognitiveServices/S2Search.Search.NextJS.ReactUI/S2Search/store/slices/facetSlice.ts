@@ -74,6 +74,12 @@ const facetSlice = createSlice({
       state.facetSelectedKeys = [];
       state.selectedFacet = '';
     },
+    resetFacets: (state) => {
+      state.facetSelectors = [];
+      state.facetSelectedKeys = [];
+      state.selectedFacet = '';
+      state.resetFacets = true;
+    },
   },
 });
 
@@ -88,6 +94,7 @@ export const {
   setFacetChipDeleted,
   setResetFacets,
   clearAllFacets,
+  resetFacets,
 } = facetSlice.actions;
 
 export default facetSlice.reducer;

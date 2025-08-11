@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import facetActions from '../../../redux/actions/facetActions';
 import SelectedFacetData from '../../objects/SelectedFacetData';
 import Checkbox from '@mui/material/Checkbox';
 import {
@@ -9,11 +8,12 @@ import {
   FormatLongStrings,
 } from '../../../common/functions/SharedFunctions';
 import { FacetToParseAsNumeric, DefaultTheme } from '../../../common/Constants';
-import searchActions from '../../../redux/actions/searchActions';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
+import { setSearchTerm } from '../../../store/slices/searchSlice';
+import { setFacetSelectors } from '../../../store/slices/facetSlice';
 
 const facetWidth_xs = 180;
 const facetWidth_sm = 180;
@@ -176,10 +176,9 @@ const mapStateToProps = reduxState => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveSearchTerm: searchTerm =>
-      dispatch(searchActions.saveSearchTerm(searchTerm)),
+    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
     saveFacetSelectors: facetSelectors =>
-      dispatch(facetActions.saveFacetSelectors(facetSelectors)),
+      dispatch(setFacetSelectors(facetSelectors)),
   };
 };
 
