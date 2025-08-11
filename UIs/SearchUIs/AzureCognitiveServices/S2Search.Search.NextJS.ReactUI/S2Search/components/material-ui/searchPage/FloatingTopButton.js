@@ -3,22 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Fab from '@mui/material/Fab';
 import NavigationIcon from '@mui/icons-material/Navigation';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 import UseWindowSize from '../../../common/hooks/UseWindowSize';
 import { DefaultTheme } from '../../../common/Constants';
 import Zoom from '@mui/material/Zoom';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-
-const LightTooltip = styled(({ className, ...props }) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.common.white,
-    color: 'rgba(0, 0, 0, 0.87)',
-    boxShadow: theme.shadows[1],
-    fontSize: 11,
-  },
-}));
+import { useTheme } from '@mui/material/styles';
 
 const setSize = width => {
   if (width < 600) {
@@ -40,6 +29,7 @@ const buttonPositionTrigger = 650;
 const FloatingTopButton = props => {
   const [width, height] = UseWindowSize();
   const [scrollPosition, setScrollPosition] = useState(0);
+  const theme = useTheme();
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -54,30 +44,12 @@ const FloatingTopButton = props => {
     setScrollPosition(position);
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main:
-          props.reduxPrimaryColour ||
-          DefaultTheme.primaryHexColour ||
-          '#616161',
-      },
-      secondary: {
-        main:
-          props.reduxSecondaryColour ||
-          DefaultTheme.secondaryHexColour ||
-          '#303f9f',
-      },
-    },
-  });
-
   return (
     <div>
-      <ThemeProvider theme={theme}>
-        <Zoom in={scrollPosition > buttonPositionTrigger}>
-          <LightTooltip title="Back to Top" aria-label="Back to Top">
-            <Fab
-              size={setSize(width)}
+      <Zoom in={scrollPosition > buttonPositionTrigger}>
+        <Tooltip title="Back to Top" aria-label="Back to Top">
+          <Fab
+            size={setSize(width)}
               color="secondary"
               aria-label="add"
               sx={{
@@ -91,9 +63,8 @@ const FloatingTopButton = props => {
             >
               <NavigationIcon />
             </Fab>
-          </LightTooltip>
+          </Tooltip>
         </Zoom>
-      </ThemeProvider>
     </div>
   );
 };
