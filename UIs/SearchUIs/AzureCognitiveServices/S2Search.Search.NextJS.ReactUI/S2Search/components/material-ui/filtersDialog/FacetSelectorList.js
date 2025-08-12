@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import FacetSelector from '../filtersDialog/FacetSelector';
 import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import {
   setVehicleData,
   setPageNumber,
@@ -125,30 +127,98 @@ const FacetSelectionList = props => {
   }, [props.reduxSelectedFacet, generateFacetSelectors]);
 
   return (
-    <main
+    <Box
+      component="main"
       sx={{
         flexGrow: 1,
-        padding: 1,
+        ml: '280px',
+        mt: '64px',
+        p: 4,
+        backgroundColor: '#f8fafc',
+        minHeight: 'calc(100vh - 64px)',
       }}
-      style={{ paddingTop: '75px' }}
     >
-      <Grid container>
-        {facetState.facetItems !== undefined ? (
-          facetState.facetItems.map((facetSelectorItem, index) => {
-            return (
-              <FacetSelector
+      {facetState.facetItems !== undefined ? (
+        <>
+          <Box sx={{ mb: 4 }}>
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 700,
+                color: 'text.primary',
+                mb: 1,
+              }}
+            >
+              {facetState.facetKeyDisplayName || 'Select Options'}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: 'text.secondary',
+                mb: 3,
+              }}
+            >
+              Choose from the options below to filter your results
+            </Typography>
+          </Box>
+
+          <Grid
+            container
+            spacing={3}
+            sx={{
+              maxWidth: '100%',
+            }}
+          >
+            {facetState.facetItems.map((facetSelectorItem, index) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
                 key={`${index}-${facetSelectorItem.facetDisplayText}`}
-                facet={facetSelectorItem}
-                selectedFacet={facetState.facetKey}
-                isChecked={facetSelectorItem.selected}
-              />
-            );
-          })
-        ) : (
-          <>Loading</>
-        )}
-      </Grid>
-    </main>
+              >
+                <FacetSelector
+                  facet={facetSelectorItem}
+                  selectedFacet={facetState.facetKey}
+                  isChecked={facetSelectorItem.selected}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      ) : (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '400px',
+            textAlign: 'center',
+          }}
+        >
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 600,
+              color: 'text.secondary',
+              mb: 2,
+            }}
+          >
+            Select a filter category
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
+            Choose a category from the left menu to view filter options
+          </Typography>
+        </Box>
+      )}
+    </Box>
   );
 };
 

@@ -2,18 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Dialog from '@mui/material/Dialog';
 import Slide from '@mui/material/Slide';
+import Box from '@mui/material/Box';
 import { connect } from 'react-redux';
 import { setDialogOpen } from '../../../store/slices/uiSlice';
 import FacetAppBar from '../filtersDialog/FacetAppBar';
 import FacetSelectionMenu from '../filtersDialog/FacetSelectionMenu';
 import FacetSelectionList from '../filtersDialog/FacetSelectorList';
 import { LogDetails } from '../../../helpers/LogDetails';
-
-const styles = {
-  root: {
-    display: 'flex',
-  },
-};
 
 // *********************************************************************************************************************
 // ** - WARNING
@@ -29,21 +24,32 @@ const FacetFullScreenDialog = props => {
   };
 
   return (
-    <div>
+    <Box>
       <LogDetails logData={props} enable={false} />
       <Dialog
         fullScreen
         open={props.reduxDialogOpen}
         onClose={handleClose}
         TransitionComponent={Transition}
+        sx={{
+          '& .MuiDialog-paper': {
+            backgroundColor: '#f8fafc',
+          },
+        }}
       >
-        <div style={styles.root}>
+        <Box
+          sx={{
+            display: 'flex',
+            minHeight: '100vh',
+            backgroundColor: '#f8fafc',
+          }}
+        >
           <FacetAppBar />
           <FacetSelectionMenu />
           <FacetSelectionList />
-        </div>
+        </Box>
       </Dialog>
-    </div>
+    </Box>
   );
 };
 

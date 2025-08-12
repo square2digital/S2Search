@@ -2,20 +2,19 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Checkbox from '@mui/material/Checkbox';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import {
   FormatStringOrNumeric,
   FormatLongStrings,
 } from '../../../common/functions/SharedFunctions';
 import { FacetToParseAsNumeric, DefaultTheme } from '../../../common/Constants';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
 import { setSearchTerm } from '../../../store/slices/searchSlice';
 import { setFacetSelectors } from '../../../store/slices/facetSlice';
-
-const facetWidth_xs = 180;
-const facetWidth_sm = 180;
 
 const FacetSelector = props => {
   const theme = useTheme();
@@ -115,51 +114,108 @@ const FacetSelector = props => {
 
   const renderVehicleCount = count => {
     if (count === 1) {
-      return `${count} Vehicle`;
+      return '1 Vehicle';
     }
-
-    return `${count} Vehicles`;
+    return `${count.toLocaleString()} Vehicles`;
   };
 
   return (
-    <>
-      <List
+    <Card
+      onClick={FacetOnClick}
+      sx={{
+        cursor: 'pointer',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        border: '1px solid',
+        borderColor: checked ? 'primary.main' : 'grey.200',
+        backgroundColor: checked ? 'primary.50' : 'white',
+        boxShadow: checked
+          ? '0 4px 12px rgba(0, 0, 0, 0.15)'
+          : '0 2px 8px rgba(0, 0, 0, 0.1)',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: checked
+            ? '0 8px 25px rgba(0, 0, 0, 0.15)'
+            : '0 4px 20px rgba(0, 0, 0, 0.12)',
+          borderColor: checked ? 'primary.dark' : 'grey.300',
+        },
+        position: 'relative',
+        overflow: 'visible',
+      }}
+    >
+      <CardContent
         sx={{
-          width: {
-            xs: facetWidth_xs,
-            sm: facetWidth_sm,
-          },
-          margin: 0.5,
-          backgroundColor: '#ffffff',
-          cursor: 'pointer',
-          '&:hover': {
-            backgroundColor: '#f2f2f2',
-            boxShadow: '2px 2px 10px #efefef',
-          },
-          boxShadow: '5px 5px 10px #efefef',
+          p: 3,
+          pb: '16px !important',
+          position: 'relative',
         }}
-        onClick={FacetOnClick}
       >
-        <ListItem
+        <Box
           sx={{
-            padding: 0,
-            lineHeight: 0,
-            marginTop: 0,
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 2,
           }}
         >
           <Checkbox
-            onChange={FacetOnClick}
-            name={`${checkboxFacetNameAsString}`}
             checked={checked}
+            onChange={FacetOnClick}
+            name={checkboxFacetNameAsString}
+            sx={{
+              p: 0,
+              '&.Mui-checked': {
+                color: 'primary.main',
+              },
+            }}
           />
-
-          <ListItemText
-            primary={formattedFacetName}
-            secondary={<>{renderVehicleCount(props.facet.count)}</>}
+          
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: checked ? 600 : 500,
+                color: checked ? 'primary.main' : 'text.primary',
+                mb: 1,
+                lineHeight: 1.4,
+                wordBreak: 'break-word',
+              }}
+            >
+              {props.facet.facetDisplayText}
+            </Typography>
+            
+            <Chip
+              label={renderVehicleCount(props.facet.count)}
+              size="small"
+              variant={checked ? 'filled' : 'outlined'}
+              sx={{
+                fontSize: '0.75rem',
+                height: 24,
+                backgroundColor: checked ? 'primary.main' : 'transparent',
+                color: checked ? 'white' : 'text.secondary',
+                borderColor: checked ? 'primary.main' : 'grey.300',
+                '& .MuiChip-label': {
+                  px: 1.5,
+                  fontWeight: 500,
+                },
+              }}
+            />
+          </Box>
+        </Box>
+        
+        {checked && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: 'primary.main',
+            }}
           />
-        </ListItem>
-      </List>
-    </>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
