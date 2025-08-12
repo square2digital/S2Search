@@ -35,13 +35,17 @@ const VehicleImage: React.FC<VehicleImageProps> = ({
 
   const defaultStyles: React.CSSProperties = mobile
     ? {
-        width: 150,
+        width: 280,
+        height: 200,
+        objectFit: 'cover',
         padding: '1px',
         boxShadow: '2px 10px 8px 0px #a1a1a1',
         marginBottom: '5px',
       }
     : {
-        width: '95%',
+        width: 320,
+        height: 240,
+        objectFit: 'cover',
         padding: '1px',
         marginBottom: '5px',
         boxShadow: '2px 10px 8px 0px #9c9c9c',
@@ -59,6 +63,7 @@ const VehicleImage: React.FC<VehicleImageProps> = ({
         ...style,
         display: 'block',
         borderRadius: 1,
+        maxWidth: '100%',
       }}
     />
   );

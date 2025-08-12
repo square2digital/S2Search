@@ -1,8 +1,8 @@
 ﻿import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import FacetFullScreenDialog from './material-ui/filtersDialog/FacetFullScreenDialog';
-import VehicleCardList from './material-ui/vehicleCards/VehicleCardList';
-import LoadMoreResultsButton from './material-ui/vehicleCards/LoadMoreResultsButton';
+import VehicleCardList from './material-ui/vehicleCards/VehicleCardList.tsx';
+import LoadMoreResultsButton from './LoadMoreResultsButton';
 import FacetChips from './material-ui/searchPage/FacetChips';
 import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import { connect } from 'react-redux';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Box, Typography } from '@mui/material';
-import VehicleCard from './VehicleCard';
+import VehicleCard from '../../VehicleCard';
 import { useAppSelector } from '../../../store/hooks';
 import { selectVehicleData, selectMissingImageURL } from '../../../store/selectors';
 
