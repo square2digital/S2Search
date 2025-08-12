@@ -302,7 +302,10 @@ const AdaptiveNavBar: React.FC<AdaptiveNavBarProps> = ({
     );
   };
 
-  return windowWidth < MobileMaxWidth ? mobileNavBar() : desktopNavBar();
+  // Always render consistently - no conditional returns
+  const isMobile = windowWidth < MobileMaxWidth;
+  
+  return isMobile ? mobileNavBar() : desktopNavBar();
 };
 
 export default AdaptiveNavBar;

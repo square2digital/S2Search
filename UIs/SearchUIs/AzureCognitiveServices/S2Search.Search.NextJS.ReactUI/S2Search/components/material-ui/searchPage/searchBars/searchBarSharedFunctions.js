@@ -1,4 +1,3 @@
-import DynamicPlaceholder from './DynamicPlaceholder';
 import { removeFullQueryString } from '../../../../common/functions/QueryStringFunctions';
 
 const ForbiddenSearchBarCharacters = '[]{}#~¬$£"%^&@';
@@ -27,9 +26,9 @@ export const checkForEnter = event => {
   }
 };
 
-export const generatePlaceholder = (props, windowWidth, MobileMaxWidth) => {
+export const generatePlaceholder = (props, windowWidth, MobileMaxWidth, dynamicPlaceholder) => {
   if (windowWidth > MobileMaxWidth && !props.searchTerm) {
-    return DynamicPlaceholder(props.reduxConfigPlaceholders);
+    return dynamicPlaceholder || 'Search...';
   }
 
   return props.placeholderText;

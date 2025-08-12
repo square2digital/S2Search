@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -24,6 +24,8 @@ import {
   disableResetFiltersButton,
   updateSearchTerm,
 } from './searchBarSharedFunctions';
+import { useWindowSize } from '../../../../hooks/useWindowSize';
+import useDynamicPlaceholder from './DynamicPlaceholder';
 
 // Inline styles object (converted from makeStyles)
 const styles = {
@@ -34,17 +36,8 @@ const styles = {
 };
 
 export const SearchBar = props => {
-  const [windowWidth, setwindowWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const updateWindowDimensions = () => {
-      setwindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', updateWindowDimensions);
-
-    return () => window.removeEventListener('resize', updateWindowDimensions);
-  }, []);
+  const { width: windowWidth } = useWindowSize();
+  const dynamicPlaceholder = useDynamicPlaceholder(props.reduxConfigPlaceholders);
 
   const updateSearch = event => {
     updateSearchTerm(event.target.value, props);
@@ -73,7 +66,7 @@ export const SearchBar = props => {
             marginLeft: 1,
             flex: 1,
           }}
-          placeholder={generatePlaceholder(props, windowWidth, MobileMaxWidth)}
+          placeholder={generatePlaceholder(props, windowWidth, MobileMaxWidth, dynamicPlaceholder)}
           variant="outlined"
           onKeyPress={checkForEnter}
           onChange={updateSearch}

@@ -109,8 +109,12 @@ const FacetSelectionMenu = props => {
                       borderRadius: 2,
                       py: 1.5,
                       px: 2,
-                      backgroundColor: isSelected ? 'primary.50' : 'transparent',
-                      border: isSelected ? '1px solid' : '1px solid transparent',
+                      backgroundColor: isSelected
+                        ? 'primary.50'
+                        : 'transparent',
+                      border: isSelected
+                        ? '1px solid'
+                        : '1px solid transparent',
                       borderColor: isSelected ? 'primary.200' : 'transparent',
                       '&:hover': {
                         backgroundColor: isSelected ? 'primary.100' : 'grey.50',

@@ -11,7 +11,7 @@ const fallbackPlaceholders = [
   `Porsche Silver...${FiveSpaces}`,
 ];
 
-const DynamicPlaceholder = apiPlaceholders => {
+const useDynamicPlaceholder = apiPlaceholders => {
   const [placeholder, setPlaceholder] = useState('');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [arrayIndex, setArrayIndex] = useState(0);
@@ -72,4 +72,4 @@ const DynamicPlaceholder = apiPlaceholders => {
   return placeholder;
 };
 
-export default DynamicPlaceholder;
+export default useDynamicPlaceholder;

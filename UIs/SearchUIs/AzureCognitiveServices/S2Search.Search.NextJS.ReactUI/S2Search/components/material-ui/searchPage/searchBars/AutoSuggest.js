@@ -21,6 +21,8 @@ import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import { MobileMaxWidth } from '../../../../common/Constants';
+import { useWindowSize } from '../../../../hooks/useWindowSize';
+import useDynamicPlaceholder from './DynamicPlaceholder';
 import {
   checkForEnter,
   generatePlaceholder,
@@ -32,12 +34,8 @@ import {
 export const AutoSuggest = props => {
   const [options, setOptions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [windowWidth, setwindowWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    window.addEventListener('resize', updateWindowDimensions);
-    window.removeEventListener('resize', updateWindowDimensions);
-  }, []);
+  const { width: windowWidth } = useWindowSize();
+  const dynamicPlaceholder = useDynamicPlaceholder(props.reduxConfigPlaceholders);
 
   useEffect(() => {
     if (props.reduxSearchTerm) {
@@ -64,10 +62,6 @@ export const AutoSuggest = props => {
 
     setShowDropdown(options.length > 0);
   }, [props.reduxSearchTerm]);
-
-  const updateWindowDimensions = () => {
-    setwindowWidth(window.innerWidth);
-  };
 
   const updateSearch = (event, value) => {
     updateSearchTerm(value, props);
@@ -154,7 +148,8 @@ export const AutoSuggest = props => {
                 placeholder={generatePlaceholder(
                   props,
                   windowWidth,
-                  MobileMaxWidth
+                  MobileMaxWidth,
+                  dynamicPlaceholder
                 )}
                 variant="outlined"
                 onChange={saveOnChange}

@@ -167,7 +167,7 @@ const FacetSelector = props => {
               },
             }}
           />
-          
+
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
               variant="body1"
@@ -181,7 +181,7 @@ const FacetSelector = props => {
             >
               {props.facet.facetDisplayText}
             </Typography>
-            
+
             <Chip
               label={renderVehicleCount(props.facet.count)}
               size="small"
@@ -200,7 +200,7 @@ const FacetSelector = props => {
             />
           </Box>
         </Box>
-        
+
         {checked && (
           <Box
             sx={{
