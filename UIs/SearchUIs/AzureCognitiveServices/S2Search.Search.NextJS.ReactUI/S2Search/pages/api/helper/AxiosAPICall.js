@@ -1,5 +1,5 @@
-const axios = require("axios");
-const https = require("https");
+const axios = require('axios');
+const https = require('https');
 
 // Create an HTTPS agent that ignores SSL certificate errors for development
 const httpsAgent = new https.Agent({
@@ -11,9 +11,9 @@ const configWithApiKey = () => {
 
   return {
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "Ocp-Apim-Subscription-Key": key,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'Ocp-Apim-Subscription-Key': key,
     },
     httpsAgent: httpsAgent, // Add HTTPS agent to ignore self-signed certificates
   };
@@ -21,19 +21,19 @@ const configWithApiKey = () => {
 
 const configNoApiKey = {
   headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
   },
   httpsAgent: httpsAgent, // Add HTTPS agent to ignore self-signed certificates
 };
 
-const cancelRequest = (configHeaders) => {
+const cancelRequest = configHeaders => {
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
   let axiosConfig = {};
 
   // To cancel the request, call `cancel()` on the `axios.CancelToken.source()`.
-  source.cancel("axios cancellation from token");
+  source.cancel('axios cancellation from token');
 
   if (configHeaders) {
     axiosConfig = { cancelToken, ...configHeaders };
@@ -48,13 +48,13 @@ const getApiSubscriptionKey = () => {
   let ApiKey = process.env.NEXT_PUBLIC_OCP_APIM_SUBSCRIPTION_KEY;
 
   if (ApiKey === undefined) {
-    return "";
+    return '';
   } else {
     return ApiKey;
   }
 };
 
-const getSearchQueryParams = (request) => {
+const getSearchQueryParams = request => {
   if (request.query === undefined) {
     return `?searchTerm=${request.searchTerm}&filters=${request.filters}&orderBy=${request.orderBy}&pageNumber=${request.pageNumber}&pageSize=${request.pageSize}&numberOfExistingResults=${request.numberOfExistingResults}&callingHost=${request.callingHost}`;
   } else {
@@ -73,7 +73,7 @@ const AxiosPost = async (request, url) => {
     .catch(function (error) {
       console.log(`error on AxiosPost - url ${url}`, error);
       return {
-        code: error.code || "UNKNOWN_ERROR",
+        code: error.code || 'UNKNOWN_ERROR',
         message: error.message,
         response: error.response,
         isError: true,
@@ -116,10 +116,10 @@ const axiosCall = async (url, configHeaders, cancellation) => {
     })
     .catch(function (error) {
       if (axios.isCancel(error)) {
-        console.log("Request canceled", error.message);
+        console.log('Request canceled', error.message);
         return {
-          code: "REQUEST_CANCELLED",
-          message: "Request was cancelled",
+          code: 'REQUEST_CANCELLED',
+          message: 'Request was cancelled',
           cancelled: true,
         };
       } else {
@@ -127,7 +127,7 @@ const axiosCall = async (url, configHeaders, cancellation) => {
 
         // Return a structured error object that genericAPI can handle
         return {
-          code: error.code || "UNKNOWN_ERROR",
+          code: error.code || 'UNKNOWN_ERROR',
           message: error.message,
           response: error.response,
           isError: true,

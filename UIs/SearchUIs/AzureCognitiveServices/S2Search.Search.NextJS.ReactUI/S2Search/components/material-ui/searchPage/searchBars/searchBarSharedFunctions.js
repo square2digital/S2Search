@@ -1,9 +1,9 @@
-import DynamicPlaceholder from "./DynamicPlaceholder";
-import { removeFullQueryString } from "../../../../common/functions/QueryStringFunctions";
+import DynamicPlaceholder from './DynamicPlaceholder';
+import { removeFullQueryString } from '../../../../common/functions/QueryStringFunctions';
 
 const ForbiddenSearchBarCharacters = '[]{}#~¬$£"%^&@';
 
-export const isCharForbidden = (searchTerm) => {
+export const isCharForbidden = searchTerm => {
   const char = searchTerm.slice(-1);
   const result = ForbiddenSearchBarCharacters.indexOf(char) > -1;
 
@@ -16,13 +16,13 @@ export const updateSearchTerm = (searchTerm, props) => {
   }
 };
 
-export const resetFilters = (props) => {
+export const resetFilters = props => {
   props.saveResetFacets(true);
   removeFullQueryString();
 };
 
-export const checkForEnter = (event) => {
-  if (event.key === "Enter") {
+export const checkForEnter = event => {
+  if (event.key === 'Enter') {
     event.preventDefault();
   }
 };
@@ -35,8 +35,8 @@ export const generatePlaceholder = (props, windowWidth, MobileMaxWidth) => {
   return props.placeholderText;
 };
 
-export const disableResetFiltersButton = (props) => {
-  if (props.reduxSearchTerm !== "") {
+export const disableResetFiltersButton = props => {
+  if (props.reduxSearchTerm !== '') {
     return false;
   }
 

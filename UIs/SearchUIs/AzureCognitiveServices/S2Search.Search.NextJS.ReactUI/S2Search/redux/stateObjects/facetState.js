@@ -1,11 +1,11 @@
-import { getQueryStringFacetsSelectors } from "../../common/functions/QueryStringFunctions";
+import { getQueryStringFacetsSelectors } from '../../common/functions/QueryStringFunctions';
 
 export default {
   defaultFacetData: [],
   facetData: [],
   facetSelectors: getQueryStringFacetsSelectors(),
-  facetSelectedKeys: ["make"],
-  selectedFacet: "make",
+  facetSelectedKeys: ['make'],
+  selectedFacet: 'make',
   resetFacets: false,
   facetChipDeleted: 0,
 };

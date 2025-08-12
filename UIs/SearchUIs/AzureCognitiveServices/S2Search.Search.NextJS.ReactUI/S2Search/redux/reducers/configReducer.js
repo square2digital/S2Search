@@ -1,5 +1,5 @@
-import * as actionTypes from "../actions/actionTypes";
-import initialConfigState from "../stateObjects/configState";
+import * as actionTypes from '../actions/actionTypes';
+import initialConfigState from '../stateObjects/configState';
 
 const configReducer = (state = initialConfigState, action) => {
   switch (action.type) {

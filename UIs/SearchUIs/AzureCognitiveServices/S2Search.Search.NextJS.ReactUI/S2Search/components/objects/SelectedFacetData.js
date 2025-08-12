@@ -1,8 +1,8 @@
 class SelectedFacetData {
   constructor(
-    facetKey = "",
-    facetDisplayText = "",
-    luceneExpression = "",
+    facetKey = '',
+    facetDisplayText = '',
+    luceneExpression = '',
     checked = false
   ) {
     this.facetKey = facetKey;

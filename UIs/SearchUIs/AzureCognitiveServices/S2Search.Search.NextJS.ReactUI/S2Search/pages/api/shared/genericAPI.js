@@ -6,8 +6,8 @@ export const genericAPI = async (
   addApiKeyHeader,
   cancellation
 ) => {
-  const { invokeAPI } = require("../shared/invokeAPI");
-  const { GenerateAPIError } = require("../shared/apiFunctions/apiHelpers");
+  const { invokeAPI } = require('../shared/invokeAPI');
+  const { GenerateAPIError } = require('../shared/apiFunctions/apiHelpers');
 
   try {
     const axiosResponse = await invokeAPI(
@@ -27,7 +27,7 @@ export const genericAPI = async (
       }
       // Check if this is an axios error with a response
       else if (axiosResponse.response && axiosResponse.response.status) {
-        console.log(`error - ${axiosResponse.message || "API Error"}`);
+        console.log(`error - ${axiosResponse.message || 'API Error'}`);
         res.statusCode = axiosResponse.response.status;
         res.end(GenerateAPIError(axiosResponse.response));
       }
@@ -48,7 +48,7 @@ export const genericAPI = async (
         res.statusCode = 500;
         res.end(
           JSON.stringify({
-            error: "Unexpected response format",
+            error: 'Unexpected response format',
             details: `Error calling ${type} API`,
           })
         );

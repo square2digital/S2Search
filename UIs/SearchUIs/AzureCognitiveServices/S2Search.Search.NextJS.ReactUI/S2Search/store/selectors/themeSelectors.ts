@@ -6,34 +6,31 @@ export const selectThemeState = (state: RootState) => state.theme;
 
 export const selectPrimaryColour = createSelector(
   [selectThemeState],
-  (theme) => theme.primaryColour
+  theme => theme.primaryColour
 );
 
 export const selectSecondaryColour = createSelector(
   [selectThemeState],
-  (theme) => theme.secondaryColour
+  theme => theme.secondaryColour
 );
 
 export const selectNavBarColour = createSelector(
   [selectThemeState],
-  (theme) => theme.navBarColour
+  theme => theme.navBarColour
 );
 
 export const selectLogoURL = createSelector(
   [selectThemeState],
-  (theme) => theme.logoURL
+  theme => theme.logoURL
 );
 
 export const selectMissingImageURL = createSelector(
   [selectThemeState],
-  (theme) => theme.missingImageURL
+  theme => theme.missingImageURL
 );
 
-export const selectThemeColors = createSelector(
-  [selectThemeState],
-  (theme) => ({
-    primary: theme.primaryColour,
-    secondary: theme.secondaryColour,
-    navBar: theme.navBarColour,
-  })
-);
+export const selectThemeColors = createSelector([selectThemeState], theme => ({
+  primary: theme.primaryColour,
+  secondary: theme.secondaryColour,
+  navBar: theme.navBarColour,
+}));

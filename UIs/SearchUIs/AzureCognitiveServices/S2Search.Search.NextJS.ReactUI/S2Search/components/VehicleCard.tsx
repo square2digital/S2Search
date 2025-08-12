@@ -67,7 +67,7 @@ const formatMileage = (mileage: number): string => {
 
 const getFuelIcon = (fuelType: string) => {
   const iconProps = { fontSize: 'small' as const };
-  
+
   switch (fuelType?.toLowerCase()) {
     case 'petrol':
       return <LocalGasStation {...iconProps} sx={{ color: blue[600] }} />;
@@ -100,9 +100,9 @@ const getFuelColor = (fuelType: string) => {
   }
 };
 
-const VehicleCard: React.FC<VehicleCardProps> = ({ 
-  vehicleData, 
-  missingImageURL = '/images/no-image-available.png' 
+const VehicleCard: React.FC<VehicleCardProps> = ({
+  vehicleData,
+  missingImageURL = '/images/no-image-available.png',
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -113,11 +113,15 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
 
     return (
       <Box>
-        <Typography variant="h6" component="div" sx={{ 
-          fontWeight: 'bold',
-          color: theme.palette.primary.main,
-          mb: 0.5
-        }}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            fontWeight: 'bold',
+            color: theme.palette.primary.main,
+            mb: 0.5,
+          }}
+        >
           £{priceStr}
         </Typography>
         {vehicle.monthlyPrice > 0 && (
@@ -167,7 +171,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
 
   const renderMobileCard = (vehicle: VehicleData, index: number) => {
     const title = `${vehicle.make} ${vehicle.model}`;
-    
+
     return (
       <Box key={vehicle.vehicleID} sx={{ px: 1, mb: 2 }}>
         <Card
@@ -227,22 +231,27 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
           </Box>
 
           <CardContent sx={{ p: 2 }}>
-            <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 600 }}>
+            <Typography
+              variant="h6"
+              component="h3"
+              gutterBottom
+              sx={{ fontWeight: 600 }}
+            >
               {title} ✨
             </Typography>
-            
+
             <Typography variant="body2" color="text.secondary" gutterBottom>
               {vehicle.variant}
             </Typography>
 
             {renderPriceDisplay(vehicle)}
 
-            <Box sx={{ mt: 2 }}>
-              {renderVehicleSpecs(vehicle)}
-            </Box>
+            <Box sx={{ mt: 2 }}>{renderVehicleSpecs(vehicle)}</Box>
           </CardContent>
 
-          <CardActions sx={{ px: 2, pb: 2, pt: 0, justifyContent: 'space-between' }}>
+          <CardActions
+            sx={{ px: 2, pb: 2, pt: 0, justifyContent: 'space-between' }}
+          >
             <Typography variant="body2" color="text.secondary">
               {vehicle.location}
             </Typography>
@@ -257,7 +266,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
 
   const renderDesktopCard = (vehicle: VehicleData, index: number) => {
     const title = `${vehicle.make} ${vehicle.model}`;
-    
+
     return (
       <Grid item xs={12} sm={6} md={4} lg={3} key={vehicle.vehicleID}>
         <Card
@@ -320,38 +329,53 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
           </Box>
 
           <CardContent sx={{ flexGrow: 1, p: 3 }}>
-            <Typography variant="h6" component="h3" gutterBottom sx={{ 
-              fontWeight: 600,
-              lineHeight: 1.3,
-            }}>
+            <Typography
+              variant="h6"
+              component="h3"
+              gutterBottom
+              sx={{
+                fontWeight: 600,
+                lineHeight: 1.3,
+              }}
+            >
               {title} ✨🚗
             </Typography>
-            
+
             <Typography variant="body2" color="text.secondary" gutterBottom>
               {vehicle.variant}
             </Typography>
 
-            <Box sx={{ mt: 2, mb: 3 }}>
-              {renderPriceDisplay(vehicle)}
-            </Box>
+            <Box sx={{ mt: 2, mb: 3 }}>{renderPriceDisplay(vehicle)}</Box>
 
             <Divider sx={{ my: 2 }} />
 
-            <Box sx={{ mt: 2 }}>
-              {renderVehicleSpecs(vehicle)}
-            </Box>
+            <Box sx={{ mt: 2 }}>{renderVehicleSpecs(vehicle)}</Box>
 
             {vehicle.colour && (
               <Box sx={{ mt: 2 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Colour: <Typography component="span" sx={{ fontWeight: 'bold' }}>{vehicle.colour}</Typography>
+                  Colour:{' '}
+                  <Typography component="span" sx={{ fontWeight: 'bold' }}>
+                    {vehicle.colour}
+                  </Typography>
                 </Typography>
               </Box>
             )}
           </CardContent>
 
-          <CardActions sx={{ p: 3, pt: 0, justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <CardActions
+            sx={{
+              p: 3,
+              pt: 0,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+            >
               <Box
                 component="span"
                 sx={{
@@ -359,19 +383,19 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
                   height: 6,
                   borderRadius: '50%',
                   backgroundColor: green[500],
-                  display: 'inline-block'
+                  display: 'inline-block',
                 }}
               />
               {vehicle.location}
             </Typography>
-            <IconButton 
-              size="small" 
+            <IconButton
+              size="small"
               color="primary"
               sx={{
                 backgroundColor: alpha(theme.palette.primary.main, 0.1),
                 '&:hover': {
                   backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                }
+                },
               }}
             >
               <VisibilityOutlined fontSize="small" />

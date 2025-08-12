@@ -1,10 +1,10 @@
-import React from "react";
-import CheckIcon from "@mui/icons-material/Check";
-import { RemoveSpacesAndSetToLower } from "./SharedFunctions";
+import React from 'react';
+import CheckIcon from '@mui/icons-material/Check';
+import { RemoveSpacesAndSetToLower } from './SharedFunctions';
 
 export const setSelectedFacetButton = (facetName, reduxFacetSelectors) => {
   if (isFacetKeyButtonSelected(facetName, reduxFacetSelectors)) {
-    return <CheckIcon style={{ color: "green" }} />;
+    return <CheckIcon style={{ color: 'green' }} />;
   }
 };
 
@@ -16,7 +16,7 @@ export const isFacetKeyButtonSelected = (facetName, reduxFacetSelectors) => {
 
 const isFacetSelected = (facetName, reduxFacetSelectors) => {
   const facetSelector = reduxFacetSelectors.filter(
-    (facet) =>
+    facet =>
       RemoveSpacesAndSetToLower(facet.facetKey) ===
         RemoveSpacesAndSetToLower(facetName) && facet.checked === true
   );
@@ -28,10 +28,10 @@ const isFacetSelected = (facetName, reduxFacetSelectors) => {
   }
 };
 
-export const isAnyFacetSelected = (reduxFacetSelectors) => {
+export const isAnyFacetSelected = reduxFacetSelectors => {
   let facetSelected = false;
 
-  reduxFacetSelectors.filter((facet) => {
+  reduxFacetSelectors.filter(facet => {
     if (facet.enabled === true) {
       facetSelected = true;
     }
@@ -40,7 +40,7 @@ export const isAnyFacetSelected = (reduxFacetSelectors) => {
   return facetSelected;
 };
 
-export const getSelectedFacets = (reduxFacetSelectors) => {
+export const getSelectedFacets = reduxFacetSelectors => {
   const requestFilters = [];
 
   if (reduxFacetSelectors !== undefined) {
@@ -61,7 +61,7 @@ export const getDefaultFacetsWithSelections = (
 ) => {
   const defaultFacetsCopy = [...reduxDefaultFacets];
   const defaultFacetByKey = defaultFacetsCopy.filter(
-    (x) => x.facetKey === facetKeyName
+    x => x.facetKey === facetKeyName
   );
 
   for (const selectedFacetData of reduxFacetSelectors) {
@@ -82,7 +82,7 @@ export const isSelectFacetMenuAlreadySelected = (
   reduxFacetSelectors,
   facetKeyName
 ) => {
-  const filter = reduxFacetSelectors.filter((x) => x.facetKey === facetKeyName);
+  const filter = reduxFacetSelectors.filter(x => x.facetKey === facetKeyName);
 
   if (filter.length === 0) {
     return false;

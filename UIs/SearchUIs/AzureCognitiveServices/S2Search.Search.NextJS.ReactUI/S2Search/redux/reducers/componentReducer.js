@@ -1,5 +1,5 @@
-import * as actionTypes from "../actions/actionTypes";
-import initialComponentState from "../../redux/stateObjects/componentState";
+import * as actionTypes from '../actions/actionTypes';
+import initialComponentState from '../../redux/stateObjects/componentState';
 
 const componentReducer = (state = initialComponentState, action) => {
   switch (action.type) {

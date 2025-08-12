@@ -1,5 +1,5 @@
-import * as actionTypes from "../actions/actionTypes";
-import initialSearchState from "../../redux/stateObjects/searchState";
+import * as actionTypes from '../actions/actionTypes';
+import initialSearchState from '../../redux/stateObjects/searchState';
 
 const searchReducer = (state = initialSearchState, action) => {
   switch (action.type) {

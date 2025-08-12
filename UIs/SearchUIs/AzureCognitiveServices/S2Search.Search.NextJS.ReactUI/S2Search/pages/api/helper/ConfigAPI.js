@@ -1,4 +1,4 @@
-﻿const ConfigAPI = async (hostParam) => {
+﻿const ConfigAPI = async hostParam => {
   let URL = `/api/configuration`;
   if (hostParam) {
     URL += `?host=${encodeURIComponent(hostParam)}`;
@@ -6,10 +6,10 @@
 
   try {
     const response = await fetch(URL, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
     });
 

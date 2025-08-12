@@ -25,17 +25,13 @@ const uiSlice = createSlice({
     setCancellationToken: (state, action: PayloadAction<boolean>) => {
       state.cancellationToken = action.payload;
     },
-    toggleDialog: (state) => {
+    toggleDialog: state => {
       state.isDialogOpen = !state.isDialogOpen;
     },
   },
 });
 
-export const {
-  setDialogOpen,
-  setLoading,
-  setCancellationToken,
-  toggleDialog,
-} = uiSlice.actions;
+export const { setDialogOpen, setLoading, setCancellationToken, toggleDialog } =
+  uiSlice.actions;
 
 export default uiSlice.reducer;

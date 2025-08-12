@@ -46,7 +46,10 @@ const facetSlice = createSlice({
     addFacetSelector: (state, action: PayloadAction<SelectedFacetData>) => {
       state.facetSelectors.push(action.payload);
     },
-    removeFacetSelector: (state, action: PayloadAction<SelectedFacetData[]>) => {
+    removeFacetSelector: (
+      state,
+      action: PayloadAction<SelectedFacetData[]>
+    ) => {
       state.facetSelectors = action.payload;
     },
     setFacetSelectedKeys: (state, action: PayloadAction<string[]>) => {
@@ -67,12 +70,12 @@ const facetSlice = createSlice({
     setResetFacets: (state, action: PayloadAction<boolean>) => {
       state.resetFacets = action.payload;
     },
-    clearAllFacets: (state) => {
+    clearAllFacets: state => {
       state.facetSelectors = [];
       state.facetSelectedKeys = [];
       state.selectedFacet = '';
     },
-    resetFacets: (state) => {
+    resetFacets: state => {
       state.facetSelectors = [];
       state.facetSelectedKeys = [];
       state.selectedFacet = '';

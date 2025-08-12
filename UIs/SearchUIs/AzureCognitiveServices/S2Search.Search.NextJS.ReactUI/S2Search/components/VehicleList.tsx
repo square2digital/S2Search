@@ -49,7 +49,9 @@ const SEARCH_TERMS = [
 ] as const;
 
 const VehicleList: React.FC = () => {
-  const [vehicleData, setVehicleData] = useState<VehicleListResponse | null>(null);
+  const [vehicleData, setVehicleData] = useState<VehicleListResponse | null>(
+    null
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -69,7 +71,7 @@ const VehicleList: React.FC = () => {
       numberOfExistingResults: '0',
       callingHost: 'localhost:3000',
     });
-    
+
     return `/api/search?${params.toString()}`;
   }, []);
 
@@ -77,10 +79,10 @@ const VehicleList: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const term = getRandomSearchTerm();
       setSearchTerm(term);
-      
+
       const url = buildSearchURL(term);
       const axiosResponse = await AxiosGet(url);
 
@@ -105,7 +107,8 @@ const VehicleList: React.FC = () => {
         setError('Unexpected response format');
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      const errorMessage =
+        err instanceof Error ? err.message : 'An unknown error occurred';
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -122,7 +125,12 @@ const VehicleList: React.FC = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight={200}
+      >
         <CircularProgress />
         <Typography variant="body1" sx={{ ml: 2 }}>
           Loading vehicles...
@@ -137,7 +145,11 @@ const VehicleList: React.FC = () => {
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
-        <Button variant="contained" onClick={handleRefresh} startIcon={<Refresh />}>
+        <Button
+          variant="contained"
+          onClick={handleRefresh}
+          startIcon={<Refresh />}
+        >
           Try Again
         </Button>
       </Box>
@@ -155,7 +167,7 @@ const VehicleList: React.FC = () => {
         >
           Refresh Vehicle List
         </Button>
-        
+
         {searchTerm && (
           <Typography variant="h6" color="primary">
             Search term: &ldquo;{searchTerm}&rdquo;
@@ -165,10 +177,14 @@ const VehicleList: React.FC = () => {
 
       {vehicleData?.results && vehicleData.results.length > 0 ? (
         <Paper elevation={1}>
-          <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-            Found {vehicleData.totalResults || vehicleData.results.length} vehicles
+          <Typography
+            variant="h6"
+            sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}
+          >
+            Found {vehicleData.totalResults || vehicleData.results.length}{' '}
+            vehicles
           </Typography>
-          
+
           <List>
             {vehicleData.results.map((vehicle, index) => (
               <ListItem
@@ -180,15 +196,24 @@ const VehicleList: React.FC = () => {
                   secondary={
                     <Box component="span">
                       <Typography variant="body2" component="span">
-                        {vehicle.year} • {vehicle.fuelType} • {vehicle.transmission}
+                        {vehicle.year} • {vehicle.fuelType} •{' '}
+                        {vehicle.transmission}
                       </Typography>
                       {vehicle.price && (
-                        <Typography variant="body2" component="span" sx={{ ml: 1 }}>
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          sx={{ ml: 1 }}
+                        >
                           • £{vehicle.price.toLocaleString()}
                         </Typography>
                       )}
                       {vehicle.mileage && (
-                        <Typography variant="body2" component="span" sx={{ ml: 1 }}>
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          sx={{ ml: 1 }}
+                        >
                           • {vehicle.mileage.toLocaleString()} miles
                         </Typography>
                       )}

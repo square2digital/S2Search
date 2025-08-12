@@ -6,22 +6,22 @@ export const selectSearchState = (state: RootState) => state.search;
 
 export const selectSearchTerm = createSelector(
   [selectSearchState],
-  (search) => search.searchTerm
+  search => search.searchTerm
 );
 
 export const selectVehicleData = createSelector(
   [selectSearchState],
-  (search) => search.vehicleData
+  search => search.vehicleData
 );
 
 export const selectSearchCount = createSelector(
   [selectSearchState],
-  (search) => search.searchCount
+  search => search.searchCount
 );
 
 export const selectTotalDocumentCount = createSelector(
   [selectSearchState],
-  (search) => search.totalDocumentCount
+  search => search.totalDocumentCount
 );
 
 export const selectHasMoreResults = createSelector(
@@ -31,10 +31,10 @@ export const selectHasMoreResults = createSelector(
 
 export const selectIsSearchEmpty = createSelector(
   [selectVehicleData],
-  (vehicleData) => vehicleData.length === 0
+  vehicleData => vehicleData.length === 0
 );
 
 export const selectNetworkError = createSelector(
   [selectSearchState],
-  (search) => search.networkError
+  search => search.networkError
 );

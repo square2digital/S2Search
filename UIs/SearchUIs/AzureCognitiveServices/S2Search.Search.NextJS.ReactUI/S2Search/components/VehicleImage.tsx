@@ -25,7 +25,9 @@ const VehicleImage: React.FC<VehicleImageProps> = ({
     setImageSrc(`${imageURL}?${new Date().getTime()}`);
   }, [imageURL]);
 
-  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const handleImageError = (
+    event: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
     const target = event.target as HTMLImageElement;
     if (target) {
       target.onerror = null;

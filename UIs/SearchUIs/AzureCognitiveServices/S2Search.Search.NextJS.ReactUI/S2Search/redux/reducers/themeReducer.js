@@ -1,5 +1,5 @@
-import * as actionTypes from "../actions/actionTypes";
-import initialThemeState from "../stateObjects/themeState";
+import * as actionTypes from '../actions/actionTypes';
+import initialThemeState from '../stateObjects/themeState';
 
 const themeReducer = (state = initialThemeState, action) => {
   switch (action.type) {

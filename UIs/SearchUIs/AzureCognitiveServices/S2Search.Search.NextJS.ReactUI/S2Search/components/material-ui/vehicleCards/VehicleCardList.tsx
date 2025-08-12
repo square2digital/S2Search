@@ -2,7 +2,10 @@ import React from 'react';
 import { Grid, Box, Typography } from '@mui/material';
 import VehicleCard from '../../VehicleCard';
 import { useAppSelector } from '../../../store/hooks';
-import { selectVehicleData, selectMissingImageURL } from '../../../store/selectors';
+import {
+  selectVehicleData,
+  selectMissingImageURL,
+} from '../../../store/selectors';
 
 interface VehicleData {
   vehicleID: string;
@@ -47,9 +50,9 @@ const VehicleCardList: React.FC = () => {
 
   return (
     <Grid container spacing={2} sx={{ py: 2 }}>
-      <VehicleCard 
-        vehicleData={vehicleData} 
-        missingImageURL={missingImageURL || '/images/no-image-available.png'} 
+      <VehicleCard
+        vehicleData={vehicleData}
+        missingImageURL={missingImageURL || '/images/no-image-available.png'}
       />
     </Grid>
   );

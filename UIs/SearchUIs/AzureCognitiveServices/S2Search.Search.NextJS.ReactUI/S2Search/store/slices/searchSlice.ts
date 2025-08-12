@@ -79,7 +79,7 @@ const searchSlice = createSlice({
     setPageNumber: (state, action: PayloadAction<number>) => {
       state.pageNumber = action.payload;
     },
-    incrementPageNumber: (state) => {
+    incrementPageNumber: state => {
       state.pageNumber += 1;
     },
     setHasMoreResults: (state, action: PayloadAction<boolean>) => {

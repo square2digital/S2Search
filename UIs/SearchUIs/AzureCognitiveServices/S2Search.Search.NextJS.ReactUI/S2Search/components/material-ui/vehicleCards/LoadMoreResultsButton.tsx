@@ -52,7 +52,9 @@ const LoadMoreResultsButton: React.FC = () => {
         isLoading ? (
           <CloudUpload color="disabled" />
         ) : (
-          <CloudDownload sx={{ color: primaryColour || theme.palette.primary.main }} />
+          <CloudDownload
+            sx={{ color: primaryColour || theme.palette.primary.main }}
+          />
         )
       }
       sx={{

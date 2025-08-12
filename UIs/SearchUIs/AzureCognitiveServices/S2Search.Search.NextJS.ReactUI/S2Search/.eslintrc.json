@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "prettier"
-  ],
+  "extends": ["next/core-web-vitals", "prettier"],
   "rules": {
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-explicit-any": "off",
@@ -15,10 +12,5 @@
     "jsx-a11y/alt-text": "off",
     "react/jsx-key": "off"
   },
-  "ignorePatterns": [
-    "node_modules",
-    ".next",
-    "out",
-    "build"
-  ]
+  "ignorePatterns": ["node_modules", ".next", "out", "build"]
 }
