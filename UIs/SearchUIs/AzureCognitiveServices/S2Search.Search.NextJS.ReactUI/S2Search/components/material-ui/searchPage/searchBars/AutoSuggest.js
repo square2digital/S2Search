@@ -197,7 +197,7 @@ const mapStateToProps = reduxState => {
 const mapDispatchToProps = dispatch => {
   return {
     saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
-    saveResetFacets: resetFacets => dispatch(resetFacets(resetFacets)),
+    saveResetFacets: resetFacetsFlag => dispatch(resetFacets()),
     saveVehicleData: () => dispatch(setVehicleData([])),
     savePageNumber: () => dispatch(setPageNumber(0)),
     saveFacetSelectors: () => dispatch(setFacetSelectors([])),
