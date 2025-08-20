@@ -1,58 +1,78 @@
-﻿import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import FacetFullScreenDialog from "./material-ui/filtersDialog/FacetFullScreenDialog";
-import VehicleCardList from "./material-ui/vehicleCards/VehicleCardList";
-import LoadMoreResultsButton from "./material-ui/vehicleCards/LoadMoreResultsButton";
-import FacetChips from "./material-ui/searchPage/FacetChips";
-import NetworkErrorDialog from "./material-ui/searchPage/NetworkErrorDialog";
-import { connect } from "react-redux";
-import SearchRequest from "../pages/api/shared/request/SearchRequest";
-import searchActions from "../redux/actions/searchActions";
-import facetActions from "../redux/actions/facetActions";
-import themeActions from "../redux/actions/themeActions";
-import configActions from "../redux/actions/configActions";
-import { getSelectedFacets } from "../common/functions/FacetFunctions";
+﻿import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import FacetFullScreenDialog from './material-ui/filtersDialog/FacetFullScreenDialog';
+import VehicleCardList from './material-ui/vehicleCards/VehicleCardList.tsx';
+import LoadMoreResultsButton from './LoadMoreResultsButton';
+import FacetChips from './material-ui/searchPage/FacetChips';
+import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
+import { connect } from 'react-redux';
+import SearchRequest from '../pages/api/shared/request/SearchRequest';
+
+// New RTK action imports
+import {
+  setVehicleData,
+  setPageNumber,
+  setTotalDocumentCount,
+  setPreviousRequest,
+  setNetworkError,
+  setSearchCount,
+} from '../store/slices/searchSlice';
+import { setFacetData, setDefaultFacetData } from '../store/slices/facetSlice';
+import { setLoading, setCancellationToken } from '../store/slices/uiSlice';
+import {
+  setPrimaryColour,
+  setSecondaryColour,
+  setNavBarColour,
+  setLogoURL,
+  setMissingImageURL,
+} from '../store/slices/themeSlice';
+import {
+  setConfigData,
+  setEnableAutoComplete,
+  setHideIconVehicleCounts,
+  setPlaceholderArray,
+} from '../store/slices/configSlice';
+
+import { getSelectedFacets } from '../common/functions/FacetFunctions';
 import {
   getConfigValueByKey,
   getPlaceholdersArray,
-} from "../common/functions/ConfigFunctions";
+} from '../common/functions/ConfigFunctions';
 import {
   IsPreviousRequestDataTheSame,
   IsRequestReOrderBy,
   ConvertStringToBoolean,
   LogString,
-} from "../common/functions/SharedFunctions";
-import { LogDetails } from "../helpers/LogDetails";
-import componentActions from "../redux/actions/componentActions";
-import Box from "@mui/material/Box";
-import HelperFunctions from "../helpers/HelperFunctions";
-import { makeStyles } from "@mui/styles";
-import { grey } from "@mui/material/colors";
-import { red } from "@mui/material/colors";
-import Alert from "@mui/material/Alert";
-import FloatingTopButton from "./material-ui/searchPage/FloatingTopButton";
+} from '../common/functions/SharedFunctions';
+import { LogDetails } from '../helpers/LogDetails';
+import Box from '@mui/material/Box';
+import HelperFunctions from '../helpers/HelperFunctions';
+import { grey, red } from '@mui/material/colors';
+import Alert from '@mui/material/Alert';
+import FloatingTopButton from './material-ui/searchPage/FloatingTopButton';
 import {
   SearchAndFacetsAPI,
   DocumentCountAPI,
-} from "../pages/api/helper/SearchAPI";
-import ThemeAPI from "../pages/api/helper/ThemeAPI";
-import ConfigAPI from "../pages/api/helper/ConfigAPI";
+} from '../pages/api/helper/SearchAPI';
+import ThemeAPI from '../pages/api/helper/ThemeAPI';
+import ConfigAPI from '../pages/api/helper/ConfigAPI';
 
 import {
   DefaultPageSize,
   DefaultPageNumber,
   DefaultTheme,
   MillisecondsDifference,
-} from "../common/Constants";
+} from '../common/Constants';
 
-import AdaptiveNavBar from "./material-ui/searchPage/navBars/AdaptiveNavBar";
+import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar.tsx';
 import {
   insertQueryStringParam,
   removeFullQueryString,
-} from "../common/functions/QueryStringFunctions";
-import { useRouter } from "next/router";
+} from '../common/functions/QueryStringFunctions';
+import { useRouter } from 'next/router';
 
-const useStyles = makeStyles((theme) => ({
+// Modern styles using theme-aware sx prop patterns
+const styles = {
   root: {
     flexGrow: 1,
   },
@@ -62,13 +82,12 @@ const useStyles = makeStyles((theme) => ({
   noResultsText: {
     color: red[600],
   },
-  margin: {
+  margin: theme => ({
     margin: theme.spacing(1),
-  },
-}));
+  }),
+};
 
-const VehicleSearchApp = (props) => {
-  const classes = useStyles();
+const VehicleSearchApp = props => {
   const [facetSelectedKeys, setFacetSelectedKeys] = useState([]);
   const [searchCount, setSearchCount] = useState(0);
   const [timestamp, setTimestamp] = useState(undefined);
@@ -98,13 +117,13 @@ const VehicleSearchApp = (props) => {
             props.savePlaceholderArray(getPlaceholdersArray(config));
 
             const enableAutoComplete = ConvertStringToBoolean(
-              getConfigValueByKey(config, "EnableAutoComplete").value
+              getConfigValueByKey(config, 'EnableAutoComplete').value
             );
             props.saveEnableAutoComplete(enableAutoComplete);
             setAutoCompleteSearchBar(enableAutoComplete);
 
             const HideIconVehicleCounts = ConvertStringToBoolean(
-              getConfigValueByKey(config, "HideIconVehicleCounts").value
+              getConfigValueByKey(config, 'HideIconVehicleCounts').value
             );
             props.saveHideIconVehicleCounts(HideIconVehicleCounts);
 
@@ -169,8 +188,7 @@ const VehicleSearchApp = (props) => {
     props.reduxPageNumber,
     props.reduxFacetChipDeleted,
     props.reduxFacetSelectedKeys,
-    queryStringParams,
-    props.reduxCancellationToken,
+    router.query,
   ]);
 
   const getThemeFromAPI = () => {
@@ -202,20 +220,22 @@ const VehicleSearchApp = (props) => {
   };
 
   const getDocumentCountAPI = () => {
-    DocumentCountAPI(window.location.host).then(function (
-      axiosDocumentCountResponse
-    ) {
-      if (axiosDocumentCountResponse) {
-        if (axiosDocumentCountResponse.status === 200) {
-          let documentCount = axiosDocumentCountResponse.data;
-          props.saveTotalDocumentCount(documentCount);
+    DocumentCountAPI(window.location.host).then(
+      function (axiosDocumentCountResponse) {
+        if (axiosDocumentCountResponse) {
+          if (axiosDocumentCountResponse.status === 200) {
+            let documentCount = axiosDocumentCountResponse.data;
+            props.saveTotalDocumentCount(documentCount);
+          }
         }
       }
-    });
+    );
   };
 
-  const triggerSearch = (request) => {
-    if (IsRequestReOrderBy(request, props.reduxPreviousRequest)) {
+  const triggerSearch = request => {
+    const requestPlain = request.toPlainObject();
+
+    if (IsRequestReOrderBy(requestPlain, props.reduxPreviousRequest)) {
       request.numberOfExistingResults = props.reduxVehicleData.length;
       request.pageSize = request.numberOfExistingResults;
       request.pageNumber = 0;
@@ -226,83 +246,87 @@ const VehicleSearchApp = (props) => {
     // ** only call the API if the search request is different **
     // **********************************************************
     if (
-      !IsPreviousRequestDataTheSame(request, props.reduxPreviousRequest) ||
+      !IsPreviousRequestDataTheSame(requestPlain, props.reduxPreviousRequest) ||
       props.reduxVehicleData.length == 0 ||
       facetSelectedKeys !== props.reduxFacetSelectedKeys
     ) {
       props.saveLoading(true);
-      props.savePreviousRequest(request);
+      props.savePreviousRequest(requestPlain);
 
-      SearchAndFacetsAPI(request, props.reduxCancellationToken).then(function (
-        axiosSearchResponse
-      ) {
-        if (axiosSearchResponse) {
-          if (axiosSearchResponse.status !== 200) {
-            props.saveLoading(false);
-            return false;
-          } else {
-            props.saveNetworkError(false);
-            if (
-              axiosSearchResponse.data.results &&
-              axiosSearchResponse.data.results.length > 0
-            ) {
-              let vehicleSearchData = [];
-
+      SearchAndFacetsAPI(request, props.reduxCancellationToken).then(
+        function (axiosSearchResponse) {
+          if (axiosSearchResponse) {
+            if (axiosSearchResponse.status !== 200) {
+              props.saveLoading(false);
+              return false;
+            } else {
+              props.saveNetworkError(false);
               if (
-                props.reduxPageNumber != props.reduxPreviousRequest.pageNumber
+                axiosSearchResponse.data.results &&
+                axiosSearchResponse.data.results.length > 0
               ) {
-                vehicleSearchData = HelperFunctions.RemoveDuplicates([
-                  ...props.reduxVehicleData,
-                  ...axiosSearchResponse.data.results,
-                ]);
+                let vehicleSearchData = [];
+
+                if (
+                  props.reduxPageNumber !=
+                  (props.reduxPreviousRequest?.pageNumber || 0)
+                ) {
+                  vehicleSearchData = HelperFunctions.RemoveDuplicates([
+                    ...props.reduxVehicleData,
+                    ...axiosSearchResponse.data.results,
+                  ]);
+                } else {
+                  vehicleSearchData = axiosSearchResponse.data.results;
+                }
+
+                props.saveVehicleData(vehicleSearchData);
+                props.saveSearchCount(axiosSearchResponse.data.totalResults);
               } else {
-                vehicleSearchData = axiosSearchResponse.data.results;
+                // no results found
+                props.savePageNumber(DefaultPageNumber);
+                props.saveVehicleData([]);
               }
 
-              props.saveVehicleData(vehicleSearchData);
-              props.saveSearchCount(axiosSearchResponse.data.totalResults);
-            } else {
-              // no results found
-              props.savePageNumber(DefaultPageNumber);
-              props.saveVehicleData([]);
-            }
-
-            if (axiosSearchResponse.data.facets) {
-              props.saveFacetData(axiosSearchResponse.data.facets);
-            }
-            if (props.defaultFacetData.length === 0) {
-              SearchAndFacetsAPI(request, props.reduxCancellationToken).then(
-                function (axiosFacetResponse) {
-                  if (axiosFacetResponse && axiosFacetResponse.status === 200) {
-                    if (axiosFacetResponse.data.facets) {
-                      props.saveDefaultFacetData(
-                        axiosFacetResponse.data.facets
-                      );
+              if (axiosSearchResponse.data.facets) {
+                props.saveFacetData(axiosSearchResponse.data.facets);
+              }
+              if (props.defaultFacetData.length === 0) {
+                SearchAndFacetsAPI(request, props.reduxCancellationToken).then(
+                  function (axiosFacetResponse) {
+                    if (
+                      axiosFacetResponse &&
+                      axiosFacetResponse.status === 200
+                    ) {
+                      if (axiosFacetResponse.data.facets) {
+                        props.saveDefaultFacetData(
+                          axiosFacetResponse.data.facets
+                        );
+                      }
                     }
                   }
-                }
-              );
-            }
+                );
+              }
 
-            props.saveLoading(false);
+              props.saveLoading(false);
+            }
           }
         }
-      });
+      );
     }
   };
 
   const updateQueryStringURL = () => {
     if (props.reduxFacetSelectors.length > 0) {
       insertQueryStringParam(
-        "facetselectors",
+        'facetselectors',
         JSON.stringify(props.reduxFacetSelectors)
       );
 
-      insertQueryStringParam("orderby", props.reduxOrderBy);
+      insertQueryStringParam('orderby', props.reduxOrderBy);
     }
 
     if (props.reduxSearchTerm.length > 0) {
-      insertQueryStringParam("searchterm", props.reduxSearchTerm);
+      insertQueryStringParam('searchterm', props.reduxSearchTerm);
     }
 
     if (
@@ -318,13 +342,13 @@ const VehicleSearchApp = (props) => {
       return <NetworkErrorDialog reduxNetworkError={props.reduxNetworkError} />;
     }
 
-    return "";
+    return '';
   };
 
   const renderResults = () => {
     if (searchCount === 0) {
       return (
-        <div style={{ position: "relative", top: "5px" }}>
+        <div style={{ position: 'relative', top: '5px' }}>
           <Alert severity="info">Loading - Stand by...</Alert>
         </div>
       );
@@ -334,7 +358,7 @@ const VehicleSearchApp = (props) => {
       !props.reduxLoading
     ) {
       return (
-        <div style={{ position: "relative", top: "5px" }}>
+        <div style={{ position: 'relative', top: '5px' }}>
           <Alert severity="error">
             No vehicles found - to restart click the reset button
           </Alert>
@@ -346,7 +370,7 @@ const VehicleSearchApp = (props) => {
       props.reduxLoading
     ) {
       return (
-        <div style={{ position: "relative", top: "5px" }}>
+        <div style={{ position: 'relative', top: '5px' }}>
           <Alert severity="warning">Loading - please wait</Alert>
         </div>
       );
@@ -358,21 +382,21 @@ const VehicleSearchApp = (props) => {
   ) : (
     <div className="content-container">
       <>
-        <Box p={1} className={classes.root}>
-          <Box style={{ minHeight: 60 }}>
+        <Box p={1} sx={styles.root}>
+          <Box sx={{ minHeight: 60 }}>
             <AdaptiveNavBar autoCompleteSearchBar={autoCompleteSearchBar} />
           </Box>
           <Box xs={12}>{renderResults()}</Box>
           <Box xs={12}>
-            {props.reduxFacetSelectors.length > 0 ? <FacetChips /> : <></>}{" "}
+            {props.reduxFacetSelectors.length > 0 ? <FacetChips /> : <></>}{' '}
             <VehicleCardList />
           </Box>
-          <Box xs={12} style={{ textAlign: "center" }}>
+          <Box xs={12} style={{ textAlign: 'center' }}>
             <LoadMoreResultsButton />
           </Box>
         </Box>
       </>
-      <FacetFullScreenDialog dialogLabel={"Filters"} />
+      <FacetFullScreenDialog dialogLabel={'Filters'} />
       <RenderNetworkError />
       <FloatingTopButton />
       <LogDetails logData={props} enable={false} />
@@ -380,67 +404,60 @@ const VehicleSearchApp = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxSearchCount: reduxState.searchReducer.searchCount,
-    reduxVehicleData: reduxState.searchReducer.vehicleData,
-    reduxOrderBy: reduxState.searchReducer.orderBy,
-    reduxPageNumber: reduxState.searchReducer.pageNumber,
-    reduxNetworkError: reduxState.searchReducer.networkError,
-    reduxPreviousRequest: reduxState.searchReducer.previousRequest,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxSearchCount: reduxState.search.searchCount,
+    reduxVehicleData: reduxState.search.vehicleData,
+    reduxOrderBy: reduxState.search.orderBy,
+    reduxPageNumber: reduxState.search.pageNumber,
+    reduxNetworkError: reduxState.search.networkError,
+    reduxPreviousRequest: reduxState.search.previousRequest,
 
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxFacetSelectedKeys: reduxState.facetReducer.facetSelectedKeys,
-    defaultFacetData: reduxState.facetReducer.defaultFacetData,
-    reduxSelectedFacet: reduxState.facetReducer.selectedFacet,
-    reduxFacetChipDeleted: reduxState.facetReducer.facetChipDeleted,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxFacetSelectedKeys: reduxState.facet.facetSelectedKeys,
+    defaultFacetData: reduxState.facet.defaultFacetData,
+    reduxSelectedFacet: reduxState.facet.selectedFacet,
+    reduxFacetChipDeleted: reduxState.facet.facetChipDeleted,
 
-    reduxLoading: reduxState.componentReducer.loading,
-    reduxCancellationToken: reduxState.componentReducer.enableToken,
-    reduxDialogOpen: reduxState.componentReducer.dialogOpen,
-    reduxConfigData: reduxState.configReducer.configData,
+    reduxLoading: reduxState.ui.isLoading,
+    reduxCancellationToken: reduxState.ui.cancellationToken,
+    reduxDialogOpen: reduxState.ui.isDialogOpen,
+    reduxConfigData: reduxState.config.configData,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveVehicleData: (vehicleData) =>
-      dispatch(searchActions.saveVehicleData(vehicleData)),
-    savePageNumber: (pageNumber) =>
-      dispatch(searchActions.savePageNumber(pageNumber)),
-    saveTotalDocumentCount: (documentCount) =>
-      dispatch(searchActions.saveTotalDocumentCount(documentCount)),
-    savePreviousRequest: (searchRequestObj) =>
-      dispatch(searchActions.savePreviousRequest(searchRequestObj)),
-    saveNetworkError: (enable) =>
-      dispatch(searchActions.saveNetworkError(enable)),
-    saveSearchCount: (searchCount) =>
-      dispatch(searchActions.saveSearchCount(searchCount)),
-    saveFacetData: (facets) => dispatch(facetActions.saveFacetData(facets)),
-    saveDefaultFacetData: (defaultFacets) =>
-      dispatch(facetActions.saveDefaultFacetData(defaultFacets)),
-    saveLoading: (loading) => dispatch(componentActions.saveLoading(loading)),
-    saveCancellationToken: (enable) =>
-      dispatch(componentActions.saveCancellationToken(enable)),
+    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
+    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
+    saveTotalDocumentCount: documentCount =>
+      dispatch(setTotalDocumentCount(documentCount)),
+    savePreviousRequest: searchRequestObj =>
+      dispatch(setPreviousRequest(searchRequestObj)),
+    saveNetworkError: enable => dispatch(setNetworkError(enable)),
+    saveSearchCount: searchCount => dispatch(setSearchCount(searchCount)),
+    saveFacetData: facets => dispatch(setFacetData(facets)),
+    saveDefaultFacetData: defaultFacets =>
+      dispatch(setDefaultFacetData(defaultFacets)),
+    saveLoading: loading => dispatch(setLoading(loading)),
+    saveCancellationToken: enable => dispatch(setCancellationToken(enable)),
 
-    savePrimaryColour: (primaryHexColour) =>
-      dispatch(themeActions.savePrimaryColour(primaryHexColour)),
-    saveSecondaryColour: (secondaryHexColour) =>
-      dispatch(themeActions.saveSecondaryColour(secondaryHexColour)),
-    saveNavBarColour: (navBarHexColour) =>
-      dispatch(themeActions.saveNavBarColour(navBarHexColour)),
-    saveLogoURL: (logoURL) => dispatch(themeActions.saveLogoURL(logoURL)),
-    saveMissingImageURL: (logoURL) =>
-      dispatch(themeActions.saveMissingImageURL(logoURL)),
-    saveConfigData: (configData) =>
-      dispatch(configActions.saveConfigData(configData)),
-    saveEnableAutoComplete: (enableAutoComplete) =>
-      dispatch(configActions.saveEnableAutoComplete(enableAutoComplete)),
-    saveHideIconVehicleCounts: (hideIconVehicleCounts) =>
-      dispatch(configActions.saveHideIconVehicleCounts(hideIconVehicleCounts)),
-    savePlaceholderArray: (placeholderText) =>
-      dispatch(configActions.savePlaceholderArray(placeholderText)),
+    savePrimaryColour: primaryHexColour =>
+      dispatch(setPrimaryColour(primaryHexColour)),
+    saveSecondaryColour: secondaryHexColour =>
+      dispatch(setSecondaryColour(secondaryHexColour)),
+    saveNavBarColour: navBarHexColour =>
+      dispatch(setNavBarColour(navBarHexColour)),
+    saveLogoURL: logoURL => dispatch(setLogoURL(logoURL)),
+    saveMissingImageURL: logoURL => dispatch(setMissingImageURL(logoURL)),
+    saveConfigData: configData => dispatch(setConfigData(configData)),
+    saveEnableAutoComplete: enableAutoComplete =>
+      dispatch(setEnableAutoComplete(enableAutoComplete)),
+    saveHideIconVehicleCounts: hideIconVehicleCounts =>
+      dispatch(setHideIconVehicleCounts(hideIconVehicleCounts)),
+    savePlaceholderArray: placeholderText =>
+      dispatch(setPlaceholderArray(placeholderText)),
   };
 };
 

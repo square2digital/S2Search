@@ -1,5 +1,5 @@
 export const GenerateFacetArray = (stateArray, facetKey) => {
-  if (facetKey === "" || typeof facetKey === "undefined") {
+  if (facetKey === '' || typeof facetKey === 'undefined') {
     return [];
   } else {
     if (!stateArray.includes(facetKey)) {
@@ -24,19 +24,19 @@ export const DoesValueExistInArray = (array, value) => {
   return array.includes(value);
 };
 
-export const RemoveSpacesAndSetToLower = (str) => {
-  return str.replace(/ /g, "").toLocaleLowerCase();
+export const RemoveSpacesAndSetToLower = str => {
+  return str.replace(/ /g, '').toLocaleLowerCase();
 };
 
-export const IsNumeric = (str) => {
+export const IsNumeric = str => {
   return /^-?\d+$/.test(str);
 };
 
-export const ConvertStringToBoolean = (str) => {
-  return str === "true";
+export const ConvertStringToBoolean = str => {
+  return str === 'true';
 };
 
-export const FormatStringOrNumeric = (str) => {
+export const FormatStringOrNumeric = str => {
   return IsNumeric(str) === true ? Number.parseInt(str, 0) : `'${str}'`;
 };
 
@@ -62,8 +62,8 @@ export const GetFacetData = (facetJSONData, facetName) => {
 // - NumberOfExistingResults
 // - pageSize
 export const IsPreviousRequestDataTheSame = (newRequest, reduxRequest) => {
-  if (Object.keys(reduxRequest).length === 0) {
-    return true;
+  if (!reduxRequest || Object.keys(reduxRequest).length === 0) {
+    return false;
   }
 
   if (
@@ -108,15 +108,15 @@ export const IsPreviousRequestDataTheSame = (newRequest, reduxRequest) => {
 };
 
 const LogRequests = (newRequest, reduxRequest, logString) => {
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     console.log(logString);
     console.dir(newRequest);
     console.dir(reduxRequest);
   }
 };
 
-export const LogString = (str) => {
-  if (process.env.NODE_ENV !== "production") {
+export const LogString = str => {
+  if (process.env.NODE_ENV !== 'production') {
     console.log(str);
   }
 };
@@ -127,6 +127,10 @@ export const LogString = (str) => {
 // - NumberOfExistingResults
 // - pageSize
 export const IsRequestReOrderBy = (newRequest, reduxRequest) => {
+  if (!reduxRequest) {
+    return false;
+  }
+
   if (
     newRequest.orderBy !== reduxRequest.orderBy &&
     JSON.stringify(newRequest.filters) ===

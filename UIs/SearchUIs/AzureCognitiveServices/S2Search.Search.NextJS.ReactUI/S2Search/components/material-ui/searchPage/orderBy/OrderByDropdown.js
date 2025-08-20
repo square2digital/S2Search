@@ -1,24 +1,25 @@
-import React from "react";
-import { makeStyles } from "@mui/styles";
-import PropTypes from "prop-types";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import searchActions from "../../../../redux/actions/searchActions";
-import { GetOrderByData } from "../../../../common/Constants";
-import { connect } from "react-redux";
+import React from 'react';
+import { useTheme } from '@mui/material/styles';
+import PropTypes from 'prop-types';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import { setOrderBy } from '../../../../store/slices/searchSlice';
+import { GetOrderByData } from '../../../../common/Constants';
+import { connect } from 'react-redux';
 
-const useStyles = makeStyles((theme) => ({
+// Inline styles object (converted from makeStyles)
+const styles = {
   formControl: {
-    margin: theme.spacing(0),
+    margin: 0, // theme.spacing(0)
     minWidth: 120,
   },
-}));
+};
 
-const OrderByDropdown = (props) => {
-  const classes = useStyles();
-  const [orderBy, setOrderBy] = React.useState("");
+const OrderByDropdown = props => {
+  const theme = useTheme();
+  const [orderBy, setOrderBy] = React.useState('');
   const [open, setOpen] = React.useState(false);
 
   const GenerateDropdown = () => {
@@ -35,7 +36,7 @@ const OrderByDropdown = (props) => {
     return dropdownArray;
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     setOrderBy(event.target.value);
     props.saveOrderby(event.target.value);
   };
@@ -50,7 +51,7 @@ const OrderByDropdown = (props) => {
 
   return (
     <div>
-      <FormControl variant="outlined" className={classes.formControl}>
+      <FormControl variant="outlined" style={styles.formControl}>
         <InputLabel htmlFor="demo-customized-select-native" color="secondary">
           Order By
         </InputLabel>
@@ -60,9 +61,10 @@ const OrderByDropdown = (props) => {
           onClose={handleClose}
           onOpen={handleOpen}
           value={orderBy}
-          renderValue={(selected) => props.reduxOrderBy !== selected}
+          renderValue={selected => props.reduxOrderBy !== selected}
           onChange={handleChange}
-          label="Order By">
+          label="Order By"
+        >
           {GenerateDropdown()}
         </Select>
       </FormControl>
@@ -70,16 +72,16 @@ const OrderByDropdown = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxOrderBy: reduxState.searchReducer.orderBy,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxOrderBy: reduxState.search.orderBy,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveOrderby: (orderBy) => dispatch(searchActions.saveOrderby(orderBy)),
+    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
   };
 };
 

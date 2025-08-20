@@ -1,26 +1,17 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Backdrop from "@mui/material/Backdrop";
-import { makeStyles } from "@mui/styles";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import searchActions from "../../../redux/actions/searchActions";
-import { connect } from "react-redux";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Backdrop from '@mui/material/Backdrop';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { setNetworkError } from '../../../store/slices/searchSlice';
+import { connect } from 'react-redux';
 
-const useStyles = makeStyles((theme) => ({
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff",
-  },
-}));
-
-const NetworkErrorDialog = (props) => {
-  const classes = useStyles();
+const NetworkErrorDialog = props => {
   const [open, setOpen] = useState(props.reduxNetworkError);
 
   const refreshPage = () => {
@@ -35,12 +26,19 @@ const NetworkErrorDialog = (props) => {
 
   return (
     <div>
-      <Backdrop className={classes.backdrop} open={open}>
+      <Backdrop
+        sx={theme => ({
+          zIndex: theme.zIndex.drawer + 1,
+          color: '#fff',
+        })}
+        open={open}
+      >
         <Dialog
           open={open}
           onClose={handleClose}
           aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description">
+          aria-describedby="alert-dialog-description"
+        >
           <DialogTitle id="alert-dialog-title" onClose={handleClose}>
             Connectivity Issue
           </DialogTitle>
@@ -55,7 +53,8 @@ const NetworkErrorDialog = (props) => {
               onClick={refreshPage}
               color="secondary"
               size="small"
-              startIcon={<RefreshIcon />}>
+              startIcon={<RefreshIcon />}
+            >
               Refresh
             </Button>
           </DialogActions>
@@ -65,16 +64,15 @@ const NetworkErrorDialog = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    reduxNetworkError: reduxState.searchReducer.networkError,
+    reduxNetworkError: reduxState.search.networkError,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveNetworkError: (enable) =>
-      dispatch(searchActions.saveNetworkError(enable)),
+    saveNetworkError: enable => dispatch(setNetworkError(enable)),
   };
 };
 

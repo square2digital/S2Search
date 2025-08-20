@@ -1,7 +1,7 @@
-import React from "react";
-import VehicleSearchApp from "./VehicleSearchApp";
-import Container from "@mui/material/Container";
-import ResetFacets from "../common/functions/ResetFacets";
+import React from 'react';
+import VehicleSearchApp from './VehicleSearchApp';
+import Container from '@mui/material/Container';
+import ResetFacets from '../common/functions/ResetFacets';
 
 const Layout = () => {
   return (

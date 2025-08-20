@@ -1,8 +1,8 @@
-import { DefaultPageSize, DefaultPageNumber } from "../../common/Constants";
+import { DefaultPageSize, DefaultPageNumber } from '../../common/Constants';
 import {
   getQueryStringSearchTerm,
   getQueryStringOrderBy,
-} from "../../common/functions/QueryStringFunctions";
+} from '../../common/functions/QueryStringFunctions';
 
 export default {
   searchTerm: getQueryStringSearchTerm(),
@@ -14,6 +14,6 @@ export default {
   networkError: false,
   previousRequest: {},
 
-  filters: "",
+  filters: '',
   pageSize: DefaultPageSize,
 };

@@ -1,4 +1,4 @@
-import { DefaultPlaceholderText } from "../Constants";
+import { DefaultPlaceholderText } from '../Constants';
 
 export const getConfigValueByKey = (config, key) => {
   for (const item of config) {
@@ -8,11 +8,18 @@ export const getConfigValueByKey = (config, key) => {
   }
 };
 
-export const getPlaceholdersArray = (configData) => {
+export const getPlaceholdersArray = configData => {
+  if (!Array.isArray(configData)) {
+    console.warn(
+      'getPlaceholdersArray: configData is not an array, returning default'
+    );
+    return DefaultPlaceholderText;
+  }
+
   const arr = [];
 
-  configData.forEach((element) => {
-    if (element.key.includes("PlaceholderText")) {
+  configData.forEach(element => {
+    if (element && element.key && element.key.includes('PlaceholderText')) {
       if (element) {
         arr.push(element);
       }
@@ -20,27 +27,45 @@ export const getPlaceholdersArray = (configData) => {
   });
 
   if (arr.length === 0) {
-    arr = DefaultPlaceholderText;
+    return DefaultPlaceholderText;
   }
 
   return arr;
 };
 
-export const getValuesFromConfigArray = (configData) => {
+export const getValuesFromConfigArray = configData => {
+  if (!Array.isArray(configData)) {
+    console.warn(
+      'getValuesFromConfigArray: configData is not an array, returning empty array'
+    );
+    return [];
+  }
+
   const arr = [];
 
-  configData.forEach((element) => {
-    arr.push(element.value);
+  configData.forEach(element => {
+    if (element && element.value !== undefined) {
+      arr.push(element.value);
+    }
   });
 
   return arr;
 };
 
-export const getKeysFromConfigArray = (configData) => {
+export const getKeysFromConfigArray = configData => {
+  if (!Array.isArray(configData)) {
+    console.warn(
+      'getKeysFromConfigArray: configData is not an array, returning empty array'
+    );
+    return [];
+  }
+
   const arr = [];
 
-  configData.forEach((element) => {
-    arr.push(element.key);
+  configData.forEach(element => {
+    if (element && element.key !== undefined) {
+      arr.push(element.key);
+    }
   });
 
   return arr;

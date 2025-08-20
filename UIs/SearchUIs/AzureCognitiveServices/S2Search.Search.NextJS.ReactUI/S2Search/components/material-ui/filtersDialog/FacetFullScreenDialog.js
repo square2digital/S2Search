@@ -1,20 +1,14 @@
-import React from "react";
-import PropTypes from "prop-types";
-import Dialog from "@mui/material/Dialog";
-import Slide from "@mui/material/Slide";
-import { connect } from "react-redux";
-import componentActions from "../../../redux/actions/componentActions";
-import { makeStyles } from "@mui/styles";
-import FacetAppBar from "../filtersDialog/FacetAppBar";
-import FacetSelectionMenu from "../filtersDialog/FacetSelectionMenu";
-import FacetSelectionList from "../filtersDialog/FacetSelectorList";
-import { LogDetails } from "../../../helpers/LogDetails";
-
-const useStyles = makeStyles(() => ({
-  root: {
-    display: "flex",
-  },
-}));
+import React from 'react';
+import PropTypes from 'prop-types';
+import Dialog from '@mui/material/Dialog';
+import Slide from '@mui/material/Slide';
+import Box from '@mui/material/Box';
+import { connect } from 'react-redux';
+import { setDialogOpen } from '../../../store/slices/uiSlice';
+import FacetAppBar from '../filtersDialog/FacetAppBar';
+import FacetSelectionMenu from '../filtersDialog/FacetSelectionMenu';
+import FacetSelectionList from '../filtersDialog/FacetSelectorList';
+import { LogDetails } from '../../../helpers/LogDetails';
 
 // *********************************************************************************************************************
 // ** - WARNING
@@ -24,42 +18,51 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const FacetFullScreenDialog = (props) => {
-  const classes = useStyles();
-
+const FacetFullScreenDialog = props => {
   const handleClose = () => {
     props.saveDialogOpen(false);
   };
 
   return (
-    <div>
+    <Box>
       <LogDetails logData={props} enable={false} />
       <Dialog
         fullScreen
         open={props.reduxDialogOpen}
         onClose={handleClose}
-        TransitionComponent={Transition}>
-        <div className={classes.root}>
+        TransitionComponent={Transition}
+        sx={{
+          '& .MuiDialog-paper': {
+            backgroundColor: '#f8fafc',
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            minHeight: '100vh',
+            backgroundColor: '#f8fafc',
+          }}
+        >
           <FacetAppBar />
           <FacetSelectionMenu />
           <FacetSelectionList />
-        </div>
+        </Box>
       </Dialog>
-    </div>
+    </Box>
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    reduxDialogOpen: reduxState.componentReducer.dialogOpen,
-    defaultFacetData: reduxState.facetReducer.defaultFacetData,
+    reduxDialogOpen: reduxState.ui.isDialogOpen,
+    defaultFacetData: reduxState.facet.defaultFacetData,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveDialogOpen: (dialogOpen) =>
-      dispatch(componentActions.saveDialogOpen(dialogOpen)),
+    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
   };
 };
 

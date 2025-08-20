@@ -1,5 +1,5 @@
-import ThemeAPI from "../pages/api/helper/ThemeAPI";
-import { DefaultTheme } from "./Constants";
+import ThemeAPI from '../pages/api/helper/ThemeAPI';
+import { DefaultTheme } from './Constants';
 
 export const ThemeColours = () => {
   return ThemeAPI().then(function (axiosThemeResponse) {
@@ -37,8 +37,8 @@ const GetJSONObj = (primaryHexColour, secondaryHexColour) => {
     overrides: {
       MuiToolbar: {
         regular: {
-          paddingLeft: "10px",
-          paddingRight: "10px",
+          paddingLeft: '10px',
+          paddingRight: '10px',
         },
       },
     },

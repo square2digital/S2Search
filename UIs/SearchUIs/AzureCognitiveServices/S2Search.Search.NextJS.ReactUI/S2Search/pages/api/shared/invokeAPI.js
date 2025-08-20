@@ -14,10 +14,10 @@ const invokeAPI = async (
     DocumentCountURL,
     SearchAPIEndpoint,
     FacetsAPIEndpoint,
-  } = require("../../../common/Constants");
-  const { FormatCallingHost } = require("./apiFunctions/apiHelpers");
-  const setResponse = require("./response/invovationContext/setResponse");
-  const axiosAPICall = require("../helper/AxiosAPICall");
+  } = require('../../../common/Constants');
+  const { FormatCallingHost } = require('./apiFunctions/apiHelpers');
+  const setResponse = require('./response/invovationContext/setResponse');
+  const axiosAPICall = require('../helper/AxiosAPICall');
 
   if (!req.query) {
     return setResponse(
@@ -34,7 +34,7 @@ const invokeAPI = async (
       400
     );
   } else {
-    let url = "";
+    let url = '';
     let axiosResponse = {};
     const callingHost = FormatCallingHost(req.headers.host);
 
@@ -43,7 +43,7 @@ const invokeAPI = async (
       // Search Endpoints
       // *****************
 
-      case "search":
+      case 'search':
         url = `${SearchAndFacetsAPIURL}${SearchAPIEndpoint}`;
         axiosResponse = await axiosAPICall.AxiosGetWithQueryString(
           req,
@@ -53,7 +53,7 @@ const invokeAPI = async (
         );
         break;
 
-      case "facets":
+      case 'facets':
         url = `${SearchAndFacetsAPIURL}${FacetsAPIEndpoint}`;
         axiosResponse = await axiosAPICall.AxiosGetWithQueryString(
           req,
@@ -62,12 +62,12 @@ const invokeAPI = async (
         );
         break;
 
-      case "documentCount":
+      case 'documentCount':
         url = `${SearchAPIDomain}${SearchAPIEndpoint}${DocumentCountURL}?callingHost=${callingHost}`;
         axiosResponse = await axiosAPICall.AxiosGet(url, addApiKeyHeader);
         break;
 
-      case "autoSuggest":
+      case 'autoSuggest':
         url = `${SearchAPIDomain}${SearchAPIEndpoint}${AutoCompleteURL}?SearchTerm=${req.query.SearchTerm}&callingHost=${callingHost}`;
         axiosResponse = await axiosAPICall.AxiosGet(
           url,
@@ -79,12 +79,12 @@ const invokeAPI = async (
       // *****************
       // configuration Endpoints
       // *****************
-      case "configuration":
+      case 'configuration':
         url = `${ClientConfigurationAPIURL}/api/configuration/${configType}/${callingHost}`;
         axiosResponse = await axiosAPICall.AxiosGet(url, addApiKeyHeader);
         break;
 
-      case "theme":
+      case 'theme':
         url = `${ClientConfigurationAPIURL}/api/configuration/${configType}/${callingHost}`;
         axiosResponse = await axiosAPICall.AxiosGet(url, addApiKeyHeader);
         break;

@@ -1,4 +1,4 @@
-import { DefaultTheme } from "../../common/Constants";
+import { DefaultTheme } from '../../common/Constants';
 
 export default {
   primaryColour: DefaultTheme.primaryHexColour,

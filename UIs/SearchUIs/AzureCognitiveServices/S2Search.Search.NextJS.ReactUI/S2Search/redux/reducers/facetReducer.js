@@ -1,6 +1,6 @@
-import * as actionTypes from "../actions/actionTypes";
-import initialFacetState from "../../redux/stateObjects/facetState";
-import { GenerateFacetArray } from "../../common/functions/SharedFunctions";
+import * as actionTypes from '../actions/actionTypes';
+import initialFacetState from '../../redux/stateObjects/facetState';
+import { GenerateFacetArray } from '../../common/functions/SharedFunctions';
 
 const facetReducer = (state = initialFacetState, action) => {
   switch (action.type) {

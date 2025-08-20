@@ -1,4 +1,4 @@
-import * as actionTypes from "./actionTypes";
+import * as actionTypes from './actionTypes';
 
 const searchActions = {
   saveSearchTerm: function (searchTerm) {

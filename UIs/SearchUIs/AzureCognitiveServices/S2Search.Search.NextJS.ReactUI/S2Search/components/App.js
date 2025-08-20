@@ -1,6 +1,6 @@
-import React from "react";
-import Layout from "./Layout";
-import VehicleSearchApp from "./VehicleSearchApp";
+import React from 'react';
+import Layout from './Layout';
+import VehicleSearchApp from './VehicleSearchApp';
 
 const App = () => {
   return (

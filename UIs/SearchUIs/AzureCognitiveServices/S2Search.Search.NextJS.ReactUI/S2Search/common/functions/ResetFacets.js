@@ -1,24 +1,37 @@
-import { useEffect } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import searchActions from "../../redux/actions/searchActions";
-import facetActions from "../../redux/actions/facetActions";
-import componentActions from "../../redux/actions/componentActions";
-import { DefaultPageNumber } from "../Constants";
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-const ResetFacets = (props) => {
+// New RTK action imports
+import {
+  setVehicleData,
+  setPageNumber,
+  setSearchTerm,
+  setOrderBy,
+} from '../../store/slices/searchSlice';
+import {
+  setFacetSelectors,
+  setFacetSelectedKeys,
+  setResetFacets,
+  setSelectedFacet,
+} from '../../store/slices/facetSlice';
+import { setDialogOpen } from '../../store/slices/uiSlice';
+
+import { DefaultPageNumber } from '../Constants';
+
+const ResetFacets = props => {
   useEffect(() => {
     resetFacetsData(props);
   }, [props.reduxResetFacets]);
 
-  const resetFacetsData = (props) => {
+  const resetFacetsData = props => {
     if (props.reduxResetFacets === true) {
       props.saveVehicleData([]);
       props.savePageNumber(DefaultPageNumber);
       props.saveFacetSelectors([]);
-      props.saveSearchTerm("");
+      props.saveSearchTerm('');
       props.saveDialogOpen(false);
-      props.saveOrderby("");
+      props.saveOrderby('');
 
       // set the facet button to either make or model depending on whats currently selected.
       if (props.reduxSelectedFacet) {
@@ -33,41 +46,35 @@ const ResetFacets = (props) => {
   return null;
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    searchCount: reduxState.searchReducer.searchCount,
-    reduxResultsCount: reduxState.searchReducer.searchCount,
-    vehicleData: reduxState.searchReducer.vehicleData,
+    searchCount: reduxState.search.searchCount,
+    reduxResultsCount: reduxState.search.searchCount,
+    vehicleData: reduxState.search.vehicleData,
 
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    defaultFacetData: reduxState.facetReducer.defaultFacetData,
-    facetData: reduxState.facetReducer.facetData,
-    reduxSelectedFacet: reduxState.facetReducer.selectedFacet,
-    reduxLoading: reduxState.componentReducer.loading,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    defaultFacetData: reduxState.facet.defaultFacetData,
+    facetData: reduxState.facet.facetData,
+    reduxSelectedFacet: reduxState.facet.selectedFacet,
+    reduxLoading: reduxState.ui.isLoading,
 
-    reduxResetFacets: reduxState.facetReducer.resetFacets,
+    reduxResetFacets: reduxState.facet.resetFacets,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveVehicleData: (vehicleData) =>
-      dispatch(searchActions.saveVehicleData(vehicleData)),
-    savePageNumber: (pageNumber) =>
-      dispatch(searchActions.savePageNumber(pageNumber)),
-    saveFacetSelectors: (resetFacetArray) =>
-      dispatch(facetActions.saveFacetSelectors(resetFacetArray)),
-    saveSearchTerm: (searchTerm) =>
-      dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveOrderby: (orderBy) => dispatch(searchActions.saveOrderby(orderBy)),
-    saveDialogOpen: (dialogOpen) =>
-      dispatch(componentActions.saveDialogOpen(dialogOpen)),
-    saveSelectedFacet: (facet) =>
-      dispatch(componentActions.saveSelectedFacet(facet)),
-    saveFacetSelectedKeys: (facetSelectedKeys) =>
-      dispatch(facetActions.saveFacetSelectedKeys(facetSelectedKeys)),
-    saveResetFacets: (resetFacets) =>
-      dispatch(facetActions.saveResetFacets(resetFacets)),
+    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
+    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
+    saveFacetSelectors: resetFacetArray =>
+      dispatch(setFacetSelectors(resetFacetArray)),
+    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
+    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
+    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
+    saveSelectedFacet: facet => dispatch(setSelectedFacet(facet)),
+    saveFacetSelectedKeys: facetSelectedKeys =>
+      dispatch(setFacetSelectedKeys(facetSelectedKeys)),
+    saveResetFacets: resetFacets => dispatch(setResetFacets(resetFacets)),
   };
 };
 

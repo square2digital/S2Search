@@ -1,172 +1,256 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import FacetSelector from "../filtersDialog/FacetSelector";
-import Grid from "@mui/material/Grid";
-import { makeStyles } from "@mui/styles";
-import facetActions from "../../../redux/actions/facetActions";
-import componentActions from "../../../redux/actions/componentActions";
-import searchActions from "../../../redux/actions/searchActions";
-import { StaticFacets } from "../../../common/Constants";
+import React, { useState, useEffect, useCallback } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import FacetSelector from '../filtersDialog/FacetSelector';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import {
+  setVehicleData,
+  setPageNumber,
+  setSearchTerm,
+  setOrderBy,
+} from '../../../store/slices/searchSlice';
+import {
+  setFacetSelectors,
+  setSelectedFacet,
+} from '../../../store/slices/facetSlice';
+import { setDialogOpen } from '../../../store/slices/uiSlice';
+import { StaticFacets } from '../../../common/Constants';
 import {
   getDefaultFacetsWithSelections,
   isSelectFacetMenuAlreadySelected,
-} from "../../../common/functions/FacetFunctions";
+} from '../../../common/functions/FacetFunctions';
 
-const useStyles = makeStyles((theme) => ({
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(1),
-  },
-}));
-
-const FacetSelectionList = (props) => {
-  const classes = useStyles();
+const FacetSelectionList = props => {
   const [facetState, setfacetState] = useState({});
 
-  useEffect(() => {
-    generateFacetSelectors(props.reduxSelectedFacet);
-  }, [props.reduxFacetData]);
+  const handleChecked = useCallback(
+    theFacet => {
+      let theFacetUpdated = theFacet;
+      const updatedFacetItems = [];
 
-  const generateFacetSelectors = (facetKeyName) => {
-    let theFacet = {};
-    let currentFacet = {};
-    let facetData = [];
-    let selectedFacetData = [];
+      theFacet.facetItems.map(facetItem => {
+        if (
+          props.reduxFacetSelectors.some(
+            f => f.facetDisplayText === facetItem.facetDisplayText
+          )
+        ) {
+          updatedFacetItems.push({ ...facetItem, selected: true });
+        } else {
+          updatedFacetItems.push({ ...facetItem, selected: false });
+        }
+      });
 
-    // ****************
-    // facets To Load - default or from Search Results?
-    // ****************
-    // on the first load or if reduxFacetSelectors is empty we need to load the defaultFacets.
-    // when a facet is selected, from that point the facets returned from search will be displayed
+      if (updatedFacetItems.length > 0) {
+        theFacetUpdated = { ...theFacetUpdated, facetItems: updatedFacetItems };
+      }
 
-    let facetsToLoad = [];
-    if (props.reduxSearchTerm) {
-      facetsToLoad = props.reduxFacetData;
-    } else if (
-      props.reduxFacetSelectors.length === 0 &&
-      StaticFacets.includes(facetKeyName)
-    ) {
-      facetsToLoad = props.reduxDefaultFacetData;
-    } else {
-      if (
-        isSelectFacetMenuAlreadySelected(
-          props.reduxFacetSelectors,
-          facetKeyName
-        )
-      ) {
-        facetsToLoad = getDefaultFacetsWithSelections(
-          facetKeyName,
-          props.reduxDefaultFacetData,
-          props.reduxFacetSelectors
-        );
-      } else {
+      return theFacetUpdated;
+    },
+    [props.reduxFacetSelectors]
+  );
+
+  const generateFacetSelectors = useCallback(
+    facetKeyName => {
+      let theFacet = {};
+      let currentFacet = {};
+      let facetData = [];
+      let selectedFacetData = [];
+
+      // ****************
+      // facets To Load - default or from Search Results?
+      // ****************
+      // on the first load or if reduxFacetSelectors is empty we need to load the defaultFacets.
+      // when a facet is selected, from that point the facets returned from search will be displayed
+
+      let facetsToLoad = [];
+      if (props.reduxSearchTerm) {
         facetsToLoad = props.reduxFacetData;
-      }
-    }
-
-    facetData = facetsToLoad.filter((x) => x.facetKey === facetKeyName);
-
-    currentFacet = facetData[0];
-
-    theFacet = { ...currentFacet, enabled: false };
-
-    // check if the facet is enabled
-    if (props.reduxFacetData.length > 0) {
-      if (selectedFacetData.length > 0) {
-        theFacet = { ...currentFacet, enabled: selectedFacetData[0].enabled };
-      }
-    } else {
-      theFacet = { ...currentFacet, enabled: false };
-    }
-
-    if (props.reduxFacetSelectors.length > 0) {
-      let theFacetUpdated = handleChecked(theFacet);
-      setfacetState(theFacetUpdated);
-    } else {
-      setfacetState(theFacet);
-    }
-  };
-
-  const handleChecked = (theFacet) => {
-    let theFacetUpdated = theFacet;
-    const updatedFacetItems = [];
-
-    theFacet.facetItems.map((facetItem) => {
-      if (
-        props.reduxFacetSelectors.some(
-          (f) => f.facetDisplayText === facetItem.facetDisplayText
-        )
+      } else if (
+        props.reduxFacetSelectors.length === 0 &&
+        StaticFacets.includes(facetKeyName)
       ) {
-        updatedFacetItems.push({ ...facetItem, selected: true });
+        facetsToLoad = props.reduxDefaultFacetData;
       } else {
-        updatedFacetItems.push({ ...facetItem, selected: false });
+        if (
+          isSelectFacetMenuAlreadySelected(
+            props.reduxFacetSelectors,
+            facetKeyName
+          )
+        ) {
+          facetsToLoad = getDefaultFacetsWithSelections(
+            facetKeyName,
+            props.reduxDefaultFacetData,
+            props.reduxFacetSelectors
+          );
+        } else {
+          facetsToLoad = props.reduxFacetData;
+        }
       }
-    });
 
-    if (updatedFacetItems.length > 0) {
-      theFacetUpdated = { ...theFacetUpdated, facetItems: updatedFacetItems };
+      facetData = facetsToLoad.filter(x => x.facetKey === facetKeyName);
+
+      currentFacet = facetData[0];
+
+      theFacet = { ...currentFacet, enabled: false };
+
+      // check if the facet is enabled
+      if (props.reduxFacetData.length > 0) {
+        if (selectedFacetData.length > 0) {
+          theFacet = { ...currentFacet, enabled: selectedFacetData[0].enabled };
+        }
+      } else {
+        theFacet = { ...currentFacet, enabled: false };
+      }
+
+      if (props.reduxFacetSelectors.length > 0) {
+        let theFacetUpdated = handleChecked(theFacet);
+        setfacetState(theFacetUpdated);
+      } else {
+        setfacetState(theFacet);
+      }
+    },
+    [
+      props.reduxSearchTerm,
+      props.reduxFacetData,
+      props.reduxFacetSelectors,
+      props.reduxDefaultFacetData,
+      handleChecked,
+    ]
+  );
+
+  useEffect(() => {
+    if (props.reduxSelectedFacet) {
+      generateFacetSelectors(props.reduxSelectedFacet);
     }
-
-    return theFacetUpdated;
-  };
+  }, [props.reduxSelectedFacet, generateFacetSelectors]);
 
   return (
-    <main className={classes.content} style={{ paddingTop: "75px" }}>
-      <Grid container>
-        {facetState.facetItems !== undefined ? (
-          facetState.facetItems.map((facetSelectorItem, index) => {
-            return (
-              <FacetSelector
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        ml: '280px',
+        mt: '64px',
+        p: 4,
+        backgroundColor: '#f8fafc',
+        minHeight: 'calc(100vh - 64px)',
+      }}
+    >
+      {facetState.facetItems !== undefined ? (
+        <>
+          <Box sx={{ mb: 4 }}>
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 700,
+                color: 'text.primary',
+                mb: 1,
+              }}
+            >
+              {facetState.facetKeyDisplayName || 'Select Options'}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: 'text.secondary',
+                mb: 3,
+              }}
+            >
+              Choose from the options below to filter your results
+            </Typography>
+          </Box>
+
+          <Grid
+            container
+            spacing={3}
+            sx={{
+              maxWidth: '100%',
+            }}
+          >
+            {facetState.facetItems.map((facetSelectorItem, index) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
                 key={`${index}-${facetSelectorItem.facetDisplayText}`}
-                facet={facetSelectorItem}
-                selectedFacet={facetState.facetKey}
-                isChecked={facetSelectorItem.selected}
-              />
-            );
-          })
-        ) : (
-          <>Loading</>
-        )}
-      </Grid>
-    </main>
+              >
+                <FacetSelector
+                  facet={facetSelectorItem}
+                  selectedFacet={facetState.facetKey}
+                  isChecked={facetSelectorItem.selected}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      ) : (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '400px',
+            textAlign: 'center',
+          }}
+        >
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 600,
+              color: 'text.secondary',
+              mb: 2,
+            }}
+          >
+            Select a filter category
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
+            Choose a category from the left menu to view filter options
+          </Typography>
+        </Box>
+      )}
+    </Box>
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveVehicleData: (vehicleData) =>
-      dispatch(searchActions.saveVehicleData(vehicleData)),
-    savePageNumber: (pageNumber) =>
-      dispatch(searchActions.savePageNumber(pageNumber)),
-    saveFacetSelectors: (resetFacetArray) =>
-      dispatch(facetActions.saveFacetSelectors(resetFacetArray)),
-    saveSearchTerm: (searchTerm) =>
-      dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveOrderby: (orderBy) => dispatch(searchActions.saveOrderby(orderBy)),
-    saveDialogOpen: (dialogOpen) =>
-      dispatch(componentActions.saveDialogOpen(dialogOpen)),
-    saveSelectedFacet: (facetName) =>
-      dispatch(componentActions.saveSelectedFacet(facetName)),
+    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
+    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
+    saveFacetSelectors: resetFacetArray =>
+      dispatch(setFacetSelectors(resetFacetArray)),
+    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
+    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
+    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
+    saveSelectedFacet: facetName => dispatch(setSelectedFacet(facetName)),
   };
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxSearchCount: reduxState.searchReducer.searchCount,
-    reduxVehicleData: reduxState.searchReducer.vehicleData,
-    reduxOrderBy: reduxState.searchReducer.orderBy,
-    reduxPageNumber: reduxState.searchReducer.pageNumber,
-    reduxNetworkError: reduxState.searchReducer.networkError,
-    reduxPreviousRequest: reduxState.searchReducer.previousRequest,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxSearchCount: reduxState.search.searchCount,
+    reduxVehicleData: reduxState.search.vehicleData,
+    reduxOrderBy: reduxState.search.orderBy,
+    reduxPageNumber: reduxState.search.pageNumber,
+    reduxNetworkError: reduxState.search.networkError,
+    reduxPreviousRequest: reduxState.search.previousRequest,
 
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxDefaultFacetData: reduxState.facetReducer.defaultFacetData,
-    reduxFacetData: reduxState.facetReducer.facetData,
-    reduxDialogOpen: reduxState.componentReducer.dialogOpen,
-    reduxSelectedFacet: reduxState.facetReducer.selectedFacet,
-    reduxFacetSelectedKeys: reduxState.facetReducer.facetSelectedKeys,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxDefaultFacetData: reduxState.facet.defaultFacetData,
+    reduxFacetData: reduxState.facet.facetData,
+    reduxDialogOpen: reduxState.ui.isDialogOpen,
+    reduxSelectedFacet: reduxState.facet.selectedFacet,
+    reduxFacetSelectedKeys: reduxState.facet.facetSelectedKeys,
   };
 };
 

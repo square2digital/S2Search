@@ -1,54 +1,23 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { makeStyles } from "@mui/styles";
-import { connect } from "react-redux";
-import facetActions from "../../../redux/actions/facetActions";
-import SelectedFacetData from "../../objects/SelectedFacetData";
-import Checkbox from "@mui/material/Checkbox";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import Checkbox from '@mui/material/Checkbox';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import {
   FormatStringOrNumeric,
   FormatLongStrings,
-} from "../../../common/functions/SharedFunctions";
-import { FacetToParseAsNumeric } from "../../../common/Constants";
-import searchActions from "../../../redux/actions/searchActions";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+} from '../../../common/functions/SharedFunctions';
+import { FacetToParseAsNumeric, DefaultTheme } from '../../../common/Constants';
+import { useTheme } from '@mui/material/styles';
+import { setSearchTerm } from '../../../store/slices/searchSlice';
+import { setFacetSelectors } from '../../../store/slices/facetSlice';
 
-const facetWidth_xs = 180;
-const facetWidth_sm = 180;
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    [theme.breakpoints.up("xs")]: {
-      width: facetWidth_xs,
-    },
-    [theme.breakpoints.up("sm")]: {
-      width: facetWidth_sm,
-    },
-    margin: theme.spacing(0.5),
-    backgroundColor: "#ffffff",
-    cursor: "pointer",
-    "&:hover": {
-      backgroundColor: "#f2f2f2",
-      boxShadow: "2px 2px 10px #efefef",
-    },
-    boxShadow: "5px 5px 10px #efefef",
-  },
-  textContainer: {
-    width: "100%",
-    maxWidth: 500,
-  },
-  item: {
-    padding: 0,
-    lineHeight: 0,
-    marginTop: 0,
-  },
-}));
-
-const FacetSelector = (props) => {
-  const classes = useStyles();
+const FacetSelector = props => {
+  const theme = useTheme();
   const [checked, setChecked] = useState(props.isChecked);
 
   const checkboxFacetNameAsString = `${props.facet.facetDisplayText}`;
@@ -66,13 +35,13 @@ const FacetSelector = (props) => {
     buildFacetSelectors(checkedValue);
   };
 
-  const handleDelete = (facetToDelete) => {
+  const handleDelete = facetToDelete => {
     let facetSelectorArray = [...props.reduxFacetSelectors];
     let forDeletion = [facetToDelete.value];
 
     if (facetSelectorArray.length > 0) {
       facetSelectorArray = facetSelectorArray.filter(
-        (item) => !forDeletion.includes(item.facetDisplayText)
+        item => !forDeletion.includes(item.facetDisplayText)
       );
 
       props.saveFacetSelectors(facetSelectorArray);
@@ -81,15 +50,15 @@ const FacetSelector = (props) => {
     }
   };
 
-  const buildFacetSelectors = (isChecked) => {
-    let selectedFacetData = new SelectedFacetData(
-      props.selectedFacet,
-      props.facet.facetDisplayText,
-      "",
-      isChecked
-    );
+  const buildFacetSelectors = isChecked => {
+    let selectedFacetData = {
+      facetKey: props.selectedFacet,
+      facetDisplayText: props.facet.facetDisplayText,
+      luceneExpression: '',
+      checked: isChecked,
+    };
 
-    if (props.facet.type === "Range") {
+    if (props.facet.type === 'Range') {
       selectedFacetData.luceneExpression = `${
         props.selectedFacet
       } ge ${FormatStringOrNumeric(props.facet.from)} and ${
@@ -108,7 +77,7 @@ const FacetSelector = (props) => {
     if (!isChecked) {
       let copyArr = [...props.reduxFacetSelectors];
       copyArr = copyArr.filter(
-        (x) => x.luceneExpression !== selectedFacetData.luceneExpression
+        x => x.luceneExpression !== selectedFacetData.luceneExpression
       );
       props.saveFacetSelectors([...copyArr]);
     } else {
@@ -122,12 +91,12 @@ const FacetSelector = (props) => {
 
       if (
         props.reduxFacetSelectors.some(
-          (x) => x.luceneExpression === selectedFacetData.luceneExpression
+          x => x.luceneExpression === selectedFacetData.luceneExpression
         )
       ) {
         // facet is in redux - update it
         let index = props.reduxFacetSelectors.findIndex(
-          (x) => x.luceneExpression === selectedFacetData.luceneExpression
+          x => x.luceneExpression === selectedFacetData.luceneExpression
         );
 
         let facetSelectorArray = [...props.reduxFacetSelectors];
@@ -143,67 +112,128 @@ const FacetSelector = (props) => {
     }
   };
 
-  const renderVehicleCount = (count) => {
+  const renderVehicleCount = count => {
     if (count === 1) {
-      return `${count} Vehicle`;
+      return '1 Vehicle';
     }
-
-    return `${count} Vehicles`;
+    return `${count.toLocaleString()} Vehicles`;
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: props.reduxPrimaryColour,
-      },
-      secondary: {
-        main: props.reduxSecondaryColour,
-      },
-    },
-    typography: {
-      fontFamily: `"Roboto", "Helvetica", "Arial", sans-serif`,
-      fontSize: 11,
-    },
-  });
-
   return (
-    <>
-      <List className={classes.root} onClick={FacetOnClick}>
-        <ListItem classes={{ root: classes.item }}>
-          <ThemeProvider theme={theme}>
-            <Checkbox
-              onChange={FacetOnClick}
-              name={`${checkboxFacetNameAsString}`}
-              checked={checked}
-            />
+    <Card
+      onClick={FacetOnClick}
+      sx={{
+        cursor: 'pointer',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        border: '1px solid',
+        borderColor: checked ? 'primary.main' : 'grey.200',
+        backgroundColor: checked ? 'primary.50' : 'white',
+        boxShadow: checked
+          ? '0 4px 12px rgba(0, 0, 0, 0.15)'
+          : '0 2px 8px rgba(0, 0, 0, 0.1)',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: checked
+            ? '0 8px 25px rgba(0, 0, 0, 0.15)'
+            : '0 4px 20px rgba(0, 0, 0, 0.12)',
+          borderColor: checked ? 'primary.dark' : 'grey.300',
+        },
+        position: 'relative',
+        overflow: 'visible',
+      }}
+    >
+      <CardContent
+        sx={{
+          p: 3,
+          pb: '16px !important',
+          position: 'relative',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 2,
+          }}
+        >
+          <Checkbox
+            checked={checked}
+            onChange={FacetOnClick}
+            name={checkboxFacetNameAsString}
+            sx={{
+              p: 0,
+              '&.Mui-checked': {
+                color: 'primary.main',
+              },
+            }}
+          />
 
-            <ListItemText
-              primary={formattedFacetName}
-              secondary={<>{renderVehicleCount(props.facet.count)}</>}
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: checked ? 600 : 500,
+                color: checked ? 'primary.main' : 'text.primary',
+                mb: 1,
+                lineHeight: 1.4,
+                wordBreak: 'break-word',
+              }}
+            >
+              {props.facet.facetDisplayText}
+            </Typography>
+
+            <Chip
+              label={renderVehicleCount(props.facet.count)}
+              size="small"
+              variant={checked ? 'filled' : 'outlined'}
+              sx={{
+                fontSize: '0.75rem',
+                height: 24,
+                backgroundColor: checked ? 'primary.main' : 'transparent',
+                color: checked ? 'white' : 'text.secondary',
+                borderColor: checked ? 'primary.main' : 'grey.300',
+                '& .MuiChip-label': {
+                  px: 1.5,
+                  fontWeight: 500,
+                },
+              }}
             />
-          </ThemeProvider>
-        </ListItem>
-      </List>
-    </>
+          </Box>
+        </Box>
+
+        {checked && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: 'primary.main',
+            }}
+          />
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    reduxDialogOpen: reduxState.componentReducer.dialogOpen,
-    reduxResultsCount: reduxState.searchReducer.searchCount,
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxPrimaryColour: reduxState.themeReducer.primaryColour,
-    reduxSecondaryColour: reduxState.themeReducer.secondaryColour,
+    reduxDialogOpen: reduxState.ui.isDialogOpen,
+    reduxResultsCount: reduxState.search.searchCount,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxPrimaryColour: reduxState.theme.primaryColour,
+    reduxSecondaryColour: reduxState.theme.secondaryColour,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveSearchTerm: (searchTerm) =>
-      dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveFacetSelectors: (facetSelectors) =>
-      dispatch(facetActions.saveFacetSelectors(facetSelectors)),
+    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
+    saveFacetSelectors: facetSelectors =>
+      dispatch(setFacetSelectors(facetSelectors)),
   };
 };
 

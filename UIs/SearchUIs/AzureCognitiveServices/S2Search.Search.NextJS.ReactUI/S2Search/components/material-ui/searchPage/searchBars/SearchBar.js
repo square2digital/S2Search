@@ -1,47 +1,47 @@
-﻿import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import searchActions from "../../../../redux/actions/searchActions";
-import facetActions from "../../../../redux/actions/facetActions";
-import { DefaultLoadSpeed } from "../../../../common/Constants";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import InputBase from "@mui/material/InputBase";
-import Divider from "@mui/material/Divider";
-import { makeStyles } from "@mui/styles";
-import RotateLeftIcon from "@mui/icons-material/RotateLeft";
-import { MobileMaxWidth } from "../../../../common/Constants";
+﻿import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import {
+  setSearchTerm,
+  setVehicleData,
+  setPageNumber,
+} from '../../../../store/slices/searchSlice';
+import {
+  resetFacets,
+  setFacetSelectors,
+} from '../../../../store/slices/facetSlice';
+import { DefaultLoadSpeed } from '../../../../common/Constants';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import Divider from '@mui/material/Divider';
+import RotateLeftIcon from '@mui/icons-material/RotateLeft';
+import { MobileMaxWidth } from '../../../../common/Constants';
 import {
   checkForEnter,
   generatePlaceholder,
   resetFilters,
   disableResetFiltersButton,
   updateSearchTerm,
-} from "./searchBarSharedFunctions";
+} from './searchBarSharedFunctions';
+import { useWindowSize } from '../../../../hooks/useWindowSize';
+import useDynamicPlaceholder from './DynamicPlaceholder';
 
-const useStyles = makeStyles(() => ({
+// Inline styles object (converted from makeStyles)
+const styles = {
   divider: {
     height: 28,
     margin: 4,
   },
-}));
+};
 
-export const SearchBar = (props) => {
-  const [windowWidth, setwindowWidth] = useState(window.innerWidth);
+export const SearchBar = props => {
+  const { width: windowWidth } = useWindowSize();
+  const dynamicPlaceholder = useDynamicPlaceholder(
+    props.reduxConfigPlaceholders
+  );
 
-  const classes = useStyles();
-
-  useEffect(() => {
-    const updateWindowDimensions = () => {
-      setwindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener("resize", updateWindowDimensions);
-
-    return () => window.removeEventListener("resize", updateWindowDimensions);
-  }, []);
-
-  const updateSearch = (event) => {
+  const updateSearch = event => {
     updateSearchTerm(event.target.value, props);
   };
 
@@ -58,28 +58,35 @@ export const SearchBar = (props) => {
       <Paper
         component="form"
         style={{
-          padding: "2px 4px",
-          display: "flex",
+          padding: '2px 4px',
+          display: 'flex',
           height: 45,
-        }}>
+        }}
+      >
         <InputBase
           style={{
             marginLeft: 1,
             flex: 1,
           }}
-          placeholder={generatePlaceholder(props, windowWidth, MobileMaxWidth)}
+          placeholder={generatePlaceholder(
+            props,
+            windowWidth,
+            MobileMaxWidth,
+            dynamicPlaceholder
+          )}
           variant="outlined"
           onKeyPress={checkForEnter}
           onChange={updateSearch}
           value={props.reduxSearchTerm}
         />
-        <Divider className={classes.divider} orientation="vertical" />
+        <Divider style={styles.divider} orientation="vertical" />
         <IconButton
           style={{ paddingLeft: 2, paddingRight: 2 }}
           color="primary"
           onClick={reset}
           disabled={disableResetButton()}
-          aria-label="directions">
+          aria-label="directions"
+        >
           <RotateLeftIcon />
         </IconButton>
       </Paper>
@@ -87,23 +94,21 @@ export const SearchBar = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxFacetSelectors: reduxState.facetReducer.facetSelectors,
-    reduxConfigPlaceholders: reduxState.configReducer.placeholderText,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxConfigPlaceholders: reduxState.config.placeholderArray,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveSearchTerm: (searchTerm) =>
-      dispatch(searchActions.saveSearchTerm(searchTerm)),
-    saveResetFacets: (resetFacets) =>
-      dispatch(facetActions.saveResetFacets(resetFacets)),
-    saveVehicleData: () => dispatch(searchActions.saveVehicleData([])),
-    savePageNumber: () => dispatch(searchActions.savePageNumber(0)),
-    saveFacetSelectors: () => dispatch(facetActions.saveFacetSelectors([])),
+    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
+    saveResetFacets: resetFacetsFlag => dispatch(resetFacets()),
+    saveVehicleData: () => dispatch(setVehicleData([])),
+    savePageNumber: () => dispatch(setPageNumber(0)),
+    saveFacetSelectors: () => dispatch(setFacetSelectors([])),
   };
 };
 

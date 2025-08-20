@@ -1,10 +1,10 @@
 ﻿// Helper function to build query string from request object
-const buildQueryString = (request) => {
+const buildQueryString = request => {
   const params = new URLSearchParams();
 
   if (request.query) {
     // If request has a query property, use those values
-    Object.keys(request.query).forEach((key) => {
+    Object.keys(request.query).forEach(key => {
       if (request.query[key] !== undefined) {
         params.append(key, request.query[key]);
       }
@@ -12,19 +12,19 @@ const buildQueryString = (request) => {
   } else {
     // Otherwise use direct properties
     if (request.searchTerm !== undefined)
-      params.append("searchTerm", request.searchTerm);
+      params.append('searchTerm', request.searchTerm);
     if (request.filters !== undefined)
-      params.append("filters", request.filters);
+      params.append('filters', request.filters);
     if (request.orderBy !== undefined)
-      params.append("orderBy", request.orderBy);
+      params.append('orderBy', request.orderBy);
     if (request.pageNumber !== undefined)
-      params.append("pageNumber", request.pageNumber);
+      params.append('pageNumber', request.pageNumber);
     if (request.pageSize !== undefined)
-      params.append("pageSize", request.pageSize);
+      params.append('pageSize', request.pageSize);
     if (request.numberOfExistingResults !== undefined)
-      params.append("numberOfExistingResults", request.numberOfExistingResults);
+      params.append('numberOfExistingResults', request.numberOfExistingResults);
     if (request.callingHost !== undefined)
-      params.append("callingHost", request.callingHost);
+      params.append('callingHost', request.callingHost);
   }
 
   return params.toString();
@@ -34,10 +34,10 @@ const buildQueryString = (request) => {
 const fetchAPI = async (url, options = {}) => {
   try {
     const response = await fetch(url, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       ...options,
     });
@@ -90,15 +90,15 @@ export const AutoSuggestAPI = async (
   return await fetchAPI(url);
 };
 
-export const DocumentCountAPI = async (callingHost) => {
+export const DocumentCountAPI = async callingHost => {
   const url = `/api/documentCount?callingHost=${encodeURIComponent(
     callingHost
   )}`;
   return await fetchAPI(url);
 };
 
-const setCancellationToken = (cancellationToken) => {
-  if (process.env.NEXT_PUBLIC_ENABLE_CANCELATION_TOKEN === "false") {
+const setCancellationToken = cancellationToken => {
+  if (process.env.NEXT_PUBLIC_ENABLE_CANCELATION_TOKEN === 'false') {
     return false;
   }
 

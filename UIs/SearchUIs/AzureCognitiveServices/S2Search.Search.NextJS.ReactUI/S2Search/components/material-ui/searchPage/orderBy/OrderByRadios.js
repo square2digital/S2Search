@@ -1,24 +1,25 @@
-import React from "react";
-import { makeStyles } from "@mui/styles";
-import PropTypes from "prop-types";
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import searchActions from "../../../../redux/actions/searchActions";
-import { GetOrderByData } from "../../../../common/Constants";
-import { connect } from "react-redux";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
+import React from 'react';
+import { useTheme } from '@mui/material/styles';
+import PropTypes from 'prop-types';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { setOrderBy } from '../../../../store/slices/searchSlice';
+import { GetOrderByData } from '../../../../common/Constants';
+import { connect } from 'react-redux';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 
-const useStyles = makeStyles((theme) => ({
+// Inline styles object (converted from makeStyles)
+const styles = {
   formControl: {
-    margin: theme.spacing(0),
+    margin: 0, // theme.spacing(0)
     minWidth: 120,
   },
-}));
+};
 
-const OrderByRadios = (props) => {
-  const classes = useStyles();
-  const [orderBy, setOrderBy] = React.useState("");
+const OrderByRadios = props => {
+  const theme = useTheme();
+  const [orderBy, setOrderBy] = React.useState('');
 
   const GenerateRadios = () => {
     const dropdownArray = [];
@@ -41,20 +42,21 @@ const OrderByRadios = (props) => {
     return dropdownArray;
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     setOrderBy(event.target.value);
     props.saveOrderby(event.target.value);
   };
 
   return (
     <div>
-      <FormControl variant="outlined" className={classes.formControl}>
+      <FormControl variant="outlined" style={styles.formControl}>
         <RadioGroup
           color="secondary"
           label="Order By"
           name="Order By"
           value={orderBy}
-          onChange={handleChange}>
+          onChange={handleChange}
+        >
           {GenerateRadios()}
         </RadioGroup>
       </FormControl>
@@ -62,16 +64,16 @@ const OrderByRadios = (props) => {
   );
 };
 
-const mapStateToProps = (reduxState) => {
+const mapStateToProps = reduxState => {
   return {
-    reduxSearchTerm: reduxState.searchReducer.searchTerm,
-    reduxOrderBy: reduxState.searchReducer.orderBy,
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxOrderBy: reduxState.search.orderBy,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    saveOrderby: (orderBy) => dispatch(searchActions.saveOrderby(orderBy)),
+    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
   };
 };
 

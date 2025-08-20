@@ -1,14 +1,14 @@
 ﻿const ThemeAPI = async (req, res) => {
   // Check if we're running on the server side (SSR) or client side
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     // Server-side: Call the API handler directly
-    const { DefaultTheme } = require("../../../common/Constants");
-    const { invokeAPI } = require("../shared/invokeAPI");
+    const { DefaultTheme } = require('../../../common/Constants');
+    const { invokeAPI } = require('../shared/invokeAPI');
 
     try {
       // Create a mock request object if not provided
       const mockReq = req || {
-        headers: { host: "localhost:2997" },
+        headers: { host: 'localhost:2997' },
         query: {},
       };
       const mockRes = res || {};
@@ -16,8 +16,8 @@
       const axiosResponse = await invokeAPI(
         mockReq,
         mockRes,
-        "theme",
-        "theme",
+        'theme',
+        'theme',
         true
       );
 
@@ -35,7 +35,7 @@
       }
     } catch (error) {
       console.log(`error on ThemeAPI (server-side)`, error);
-      const { DefaultTheme } = require("../../../common/Constants");
+      const { DefaultTheme } = require('../../../common/Constants');
       return {
         status: 200,
         data: DefaultTheme,
@@ -43,14 +43,14 @@
     }
   } else {
     // Client-side: Use fetch to call the API route
-    const URL = "/api/theme";
+    const URL = '/api/theme';
 
     try {
       const response = await fetch(URL, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
       });
 

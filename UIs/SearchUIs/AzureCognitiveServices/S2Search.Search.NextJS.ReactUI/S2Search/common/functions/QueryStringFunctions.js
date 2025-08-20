@@ -1,12 +1,12 @@
 export const getQueryStringSearchTerm = () => {
-  return getString("searchterm");
+  return getString('searchterm');
 };
 
 export const getQueryStringOrderBy = () => {
-  return getString("orderby");
+  return getString('orderby');
 };
 
-const getString = (propertyName) => {
+const getString = propertyName => {
   const params = getQueryStringParams();
 
   const value = params[propertyName];
@@ -15,14 +15,14 @@ const getString = (propertyName) => {
     return params[propertyName];
   }
 
-  return "";
+  return '';
 };
 
 export const getQueryStringFacetsSelectors = () => {
   const params = getQueryStringParams();
 
-  if (params["facetselectors"]) {
-    const jsonString = params["facetselectors"];
+  if (params['facetselectors']) {
+    const jsonString = params['facetselectors'];
     const object = JSON.parse(jsonString);
 
     return object;
@@ -32,8 +32,8 @@ export const getQueryStringFacetsSelectors = () => {
 };
 
 export const removeFullQueryString = () => {
-  const newurl = window.location.href.split("?")[0];
-  window.history.pushState({ path: newurl }, "", newurl);
+  const newurl = window.location.href.split('?')[0];
+  window.history.pushState({ path: newurl }, '', newurl);
 };
 
 export const insertQueryStringParam = (key, value) => {
@@ -47,26 +47,26 @@ export const insertQueryStringParam = (key, value) => {
     currentUrlWithOutHash = removeURLParameter(currentUrlWithOutHash, key);
 
     let queryStart;
-    if (currentUrlWithOutHash.indexOf("?") !== -1) {
-      queryStart = "&";
+    if (currentUrlWithOutHash.indexOf('?') !== -1) {
+      queryStart = '&';
     } else {
-      queryStart = "?";
+      queryStart = '?';
     }
 
-    let newurl = "";
+    let newurl = '';
 
-    if (value !== "") {
-      newurl = currentUrlWithOutHash + queryStart + key + "=" + value + hash;
-      window.history.pushState({ path: newurl }, "", newurl);
+    if (value !== '') {
+      newurl = currentUrlWithOutHash + queryStart + key + '=' + value + hash;
+      window.history.pushState({ path: newurl }, '', newurl);
     } else {
       newurl = currentUrlWithOutHash;
-      window.history.pushState({ path: newurl }, "", newurl);
+      window.history.pushState({ path: newurl }, '', newurl);
     }
   }
 };
 
 const getQueryStringParams = () => {
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     // Client-side-only code
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
@@ -74,16 +74,16 @@ const getQueryStringParams = () => {
     return params;
   }
 
-  return "";
+  return '';
 };
 
 const removeURLParameter = (url, parameter) => {
-  let urlParts = url.split("?");
+  let urlParts = url.split('?');
 
   if (urlParts.length >= 2) {
     let urlBase = urlParts.shift();
-    let queryString = urlParts.join("?");
-    let prefix = encodeURIComponent(parameter) + "=";
+    let queryString = urlParts.join('?');
+    let prefix = encodeURIComponent(parameter) + '=';
     let parts = queryString.split(/[&;]/g);
 
     for (let i = parts.length; i-- > 0; ) {
@@ -92,7 +92,7 @@ const removeURLParameter = (url, parameter) => {
       }
     }
 
-    url = urlBase + "?" + parts.join("&");
+    url = urlBase + '?' + parts.join('&');
   }
 
   return url;
