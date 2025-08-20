@@ -49,7 +49,7 @@ const VehicleCardList: React.FC = () => {
   }
 
   return (
-    <Box sx={{ width: '100%', px: { xs: 1, md: 2 } }}>
+    <Box sx={{ width: '100%', px: { xs: 1, md: 2 }, mt: { xs: 2, sm: 3, md: 4 } }}>
       <VehicleCard
         vehicleData={vehicleData}
         missingImageURL={missingImageURL || '/images/no-image-available.png'}
