@@ -49,12 +49,12 @@ const VehicleCardList: React.FC = () => {
   }
 
   return (
-    <Grid container spacing={2} sx={{ py: 2 }}>
+    <Box sx={{ width: '100%', px: { xs: 1, md: 2 } }}>
       <VehicleCard
         vehicleData={vehicleData}
         missingImageURL={missingImageURL || '/images/no-image-available.png'}
       />
-    </Grid>
+    </Box>
   );
 };
 

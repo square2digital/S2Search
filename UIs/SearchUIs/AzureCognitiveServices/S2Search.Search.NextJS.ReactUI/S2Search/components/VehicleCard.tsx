@@ -105,7 +105,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
   missingImageURL = '/images/no-image-available.png',
 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Changed from 'md' to 'sm' for better mobile experience
 
   const renderPriceDisplay = (vehicle: VehicleData) => {
     const priceStr = formatPrice(vehicle.price);
@@ -120,12 +120,19 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
             fontWeight: 'bold',
             color: theme.palette.primary.main,
             mb: 0.5,
+            fontSize: { xs: '1.1rem', sm: '1.25rem' }
           }}
         >
           £{priceStr}
         </Typography>
         {vehicle.monthlyPrice > 0 && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography 
+            variant="body2" 
+            color="text.secondary"
+            sx={{
+              fontSize: { xs: '0.75rem', sm: '0.875rem' }
+            }}
+          >
             £{monthlyStr}/month
           </Typography>
         )}
@@ -134,7 +141,18 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
   };
 
   const renderVehicleSpecs = (vehicle: VehicleData) => (
-    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+    <Stack 
+      direction="row" 
+      spacing={1} 
+      flexWrap="wrap" 
+      useFlexGap
+      sx={{ 
+        '& > *': { 
+          mb: { xs: 0.5, sm: 1 },
+          fontSize: { xs: '0.75rem', sm: '0.875rem' }
+        } 
+      }}
+    >
       <Chip
         icon={getFuelIcon(vehicle.fuelType)}
         label={vehicle.fuelType}
@@ -173,7 +191,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
     const title = `${vehicle.make} ${vehicle.model}`;
 
     return (
-      <Box key={vehicle.vehicleID} sx={{ px: 1, mb: 2 }}>
+      <Box key={vehicle.vehicleID} sx={{ width: '100%', mb: 2 }}>
         <Card
           elevation={0}
           sx={{
@@ -196,7 +214,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
               alt={title}
               style={{
                 width: '100%',
-                height: '200px',
+                height: '220px',
                 objectFit: 'cover',
               }}
             />
@@ -230,17 +248,27 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
             </Box>
           </Box>
 
-          <CardContent sx={{ p: 2 }}>
+          <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
             <Typography
               variant="h6"
               component="h3"
               gutterBottom
-              sx={{ fontWeight: 600 }}
+              sx={{ 
+                fontWeight: 600,
+                fontSize: { xs: '1rem', sm: '1.25rem' }
+              }}
             >
               {title} ✨
             </Typography>
 
-            <Typography variant="body2" color="text.secondary" gutterBottom>
+            <Typography 
+              variant="body2" 
+              color="text.secondary" 
+              gutterBottom
+              sx={{
+                fontSize: { xs: '0.75rem', sm: '0.875rem' }
+              }}
+            >
               {vehicle.variant}
             </Typography>
 
@@ -250,9 +278,20 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
           </CardContent>
 
           <CardActions
-            sx={{ px: 2, pb: 2, pt: 0, justifyContent: 'space-between' }}
+            sx={{ 
+              px: { xs: 1.5, sm: 2 }, 
+              pb: { xs: 1.5, sm: 2 }, 
+              pt: 0, 
+              justifyContent: 'space-between' 
+            }}
           >
-            <Typography variant="body2" color="text.secondary">
+            <Typography 
+              variant="body2" 
+              color="text.secondary"
+              sx={{
+                fontSize: { xs: '0.75rem', sm: '0.875rem' }
+              }}
+            >
               {vehicle.location}
             </Typography>
             <IconButton size="small" color="primary">
@@ -268,7 +307,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
     const title = `${vehicle.make} ${vehicle.model}`;
 
     return (
-      <Grid item xs={12} sm={6} md={4} lg={3} key={vehicle.vehicleID}>
+      <Grid item xs={12} sm={6} md={4} xl={3} key={vehicle.vehicleID}>
         <Card
           elevation={0}
           sx={{
@@ -408,14 +447,14 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
 
   if (isMobile) {
     return (
-      <Box sx={{ pb: 2 }}>
+      <Box sx={{ width: '100%' }}>
         {vehicleData.map((vehicle, index) => renderMobileCard(vehicle, index))}
       </Box>
     );
   }
 
   return (
-    <Grid container spacing={3} sx={{ p: 1 }}>
+    <Grid container spacing={3} sx={{ width: '100%', m: 0 }}>
       {vehicleData.map((vehicle, index) => renderDesktopCard(vehicle, index))}
     </Grid>
   );
