@@ -26,7 +26,12 @@ export const checkForEnter = event => {
   }
 };
 
-export const generatePlaceholder = (props, windowWidth, MobileMaxWidth, dynamicPlaceholder) => {
+export const generatePlaceholder = (
+  props,
+  windowWidth,
+  MobileMaxWidth,
+  dynamicPlaceholder
+) => {
   if (windowWidth > MobileMaxWidth && !props.searchTerm) {
     return dynamicPlaceholder || 'Search...';
   }

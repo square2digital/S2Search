@@ -64,7 +64,7 @@ import {
   MillisecondsDifference,
 } from '../common/Constants';
 
-import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar';
+import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar.tsx';
 import {
   insertQueryStringParam,
   removeFullQueryString,

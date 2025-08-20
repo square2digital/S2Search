@@ -35,7 +35,9 @@ export const AutoSuggest = props => {
   const [options, setOptions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const { width: windowWidth } = useWindowSize();
-  const dynamicPlaceholder = useDynamicPlaceholder(props.reduxConfigPlaceholders);
+  const dynamicPlaceholder = useDynamicPlaceholder(
+    props.reduxConfigPlaceholders
+  );
 
   useEffect(() => {
     if (props.reduxSearchTerm) {

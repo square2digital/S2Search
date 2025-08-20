@@ -37,7 +37,9 @@ const styles = {
 
 export const SearchBar = props => {
   const { width: windowWidth } = useWindowSize();
-  const dynamicPlaceholder = useDynamicPlaceholder(props.reduxConfigPlaceholders);
+  const dynamicPlaceholder = useDynamicPlaceholder(
+    props.reduxConfigPlaceholders
+  );
 
   const updateSearch = event => {
     updateSearchTerm(event.target.value, props);
@@ -66,7 +68,12 @@ export const SearchBar = props => {
             marginLeft: 1,
             flex: 1,
           }}
-          placeholder={generatePlaceholder(props, windowWidth, MobileMaxWidth, dynamicPlaceholder)}
+          placeholder={generatePlaceholder(
+            props,
+            windowWidth,
+            MobileMaxWidth,
+            dynamicPlaceholder
+          )}
           variant="outlined"
           onKeyPress={checkForEnter}
           onChange={updateSearch}
