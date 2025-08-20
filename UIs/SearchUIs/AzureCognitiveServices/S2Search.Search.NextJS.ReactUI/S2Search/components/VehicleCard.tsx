@@ -214,7 +214,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
               alt={title}
               style={{
                 width: '100%',
-                height: '220px',
+                height: '280px',
                 objectFit: 'cover',
               }}
             />
@@ -333,7 +333,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
               alt={title}
               style={{
                 width: '100%',
-                height: '220px',
+                height: '260px',
                 objectFit: 'cover',
               }}
             />
