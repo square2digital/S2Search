@@ -307,7 +307,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
     const title = `${vehicle.make} ${vehicle.model}`;
 
     return (
-      <Grid item xs={12} sm={6} md={4} xl={3} key={vehicle.vehicleID}>
+      <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={vehicle.vehicleID}>
         <Card
           elevation={0}
           sx={{
@@ -333,7 +333,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
               alt={title}
               style={{
                 width: '100%',
-                height: '260px',
+                height: '240px',
                 objectFit: 'cover',
               }}
             />
@@ -367,7 +367,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
             </Box>
           </Box>
 
-          <CardContent sx={{ flexGrow: 1, p: 3 }}>
+          <CardContent sx={{ flexGrow: 1, p: { xs: 3, lg: 2, xl: 1.5 } }}>
             <Typography
               variant="h6"
               component="h3"
@@ -375,6 +375,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
               sx={{
                 fontWeight: 600,
                 lineHeight: 1.3,
+                fontSize: { xs: '1.25rem', lg: '1.1rem', xl: '1rem' }
               }}
             >
               {title} ✨🚗
@@ -404,7 +405,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
 
           <CardActions
             sx={{
-              p: 3,
+              p: { xs: 3, lg: 2, xl: 1.5 },
               pt: 0,
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -454,7 +455,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
   }
 
   return (
-    <Grid container spacing={3} sx={{ width: '100%', m: 0 }}>
+    <Grid container spacing={{ xs: 2, sm: 2, md: 2, lg: 1.5 }} sx={{ width: '100%', m: 0 }}>
       {vehicleData.map((vehicle, index) => renderDesktopCard(vehicle, index))}
     </Grid>
   );
