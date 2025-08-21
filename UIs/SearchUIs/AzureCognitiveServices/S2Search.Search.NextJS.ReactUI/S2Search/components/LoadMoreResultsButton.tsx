@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, useTheme } from '@mui/material';
-import { CloudDownload, CloudUpload } from '@mui/icons-material';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { incrementPageNumber } from '../store/slices/searchSlice';
 import {
@@ -51,9 +52,9 @@ const LoadMoreResultsButton: React.FC = () => {
       sx={getButtonStyles(windowWidth)}
       startIcon={
         isLoading ? (
-          <CloudUpload color="disabled" />
+          <CloudUploadIcon color="disabled" />
         ) : (
-          <CloudDownload sx={{ color: primaryColour }} />
+          <CloudDownloadIcon sx={{ color: primaryColour }} />
         )
       }
     >
