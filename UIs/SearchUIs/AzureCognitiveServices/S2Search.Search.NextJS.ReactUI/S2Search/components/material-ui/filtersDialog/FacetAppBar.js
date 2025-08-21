@@ -85,18 +85,17 @@ const FacetAppBar = props => {
             Reset All
           </Button>
           <Button
-            variant="contained"
+            variant="outlined"
             onClick={handleClose}
             sx={{
-              backgroundColor: 'white',
-              color: props.reduxNavBarColour || DefaultTheme.navBarHexColour,
+              color: 'white',
+              borderColor: 'rgba(255, 255, 255, 0.5)',
               textTransform: 'none',
-              fontWeight: 600,
+              fontWeight: 500,
               px: 3,
-              boxShadow: 'none',
               '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                boxShadow: 'none',
+                borderColor: 'white',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
               },
             }}
           >
