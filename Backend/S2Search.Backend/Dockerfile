@@ -1,10 +1,16 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+# Use the official .NET 9 ASP.NET runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 LABEL author="S2Digital"
-COPY . app/
+
+WORKDIR /app
+
+# Copy published output from build stage (assumes you use 'dotnet publish' in your build pipeline)
+COPY . .
+
 EXPOSE 80
 EXPOSE 443
 
-WORKDIR /app
-ENTRYPOINT ["dotnet", "Search.dll"]
+# Use the correct DLL name for your main project (update if needed)
+ENTRYPOINT ["dotnet", "S2Search.Backend.dll"]
