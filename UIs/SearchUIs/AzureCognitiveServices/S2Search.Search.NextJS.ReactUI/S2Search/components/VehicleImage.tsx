@@ -36,13 +36,11 @@ const VehicleImage: React.FC<VehicleImageProps> = memo(({
         width: '100%',
         height: 200,
         objectFit: 'cover',
-        borderRadius: 8,
       }
     : {
         width: '100%', 
         height: 240,
         objectFit: 'cover',
-        borderRadius: 8,
       };
 
   // For external images or when Next.js Image optimization isn't suitable
@@ -77,7 +75,6 @@ const VehicleImage: React.FC<VehicleImageProps> = memo(({
         fill
         style={{
           objectFit: 'cover',
-          borderRadius: 8,
         }}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         priority={false} // Set to true for above-the-fold images
