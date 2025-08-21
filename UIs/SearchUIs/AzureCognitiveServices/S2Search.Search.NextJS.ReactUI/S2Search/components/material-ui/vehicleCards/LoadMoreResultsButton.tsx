@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, useTheme, useMediaQuery } from '@mui/material';
-import { CloudDownload, CloudUpload } from '@mui/icons-material';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useAppSelector, useAppDispatch } from '../../../store/hooks';
 import {
   selectSearchCount,
@@ -50,9 +51,9 @@ const LoadMoreResultsButton: React.FC = () => {
       disabled={isLoading}
       startIcon={
         isLoading ? (
-          <CloudUpload color="disabled" />
+          <CloudUploadIcon color="disabled" />
         ) : (
-          <CloudDownload
+          <CloudDownloadIcon
             sx={{ color: primaryColour || theme.palette.primary.main }}
           />
         )

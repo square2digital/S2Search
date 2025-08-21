@@ -1,5 +1,5 @@
 import '@/styles/globals.css';
-import '@fontsource/roboto/300.css';
+// Optimized font loading - only load weights we actually use
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
@@ -18,6 +18,21 @@ export default function App(props) {
     <CacheProvider value={emotionCache}>
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
+        {/* Preload critical fonts */}
+        <link
+          rel="preload"
+          href="/fonts/roboto-v30-latin-regular.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/roboto-v30-latin-500.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
       </Head>
       <CssBaseline />
       <Component {...pageProps} />

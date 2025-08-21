@@ -10,7 +10,7 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
-import { Refresh } from '@mui/icons-material';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { AxiosGet } from '../pages/api/helper/AxiosAPICall';
 
 interface VehicleResult {
@@ -148,7 +148,7 @@ const VehicleList: React.FC = () => {
         <Button
           variant="contained"
           onClick={handleRefresh}
-          startIcon={<Refresh />}
+          startIcon={<RefreshIcon />}
         >
           Try Again
         </Button>
@@ -162,7 +162,7 @@ const VehicleList: React.FC = () => {
         <Button
           variant="contained"
           onClick={handleRefresh}
-          startIcon={<Refresh />}
+          startIcon={<RefreshIcon />}
           disabled={loading}
         >
           Refresh Vehicle List

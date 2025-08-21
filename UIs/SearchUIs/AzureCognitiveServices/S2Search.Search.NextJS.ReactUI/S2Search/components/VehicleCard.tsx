@@ -15,18 +15,17 @@ import {
   useMediaQuery,
   alpha,
 } from '@mui/material';
-import {
-  DriveEta,
-  LocalGasStation,
-  CalendarToday,
-  Speed,
-  Settings,
-  ElectricCar,
-  Favorite,
-  FavoriteBorder,
-  Share,
-  VisibilityOutlined,
-} from '@mui/icons-material';
+// Individual icon imports for better tree-shaking
+import DriveEtaIcon from '@mui/icons-material/DriveEta';
+import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import SpeedIcon from '@mui/icons-material/Speed';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ElectricCarIcon from '@mui/icons-material/ElectricCar';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ShareIcon from '@mui/icons-material/Share';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { green, blue, orange, grey } from '@mui/material/colors';
 import VehicleImage from './VehicleImage';
 
@@ -70,17 +69,17 @@ const getFuelIcon = (fuelType: string) => {
 
   switch (fuelType?.toLowerCase()) {
     case 'petrol':
-      return <LocalGasStation {...iconProps} sx={{ color: blue[600] }} />;
+      return <LocalGasStationIcon {...iconProps} sx={{ color: blue[600] }} />;
     case 'diesel':
-      return <LocalGasStation {...iconProps} sx={{ color: grey[700] }} />;
+      return <LocalGasStationIcon {...iconProps} sx={{ color: grey[700] }} />;
     case 'electric':
-      return <ElectricCar {...iconProps} sx={{ color: green[600] }} />;
+      return <ElectricCarIcon {...iconProps} sx={{ color: green[600] }} />;
     case 'hybrid':
-      return <ElectricCar {...iconProps} sx={{ color: orange[600] }} />;
+      return <ElectricCarIcon {...iconProps} sx={{ color: orange[600] }} />;
     case 'plugin hybrid':
-      return <ElectricCar {...iconProps} sx={{ color: orange[700] }} />;
+      return <ElectricCarIcon {...iconProps} sx={{ color: orange[700] }} />;
     default:
-      return <DriveEta {...iconProps} sx={{ color: grey[500] }} />;
+      return <DriveEtaIcon {...iconProps} sx={{ color: grey[500] }} />;
   }
 };
 
@@ -164,21 +163,21 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
         }}
       />
       <Chip
-        icon={<Settings fontSize="small" />}
+        icon={<SettingsIcon fontSize="small" />}
         label={vehicle.transmission}
         size="small"
         variant="outlined"
         sx={{ backgroundColor: grey[100], borderColor: 'transparent' }}
       />
       <Chip
-        icon={<CalendarToday fontSize="small" />}
+        icon={<CalendarTodayIcon fontSize="small" />}
         label={vehicle.year.toString()}
         size="small"
         variant="outlined"
         sx={{ backgroundColor: grey[100], borderColor: 'transparent' }}
       />
       <Chip
-        icon={<Speed fontSize="small" />}
+        icon={<SpeedIcon fontSize="small" />}
         label={`${formatMileage(vehicle.mileage)} mi`}
         size="small"
         variant="outlined"
@@ -234,7 +233,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
                   '&:hover': { backgroundColor: theme.palette.common.white },
                 }}
               >
-                <FavoriteBorder fontSize="small" />
+                <FavoriteBorderIcon fontSize="small" />
               </IconButton>
               <IconButton
                 size="small"
@@ -243,7 +242,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
                   '&:hover': { backgroundColor: theme.palette.common.white },
                 }}
               >
-                <Share fontSize="small" />
+                <ShareIcon fontSize="small" />
               </IconButton>
             </Box>
           </Box>
@@ -295,7 +294,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
               {vehicle.location}
             </Typography>
             <IconButton size="small" color="primary">
-              <VisibilityOutlined fontSize="small" />
+              <VisibilityOutlinedIcon fontSize="small" />
             </IconButton>
           </CardActions>
         </Card>
@@ -353,7 +352,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
                   '&:hover': { backgroundColor: theme.palette.common.white },
                 }}
               >
-                <FavoriteBorder fontSize="small" />
+                <FavoriteBorderIcon fontSize="small" />
               </IconButton>
               <IconButton
                 size="small"
@@ -362,7 +361,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
                   '&:hover': { backgroundColor: theme.palette.common.white },
                 }}
               >
-                <Share fontSize="small" />
+                <ShareIcon fontSize="small" />
               </IconButton>
             </Box>
           </Box>
@@ -438,7 +437,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
                 },
               }}
             >
-              <VisibilityOutlined fontSize="small" />
+              <VisibilityOutlinedIcon fontSize="small" />
             </IconButton>
           </CardActions>
         </Card>

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Box } from '@mui/material';
+import Image from 'next/image';
 
 interface VehicleImageProps {
   imageURL: string;
@@ -10,7 +11,7 @@ interface VehicleImageProps {
   mobile?: boolean;
 }
 
-const VehicleImage: React.FC<VehicleImageProps> = ({
+const VehicleImage: React.FC<VehicleImageProps> = memo(({
   imageURL,
   vrm,
   missingImageURL,
@@ -18,57 +19,74 @@ const VehicleImage: React.FC<VehicleImageProps> = ({
   style = {},
   mobile = false,
 }) => {
-  const [imageSrc, setImageSrc] = useState<string>('');
+  const [imgSrc, setImgSrc] = useState<string>(imageURL);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    // Add timestamp to prevent caching issues
-    setImageSrc(`${imageURL}?${new Date().getTime()}`);
-  }, [imageURL]);
+  const handleImageError = useCallback(() => {
+    setImgSrc(missingImageURL);
+    setLoading(false);
+  }, [missingImageURL]);
 
-  const handleImageError = (
-    event: React.SyntheticEvent<HTMLImageElement, Event>
-  ) => {
-    const target = event.target as HTMLImageElement;
-    if (target) {
-      target.onerror = null;
-      target.src = missingImageURL;
-    }
-  };
+  const handleImageLoad = useCallback(() => {
+    setLoading(false);
+  }, []);
 
   const defaultStyles: React.CSSProperties = mobile
     ? {
-        width: 280,
+        width: '100%',
         height: 200,
         objectFit: 'cover',
-        padding: '1px',
-        boxShadow: '2px 10px 8px 0px #a1a1a1',
-        marginBottom: '5px',
       }
     : {
-        width: 320,
+        width: '100%', 
         height: 240,
         objectFit: 'cover',
-        padding: '1px',
-        marginBottom: '5px',
-        boxShadow: '2px 10px 8px 0px #9c9c9c',
       };
 
+  // For external images or when Next.js Image optimization isn't suitable
+  if (imageURL.startsWith('http') && !imageURL.includes('localhost')) {
+    return (
+      <Box
+        component="img"
+        src={imgSrc}
+        alt={alt || `${vrm} vehicle image`}
+        title={alt || vrm}
+        onError={handleImageError}
+        onLoad={handleImageLoad}
+        loading="lazy"
+        sx={{
+          ...defaultStyles,
+          ...style,
+          display: 'block',
+          transition: 'opacity 0.3s ease',
+          opacity: loading ? 0.7 : 1,
+          maxWidth: '100%',
+        }}
+      />
+    );
+  }
+
+  // Use Next.js Image component for local images
   return (
-    <Box
-      component="img"
-      src={imageSrc}
-      alt={alt || `${vrm} vehicle image`}
-      title={alt || vrm}
-      onError={handleImageError}
-      sx={{
-        ...defaultStyles,
-        ...style,
-        display: 'block',
-        borderRadius: 1,
-        maxWidth: '100%',
-      }}
-    />
+    <Box sx={{ position: 'relative', ...style }}>
+      <Image
+        src={imgSrc}
+        alt={alt || `${vrm} vehicle image`}
+        fill
+        style={{
+          objectFit: 'cover',
+        }}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        priority={false} // Set to true for above-the-fold images
+        onError={handleImageError}
+        onLoad={handleImageLoad}
+        placeholder="blur"
+        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+      />
+    </Box>
   );
-};
+});
+
+VehicleImage.displayName = 'VehicleImage';
 
 export default VehicleImage;

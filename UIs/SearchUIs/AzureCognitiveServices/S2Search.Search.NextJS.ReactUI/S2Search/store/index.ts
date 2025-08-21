@@ -17,9 +17,15 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        // Performance: ignore large state paths
+        ignoredPaths: ['search.vehicleData', 'facet.facetData'],
       },
+      // Enable immutability check only in development
+      immutableCheck: process.env.NODE_ENV === 'development',
     }),
   devTools: process.env.NODE_ENV !== 'production',
+  // Preloaded state optimization
+  preloadedState: undefined,
 });
 
 export type RootState = ReturnType<typeof store.getState>;

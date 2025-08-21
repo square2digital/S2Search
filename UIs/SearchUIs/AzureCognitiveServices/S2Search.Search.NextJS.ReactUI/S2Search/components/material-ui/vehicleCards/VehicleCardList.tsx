@@ -1,11 +1,21 @@
 import React from 'react';
 import { Grid, Box, Typography } from '@mui/material';
-import VehicleCard from '../../VehicleCard';
+import dynamic from 'next/dynamic';
 import { useAppSelector } from '../../../store/hooks';
 import {
   selectVehicleData,
   selectMissingImageURL,
 } from '../../../store/selectors';
+
+// Dynamic import for better code splitting
+const VehicleCard = dynamic(() => import('../../VehicleCard'), {
+  loading: () => (
+    <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Typography>Loading vehicles...</Typography>
+    </Box>
+  ),
+  ssr: true,
+});
 
 interface VehicleData {
   vehicleID: string;
