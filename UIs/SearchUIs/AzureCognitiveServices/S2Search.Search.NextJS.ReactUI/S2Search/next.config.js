@@ -2,6 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  // Enable standalone output for better Docker builds
+  output: 'standalone',
   compiler: {
     emotion: true,
     // Remove console.logs in production
