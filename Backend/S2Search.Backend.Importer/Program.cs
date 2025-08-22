@@ -1,15 +1,13 @@
 ﻿using LazyCache;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using S2.Importer.Providers.AzureSearch;
+using S2.Test.Importer;
 using S2.Test.Importer.Data.Synonyms;
 using S2.Test.Importer.Helpers;
 using S2.Test.Importer.Services;
-
-// Uncomment and fix configuration if needed`
-// var configuration = new ConfigurationBuilder()
-//     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-//     .Build();
+using System.Reflection;
 
 internal class Program
 {
@@ -20,8 +18,14 @@ internal class Program
         // Remove this line if AddConsole is not available or not working
         services.AddLogging(); // Registers ILoggerFactory and basic logging services
 
-        // Uncomment and fix configuration binding if needed
-        // services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+
+        // Register configuration binding
+        //services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
         // Add DI types
         services.AddSingleton<IAzureSearchDocumentsClientProvider, AzureSearchDocumentsClientProvider>();
