@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using LazyCache;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using S2.Test.Importer.Services;
-using S2.Test.Importer.Helpers;
-using S2.Test.Importer.Data.Synonyms;
+using S2.Importer.Providers.AzureSearch;
 using S2.Test.Importer;
+using S2.Test.Importer.Data.Synonyms;
+using S2.Test.Importer.Helpers;
+using S2.Test.Importer.Services;
 
 var serviceProvider = new Startup().ConfigureServices();
 
@@ -13,10 +15,19 @@ await ExecuteStepsAsync(serviceProvider);
 static async Task ExecuteStepsAsync(IServiceProvider serviceProvider)
 {
     Console.ResetColor();
+
     var dataImport = serviceProvider.GetRequiredService<IDataImport>();
     var generateSynonyms = serviceProvider.GetRequiredService<IGenerateSynonyms>();
     var appSettings = serviceProvider.GetRequiredService<IOptionsSnapshot<AppSettings>>().Value;
     var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Importer");
+
+    // Add DI types here
+    serviceProvider.AddSingleton<IAzureSearchDocumentsClientProvider, AzureSearchDocumentsClientProvider>();
+    serviceProvider.AddSingleton<IDataImport, DataImport>();
+    serviceProvider.AddSingleton<IGenerateSynonyms, GenerateSynonyms>();
+
+    // Add LazyCache if package is installed
+    serviceProvider.AddSingleton<IAppCache, CachingService>();
 
     logger.LogDebug(appSettings.IndexSettings.SearchIndexName);
     logger.LogDebug(appSettings.APIKeys.QueryKey);
