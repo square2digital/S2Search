@@ -1,109 +1,112 @@
 ﻿using LazyCache;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using S2.Importer.Providers.AzureSearch;
-using S2.Test.Importer;
 using S2.Test.Importer.Data.Synonyms;
 using S2.Test.Importer.Helpers;
 using S2.Test.Importer.Services;
 
-//var configuration = new ConfigurationBuilder()
-//    .SetBasePath(Directory.GetCurrentDirectory())
-//    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-//    .Build();
+// Uncomment and fix configuration if needed`
+// var configuration = new ConfigurationBuilder()
+//     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+//     .Build();
 
-var services = new ServiceCollection();
-
-// Add logging
-//services.AddLogging(builder => builder.AddConsole());
-
-// Add configuration binding
-//services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
-
-// Add DI types
-services.AddSingleton<IAzureSearchDocumentsClientProvider, AzureSearchDocumentsClientProvider>();
-services.AddSingleton<IDataImport, DataImport>();
-services.AddSingleton<IGenerateSynonyms, GenerateSynonyms>();
-
-// Add LazyCache
-services.AddSingleton<IAppCache, CachingService>();
-
-var serviceProvider = services.BuildServiceProvider();
-
-await ExecuteStepsAsync(serviceProvider);
-
-static async Task ExecuteStepsAsync(IServiceProvider serviceProvider)
+internal class Program
 {
-    Console.ResetColor();
+    private static async Task Main(string[] args)
+    {
+        var services = new ServiceCollection();
 
-    var dataImport = serviceProvider.GetRequiredService<IDataImport>();
-    var generateSynonyms = serviceProvider.GetRequiredService<IGenerateSynonyms>();
-    var appSettings = serviceProvider.GetRequiredService<IOptionsSnapshot<AppSettings>>().Value;
-    var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Importer");
+        // Remove this line if AddConsole is not available or not working
+        services.AddLogging(); // Registers ILoggerFactory and basic logging services
 
-    logger.LogDebug(appSettings.IndexSettings.SearchIndexName);
-    logger.LogDebug(appSettings.APIKeys.QueryKey);
+        // Uncomment and fix configuration binding if needed
+        // services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
-    try
-    {
-        ConsoleHelper.WriteIndicatorMessage($"Cleaning Resources on index {appSettings.IndexSettings.SearchIndexName}...\n");
-        dataImport.CleanupResources();
-        Console.WriteLine("Resources cleaned successfully...\n");
-    }
-    catch (Exception ex)
-    {
-        ConsoleHelper.WriteErrorMessage(ex.ToString());
-    }
+        // Add DI types
+        services.AddSingleton<IAzureSearchDocumentsClientProvider, AzureSearchDocumentsClientProvider>();
+        services.AddSingleton<IDataImport, DataImport>();
+        services.AddSingleton<IGenerateSynonyms, GenerateSynonyms>();
 
-    try
-    {
-        ConsoleHelper.WriteIndicatorMessage("Uploading Synonyms...\n");
-        generateSynonyms.UploadSynonyms();
-        Console.WriteLine("Uploaded Synonyms successfully...\n");
-    }
-    catch (Exception ex)
-    {
-        ConsoleHelper.WriteErrorMessage(ex.ToString());
-    }
+        // Add LazyCache
+        services.AddSingleton<IAppCache, CachingService>();
 
-    try
-    {
-        ConsoleHelper.WriteIndicatorMessage($"Creating {appSettings.IndexSettings.SearchIndexName} index...\n");
-        dataImport.CreateVehiclesIndex();
-        ConsoleHelper.WriteIndicatorMessage($"{appSettings.IndexSettings.SearchIndexName} created successfully...\n");
-    }
-    catch (Exception ex)
-    {
-        ConsoleHelper.WriteErrorMessage(ex.ToString());
-    }
+        var serviceProvider = services.BuildServiceProvider();
 
-    try
-    {
-        ConsoleHelper.WriteIndicatorMessage("Uploading Vehicle Documents...\n");
-        dataImport.UploadVehicleDocuments();
-        ConsoleHelper.WriteIndicatorMessage("Vehicle Documents uploaded successfully...\n");
-    }
-    catch (Exception ex)
-    {
-        ConsoleHelper.WriteErrorMessage(ex.ToString());
-    }
+        await ExecuteStepsAsync(serviceProvider);
 
-    try
-    {
-        ConsoleHelper.WriteIndicatorMessage("Enabling synonyms in the test index...\n");
-        generateSynonyms.EnableSynonymsInVehicleIndexSafely();
+        static async Task ExecuteStepsAsync(IServiceProvider serviceProvider)
+        {
+            Console.ResetColor();
 
-        ConsoleHelper.WriteInformationMessage("Waiting for the changes to propagate - stand by...\n");
-        await Task.Delay(10000);
-        ConsoleHelper.WriteInformationMessage("Changes propagated successfully\n");
-    }
-    catch (Exception ex)
-    {
-        ConsoleHelper.WriteErrorMessage(ex.ToString());
-    }
+            var dataImport = serviceProvider.GetRequiredService<IDataImport>();
+            var generateSynonyms = serviceProvider.GetRequiredService<IGenerateSynonyms>();
+            // var appSettings = serviceProvider.GetRequiredService<IOptionsSnapshot<AppSettings>>().Value;
+            var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Importer");
 
-    Console.ResetColor();
-    ConsoleHelper.WriteIndicatorMessage("Process Complete\n");
+            // logger.LogDebug(appSettings.IndexSettings.SearchIndexName);
+            // logger.LogDebug(appSettings.APIKeys.QueryKey);
+
+            try
+            {
+                ConsoleHelper.WriteIndicatorMessage("Cleaning Resources...\n");
+                dataImport.CleanupResources();
+                Console.WriteLine("Resources cleaned successfully...\n");
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.WriteErrorMessage(ex.ToString());
+            }
+
+            try
+            {
+                ConsoleHelper.WriteIndicatorMessage("Uploading Synonyms...\n");
+                generateSynonyms.UploadSynonyms();
+                Console.WriteLine("Uploaded Synonyms successfully...\n");
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.WriteErrorMessage(ex.ToString());
+            }
+
+            try
+            {
+                ConsoleHelper.WriteIndicatorMessage("Creating index...\n");
+                dataImport.CreateVehiclesIndex();
+                ConsoleHelper.WriteIndicatorMessage("Index created successfully...\n");
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.WriteErrorMessage(ex.ToString());
+            }
+
+            try
+            {
+                ConsoleHelper.WriteIndicatorMessage("Uploading Vehicle Documents...\n");
+                dataImport.UploadVehicleDocuments();
+                ConsoleHelper.WriteIndicatorMessage("Vehicle Documents uploaded successfully...\n");
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.WriteErrorMessage(ex.ToString());
+            }
+
+            try
+            {
+                ConsoleHelper.WriteIndicatorMessage("Enabling synonyms in the test index...\n");
+                generateSynonyms.EnableSynonymsInVehicleIndexSafely();
+
+                ConsoleHelper.WriteInformationMessage("Waiting for the changes to propagate - stand by...\n");
+                await Task.Delay(10000);
+                ConsoleHelper.WriteInformationMessage("Changes propagated successfully\n");
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.WriteErrorMessage(ex.ToString());
+            }
+
+            Console.ResetColor();
+            ConsoleHelper.WriteIndicatorMessage("Process Complete\n");
+        }
+    }
 }
