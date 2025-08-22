@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using S2.Importer.Providers.AzureSearch;
 using S2.Test.Importer;
 using S2.Test.Importer.Data.Synonyms;
@@ -25,7 +26,7 @@ internal class Program
 
 
         // Register configuration binding
-        //services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
+        services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
         // Add DI types
         services.AddSingleton<IAzureSearchDocumentsClientProvider, AzureSearchDocumentsClientProvider>();
