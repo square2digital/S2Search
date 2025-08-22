@@ -1,4 +1,5 @@
 ﻿using LazyCache;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,7 +9,28 @@ using S2.Test.Importer.Data.Synonyms;
 using S2.Test.Importer.Helpers;
 using S2.Test.Importer.Services;
 
-var serviceProvider = new Startup().ConfigureServices();
+//var configuration = new ConfigurationBuilder()
+//    .SetBasePath(Directory.GetCurrentDirectory())
+//    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+//    .Build();
+
+var services = new ServiceCollection();
+
+// Add logging
+//services.AddLogging(builder => builder.AddConsole());
+
+// Add configuration binding
+//services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
+
+// Add DI types
+services.AddSingleton<IAzureSearchDocumentsClientProvider, AzureSearchDocumentsClientProvider>();
+services.AddSingleton<IDataImport, DataImport>();
+services.AddSingleton<IGenerateSynonyms, GenerateSynonyms>();
+
+// Add LazyCache
+services.AddSingleton<IAppCache, CachingService>();
+
+var serviceProvider = services.BuildServiceProvider();
 
 await ExecuteStepsAsync(serviceProvider);
 
@@ -21,24 +43,14 @@ static async Task ExecuteStepsAsync(IServiceProvider serviceProvider)
     var appSettings = serviceProvider.GetRequiredService<IOptionsSnapshot<AppSettings>>().Value;
     var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Importer");
 
-    // Add DI types here
-    serviceProvider.AddSingleton<IAzureSearchDocumentsClientProvider, AzureSearchDocumentsClientProvider>();
-    serviceProvider.AddSingleton<IDataImport, DataImport>();
-    serviceProvider.AddSingleton<IGenerateSynonyms, GenerateSynonyms>();
-
-    // Add LazyCache if package is installed
-    serviceProvider.AddSingleton<IAppCache, CachingService>();
-
     logger.LogDebug(appSettings.IndexSettings.SearchIndexName);
     logger.LogDebug(appSettings.APIKeys.QueryKey);
 
-    ConsoleHelper.WriteIndicatorMessage($"Calling Cleanup Existing Resources on index {appSettings.IndexSettings.SearchIndexName}...\n");
-
     try
     {
-        ConsoleHelper.WriteIndicatorMessage($"Cleaning Resources...\n");
+        ConsoleHelper.WriteIndicatorMessage($"Cleaning Resources on index {appSettings.IndexSettings.SearchIndexName}...\n");
         dataImport.CleanupResources();
-        Console.WriteLine($"Resources cleaned successfully...\n");
+        Console.WriteLine("Resources cleaned successfully...\n");
     }
     catch (Exception ex)
     {
@@ -47,9 +59,9 @@ static async Task ExecuteStepsAsync(IServiceProvider serviceProvider)
 
     try
     {
-        ConsoleHelper.WriteIndicatorMessage($"Uploading Synonyms...\n");
+        ConsoleHelper.WriteIndicatorMessage("Uploading Synonyms...\n");
         generateSynonyms.UploadSynonyms();
-        Console.WriteLine($"Uploaded Synonyms successfully...\n");
+        Console.WriteLine("Uploaded Synonyms successfully...\n");
     }
     catch (Exception ex)
     {
@@ -69,9 +81,9 @@ static async Task ExecuteStepsAsync(IServiceProvider serviceProvider)
 
     try
     {
-        ConsoleHelper.WriteIndicatorMessage($"Uploading Vehicle Documents...\n");
+        ConsoleHelper.WriteIndicatorMessage("Uploading Vehicle Documents...\n");
         dataImport.UploadVehicleDocuments();
-        ConsoleHelper.WriteIndicatorMessage($"Vehicle Documents uploaded successfully...\n");
+        ConsoleHelper.WriteIndicatorMessage("Vehicle Documents uploaded successfully...\n");
     }
     catch (Exception ex)
     {
@@ -80,12 +92,12 @@ static async Task ExecuteStepsAsync(IServiceProvider serviceProvider)
 
     try
     {
-        ConsoleHelper.WriteIndicatorMessage($"Enabling synonyms in the test index...\n");
+        ConsoleHelper.WriteIndicatorMessage("Enabling synonyms in the test index...\n");
         generateSynonyms.EnableSynonymsInVehicleIndexSafely();
 
-        ConsoleHelper.WriteInformationMessage($"Waiting for the changes to propagate - stand by...\n");
+        ConsoleHelper.WriteInformationMessage("Waiting for the changes to propagate - stand by...\n");
         await Task.Delay(10000);
-        ConsoleHelper.WriteInformationMessage($"Changes propagated successfully\n");
+        ConsoleHelper.WriteInformationMessage("Changes propagated successfully\n");
     }
     catch (Exception ex)
     {
