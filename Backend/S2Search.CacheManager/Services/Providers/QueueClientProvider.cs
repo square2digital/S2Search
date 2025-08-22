@@ -1,6 +1,5 @@
 ﻿using Azure.Storage.Queues;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
-using Services.Interfaces.Providers;
 
 namespace Services.Providers
 {

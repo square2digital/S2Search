@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Queues.Models;
 using S2Search.Backend.Domain.Constants;
+using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
 using Services.Interfaces.Managers;
-using Services.Interfaces.Providers;
 
 namespace Services.Managers
 {

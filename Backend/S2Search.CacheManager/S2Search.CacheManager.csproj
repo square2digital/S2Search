@@ -22,4 +22,8 @@
     <ProjectReference Include="..\S2Search.Backend.Services\S2Search.Backend.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Interfaces\Providers\" />
+  </ItemGroup>
+
 </Project>
