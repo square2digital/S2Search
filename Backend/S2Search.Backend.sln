@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Backend.Services",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Backend.Importer", "S2Search.Backend.Importer\S2Search.Backend.Importer.csproj", "{DF897DB5-3321-4479-87D6-8D72B0C33849}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.CacheManager", "S2Search.CacheManager\S2Search.CacheManager.csproj", "{479D5E5A-D7D5-43E5-8FAB-075525581429}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{DF897DB5-3321-4479-87D6-8D72B0C33849}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF897DB5-3321-4479-87D6-8D72B0C33849}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF897DB5-3321-4479-87D6-8D72B0C33849}.Release|Any CPU.Build.0 = Release|Any CPU
+		{479D5E5A-D7D5-43E5-8FAB-075525581429}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{479D5E5A-D7D5-43E5-8FAB-075525581429}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{479D5E5A-D7D5-43E5-8FAB-075525581429}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{479D5E5A-D7D5-43E5-8FAB-075525581429}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
