@@ -4,6 +4,11 @@ using Microsoft.Extensions.Logging;
 using S2.Test.Importer.Services;
 using S2.Test.Importer.Data.Synonyms;
 using S2.Importer.Providers.AzureSearch;
+using LazyCache;
+using Microsoft.Extensions.Configuration.Json; // Fix for AddJsonFile
+using Microsoft.Extensions.Options; // Fix for options binding
+using System.IO; // ADD THIS USING DIRECTIVE FOR Directory
+using Microsoft.Extensions.Configuration.FileExtensions; // ADD THIS USING DIRECTIVE FOR SetBasePath
 
 namespace S2.Test.Importer
 {
@@ -13,22 +18,20 @@ namespace S2.Test.Importer
 
         public Startup()
         {
-            var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json");
+            var basePath = Directory.GetCurrentDirectory();
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile(Path.Combine(basePath, "appsettings.json"), optional: true, reloadOnChange: true);
             Configuration = builder.Build();
-
-            ConfigureServices();
         }
 
         public IServiceCollection ConfigureServices()
         {
             IServiceCollection serviceCollection = new ServiceCollection();
 
-            serviceCollection.AddLogging(opt =>
-            {
-                opt.AddConsole();
-                opt.AddDebug();
-            });
+            // Add logging
+            serviceCollection.AddLogging();
 
+            // Add configuration binding (use Configure<T>)
             serviceCollection.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             // Add DI types here
@@ -36,7 +39,8 @@ namespace S2.Test.Importer
             serviceCollection.AddSingleton<IDataImport, DataImport>();
             serviceCollection.AddSingleton<IGenerateSynonyms, GenerateSynonyms>();
 
-            serviceCollection.AddLazyCache();
+            // Add LazyCache if package is installed
+            serviceCollection.AddSingleton<IAppCache, CachingService>();
 
             return serviceCollection;
         }
