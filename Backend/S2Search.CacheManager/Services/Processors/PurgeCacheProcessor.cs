@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Queues.Models;
-using Domain.Constants;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
+using S2Search.Backend.Domain.Constants;
 using Services.Interfaces.Managers;
 using Services.Interfaces.Processors;
 using Services.Managers;

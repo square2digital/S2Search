@@ -12,7 +12,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
     {
         private readonly QueueClientProvider _queueClient;
 
-        public QueueManager(IQueueClientProvider queueClient)
+        public QueueManager(QueueClientProvider queueClient)
         {
             _queueClient = queueClient;
         }

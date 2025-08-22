@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using S2Search.Backend.Domain.Constants;
+using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
+using S2Search.Backend.Services.Services.Admin.Dapper.Providers;
 using Services.Interfaces.Managers;
 using Services.Interfaces.Processors;
-using Services.Interfaces.Providers;
 using Services.Managers;
 using Services.Processors;
 using Services.Providers;
