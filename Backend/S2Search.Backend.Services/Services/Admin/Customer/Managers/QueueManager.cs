@@ -2,7 +2,6 @@
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Messages;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
-using S2Search.Backend.Services.Services.Admin.Customer.Providers;
 using System.Text;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
 
@@ -10,9 +9,9 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
 {
     public class QueueManager : IQueueManager
     {
-        private readonly QueueClientProvider _queueClient;
+        private readonly IQueueClientProvider _queueClient;
 
-        public QueueManager(QueueClientProvider queueClient)
+        public QueueManager(IQueueClientProvider queueClient)
         {
             _queueClient = queueClient;
         }
