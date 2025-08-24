@@ -10,7 +10,3 @@
     CONSTRAINT [FK_Synonyms_SearchIndex] FOREIGN KEY ([SearchIndexId]) REFERENCES [dbo].[SearchIndex] ([SearchIndexId])
 );
 
-
-
-
-

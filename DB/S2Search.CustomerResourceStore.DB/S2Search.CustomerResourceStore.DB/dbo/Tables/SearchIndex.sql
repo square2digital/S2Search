@@ -11,5 +11,3 @@
     CONSTRAINT [FK_SearchIndex_Customers] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[Customers] ([CustomerId])
 );
 
-
-

@@ -13,3 +13,4 @@
     CONSTRAINT [FK_SearchInstances_ResourceGroups] FOREIGN KEY ([ResourceGroup]) REFERENCES [dbo].[ResourceGroups] ([ResourceGroup]),
     CONSTRAINT [FK_SearchInstances_Subscriptions] FOREIGN KEY ([SubscriptionId]) REFERENCES [dbo].[Subscriptions] ([SubscriptionId])
 );
+

@@ -9,5 +9,3 @@
     CONSTRAINT [PK_Notifications_1] PRIMARY KEY CLUSTERED ([NotificationId] ASC)
 );
 
-
-

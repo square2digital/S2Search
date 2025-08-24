@@ -11,5 +11,3 @@
     CONSTRAINT [FK_Feeds_SearchIndex] FOREIGN KEY ([SearchIndexId]) REFERENCES [dbo].[SearchIndex] ([SearchIndexId])
 );
 
-
-
