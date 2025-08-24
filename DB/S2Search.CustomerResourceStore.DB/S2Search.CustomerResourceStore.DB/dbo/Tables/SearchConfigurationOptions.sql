@@ -11,7 +11,3 @@
     CONSTRAINT [FK_SearchConfigurationOptions_SearchConfigurationDataTypes] FOREIGN KEY ([SearchConfigurationDataTypeId]) REFERENCES [dbo].[SearchConfigurationDataTypes] ([SearchConfigurationDataTypeId])
 );
 
-
-
-
-

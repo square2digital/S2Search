@@ -6,13 +6,3 @@
     CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([CustomerId] ASC)
 );
 
-
-
-
-
-
-
-
-
-
-

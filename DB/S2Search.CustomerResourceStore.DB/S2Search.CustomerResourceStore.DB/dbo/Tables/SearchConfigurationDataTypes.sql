@@ -4,9 +4,3 @@
     CONSTRAINT [PK_SearchConfigurationDataTypes] PRIMARY KEY CLUSTERED ([SearchConfigurationDataTypeId] ASC)
 );
 
-
-
-
-
-
-
