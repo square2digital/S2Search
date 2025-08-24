@@ -78,6 +78,13 @@
     <Folder Include="FeedServicesFunc\User Defined Types\" />
     <Folder Include="ProvisioningServicesFunc\User Defined Types\" />
     <Folder Include="SearchInsightsFunc\User Defined Types\" />
+    <Folder Include="SQL Scripts" />
+    <Folder Include="SQL Scripts\Infra-test-12-12-21" />
+    <Folder Include="SQL Scripts\Infra-test-15-01-22" />
+    <Folder Include="SQL Scripts\Original" />
+    <Folder Include="SQL Scripts\production-demo-Infra-28-01-22" />
+    <Folder Include="SQL Scripts\resurrection-2023" />
+    <Folder Include="SQL Scripts\TestDealers" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\SearchInstanceKeys.sql" />
@@ -211,5 +218,16 @@
     <Build Include="Security\ProvisioningServicesFunc_2.sql" />
     <Build Include="Security\SearchInsightsFunc_2.sql" />
     <Build Include="Security\SFTPGoServicesFunc_2.sql" />
+    <Build Include="SQL Scripts\Infra-test-12-12-21\CreateData.sql" />
+    <Build Include="SQL Scripts\Infra-test-15-01-22\CreateData.sql" />
+    <Build Include="SQL Scripts\Original\CreateData.sql" />
+    <Build Include="SQL Scripts\production-demo-Infra-28-01-22\CreateData.sql" />
+    <Build Include="SQL Scripts\resurrection-2023\CreateData.sql" />
+    <Build Include="SQL Scripts\TestDealers\CreateData.sql" />
+    <Build Include="SQL Scripts\CreateData-CustomerPricingTiers.sql" />
+    <Build Include="SQL Scripts\CreateData-Notifications.sql" />
+    <Build Include="SQL Scripts\CreateData-SearchInsights.sql" />
+    <Build Include="SQL Scripts\GetAllCustomerData.sql" />
+    <Build Include="SQL Scripts\Logins.sql" />
   </ItemGroup>
 </Project>
