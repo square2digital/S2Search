@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="CacheManager" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Azure.Storage.Queues" Version="12.8.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+		<PackageReference Include="S2Search.Common.Database.Sql.Dapper" Version="1.0.0-CI-20220202-214423" />
+		<PackageReference Include="StackExchange.Redis" Version="2.2.88" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Domain\Domain.csproj" />
+	</ItemGroup>
+
+</Project>

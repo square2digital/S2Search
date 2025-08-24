@@ -2,8 +2,8 @@
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Messages;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
-using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
 using System.Text;
+using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
 
 namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
 {

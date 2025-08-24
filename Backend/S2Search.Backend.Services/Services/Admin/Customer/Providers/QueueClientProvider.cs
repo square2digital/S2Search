@@ -1,6 +1,5 @@
 ﻿using Azure.Storage.Queues;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 
 namespace S2Search.Backend.Services.Services.Admin.Customer.Providers
 {
@@ -12,6 +11,11 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Providers
             await queueClient.CreateIfNotExistsAsync();
 
             return queueClient;
+        }
+
+        public Task<bool> TestConnectionAsync(string connectionKey, string queueName)
+        {
+            throw new NotImplementedException();
         }
 
         private QueueClient CreateQueueClient(string connectionString, string queueName)
