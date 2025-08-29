@@ -2,19 +2,19 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     env:
-      DOTNET_VERSION: '9.0.x'
-      PROJECT_PATH: 'S2Search.Backend/S2Search.Backend.csproj'
-      TEST_PROJECT_PATH: 'S2Search.Backend.Services/Tests.csproj'
-      DOCKER_IMAGE: 'ghcr.io/${{ github.repository }}/searchapi'
+      DOTNET_VERSION: "9.0.x"
+      PROJECT_PATH: "S2Search.Backend/S2Search.Backend.csproj"
+      TEST_PROJECT_PATH: "S2Search.Backend.Services/Tests.csproj"
+      DOCKER_IMAGE: "ghcr.io/${{ github.repository }}/searchapi"
 
     steps:
       - name: Checkout code
