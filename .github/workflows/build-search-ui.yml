@@ -40,8 +40,7 @@ jobs:
         working-directory: UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search
 
       - name: Build Docker image
-        run: |
-          docker build -t s2search-ui:latest .
+        run: docker build -t s2search-ui:latest -f UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search/Dockerfile UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search
 
       - name: Upload production build (optional)
         uses: actions/upload-artifact@v4
