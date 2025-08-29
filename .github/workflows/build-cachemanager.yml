@@ -24,3 +24,7 @@ jobs:
 
       - name: Build
         run: dotnet build APIs/S2Search.CacheManager/S2Search.CacheManager.csproj --configuration Release --no-restore
+
+      - name: Build Docker image
+        run: docker build -t s2search-cachemanager:latest .
+        working-directory: APIs/S2Search.CacheManager/CacheManager
