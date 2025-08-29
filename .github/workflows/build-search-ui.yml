@@ -1,4 +1,4 @@
-name: Build S2Search.CacheManager
+name: Build S2Search UI
 
 on:
   push:
@@ -11,16 +11,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET 9
-        uses: actions/setup-dotnet@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          dotnet-version: "9.0.x"
+          node-version: "18"
 
-      - name: Restore dependencies
-        run: dotnet restore APIs/S2Search.CacheManager/S2Search.CacheManager.csproj
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Build
-        run: dotnet build APIs/S2Search.CacheManager/S2Search.CacheManager.csproj --configuration Release --no-restore
+      - name: TypeScript type check
+        run: npm run type-check
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Build Next.js app
+        run: npm run build
+
+      - name: Build Docker image
+        run: |
+          docker build -t s2search-ui:latest .
+
+      - name: Upload production build (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-build
+          path: .next
