@@ -24,3 +24,7 @@ jobs:
 
       - name: Build
         run: dotnet build APIs/S2Search.Backend/S2Search.Backend.csproj --configuration Release --no-restore
+
+      - name: Build Docker image
+        run: docker build -t s2search-backend:latest .
+        working-directory: APIs/S2Search.Backend
