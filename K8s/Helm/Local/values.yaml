@@ -27,8 +27,8 @@ S2Backend:
 S2SearchUi:
   replicaCount: 1
   image:
-    repository: <your-ui-image-repo>
-    tag: <your-ui-image-tag>
+    repository: ghcr.io/square2digital/s2search-ui
+    tag: latest
     pullPolicy: IfNotPresent
   service:
     type: LoadBalancer
