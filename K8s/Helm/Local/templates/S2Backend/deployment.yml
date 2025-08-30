@@ -16,12 +16,12 @@ spec:
       maxUnavailable: 1
       maxSurge: 1
   template:
-    imagePullSecrets:
-      - name: ghcr-secret  
     metadata:
       labels:
         app: s2search-backend
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret      
       containers:
         - name: s2search-backend
           image: {{ .Values.S2Backend.image.repository }}:{{ .Values.S2Backend.image.tag }}

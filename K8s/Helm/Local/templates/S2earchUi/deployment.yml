@@ -16,12 +16,12 @@ spec:
       maxUnavailable: 1
       maxSurge: 1
   template:
-    imagePullSecrets:
-      - name: ghcr-secret  
     metadata:
       labels:
         app: s2searchui
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: s2searchui
           image: {{ .Values.S2SearchUi.image.repository }}:{{ .Values.S2SearchUi.image.tag }}
