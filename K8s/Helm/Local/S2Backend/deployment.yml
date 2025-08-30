@@ -5,7 +5,7 @@ metadata:
   labels:
     app: s2search-backend
 spec:
-  replicas: 1
+  replicas: {{ .Values.S2Backend.replicaCount }}
   selector:
     matchLabels:
       app: s2search-backend
@@ -22,19 +22,19 @@ spec:
     spec:
       containers:
         - name: s2search-backend
-          image: ghcr.io/square2digital/s2search-backend:latest
+          image: {{ .Values.S2Backend.image.repository }}:{{ .Values.S2Backend.image.tag }}
           ports:
-            - containerPort: 80
+            - containerPort: {{ .Values.S2Backend.service.port }}
           livenessProbe:
             httpGet:
               path: /api/Status
-              port: 80
+              port: {{ .Values.S2Backend.service.port }}
             initialDelaySeconds: 60
             periodSeconds: 180
           readinessProbe:
             httpGet:
               path: /api/Status
-              port: 80
+              port: {{ .Values.S2Backend.service.port }}
             initialDelaySeconds: 60
             periodSeconds: 180  
           resources:
@@ -49,17 +49,17 @@ spec:
               value: Production
             - name: ASPNETCORE_URLS
               value: http://+:80
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.S2Backend.image.pullPolicy }}
           livenessProbe:
             httpGet:
               path: /api/Status
-              port: 80
+              port: {{ .Values.S2Backend.service.port }}
             initialDelaySeconds: 15
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /api/Status
-              port: 80
+              port: {{ .Values.S2Backend.service.port }}
             initialDelaySeconds: 15
             periodSeconds: 10
           volumeMounts:

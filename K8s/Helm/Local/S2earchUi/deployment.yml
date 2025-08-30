@@ -5,7 +5,7 @@ metadata:
   labels:
     app: s2searchui
 spec:
-  replicas: 1
+  replicas: {{ .Values.S2SearchUi.replicaCount }}
   selector:
     matchLabels:
       app: s2searchui
@@ -22,14 +22,14 @@ spec:
     spec:
       containers:
         - name: s2searchui
-          image: ghcr.io/square2digital/s2search-ui:latest
+          image: {{ .Values.S2SearchUi.image.repository }}:{{ .Values.S2SearchUi.image.tag }}
           ports:
             - containerPort: 3000
           resources:
             limits:
               memory: "128Mi" #128 MB
               cpu: "200m" #200 millicpu (.2 cpu or 20% of the cpu)
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.S2SearchUi.image.pullPolicy }}
           livenessProbe:
             httpGet:
               path: /vehicletest

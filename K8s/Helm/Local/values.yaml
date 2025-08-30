@@ -1,0 +1,51 @@
+S2Backend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/square2digital/s2search-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  env:
+    - name: ENVIRONMENT
+      value: "local"
+  configmap:
+    enabled: true
+    name: configmap-localk8s
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+S2SearchUi:
+  replicaCount: 1
+  image:
+    repository: <your-ui-image-repo>
+    tag: <your-ui-image-tag>
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80
+  resources:
+    limits:
+      cpu: 300m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  env:
+    - name: ENVIRONMENT
+      value: "local"
+  configmap:
+    enabled: true
+    name: configmap-localk8s
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
