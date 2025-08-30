@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: s2searchui
-          image: s2searchui:dev
+          image: ghcr.io/square2digital/s2search-ui:latest
           ports:
             - containerPort: 3000
           resources:
