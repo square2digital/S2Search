@@ -11,10 +11,8 @@ public class AppSettings : IAppSettings
     public DemoSearchCredentials DemoSearchCredentials { get; set; }
     public SearchSettings SearchSettings { get; set; }
     public FacetSettings FacetSettings { get; set; }
-    public ClientConfigurationSettings ClientConfigurationSettings { get; set; }
     public MemoryCacheSettings MemoryCacheSettings { get; set; }
     public RedisCacheSettings RedisCacheSettings { get; set; }
-    public AdminSettings AdminSettings { get; set; }
     public IndexSettings IndexSettings { get; set; }
     public APIKeys Keys { get; set; }
 }
@@ -126,13 +124,6 @@ public class DemoSearchCredentials
     public string SearchCredentialsInstanceName { get; set; }
 }
 
-public class ClientConfigurationSettings
-{
-    public string ClientConfigurationEndpoint { get; set; }
-    public string HeaderAPISubscriptionName { get; set; }
-    public string APISubscriptionKey { get; set; }
-}
-
 public class MemoryCacheSettings
 {
     public int SearchCacheSlidingExpirySeconds { get; set; }
@@ -146,11 +137,6 @@ public class RedisCacheSettings
     public bool EnableRedisCache { get; set; }
     public string RedisConnectionString { get; set; }
     public int DefaultCacheExpiryInSeconds { get; set; }        
-}
-
-public class AdminSettings
-{
-    public string AdminEndpoint { get; set; }
 }
 
 public class IndexSettings
