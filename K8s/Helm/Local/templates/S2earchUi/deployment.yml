@@ -16,6 +16,8 @@ spec:
       maxUnavailable: 1
       maxSurge: 1
   template:
+    imagePullSecrets:
+      - name: ghcr-secret  
     metadata:
       labels:
         app: s2searchui
