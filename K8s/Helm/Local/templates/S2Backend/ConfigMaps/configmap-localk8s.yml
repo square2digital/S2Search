@@ -79,3 +79,4 @@ data:
           "DefaultCacheExpiryInSeconds": 3600
         }
       }
+    }
