@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: s2searchapi-deployment
+  name: s2search-backend-deployment
   labels:
-    app: s2searchapi
+    app: s2search-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: s2searchapi
+      app: s2search-backend
   minReadySeconds: 3
   strategy:
     type: RollingUpdate
@@ -18,11 +18,11 @@ spec:
   template:
     metadata:
       labels:
-        app: s2searchapi
+        app: s2search-backend
     spec:
       containers:
-        - name: s2searchapi
-          image: s2searchapi:dev
+        - name: s2search-backend
+          image: ghcr.io/square2digital/s2search-backend:latest
           ports:
             - containerPort: 80
           livenessProbe:

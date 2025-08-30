@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: search-api-service
   labels:
-    app: s2searchapi
+    app: s2search-backend
 spec:
   type: ClusterIP
   selector:
-    app: s2searchapi
+    app: s2search-backend
   ports:
     - port: 80
       targetPort: 80
