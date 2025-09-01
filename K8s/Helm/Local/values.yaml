@@ -15,8 +15,8 @@ S2Backend:
       cpu: 250m
       memory: 256Mi
   env:
-    - name: ENVIRONMENT
-      value: "local"
+    ASPNETCORE_ENVIRONMENT: "Production"
+    ASPNETCORE_URLS: "http://+:80"
   configmap:
     enabled: true
     name: configmap-localk8s
