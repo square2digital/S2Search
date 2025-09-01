@@ -38,3 +38,6 @@ spec:
               port: 3000
             initialDelaySeconds: 15
             periodSeconds: 10
+      envFrom:
+        - configMapRef:
+            name: s2searchui-env
