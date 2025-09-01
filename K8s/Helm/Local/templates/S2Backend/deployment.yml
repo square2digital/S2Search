@@ -27,25 +27,13 @@ spec:
           image: {{ .Values.S2Backend.image.repository }}:{{ .Values.S2Backend.image.tag }}
           ports:
             - containerPort: {{ .Values.S2Backend.service.port }}
-          livenessProbe:
-            httpGet:
-              path: /api/Status
-              port: {{ .Values.S2Backend.service.port }}
-            initialDelaySeconds: 60
-            periodSeconds: 180
-          readinessProbe:
-            httpGet:
-              path: /api/Status
-              port: {{ .Values.S2Backend.service.port }}
-            initialDelaySeconds: 60
-            periodSeconds: 180  
           resources:
             requests:
-              memory: 210Mi              
+              memory: 210Mi
               cpu: 10m
             limits:
-              memory: 225Mi #225 MB     
-              cpu: 200m #200 millicpu (.2 cpu or 20% of the cpu)
+              memory: 225Mi
+              cpu: 200m
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production
@@ -69,6 +57,9 @@ spec:
               mountPath: /app/appsettings.json
               subPath: appsettings.json
               readOnly: true
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
       volumes:
         - name: appsettings-volume
           configMap:
