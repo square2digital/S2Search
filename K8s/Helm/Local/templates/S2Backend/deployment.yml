@@ -40,18 +40,18 @@ spec:
             - name: ASPNETCORE_URLS
               value: {{ .Values.S2Backend.env.ASPNETCORE_URLS | default "http://+:80" }}
           imagePullPolicy: {{ .Values.S2Backend.image.pullPolicy }}
-          livenessProbe:
-            httpGet:
-              path: /api/Status
-              port: {{ .Values.S2Backend.service.port }}
-            initialDelaySeconds: 15
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /api/Status
-              port: {{ .Values.S2Backend.service.port }}
-            initialDelaySeconds: 15
-            periodSeconds: 10
+          #livenessProbe:
+          #  httpGet:
+          #    path: /api/Status
+          #    port: {{ .Values.S2Backend.service.port }}
+          #  initialDelaySeconds: 15
+          #  periodSeconds: 10
+          #readinessProbe:
+          #  httpGet:
+          #    path: /api/Status
+          #    port: {{ .Values.S2Backend.service.port }}
+          #  initialDelaySeconds: 15
+          #  periodSeconds: 10
           volumeMounts:
             - name: appsettings-volume
               mountPath: /app/appsettings.json
