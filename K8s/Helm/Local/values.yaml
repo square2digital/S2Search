@@ -43,6 +43,10 @@ S2SearchUi:
   env:
     - name: ENVIRONMENT
       value: "local"
+    - name: ASPNETCORE_ENVIRONMENT
+      value: "Production"
+    - name: ASPNETCORE_URLS
+      value: "http://+:80"
   configmap:
     enabled: true
     name: configmap-localk8s

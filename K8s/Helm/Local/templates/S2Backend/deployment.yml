@@ -29,16 +29,16 @@ spec:
             - containerPort: {{ .Values.S2Backend.service.port }}
           resources:
             requests:
-              memory: 210Mi
-              cpu: 10m
+              memory: {{ .Values.S2Backend.resources.requests.memory }}
+              cpu: {{ .Values.S2Backend.resources.requests.cpu }}
             limits:
-              memory: 225Mi
-              cpu: 200m
+              memory: {{ .Values.S2Backend.resources.limits.memory }}
+              cpu: {{ .Values.S2Backend.resources.limits.cpu }}
           env:
             - name: ASPNETCORE_ENVIRONMENT
-              value: Production
+              value: {{ .Values.S2Backend.env.ASPNETCORE_ENVIRONMENT | default "Production" }}
             - name: ASPNETCORE_URLS
-              value: http://+:80
+              value: {{ .Values.S2Backend.env.ASPNETCORE_URLS | default "http://+:80" }}
           imagePullPolicy: {{ .Values.S2Backend.image.pullPolicy }}
           livenessProbe:
             httpGet:
@@ -63,19 +63,4 @@ spec:
       volumes:
         - name: appsettings-volume
           configMap:
-            name: searchapi-appsettings-localk8s
----            
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: appsettings-volume
-  labels:
-    type: local
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/app/appsettings.json"
+            name: {{ .Values.S2Backend.configmap.name }}
