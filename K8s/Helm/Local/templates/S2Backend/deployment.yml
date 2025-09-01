@@ -63,4 +63,4 @@ spec:
       volumes:
         - name: appsettings-volume
           configMap:
-            name: {{ .Values.S2Backend.configmap.name }}
+            name: searchapi-appsettings-localk8s
