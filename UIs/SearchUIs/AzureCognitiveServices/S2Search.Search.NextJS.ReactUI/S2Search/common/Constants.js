@@ -49,13 +49,11 @@ export const StaticFacets = ['make'];
 
 // global S2 theme
 export const DefaultTheme = {
-  primaryHexColour: '#616161',
-  secondaryHexColour: '#757575',
-  navBarHexColour: '#424242',
-  logoURL:
-    'https://dpdevstore.blob.core.windows.net/temp/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg',
-  missingImageURL:
-    'https://dpdevstore.blob.core.windows.net/temp/assets/image-coming-soon.jpg',
+  primaryHexColour: process.env.NEXT_PUBLIC_THEME_PRIMARY_COLOUR,
+  secondaryHexColour: process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR,
+  navBarHexColour: process.env.NEXT_PUBLIC_THEME_NAVBAR_COLOUR,
+  logoURL: process.env.NEXT_PUBLIC_THEME_LOGO_URL,
+  missingImageURL: process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL,
 };
 
 export const DefaultConfigData = [
