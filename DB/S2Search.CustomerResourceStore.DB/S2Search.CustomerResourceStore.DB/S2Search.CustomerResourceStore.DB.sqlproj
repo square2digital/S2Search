@@ -85,6 +85,7 @@
     <Folder Include="SQL Scripts\production-demo-Infra-28-01-22" />
     <Folder Include="SQL Scripts\resurrection-2023" />
     <Folder Include="SQL Scripts\TestDealers" />
+    <Folder Include="SQL Scripts\resurrection-2025" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\SearchInstanceKeys.sql" />
@@ -229,5 +230,6 @@
     <Build Include="SQL Scripts\CreateData-SearchInsights.sql" />
     <Build Include="SQL Scripts\GetAllCustomerData.sql" />
     <Build Include="SQL Scripts\Logins.sql" />
+    <Build Include="SQL Scripts\resurrection-2025\CreateData.sql" />
   </ItemGroup>
 </Project>

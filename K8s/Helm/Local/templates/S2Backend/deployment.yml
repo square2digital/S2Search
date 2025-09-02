@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s2search-backend-deployment
+  labels:
+    app: s2search-backend
+spec:
+  replicas: {{ .Values.S2Backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: s2search-backend
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: s2search-backend
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret      
+      containers:
+        - name: s2search-backend
+          image: {{ .Values.S2Backend.image.repository }}:{{ .Values.S2Backend.image.tag }}
+          ports:
+            - containerPort: {{ .Values.S2Backend.service.port }}
+          resources:
+            requests:
+              memory: {{ .Values.S2Backend.resources.requests.memory }}
+              cpu: {{ .Values.S2Backend.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.S2Backend.resources.limits.memory }}
+              cpu: {{ .Values.S2Backend.resources.limits.cpu }}
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: {{ .Values.S2Backend.env.ASPNETCORE_ENVIRONMENT | default "Production" }}
+            - name: ASPNETCORE_URLS
+              value: {{ .Values.S2Backend.env.ASPNETCORE_URLS | default "http://+:80" }}
+          imagePullPolicy: {{ .Values.S2Backend.image.pullPolicy }}
+          livenessProbe:
+           httpGet:
+             path: /api/SearchStatus
+             port: {{ .Values.S2Backend.service.port }}
+           initialDelaySeconds: 15
+           periodSeconds: 10
+          readinessProbe:
+           httpGet:
+             path: /api/SearchStatus
+             port: {{ .Values.S2Backend.service.port }}
+           initialDelaySeconds: 15
+           periodSeconds: 10
+          volumeMounts:
+            - name: appsettings-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+              readOnly: true
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+      volumes:
+        - name: appsettings-volume
+          configMap:
+            name: {{ .Values.S2Backend.configmap.name }}

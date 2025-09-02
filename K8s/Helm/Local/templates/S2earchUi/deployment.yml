@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s2searchui-deployment
+  labels:
+    app: s2searchui
+spec:
+  replicas: {{ .Values.S2SearchUi.replicaCount }}
+  selector:
+    matchLabels:
+      app: s2searchui
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: s2searchui
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: s2searchui
+          image: {{ .Values.S2SearchUi.image.repository }}:{{ .Values.S2SearchUi.image.tag }}
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "128Mi" #128 MB
+              cpu: "200m" #200 millicpu (.2 cpu or 20% of the cpu)
+          imagePullPolicy: {{ .Values.S2SearchUi.image.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /vehicletest
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+      envFrom:
+        - configMapRef:
+            name: s2searchui-env
