@@ -9,8 +9,7 @@
     <ProjectGuid>{e3cedc33-f00c-4152-97d8-cc8fb2d421ac}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
-    <RootPath>
-    </RootPath>
+    <RootPath />
     <RootNamespace>S2Search.CustomerResourceStore.DB</RootNamespace>
     <AssemblyName>S2Search.CustomerResourceStore.DB</AssemblyName>
     <ModelCollation>1033,CI</ModelCollation>
@@ -50,7 +49,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
     <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
     <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
   </PropertyGroup>
@@ -115,7 +113,6 @@
     <Build Include="Admin\Stored Procedures\AddSearchInterface.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchInsightsSearchCountByDateRange.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetSearchIndexFeedProcessingData.sql" />
-    <Build Include="Configuration\Stored Procedures\GetConfigurationForSearchIndex.sql" />
     <Build Include="Configuration\Stored Procedures\GetGenericSynonymsByCategory.sql" />
     <Build Include="Configuration\Stored Procedures\GetSearchIndexQueryCredentialsByCustomerEndpoint.sql" />
     <Build Include="Configuration\Stored Procedures\GetThemeByCustomerEndpoint.sql" />
