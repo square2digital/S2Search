@@ -137,7 +137,6 @@
     <Build Include="Admin\Stored Procedures\GetThemeBySearchIndexId.sql" />
     <Build Include="Admin\Stored Procedures\SupersedeLatestFeed.sql" />
     <Build Include="Admin\Stored Procedures\SupersedeLatestSearchInterface.sql" />
-    <Build Include="Admin\Stored Procedures\SupersedeNotificationRule.sql" />
     <Build Include="Admin\Stored Procedures\SupersedeSynonym.sql" />
     <Build Include="Admin\Stored Procedures\UpdateSynonym.sql" />
     <Build Include="Admin\Stored Procedures\UpdateTheme.sql" />

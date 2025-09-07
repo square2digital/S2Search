@@ -47,16 +47,6 @@ FROM dbo.Feeds
 where SearchIndexId = @SearchIndexId 
 and IsLatest = 1
 
-
-SELECT 
-NotificationRuleId,
-TransmitType,
-Recipients,
-[Trigger]
-FROM dbo.NotificationRules 
-where SearchIndexId = @SearchIndexId 
-and IsLatest = 1
-
 SELECT 
 SynonymId,
 KeyWord as [Key],
