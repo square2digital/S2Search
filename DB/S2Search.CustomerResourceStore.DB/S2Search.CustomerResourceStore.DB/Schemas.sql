@@ -1,4 +1,4 @@
-﻿CREATE SCHEMA [CustomerResourceApi]
+﻿CREATE SCHEMA [Admin]
 GO
 CREATE SCHEMA [FeedServicesFunc]
 GO
@@ -8,6 +8,6 @@ CREATE SCHEMA [ProvisioningServicesFunc]
 GO
 CREATE SCHEMA [insights]
 GO
-CREATE SCHEMA [ClientConfigurationApi]
+CREATE SCHEMA [Configuration]
 GO
 CREATE SCHEMA [SFTPGoServicesFunc]

@@ -1,3 +1,3 @@
-﻿CREATE USER [CustomerResourceApi] FOR LOGIN [CustomerResourceApi]
-    WITH DEFAULT_SCHEMA = [CustomerResourceApi];
+﻿CREATE USER [Admin] FOR LOGIN [Admin]
+    WITH DEFAULT_SCHEMA = [Admin];
 
