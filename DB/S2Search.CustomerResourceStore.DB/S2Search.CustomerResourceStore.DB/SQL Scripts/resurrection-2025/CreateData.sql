@@ -32,11 +32,6 @@ go
     DECLARE @FeedCron varchar(50) = '5 * * * *'
 	DECLARE @DataFormat varchar(50) = 'DMS14'
     
-    --NotificationRules
-    DECLARE @NotifyTransmitType varchar(255) = 'email'
-    DECLARE @NotifyRecipients varchar(255) = 'notify@square2digital.com'
-    DECLARE @NotifyTrigger varchar(255) = 'Feed_Success'
-    
     --SearchInterfaces
     DECLARE @InterfaceType varchar(50) = 'API_Consumption'
     DECLARE @InterfaceLogoURL varchar(255) = NULL
@@ -250,13 +245,7 @@ go
 DELETE FROM
     dbo.Themes
 DELETE FROM
-    dbo.DeletedSearchIndexConfiguration
-DELETE FROM
     [dbo].[FeedCredentials]
-DELETE FROM
-    dbo.NotificationRules
-DELETE FROM
-    dbo.Notifications
 DELETE FROM
     dbo.SearchInterfaces
 DELETE FROM
@@ -270,8 +259,6 @@ DELETE FROM
 DELETE FROM
 	[dbo].[SearchConfigurationOptions]
 DELETE FROM
-	[dbo].[SearchConfigurationDataTypes]
-DELETE FROM
     dbo.SearchIndexKeys
 DELETE FROM
     dbo.SearchIndex
@@ -284,25 +271,9 @@ DELETE FROM
 DELETE FROM
     dbo.SearchInstances
 DELETE FROM
-    dbo.ResourceGroupsCapacity
-DELETE FROM
-    dbo.ResourceGroups
-DELETE FROM
-    dbo.SubscriptionCapacity
-DELETE FROM
-    dbo.SubscriptionResourceCapacity
-DELETE FROM
     dbo.ClientKeys
 DELETE FROM
-    dbo.ServicePrinciples
-DELETE FROM
-    dbo.Subscriptions
-DELETE FROM
     dbo.Customers
-DELETE FROM 
-	[dbo].[CustomerPricing]
-DELETE FROM
-	[dbo].[CustomerPricingTiers]
 
 /***************************************************************************************
 Uncomment this if you want to clear down the insights
@@ -464,60 +435,6 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 		,null)
 	
 INSERT INTO
-    dbo.Subscriptions (SubscriptionId, [Name])
-VALUES
-    (@SubscriptionId, @SubscriptionName)
-INSERT INTO
-    dbo.SubscriptionCapacity (
-        SubscriptionId,
-        ResourceGroupsQuota,
-        ResourceGroupsUsed,
-        ResourceGroupsAvailable,
-        ModifiedDate
-    )
-VALUES
-    (
-        @SubscriptionId,
-        @Subscription_ResourceGroupsQuota,
-        0,
-        @Subscription_ResourceGroupsQuota,
-        @Now
-    )
-INSERT INTO
-    dbo.SubscriptionResourceCapacity (
-        SubscriptionId,
-        PricingTier,
-        ResourceType,
-        Quota,
-        Available,
-        Used,
-        ModifiedDate
-    )
-VALUES
-    (
-        @SubscriptionId,
-        @AzurePricingTier,
-        'Azure Cognitive Search',
-        1,
-        1,
-        0,
-        @Now
-    )
-INSERT INTO
-    dbo.ServicePrinciples (
-        ClientId,
-        SubscriptionId,
-        [Name],
-        TenantId
-    )
-VALUES
-    (
-        @ServicePrinciple_ClientId,
-        @SubscriptionId,
-        @ServicePrinciple_Name,
-        @ServicePrinciple_TenantId
-    )
-INSERT INTO
     dbo.ClientKeys (ClientId, [Name], [Value], ExpiryDate)
 VALUES
     (
@@ -526,69 +443,6 @@ VALUES
         @ServicePrinciple_ClientKeySecret,
         @ServicePrinciple_ClientKeyExpiryDate
     )
-
-INSERT INTO 
-    dbo.CustomerPricingTiers (SkuId, [Name], [Description], EffectiveFromDate, EffectiveToDate)
-VALUES
-    (
-    @SkuIdFree,
-    @SkuIdFreeName,
-    @SkuIdFreeDescription,
-    @SkuIdFreeEffectiveFrom,
-    NULL
-    ),
-    (
-    @SkuIdFreeTrial,
-    @SkuIdFreeTrialName,
-    @SkuIdFreeTrialDescription,
-    @SkuIdFreeTrialEffectiveFrom,
-    @SkuIdFreeTrialEffectiveTo
-    )
-
-INSERT INTO
-    dbo.CustomerPricing (SkuId, Price, EffectiveFromDate, EffectiveToDate)
-VALUES
-    (
-    @SkuIdFree,
-    0,
-    @SkuIdFreeEffectiveFrom,
-    NULL
-    ),
-    (
-    @SkuIdFreeTrial,
-    0,
-    @SkuIdFreeTrialEffectiveFrom,
-    @SkuIdFreeTrialEffectiveTo
-    )
-    /***************************************************************************************
-     Initial Setup - Script End
-     ***************************************************************************************/
-    PRINT 'Inserting Resource Group'
-
-INSERT INTO
-    dbo.ResourceGroups (ResourceGroup, SubscriptionId)
-VALUES
-    (@ResourceGroup, @SubscriptionId) PRINT 'Inserting Resource Group Capacity'
-INSERT INTO
-    dbo.ResourceGroupsCapacity (
-        ResourceGroup,
-        ResourcesQuota,
-        ResourcesUsed,
-        ResourcesAvailable,
-        ModifiedDate
-    )
-VALUES
-    (
-        @ResourceGroup,
-        @ResourceGroup_ResourceQuota,
-        1,
-        @ResourceGroup_ResourceQuota - 1,
-        @Now
-    )
-	
-PRINT '********************************'
-PRINT 'Inserting Service Resource Entry'
-PRINT '********************************'
 
 INSERT INTO
     dbo.SearchInstances (
@@ -960,25 +814,6 @@ VALUES
 
 	PRINT '********************************'
 	PRINT 'Inserting Notification Rule Entry'
-	PRINT '********************************'
-
-INSERT INTO
-    dbo.NotificationRules (
-        SearchIndexId,
-        TransmitType,
-        Recipients,
-        [Trigger]
-    )
-VALUES
-    (
-        @SearchIndexId_1,
-        @NotifyTransmitType,
-        @NotifyRecipients,
-        @NotifyTrigger
-    ) 
-	
-	PRINT '********************************'
-	PRINT 'Inserting Search Interface Entry'
 	PRINT '********************************'
 
 

@@ -1,3 +1,0 @@
-﻿CREATE SCHEMA [SFTPGoServicesFunc]
-    AUTHORIZATION [dbo];
-

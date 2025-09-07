@@ -7,7 +7,6 @@
     [PricingSkuId]     VARCHAR (50)     NOT NULL,
     [CreatedDate]      DATETIME         CONSTRAINT [DF_SearchIndex_CreatedDate] DEFAULT (getutcdate()) NOT NULL,
     CONSTRAINT [PK_SearchIndex] PRIMARY KEY CLUSTERED ([SearchIndexId] ASC),
-    CONSTRAINT [FK_SearchIndex_CustomerPricingTiers] FOREIGN KEY ([PricingSkuId]) REFERENCES [dbo].[CustomerPricingTiers] ([SkuId]),
     CONSTRAINT [FK_SearchIndex_Customers] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[Customers] ([CustomerId])
 );
 

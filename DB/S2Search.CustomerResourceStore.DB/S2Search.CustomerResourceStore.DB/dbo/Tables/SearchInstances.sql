@@ -9,8 +9,5 @@
     [Partitions]       INT              NULL,
     [IsShared]         BIT              CONSTRAINT [DF_SearchInstances_IsShared] DEFAULT ((1)) NOT NULL,
     [Endpoint]         VARCHAR (250)    NULL,
-    CONSTRAINT [PK_SearchInstances] PRIMARY KEY CLUSTERED ([SearchInstanceId] ASC),
-    CONSTRAINT [FK_SearchInstances_ResourceGroups] FOREIGN KEY ([ResourceGroup]) REFERENCES [dbo].[ResourceGroups] ([ResourceGroup]),
-    CONSTRAINT [FK_SearchInstances_Subscriptions] FOREIGN KEY ([SubscriptionId]) REFERENCES [dbo].[Subscriptions] ([SubscriptionId])
+    CONSTRAINT [PK_SearchInstances] PRIMARY KEY CLUSTERED ([SearchInstanceId] ASC)
 );
-
