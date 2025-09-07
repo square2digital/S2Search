@@ -25,7 +25,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "SearchIndexId", searchIndexId }
             };
 
-            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+            var connectionString = _configuration.GetConnectionString("S2_Search");
 
             var result = await _dbContext.QueryAsync<SearchConfigurationOption>(
                 connectionString,
@@ -45,7 +45,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "Value", config.Value }
             };
 
-            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+            var connectionString = _configuration.GetConnectionString("S2_Search");
 
             var result = await _dbContext.ExecuteAsync(
                 connectionString,

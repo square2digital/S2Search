@@ -29,10 +29,10 @@ namespace S2Search.Backend.Controllers.Admin
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetDatabaseStatus()
         {
-            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+            var connectionString = _configuration.GetConnectionString("S2_Search");
             try
             {
-                var connStr = "Server=tcp:s2-sql-dev.database.windows.net,1433;Initial Catalog=CustomerResourceStore;Persist Security Info=False;User ID=jgilmartin;Password=y5j5G5jikDdy5jtSUd#ZhP3x48m@7nVwxRg5YA$QUKaYrf%456Gd@w£d*h45QUKaY;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                var connStr = "Server=tcp:s2-sql-dev.database.windows.net,1433;Initial Catalog=S2_Search;Persist Security Info=False;User ID=jgilmartin;Password=y5j5G5jikDdy5jtSUd#ZhP3x48m@7nVwxRg5YA$QUKaYrf%456Gd@w£d*h45QUKaY;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
                 using var connection = new SqlConnection(connStr);
                 connection.Open();
                 return Ok(new { status = "Database connection successful" });

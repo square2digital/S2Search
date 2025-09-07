@@ -27,7 +27,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
             };
 
             // Pass the key, not the value
-            var connectionStringKey = "CustomerResourceStore";
+            var connectionStringKey = "S2_Search";
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
                 connectionStringKey,
@@ -44,7 +44,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "ThemeId", themeId }
             };
 
-            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+            var connectionString = _configuration.GetConnectionString("S2_Search");
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
                 connectionString,
@@ -61,7 +61,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "CustomerId", customerId }
             };
 
-            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+            var connectionString = _configuration.GetConnectionString("S2_Search");
 
             var result = await _dbContext.QueryMultipleAsync<ThemeCollection>(
                 connectionString,
@@ -78,7 +78,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "SearchIndexId", searchIndexId }
             };
 
-            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+            var connectionString = _configuration.GetConnectionString("S2_Search");
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
                 connectionString,
@@ -100,7 +100,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "MissingImageURL", theme.MissingImageURL }
             };
 
-            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+            var connectionString = _configuration.GetConnectionString("S2_Search");
 
             var result = await _dbContext.ExecuteAsync(
                 connectionString,

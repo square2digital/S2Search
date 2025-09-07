@@ -28,35 +28,6 @@ namespace S2Search.Backend.Controllers.Admin
         }
 
         /// <summary>
-        /// Retrieve search index query credentials by the requested customerEndpoint
-        /// </summary>
-        /// <param name="customerEndpoint">The host that is calling the application consuming this endpoint.</param>
-        [HttpGet("queryCredentials/{customerEndpoint}", Name = "GetSearchIndexQueryCredentials")]
-        [ProducesResponseType(typeof(SearchIndexQueryCredentials), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetQueryCredentials(string customerEndpoint)
-        {
-            try
-            {
-                var queryCredentials = await _searchIndexRepo.GetQueryCredentialsAsync(customerEndpoint);
-
-                if (queryCredentials == null)
-                {
-                    _logger.LogInformation($"Not found on {nameof(GetQueryCredentials)} | CustomerEndpoint: {customerEndpoint}");
-                    return NotFound();
-                }
-
-                return Ok(queryCredentials);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error on {nameof(GetQueryCredentials)} | CustomerEndpoint: {customerEndpoint} | Message: {ex.Message}");
-                throw;
-            }
-        }
-
-        /// <summary>
         /// Retrieve the theme for the requested customerEndpoint
         /// </summary>
         /// <param name="customerEndpoint">The host that is calling the application consuming this endpoint.</param>
@@ -81,44 +52,6 @@ namespace S2Search.Backend.Controllers.Admin
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(GetTheme)} | CustomerEndpoint: {customerEndpoint} | Message: {ex.Message}");
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Retrieve the configuration for a search index
-        /// </summary>
-        /// <param name="customerEndpoint">The host that is calling the application consuming this endpoint.</param>
-        /// <returns></returns>
-        [HttpGet("search/{customerEndpoint}", Name = "GetSearchConfiguration")]
-        [ProducesResponseType(typeof(IEnumerable<SearchConfigurationOption>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetSearchConfiguration(string customerEndpoint)
-        {
-            try
-            {
-                var queryCredentials = await _searchIndexRepo.GetQueryCredentialsAsync(customerEndpoint);
-
-                if (queryCredentials == null)
-                {
-                    _logger.LogInformation($"Not found on {nameof(GetSearchConfiguration)} | CustomerEndpoint: {customerEndpoint}");
-                    return NotFound();
-                }
-
-                var config = await _searchUIConfigurationRepo.GetConfigurationForSearchIndexAsync(queryCredentials.SearchIndexId);
-
-                if (config == null)
-                {
-                    _logger.LogInformation($"Not found on {nameof(GetSearchConfiguration)} | searchIndexId: {queryCredentials.SearchIndexId}");
-                    return NotFound();
-                }
-
-                return Ok(config);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error on {nameof(GetSearchConfiguration)} | CustomerEndpoint: {customerEndpoint} | Message: {ex.Message}");
                 throw;
             }
         }
