@@ -123,7 +123,6 @@
     <Build Include="Admin\Stored Procedures\GetFeedCredentialsUsername.sql" />
     <Build Include="Admin\Stored Procedures\GetLatestFeed.sql" />
     <Build Include="Admin\Stored Procedures\GetLatestSearchInterface.sql" />
-    <Build Include="Admin\Stored Procedures\GetNotificationRuleById.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndex.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndexByFriendlyName.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndexFull.sql" />
@@ -136,7 +135,6 @@
     <Build Include="Admin\Stored Procedures\GetThemeByCustomerId.sql" />
     <Build Include="Admin\Stored Procedures\GetThemeById.sql" />
     <Build Include="Admin\Stored Procedures\GetThemeBySearchIndexId.sql" />
-    <Build Include="Admin\Stored Procedures\InsertOrUpdateSearchConfigurationValueById.sql" />
     <Build Include="Admin\Stored Procedures\SupersedeLatestFeed.sql" />
     <Build Include="Admin\Stored Procedures\SupersedeLatestSearchInterface.sql" />
     <Build Include="Admin\Stored Procedures\SupersedeNotificationRule.sql" />
