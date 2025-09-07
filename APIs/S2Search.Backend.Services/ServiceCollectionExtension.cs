@@ -96,7 +96,7 @@ namespace S2Search.Backend.Services
             services.AddSingleton<IAzureSearchClientProvider, AzureSearchClientProvider>();
             services.AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>();
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-            services.AddSingleton<IDashboardManager, DashboardManager>();
+            //services.AddSingleton<IDashboardManager, DashboardManager>();
             //services.AddSingleton<IDateTimeCategoryProvider, DateTimeCategoryProvider>();
             //services.AddSingleton<ISearchInsightsManager, SearchInsightsManager>()
             //services.AddSingleton<ISearchFacetsFormatManager, SearchFacetsFormatManager>()
@@ -105,14 +105,14 @@ namespace S2Search.Backend.Services
             services
                 .AddSingleton<ISearchIndexRepository, SearchIndexRepository>()
                 .AddSingleton<IFeedRepository, FeedRepository>()
-                .AddSingleton<INotificationRuleRepository, NotificationRuleRepository>()
+                //.AddSingleton<INotificationRuleRepository, NotificationRuleRepository>()
                 .AddSingleton<ISearchInterfaceRepository, SearchInterfaceRepository>()
                 .AddSingleton<ISynonymRepository, SynonymRepository>()
                 .AddSingleton<ICustomerRepository, CustomerRepository>()
                 .AddSingleton<IThemeRepository, ThemeRepository>()
                 .AddSingleton<IFeedCredentialsRepository, FeedCredentialsRepository>()
-                .AddSingleton<INotificationRepository, NotificationRepository>()
-                .AddSingleton<IDashboardRepository, DashboardRepository>()
+                //.AddSingleton<INotificationRepository, NotificationRepository>()
+                //.AddSingleton<IDashboardRepository, DashboardRepository>()
                 .AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>()
                 .AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>()
                 .AddSingleton<ISearchInsightsReportRepository, SearchInsightsReportRepository>()

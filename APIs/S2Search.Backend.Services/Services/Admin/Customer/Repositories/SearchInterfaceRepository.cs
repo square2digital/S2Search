@@ -34,7 +34,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "BannerStyle", searchInterfaceRequest.BannerStyle }
             };
 
-            await _dbContext.ExecuteAsync(ConnectionStrings.CustomerResourceStore, StoredProcedures.AddSearchInterface, parameters);
+            await _dbContext.ExecuteAsync(ConnectionStrings.S2_Search, StoredProcedures.AddSearchInterface, parameters);
 
             var result = await GetLatestAsync(searchInterfaceRequest.SearchIndexId);
             return result;
@@ -47,7 +47,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "SearchIndexId", SearchIndexId }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<SearchInterface>(ConnectionStrings.CustomerResourceStore,
+            var result = await _dbContext.QuerySingleOrDefaultAsync<SearchInterface>(ConnectionStrings.S2_Search,
                                                                                      StoredProcedures.GetLatestSearchInterface,
                                                                                      parameters);
             return result;

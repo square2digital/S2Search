@@ -13,17 +13,17 @@ namespace Services.Providers
     public class SearchIndexQueryCredentialsProvider : ISearchIndexQueryCredentialsProvider
     {
         private readonly ILogger _logger;
-        private readonly ISearchIndexRepository _clientConfigClient;
+        private readonly ISearchIndexRepository _searchIndexRepo;
         private readonly IAppSettings _appSettings;
         private readonly IDistributedCacheService _redisService;
 
         public SearchIndexQueryCredentialsProvider(ILogger<SearchIndexQueryCredentialsProvider> logger,
-                                                   ISearchIndexRepository clientConfigClient,
+                                                   ISearchIndexRepository searchIndexRepo,
                                                    IAppSettings appSettings,
                                                    IDistributedCacheService redisService)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _clientConfigClient = clientConfigClient ?? throw new ArgumentNullException(nameof(clientConfigClient));
+            _searchIndexRepo = searchIndexRepo ?? throw new ArgumentNullException(nameof(searchIndexRepo));
             _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
             _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
@@ -74,7 +74,7 @@ namespace Services.Providers
         {
             try
             {
-                var queryCredentials = await _clientConfigClient.GetQueryCredentialsAsync(callingHost);
+                var queryCredentials = await _searchIndexRepo.GetQueryCredentials(callingHost);
                 var azureSearchResource = new SearchIndexQueryCredentials()
                 {
                     SearchIndexId = queryCredentials.SearchIndexId,

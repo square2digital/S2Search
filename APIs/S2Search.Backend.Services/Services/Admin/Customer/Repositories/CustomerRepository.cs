@@ -22,7 +22,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "CustomerId", customerId }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<CustomerIds>(ConnectionStrings.CustomerResourceStore, StoredProcedures.GetCustomerById, parameters);
+            var result = await _dbContext.QuerySingleOrDefaultAsync<CustomerIds>(ConnectionStrings.S2_Search, StoredProcedures.GetCustomerById, parameters);
 
             return result;
         }
@@ -34,7 +34,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "CustomerId", customerId }
             };
 
-            var result = await _dbContext.QueryMultipleAsync<CustomerFull>(ConnectionStrings.CustomerResourceStore, StoredProcedures.GetCustomerFull, parameters);
+            var result = await _dbContext.QueryMultipleAsync<CustomerFull>(ConnectionStrings.S2_Search, StoredProcedures.GetCustomerFull, parameters);
 
             return result;
         }

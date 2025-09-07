@@ -72,24 +72,6 @@ namespace S2Search.Backend.Controllers.Admin
             }
         }
 
-        [HttpGet("pricing", Name = "GetSearchIndexPricing")]
-        [ProducesResponseType(typeof(IEnumerable<CustomerPricingTier>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetSearchIndexPricing(Guid customerId)
-        {
-            try
-            {
-                var results = await _searchIndexRepo.GetPricingTiers();
-
-                return Ok(results);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error on {nameof(GetSearchIndexPricing)} | CustomerId: {customerId} | Message: {ex.Message}");
-                throw;
-            }
-        }
-
         [HttpPost("create", Name = "CreateSearchIndex")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]

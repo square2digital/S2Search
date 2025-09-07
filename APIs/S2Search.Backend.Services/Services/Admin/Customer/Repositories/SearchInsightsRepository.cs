@@ -28,7 +28,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "DataCategories", dataCategories }
             };
 
-            var result = await _dbContext.QueryAsync<SearchInsight>(ConnectionStrings.CustomerResourceStore,
+            var result = await _dbContext.QueryAsync<SearchInsight>(ConnectionStrings.S2_Search,
                                                                     StoredProcedures.GetSearchInsightsByDataCategories,
                                                                     parameters);
 
@@ -44,7 +44,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "DateTo", dateTo },
             };
 
-            var result = await _dbContext.QueryAsync<SearchInsight>(ConnectionStrings.CustomerResourceStore,
+            var result = await _dbContext.QueryAsync<SearchInsight>(ConnectionStrings.S2_Search,
                                                                     StoredProcedures.GetSearchInsightsSearchCountByDateRange,
                                                                     parameters);
 

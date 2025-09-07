@@ -35,7 +35,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "SearchIndexId", searchIndexId }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<Feed>(ConnectionStrings.CustomerResourceStore, StoredProcedures.GetLatestFeed, parameters);
+            var result = await _dbContext.QuerySingleOrDefaultAsync<Feed>(ConnectionStrings.S2_Search, StoredProcedures.GetLatestFeed, parameters);
 
             if (result != null)
             {
@@ -61,7 +61,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "FeedCron", cronExpression }
             };
 
-            await _dbContext.ExecuteAsync(ConnectionStrings.CustomerResourceStore, StoredProcedures.AddFeed, parameters);
+            await _dbContext.ExecuteAsync(ConnectionStrings.S2_Search, StoredProcedures.AddFeed, parameters);
 
             var result = await GetLatestAsync(feed.SearchIndexId);
             return result;

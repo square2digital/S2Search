@@ -16,18 +16,15 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
         private readonly IFeedUploadValidationManager _feedUploadValidator;
         private readonly IFeedUploadDestinationManager _feedUploadDestination;
         private readonly IBlobClientProvider _blobClientProvider;
-        private readonly INotificationRepository _notificationRepo;
         private readonly ISearchIndexRepository _searchIndexRepo;
         public FeedUploadManager(IFeedUploadValidationManager feedUploadValidator,
                                  IFeedUploadDestinationManager feedUploadDestination,
                                  IBlobClientProvider blobClientProvider,
-                                 INotificationRepository notificationRepo,
                                  ISearchIndexRepository searchIndexRepo)
         {
             _feedUploadValidator = feedUploadValidator ?? throw new ArgumentNullException(nameof(feedUploadValidator));
             _feedUploadDestination = feedUploadDestination ?? throw new ArgumentNullException(nameof(feedUploadDestination));
             _blobClientProvider = blobClientProvider ?? throw new ArgumentNullException(nameof(blobClientProvider));
-            _notificationRepo = notificationRepo ?? throw new ArgumentNullException(nameof(notificationRepo));
             _searchIndexRepo = searchIndexRepo ?? throw new ArgumentNullException(nameof(searchIndexRepo));
         }
 
@@ -58,7 +55,6 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
             await blobClient.UploadAsync(file.OpenReadStream());
             
             var feedUploadNotification = CreateFeedUploadNotification(searchIndexId);
-            await _notificationRepo.AddNotificationAsync(feedUploadNotification);
 
             return (true, "");
         }

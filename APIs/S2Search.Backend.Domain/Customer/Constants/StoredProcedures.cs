@@ -2,54 +2,46 @@
 
 public static class StoredProcedures
 {
-    public const string AddSearchIndex = "[CustomerResourceApi].[AddSearchIndex]";
-    public const string GetSearchIndex = "[CustomerResourceApi].[GetSearchIndex]";
-    public const string GetSearchIndexFull = "[CustomerResourceApi].[GetSearchIndexFull]";
-    public const string GetSearchIndexKeysForCustomer = "[CustomerResourceApi].[GetSearchIndexKeysForCustomer]";
-    public const string GetSearchIndexByFriendlyName = "[CustomerResourceApi].[GetSearchIndexByFriendlyName]";
-    public const string GetActiveCustomerPricingTiers = "[CustomerResourceApi].[GetActiveCustomerPricingTiers]";
+    // ***********
+    // Admin
+    // ***********
+    public const string AddFeed = "[Admin].[AddFeed]";
+    public const string AddSearchIndex = "[Admin].[AddSearchIndex]";
+    public const string AddSearchInterface = "[Admin].[AddSearchInterface]";
+    public const string AddSynonym = "[Admin].[AddSynonym]";
+    public const string GetCustomerById = "[Admin].[GetCustomerByID]";
+    public const string GetCustomerFull = "[Admin].[GetCustomerFull]";
+    public const string GetFeedCredentialsUsername = "[Admin].[GetFeedCredentialsUsername]";
     public const string GetSearchIndexQueryCredentials = "[CustomerResourceApi].[GetSearchIndexQueryCredentialsByCustomerEndpoint]";
+    public const string GetLatestFeed = "[Admin].[GetLatestFeed]";
+    public const string GetLatestSearchInterface = "[Admin].[GetLatestSearchInterface]";
+    public const string GetSearchIndex = "[Admin].[GetSearchIndex]";
+    public const string GetSearchIndexByFriendlyName = "[Admin].[GetSearchIndexByFriendlyName]";
+    public const string GetSearchIndexFull = "[Admin].[GetSearchIndexFull]";
+    public const string GetSearchIndexKeysForCustomer = "[Admin].[GetSearchIndexKeysForCustomer]";
+    public const string GetSearchInsightsByDataCategories = "[Admin].[GetSearchInsightsByDataCategories]";
+    public const string GetSearchInsightsSearchCountByDateRange = "[Admin].[GetSearchInsightsSearchCountByDateRange]";
+    public const string GetSynonymById = "[Admin].[GetSynonymById]";
+    public const string GetSynonymByKeyWord = "[Admin].[GetSynonymByKeyWord]";
+    public const string GetSynonyms = "[Admin].[GetSynonyms]";
+    public const string GetThemeByCustomerId = "[Admin].[GetThemeByCustomerId]";
+    public const string GetThemeById = "[Admin].[GetThemeById]";
+    public const string GetThemeBySearchIndexId = "[Admin].[GetThemeBySearchIndexId]";
+    public const string InsertOrUpdateSearchConfigurationValueById = "[Admin].[InsertOrUpdateSearchConfigurationValueById]";
+    public const string SupersedeNotificationRule = "[Admin].[SupersedeNotificationRule]";
+    public const string SupersedeSynonym = "[Admin].[SupersedeSynonym]";
+    public const string UpdateSynonym = "[Admin].[UpdateSynonym]";
+    public const string UpdateTheme = "[Admin].[UpdateTheme]";
 
-    public const string AddFeed = "[CustomerResourceApi].[AddFeed]";
-    public const string GetLatestFeed = "[CustomerResourceApi].[GetLatestFeed]";
+    // ***********
+    // Configuration
+    // ***********
+    public const string GetConfigurationForSearchIndex = "[Configuration].[GetConfigurationForSearchIndex]";
+    public const string GetGenericSynonymsByCategory = "[Configuration].[GetGenericSynonymsByCategory]";
+    public const string GetTheme = "[Configuration].[GetThemeByCustomerEndpoint]";
 
+    // ***********
+    // SFTPGoServicesFunc
+    // ***********
     public const string GetFeedCredentials = "[SFTPGoServicesFunc].[GetFeedCredentials]";
-    public const string GetFeedCredentialsUsername = "[CustomerResourceApi].[GetFeedCredentialsUsername]";
-
-    public const string AddNotificationRule = "[CustomerResourceApi].[AddNotificationRule]";
-    public const string SupersedeNotificationRule = "[CustomerResourceApi].[SupersedeNotificationRule]";
-    public const string GetNotificationRules = "[CustomerResourceApi].[GetNotificationRules]";
-    public const string GetNotificationRuleById = "[CustomerResourceApi].[GetNotificationRuleById]";
-
-    public const string AddNotification = "[CustomerResourceApi].[AddNotification]";
-    public const string GetNotificationsForSearchIndex = "[CustomerResourceApi].[GetNotificationsForSearchIndex]";
-
-    public const string AddSearchInterface = "[CustomerResourceApi].[AddSearchInterface]";
-    public const string GetLatestSearchInterface = "[CustomerResourceApi].[GetLatestSearchInterface]";
-
-    public const string AddSynonym = "[CustomerResourceApi].[AddSynonym]";
-    public const string GetSynonymById = "[CustomerResourceApi].[GetSynonymById]";
-    public const string GetSynonymByKeyWord = "[CustomerResourceApi].[GetSynonymByKeyWord]";
-    public const string GetSynonyms = "[CustomerResourceApi].[GetSynonyms]";
-    public const string SupersedeSynonym = "[CustomerResourceApi].[SupersedeSynonym]";
-    public const string UpdateSynonym = "[CustomerResourceApi].[UpdateSynonym]";
-
-    public const string GetCustomerById = "[CustomerResourceApi].[GetCustomerByID]";
-    public const string GetCustomerFull = "[CustomerResourceApi].[GetCustomerFull]";
-
-    public const string GetThemeById = "[CustomerResourceApi].[GetThemeById]";
-    public const string GetThemeByCustomerId = "[CustomerResourceApi].[GetThemeByCustomerId]";
-    public const string GetThemeBySearchIndexId = "[CustomerResourceApi].[GetThemeBySearchIndexId]";
-    public const string UpdateTheme = "[CustomerResourceApi].[UpdateTheme]";
-
-    public const string GetDashboardSummaryForCustomer = "[CustomerResourceApi].[GetDashboardSummaryForCustomer]";
-
-    public const string GetConfigurationForSearchIndex = "[ClientConfigurationApi].[GetConfigurationForSearchIndex]";
-    public const string InsertOrUpdateSearchConfigurationValueById = "[CustomerResourceApi].[InsertOrUpdateSearchConfigurationValueById]";
-
-    public const string GetSearchInsightsByDataCategories = "[CustomerResourceApi].[GetSearchInsightsByDataCategories]";
-    public const string GetSearchInsightsSearchCountByDateRange = "[CustomerResourceApi].[GetSearchInsightsSearchCountByDateRange]";
-
-    public const string GetTheme = "[ClientConfigurationApi].[GetThemeByCustomerEndpoint]";
-    public const string GetGenericSynonymsByCategory = "[ClientConfigurationApi].[GetGenericSynonymsByCategory]";
 }

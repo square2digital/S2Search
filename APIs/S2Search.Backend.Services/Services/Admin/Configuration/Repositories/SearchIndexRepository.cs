@@ -41,7 +41,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
                 { "CustomerEndpoint", customerEndpoint }
             };
 
-            var connectionString = _configuration.GetConnectionString("CustomerResourceStore");
+            var connectionString = _configuration.GetConnectionString("S2_Search");
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexQueryCredentials>(
                 connectionString,
@@ -58,7 +58,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
                 { "Category", category }
             };
 
-            var result = await _dbContext.QueryAsync<GenericSynonyms>(ConnectionStrings.CustomerResourceStore,
+            var result = await _dbContext.QueryAsync<GenericSynonyms>(ConnectionStrings.S2_Search,
                                                                                  StoredProcedures.GetGenericSynonymsByCategory,
                                                                                  parameters);
 
@@ -142,7 +142,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
 
             try
             {
-                var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndex>(ConnectionStrings.CustomerResourceStore,
+                var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndex>(ConnectionStrings.S2_Search,
                                                                                      StoredProcedures.GetSearchIndex,
                                                                                      parameters);
 
@@ -164,7 +164,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
 
             try
             {
-                var result = await _dbContext.QueryMultipleAsync<SearchIndexFull>(ConnectionStrings.CustomerResourceStore,
+                var result = await _dbContext.QueryMultipleAsync<SearchIndexFull>(ConnectionStrings.S2_Search,
                                                                                   StoredProcedures.GetSearchIndexFull,
                                                                                   parameters);
 
@@ -184,7 +184,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
                 { "CustomerId", customerId }
             };
 
-            var result = await _dbContext.QueryAsync<SearchIndexKeys>(ConnectionStrings.CustomerResourceStore,
+            var result = await _dbContext.QueryAsync<SearchIndexKeys>(ConnectionStrings.S2_Search,
                                                                       StoredProcedures.GetSearchIndexKeysForCustomer,
                                                                       parameters);
 
@@ -214,19 +214,8 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
                 { "FriendlyName", friendlyName }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndex>(ConnectionStrings.CustomerResourceStore,
+            var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndex>(ConnectionStrings.S2_Search,
                                                                                  StoredProcedures.GetSearchIndexByFriendlyName,
-                                                                                 parameters);
-
-            return result;
-        }
-
-        public async Task<IEnumerable<CustomerPricingTier>> GetPricingTiers()
-        {
-            var parameters = new Dictionary<string, object>();
-
-            var result = await _dbContext.QueryAsync<CustomerPricingTier>(ConnectionStrings.CustomerResourceStore,
-                                                                                 StoredProcedures.GetActiveCustomerPricingTiers,
                                                                                  parameters);
 
             return result;
@@ -239,7 +228,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
                 { "CustomerEndpoint", customerEndpoint }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexQueryCredentials>(ConnectionStrings.CustomerResourceStore,
+            var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexQueryCredentials>(ConnectionStrings.S2_Search,
                                                                                  StoredProcedures.GetSearchIndexQueryCredentials,
                                                                                  parameters);
 

@@ -22,7 +22,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "Username", username }
             };
 
-            var credentials = await _dbContext.QuerySingleOrDefaultAsync<FeedCredentials>(ConnectionStrings.CustomerResourceStore,
+            var credentials = await _dbContext.QuerySingleOrDefaultAsync<FeedCredentials>(ConnectionStrings.S2_Search,
                                                                                     StoredProcedures.GetFeedCredentials,
                                                                                     parameters);
             bool userExists = credentials != null && credentials.SearchIndexId != Guid.Empty;
@@ -36,7 +36,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "SearchIndexId", searchIndexId }
             };
 
-            var credentials = await _dbContext.QuerySingleOrDefaultAsync<FeedCredentials>(ConnectionStrings.CustomerResourceStore,
+            var credentials = await _dbContext.QuerySingleOrDefaultAsync<FeedCredentials>(ConnectionStrings.S2_Search,
                                                                                     StoredProcedures.GetFeedCredentialsUsername,
                                                                                     parameters);
             
