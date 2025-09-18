@@ -8,11 +8,11 @@ AS
 
 BEGIN
 
-select 
+SELECT 
 d.[Date],
 d.[Count]
-from insights.SearchIndexRequestLog d
-where d.SearchIndexId = @SearchIndexId
-and d.[Date] between @DateFrom and @DateTo
+FROM insights.SearchIndexRequestLog d
+WHERE d.SearchIndexId = @SearchIndexId
+AND d.[Date] BETWEEN @DateFrom AND @DateTo
 
 END

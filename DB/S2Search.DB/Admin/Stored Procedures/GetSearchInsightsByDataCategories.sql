@@ -9,16 +9,16 @@ AS
 
 BEGIN
 
-select 
+SELECT 
 d.[DataCategory],
 d.[DataPoint],
 d.[Date],
 d.[Count]
-from insights.SearchInsightsData d
-cross apply string_split(@DataCategories, ',') categories
-where d.SearchIndexId = @SearchIndexId
-and d.[Date] >= @DateFrom
-and d.[Date] <= @DateTo
-and categories.value = d.DataCategory
+FROM insights.SearchInsightsData d
+CROSS APPLY string_split(@DataCategories, ',') categories
+WHERE d.SearchIndexId = @SearchIndexId
+AND d.[Date] >= @DateFrom
+AND d.[Date] <= @DateTo
+AND categories.value = d.DataCategory
 
 END

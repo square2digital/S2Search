@@ -120,7 +120,6 @@
     <Build Include="Admin\Stored Procedures\AddSynonym.sql" />
     <Build Include="Admin\Stored Procedures\GetCustomerByID.sql" />
     <Build Include="Admin\Stored Procedures\GetCustomerFull.sql" />
-    <Build Include="Admin\Stored Procedures\GetFeedCredentialsUsername.sql" />
     <Build Include="Admin\Stored Procedures\GetLatestFeed.sql" />
     <Build Include="Admin\Stored Procedures\GetLatestSearchInterface.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndex.sql" />

@@ -24,6 +24,6 @@ BEGIN
       ,[CreatedDate]
       ,[ModifiedDate]
 	FROM [dbo].[Themes]
-	where [CustomerId] = @CustomerId
+	WHERE [CustomerId] = @CustomerId
 
 END

@@ -44,16 +44,16 @@ CreatedDate,
 SupersededDate,
 IsLatest
 FROM dbo.Feeds 
-where SearchIndexId = @SearchIndexId 
-and IsLatest = 1
+WHERE SearchIndexId = @SearchIndexId 
+AND IsLatest = 1
 
 SELECT 
 SynonymId,
 KeyWord as [Key],
 SolrFormat
 FROM dbo.[Synonyms]
-where SearchIndexId = @SearchIndexId 
-and IsLatest = 1
+WHERE SearchIndexId = @SearchIndexId 
+AND IsLatest = 1
 
 SELECT 
 SearchInterfaceId,
@@ -61,7 +61,7 @@ InterfaceType as [Type],
 LogoURL,
 BannerStyle
 FROM dbo.SearchInterfaces 
-where SearchIndexId = @SearchIndexId 
-and IsLatest = 1
+WHERE SearchIndexId = @SearchIndexId 
+AND IsLatest = 1
 
 END

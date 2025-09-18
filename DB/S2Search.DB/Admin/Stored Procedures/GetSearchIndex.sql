@@ -27,6 +27,6 @@ SELECT
 FROM dbo.SearchIndex [search]
 LEFT OUTER JOIN dbo.SearchInstances [service] on [service].SearchInstanceId = search.SearchInstanceId
 WHERE search.SearchIndexId = @SearchIndexId
-and search.CustomerId = @CustomerId
+AND search.CustomerId = @CustomerId
 
 END

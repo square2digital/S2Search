@@ -24,6 +24,6 @@ BEGIN
       ,[CreatedDate]
       ,[ModifiedDate]
 	FROM [dbo].[Themes]
-	where [SearchIndexId] = @SearchIndexId
+	WHERE [SearchIndexId] = @SearchIndexId
 
 END
