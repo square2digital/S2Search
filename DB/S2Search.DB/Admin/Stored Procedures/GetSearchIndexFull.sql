@@ -47,6 +47,16 @@ FROM dbo.Feeds
 WHERE SearchIndexId = @SearchIndexId 
 AND IsLatest = 1
 
+
+SELECT 
+NotificationRuleId,
+TransmitType,
+Recipients,
+[Trigger]
+FROM dbo.NotificationRules 
+WHERE SearchIndexId = @SearchIndexId 
+AND IsLatest = 1
+
 SELECT 
 SynonymId,
 KeyWord as [Key],
@@ -65,3 +75,4 @@ WHERE SearchIndexId = @SearchIndexId
 AND IsLatest = 1
 
 END
+GO
