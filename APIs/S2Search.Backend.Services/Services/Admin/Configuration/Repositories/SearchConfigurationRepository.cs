@@ -11,11 +11,13 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
     {
         private readonly IDbContextProvider _dbContext;
         private readonly IConfiguration _configuration;
+        private readonly string _connectionString;
 
         public SearchConfigurationRepository(IDbContextProvider dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _connectionString = configuration.GetConnectionString("S2_Search");
         }
 
         public async Task<IEnumerable<SearchConfigurationOption>> GetConfigurationForSearchIndexAsync(Guid searchIndexId)
@@ -25,10 +27,8 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "SearchIndexId", searchIndexId }
             };
 
-            var connectionString = _configuration.GetConnectionString("S2_Search");
-
             var result = await _dbContext.QueryAsync<SearchConfigurationOption>(
-                connectionString,
+                _connectionString,
                 StoredProcedures.GetConfigurationForSearchIndex,
                 parameters);
 
@@ -45,10 +45,8 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "Value", config.Value }
             };
 
-            var connectionString = _configuration.GetConnectionString("S2_Search");
-
             var result = await _dbContext.ExecuteAsync(
-                connectionString,
+                _connectionString,
                 StoredProcedures.InsertOrUpdateSearchConfigurationValueById,
                 parameters);
 

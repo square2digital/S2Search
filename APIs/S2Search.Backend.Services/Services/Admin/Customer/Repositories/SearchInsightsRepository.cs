@@ -1,4 +1,5 @@
-﻿using S2Search.Backend.Domain.Constants;
+﻿using Microsoft.Extensions.Configuration;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.Models;
 using S2Search.Backend.Domain.Interfaces.Providers;
@@ -8,11 +9,15 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 {
     public class SearchInsightsRepository : ISearchInsightsRepository
     {
+        private readonly IConfiguration _configuration;
         private readonly IDbContextProvider _dbContext;
+        private readonly string _connectionString;
 
-        public SearchInsightsRepository(IDbContextProvider dbContext)
+        public SearchInsightsRepository(IConfiguration configuration, IDbContextProvider dbContext)
         {
+            _configuration = configuration;
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _connectionString = configuration.GetConnectionString("S2_Search");
         }
 
         public async Task<IEnumerable<SearchInsight>> GetByCategoriesAsync(Guid searchIndexId,
@@ -28,7 +33,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "DataCategories", dataCategories }
             };
 
-            var result = await _dbContext.QueryAsync<SearchInsight>(ConnectionStrings.S2_Search,
+            var result = await _dbContext.QueryAsync<SearchInsight>(_connectionString,
                                                                     StoredProcedures.GetSearchInsightsByDataCategories,
                                                                     parameters);
 
@@ -44,7 +49,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "DateTo", dateTo },
             };
 
-            var result = await _dbContext.QueryAsync<SearchInsight>(ConnectionStrings.S2_Search,
+            var result = await _dbContext.QueryAsync<SearchInsight>(_connectionString,
                                                                     StoredProcedures.GetSearchInsightsSearchCountByDateRange,
                                                                     parameters);
 

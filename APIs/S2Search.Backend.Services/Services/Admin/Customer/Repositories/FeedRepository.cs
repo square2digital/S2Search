@@ -1,4 +1,4 @@
-﻿using S2Search.Backend.Domain.Constants;
+﻿using Microsoft.Extensions.Configuration;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.Feeds;
 using S2Search.Backend.Domain.Interfaces.Providers;
@@ -10,17 +10,21 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 {
     public class FeedRepository : IFeedRepository
     {
+        private readonly IConfiguration _configuration;
         private readonly IDbContextProvider _dbContext;
         private readonly IFeedSettingsValidationManager _feedValidation;
         private readonly ICronDescriptionManager _cronDescriber;
+        private readonly string _connectionString;
 
-        public FeedRepository(IDbContextProvider dbContext,
+        public FeedRepository(IConfiguration configuration,
+                              IDbContextProvider dbContext,
                               IFeedSettingsValidationManager feedValidation,
                               ICronDescriptionManager cronDescriber)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _feedValidation = feedValidation ?? throw new ArgumentNullException(nameof(feedValidation));
             _cronDescriber = cronDescriber ?? throw new ArgumentNullException(nameof(cronDescriber));
+            _connectionString = configuration.GetConnectionString("S2_Search");
         }
 
         public async Task<Feed> CreateAsync(FeedRequest feed)
@@ -35,7 +39,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "SearchIndexId", searchIndexId }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<Feed>(ConnectionStrings.S2_Search, StoredProcedures.GetLatestFeed, parameters);
+            var result = await _dbContext.QuerySingleOrDefaultAsync<Feed>(_connectionString, StoredProcedures.GetLatestFeed, parameters);
 
             if (result != null)
             {
@@ -61,7 +65,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "FeedCron", cronExpression }
             };
 
-            await _dbContext.ExecuteAsync(ConnectionStrings.S2_Search, StoredProcedures.AddFeed, parameters);
+            await _dbContext.ExecuteAsync(_connectionString, StoredProcedures.AddFeed, parameters);
 
             var result = await GetLatestAsync(feed.SearchIndexId);
             return result;

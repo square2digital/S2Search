@@ -1,4 +1,4 @@
-﻿using S2Search.Backend.Domain.Constants;
+﻿using Microsoft.Extensions.Configuration;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.SearchInterfaces;
 using S2Search.Backend.Domain.Interfaces.Providers;
@@ -9,14 +9,18 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 {
     public class SearchInterfaceRepository : ISearchInterfaceRepository
     {
+        private readonly IConfiguration _configuration;
         private readonly IDbContextProvider _dbContext;
         private readonly ISearchInterfaceValidationManager _searchInterfaceValidation;
+        private readonly string _connectionString;
 
-        public SearchInterfaceRepository(IDbContextProvider dbContext,
+        public SearchInterfaceRepository(IConfiguration configuration,
+                                         IDbContextProvider dbContext,
                                          ISearchInterfaceValidationManager searchInterfaceValidation)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _searchInterfaceValidation = searchInterfaceValidation ?? throw new ArgumentNullException(nameof(searchInterfaceValidation));
+            _connectionString = configuration.GetConnectionString("S2_Search");
         }
 
         public async Task<SearchInterface> CreateAsync(SearchInterfaceRequest searchInterfaceRequest)
@@ -34,7 +38,9 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "BannerStyle", searchInterfaceRequest.BannerStyle }
             };
 
-            await _dbContext.ExecuteAsync(ConnectionStrings.S2_Search, StoredProcedures.AddSearchInterface, parameters);
+            await _dbContext.ExecuteAsync(_connectionString,
+                StoredProcedures.AddSearchInterface,
+                parameters);
 
             var result = await GetLatestAsync(searchInterfaceRequest.SearchIndexId);
             return result;
@@ -47,7 +53,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "SearchIndexId", SearchIndexId }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<SearchInterface>(ConnectionStrings.S2_Search,
+            var result = await _dbContext.QuerySingleOrDefaultAsync<SearchInterface>(_connectionString,
                                                                                      StoredProcedures.GetLatestSearchInterface,
                                                                                      parameters);
             return result;

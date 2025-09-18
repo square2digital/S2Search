@@ -12,11 +12,13 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
     {
         private readonly IDbContextProvider _dbContext;
         private readonly IConfiguration _configuration;
+        private readonly string _connectionString;
 
         public ThemeRepository(IDbContextProvider dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _connectionString = configuration.GetConnectionString("S2_Search");
         }
 
         public async Task<Theme> GetThemeAsync(string customerEndpoint)
@@ -26,11 +28,8 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "CustomerEndpoint", customerEndpoint }
             };
 
-            // Pass the key, not the value
-            var connectionStringKey = "S2_Search";
-
             var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
-                connectionStringKey,
+                _connectionString,
                 StoredProcedures.GetTheme,
                 parameters);
 
@@ -44,10 +43,8 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "ThemeId", themeId }
             };
 
-            var connectionString = _configuration.GetConnectionString("S2_Search");
-
             var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
-                connectionString,
+                _connectionString,
                 StoredProcedures.GetThemeById,
                 parameters);
 
@@ -61,10 +58,8 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "CustomerId", customerId }
             };
 
-            var connectionString = _configuration.GetConnectionString("S2_Search");
-
             var result = await _dbContext.QueryMultipleAsync<ThemeCollection>(
-                connectionString,
+                _connectionString,
                 StoredProcedures.GetThemeByCustomerId,
                 parameters);
 
@@ -78,10 +73,8 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "SearchIndexId", searchIndexId }
             };
 
-            var connectionString = _configuration.GetConnectionString("S2_Search");
-
             var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
-                connectionString,
+                _connectionString,
                 StoredProcedures.GetThemeBySearchIndexId,
                 parameters);
 
@@ -100,10 +93,8 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
                 { "MissingImageURL", theme.MissingImageURL }
             };
 
-            var connectionString = _configuration.GetConnectionString("S2_Search");
-
             var result = await _dbContext.ExecuteAsync(
-                connectionString,
+                _connectionString,
                 StoredProcedures.UpdateTheme,
                 parameters);
 

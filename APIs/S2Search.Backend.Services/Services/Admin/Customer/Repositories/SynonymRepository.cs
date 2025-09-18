@@ -1,4 +1,5 @@
-﻿using S2Search.Backend.Domain.Constants;
+﻿using Microsoft.Extensions.Configuration;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.Synonyms;
 using S2Search.Backend.Domain.Interfaces.Providers;
@@ -9,17 +10,21 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 {
     public class SynonymRepository : ISynonymRepository
     {
+        private readonly IConfiguration _configuration;
         private readonly IDbContextProvider _dbContext;
         private readonly ISynonymValidationManager _synonymValidation;
         private readonly ISolrFormatConversionManager _solrConverter;
+        private readonly string _connectionString;
 
-        public SynonymRepository(IDbContextProvider dbContext,
+        public SynonymRepository(IConfiguration configuration,
+                                 IDbContextProvider dbContext,
                                  ISynonymValidationManager synonymValidation,
                                  ISolrFormatConversionManager solrConverter)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _synonymValidation = synonymValidation ?? throw new ArgumentNullException(nameof(synonymValidation));
             _solrConverter = solrConverter ?? throw new ArgumentNullException(nameof(solrConverter));
+            _connectionString = configuration.GetConnectionString("S2_Search");
         }
 
         public async Task<Synonym> CreateAsync(SynonymRequest synonymRequest)
@@ -39,8 +44,8 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "SolrFormat", solrFormat }
             };
 
-            var synonymId = await _dbContext.ExecuteScalarAsync<Guid>(ConnectionStrings.S2_Search,
-                                                                          StoredProcedures.AddSynonym,
+            var synonymId = await _dbContext.ExecuteScalarAsync<Guid>(_connectionString,
+                                                                            StoredProcedures.AddSynonym,
                                                                           parameters);
 
             var result = await GetByIdAsync(synonymRequest.SearchIndexId, synonymId);
@@ -55,7 +60,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "SynonymId", synonymId }
             };
 
-            await _dbContext.ExecuteAsync(ConnectionStrings.S2_Search, StoredProcedures.SupersedeSynonym, parameters);
+            await _dbContext.ExecuteAsync(_connectionString, StoredProcedures.SupersedeSynonym, parameters);
         }
 
         public async Task<IEnumerable<Synonym>> GetAsync(Guid SearchIndexId)
@@ -65,7 +70,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "SearchIndexId", SearchIndexId }
             };
 
-            var results = await _dbContext.QueryAsync<Synonym>(ConnectionStrings.S2_Search, StoredProcedures.GetSynonyms, parameters);
+            var results = await _dbContext.QueryAsync<Synonym>(_connectionString, StoredProcedures.GetSynonyms, parameters);
 
             return results;
         }
@@ -78,7 +83,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "SynonymId", synonymId }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<Synonym>(ConnectionStrings.S2_Search, StoredProcedures.GetSynonymById, parameters);
+            var result = await _dbContext.QuerySingleOrDefaultAsync<Synonym>(_connectionString, StoredProcedures.GetSynonymById, parameters);
 
             return result;
         }
@@ -91,7 +96,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "KeyWord", keyWord }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<Synonym>(ConnectionStrings.S2_Search, StoredProcedures.GetSynonymByKeyWord, parameters);
+            var result = await _dbContext.QuerySingleOrDefaultAsync<Synonym>(_connectionString, StoredProcedures.GetSynonymByKeyWord, parameters);
 
             return result;
         }
@@ -103,7 +108,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 throw new ArgumentException(errorMessage);
             }
 
-            if(synonymRequest.SynonymId == Guid.Empty)
+            if (synonymRequest.SynonymId == Guid.Empty)
             {
                 throw new ArgumentException($"{nameof(synonymRequest.SynonymId)} must be provided");
             }
@@ -118,7 +123,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "SolrFormat", solrFormat }
             };
 
-            await _dbContext.ExecuteAsync(ConnectionStrings.S2_Search, StoredProcedures.UpdateSynonym, parameters);
+            await _dbContext.ExecuteAsync(_connectionString, StoredProcedures.UpdateSynonym, parameters);
 
             var synonym = await GetByIdAsync(synonymRequest.SearchIndexId, synonymRequest.SynonymId);
 

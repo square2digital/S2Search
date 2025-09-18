@@ -1,4 +1,5 @@
-﻿using S2Search.Backend.Domain.Constants;
+﻿using Microsoft.Extensions.Configuration;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.Customer;
 using S2Search.Backend.Domain.Interfaces.Providers;
@@ -8,11 +9,14 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {
+        private readonly IConfiguration _configuration;
         private readonly IDbContextProvider _dbContext;
+        private readonly string _connectionString;
 
-        public CustomerRepository(IDbContextProvider dbContext)
+        public CustomerRepository(IConfiguration configuration, IDbContextProvider dbContextProvider)
         {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _dbContext = dbContextProvider;
+            _connectionString = configuration.GetConnectionString("S2_Search");
         }
 
         public async Task<CustomerIds> GetCustomerById(Guid customerId)
@@ -22,7 +26,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "CustomerId", customerId }
             };
 
-            var result = await _dbContext.QuerySingleOrDefaultAsync<CustomerIds>(ConnectionStrings.S2_Search, StoredProcedures.GetCustomerById, parameters);
+            var result = await _dbContext.QuerySingleOrDefaultAsync<CustomerIds>(_connectionString, StoredProcedures.GetCustomerById, parameters);
 
             return result;
         }
@@ -34,7 +38,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "CustomerId", customerId }
             };
 
-            var result = await _dbContext.QueryMultipleAsync<CustomerFull>(ConnectionStrings.S2_Search, StoredProcedures.GetCustomerFull, parameters);
+            var result = await _dbContext.QueryMultipleAsync<CustomerFull>(_connectionString, StoredProcedures.GetCustomerFull, parameters);
 
             return result;
         }

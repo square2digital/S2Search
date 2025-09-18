@@ -26,29 +26,6 @@ namespace S2Search.Backend.Controllers.Admin
         }
 
         /// <summary>
-        /// Gets the Search Configuration
-        /// </summary>
-        /// <param name="searchIndexId"></param>
-        /// <returns></returns>
-        [HttpGet("{searchIndexId}", Name = "GetConfig")]
-        [ProducesResponseType(typeof(IEnumerable<SearchConfigurationOption>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Get(Guid searchIndexId)
-        {
-            try
-            {
-                var response = await _searchConfigurationRepo.GetConfigurationForSearchIndexAsync(searchIndexId);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        /// <summary>
         /// Insert or Update a config item with a new value
         /// </summary>
         /// <param name="config"></param>
