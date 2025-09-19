@@ -120,6 +120,7 @@ namespace S2Search.Backend.Services
                 .AddSingleton<IFeedUploadManager, FeedUploadManager>()
                 .AddSingleton<IFeedUploadValidationManager, FeedUploadValidationManager>()
                 .AddSingleton<IFeedUploadDestinationManager, FeedUploadDestinationManager>()
+                .AddSingleton<IFeedCredentialsManager, FeedCredentialsManager>()
 
                 //.AddSingleton<INotificationRepository, NotificationRepository>()
                 //.AddSingleton<IDashboardRepository, DashboardRepository>()
