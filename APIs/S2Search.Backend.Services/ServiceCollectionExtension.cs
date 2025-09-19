@@ -116,21 +116,22 @@ namespace S2Search.Backend.Services
                 .AddSingleton<IPreviousDateRangeProvider, PreviousDateRangeProvider>()
                 .AddSingleton<IPercentageChangeProvider, PercentageChangeProvider>()
                 .AddSingleton<ISearchInsightFriendlyNameProvider, SearchInsightFriendlyNameProvider>()
-                
+
 
                 //.AddSingleton<INotificationRepository, NotificationRepository>()
                 //.AddSingleton<IDashboardRepository, DashboardRepository>()
                 .AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>()
                 .AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>()
                 .AddSingleton<ISearchInsightsReportRepository, SearchInsightsReportRepository>()
-                .AddSingleton<IFeedRepository, FeedRepository>();
+                .AddSingleton<IFeedRepository, FeedRepository>()
 
-            services.AddSingleton<IFeedSettingsValidationManager, FeedSettingsValidationManager>();
-            services.AddSingleton<ICronDescriptionManager, CronDescriptionManager>();
-            services.AddSingleton<INotificationRuleValidationManager, NotificationRuleValidationManager>();
-            services.AddSingleton<ISearchInterfaceValidationManager, SearchInterfaceValidationManager>();
-            services.AddSingleton<ISolrFormatConversionManager, SolrFormatConversionManager>();
-            services.AddSingleton<ISynonymValidationManager, SynonymValidationManager>();
+                .AddSingleton<IFeedSettingsValidationManager, FeedSettingsValidationManager>()
+                .AddSingleton<ICronDescriptionManager, CronDescriptionManager>()
+                .AddSingleton<INotificationRuleValidationManager, NotificationRuleValidationManager>()
+                .AddSingleton<ISearchInterfaceValidationManager, SearchInterfaceValidationManager>()
+                .AddSingleton<ISolrFormatConversionManager, SolrFormatConversionManager>()
+                .AddSingleton<ISynonymValidationManager, SynonymValidationManager>()
+                .AddSingleton<IQueryKeyNameValidationManager, QueryKeyNameValidationManager>();
 
 
             return services;
