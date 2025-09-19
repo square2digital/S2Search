@@ -20,6 +20,35 @@ namespace S2Search.Backend.Controllers.Admin
         }
 
         /// <summary>
+        /// Retrieve the theme for the requested customerEndpoint
+        /// </summary>
+        /// <param name="customerEndpoint">The host that is calling the application consuming this endpoint.</param>
+        [HttpGet("theme/{customerEndpoint}", Name = "GetTheme")]
+        [ProducesResponseType(typeof(Theme), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetTheme(string customerEndpoint)
+        {
+            try
+            {
+                var theme = await _themeRepo.GetThemeAsync(customerEndpoint);
+
+                if (theme == null)
+                {
+                    _logger.LogInformation($"Not found on {nameof(GetTheme)} | CustomerEndpoint: {customerEndpoint}");
+                    return NotFound();
+                }
+
+                return Ok(theme);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error on {nameof(GetTheme)} | CustomerEndpoint: {customerEndpoint} | Message: {ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Gets the theme by the themeId
         /// </summary>
         /// <param name="customerId"></param>

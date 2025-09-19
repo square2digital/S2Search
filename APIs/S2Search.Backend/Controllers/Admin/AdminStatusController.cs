@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using S2Search.Backend.Domain.Interfaces.Providers;
 using System.Data.SqlClient;
 
 namespace S2Search.Backend.Controllers.Admin
