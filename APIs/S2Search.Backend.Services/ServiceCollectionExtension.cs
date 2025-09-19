@@ -117,6 +117,9 @@ namespace S2Search.Backend.Services
                 .AddSingleton<IPercentageChangeProvider, PercentageChangeProvider>()
                 .AddSingleton<ISearchInsightFriendlyNameProvider, SearchInsightFriendlyNameProvider>()
 
+                .AddSingleton<IFeedUploadManager, FeedUploadManager>()
+                .AddSingleton<IFeedUploadValidationManager, FeedUploadValidationManager>()
+                .AddSingleton<IFeedUploadDestinationManager, FeedUploadDestinationManager>()
 
                 //.AddSingleton<INotificationRepository, NotificationRepository>()
                 //.AddSingleton<IDashboardRepository, DashboardRepository>()
@@ -124,6 +127,7 @@ namespace S2Search.Backend.Services
                 .AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>()
                 .AddSingleton<ISearchInsightsReportRepository, SearchInsightsReportRepository>()
                 .AddSingleton<IFeedRepository, FeedRepository>()
+                .AddSingleton<IBlobClientProvider, BlobClientProvider>()
 
                 .AddSingleton<IFeedSettingsValidationManager, FeedSettingsValidationManager>()
                 .AddSingleton<ICronDescriptionManager, CronDescriptionManager>()
