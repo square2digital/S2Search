@@ -53,7 +53,7 @@ namespace S2Search.Backend.Services
             var appSettings = LoadAppSettings(services);
 
             return services.AddRedis(appSettings.RedisCacheSettings.RedisConnectionString)
-                            .AddServiceDependencies()
+                           .AddServiceDependencies()
                            .AddServices()
                            .AddProviders();
         }
@@ -111,6 +111,11 @@ namespace S2Search.Backend.Services
                 .AddSingleton<ICustomerRepository, CustomerRepository>()
                 .AddSingleton<IThemeRepository, ThemeRepository>()
                 .AddSingleton<IFeedCredentialsRepository, FeedCredentialsRepository>()
+
+                //.AddSingleton<ISearchInsightsRetrievalManager, SearchInsightsRetrievalManager>()
+
+                
+
                 //.AddSingleton<INotificationRepository, NotificationRepository>()
                 //.AddSingleton<IDashboardRepository, DashboardRepository>()
                 .AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>()

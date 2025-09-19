@@ -1,8 +1,6 @@
 ﻿using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
 using StackExchange.Redis;
-using System;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Services.Cache
 {

@@ -59,30 +59,45 @@ namespace Search.Controllers
                 return BadRequest();
             }
 
+            var callingHost = StringHelpers.FormatCallingHost(request.CallingHost);
+
             try
             {
-                var callingHost = StringHelpers.FormatCallingHost(request.CallingHost);
-                var redisKey = _redisService.CreateRedisKey(callingHost, "facets", HashHelper.GetXXHashString(JsonConvert.SerializeObject(request)));
-                var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
-
-                if (redisValue != null)
+                if (_appSettings.RedisCacheSettings.EnableRedisCache)
                 {
-                    return Ok(JsonConvert.DeserializeObject<FacetedSearchResult>(redisValue));
-                }                
+                    var redisKey = _redisService.CreateRedisKey(callingHost, "facets", HashHelper.GetXXHashString(JsonConvert.SerializeObject(request)));
+                    var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
 
-                var queryCredentials = await _queryCredentialsProvider.GetAsync(callingHost);
+                    if (redisValue != null)
+                    {
+                        return Ok(JsonConvert.DeserializeObject<FacetedSearchResult>(redisValue));
+                    }
 
-                if (queryCredentials == null)
-                {
-                    return NotFound("CallingHost not recognised.");
+                    var queryCredentials = await _queryCredentialsProvider.GetAsync(callingHost);
+
+                    if (queryCredentials == null)
+                    {
+                        return NotFound("CallingHost not recognised.");
+                    }
+
+                    IList<FacetGroup> facets = _azureFacetService.GetOrSetDefaultFacets(callingHost, queryCredentials);
+                    FacetedSearchResult result = new FacetedSearchResult(facets);
+
+                    await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), TimeSpan.FromSeconds(600));
+
+                    return Ok(result);
                 }
-
-                IList<FacetGroup> facets = _azureFacetService.GetOrSetDefaultFacets(callingHost, queryCredentials);
-                FacetedSearchResult result = new FacetedSearchResult(facets);
-
-                await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), TimeSpan.FromSeconds(600));
-
-                return Ok(result);
+                else
+                {
+                    var queryCredentials = await _queryCredentialsProvider.GetAsync(callingHost);
+                    if (queryCredentials == null)
+                    {
+                        return NotFound("CallingHost not recognised.");
+                    }
+                    IList<FacetGroup> facets = _azureFacetService.GetOrSetDefaultFacets(callingHost, queryCredentials);
+                    FacetedSearchResult result = new FacetedSearchResult(facets);
+                    return Ok(result);
+                }
             }
             catch (Exception ex)
             {
