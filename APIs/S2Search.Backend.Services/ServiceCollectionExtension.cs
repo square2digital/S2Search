@@ -112,8 +112,10 @@ namespace S2Search.Backend.Services
                 .AddSingleton<IThemeRepository, ThemeRepository>()
                 .AddSingleton<IFeedCredentialsRepository, FeedCredentialsRepository>()
 
-                //.AddSingleton<ISearchInsightsRetrievalManager, SearchInsightsRetrievalManager>()
-
+                .AddSingleton<ISearchInsightsRetrievalManager, SearchInsightsRetrievalManager>()
+                .AddSingleton<IPreviousDateRangeProvider, PreviousDateRangeProvider>()
+                .AddSingleton<IPercentageChangeProvider, PercentageChangeProvider>()
+                .AddSingleton<ISearchInsightFriendlyNameProvider, SearchInsightFriendlyNameProvider>()
                 
 
                 //.AddSingleton<INotificationRepository, NotificationRepository>()
