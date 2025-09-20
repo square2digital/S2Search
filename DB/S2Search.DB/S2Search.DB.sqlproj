@@ -158,5 +158,6 @@
     <None Include="SQL Scripts\resurrection-2025\CreateData.sql" />
     <Build Include="Schemas.sql" />
     <Build Include="logins.sql" />
+    <Build Include="FeedServicesFunc\Stored Procedures\GetFeedCredentialsUsername.sql" />
   </ItemGroup>
 </Project>
