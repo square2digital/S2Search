@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.SearchInterfaces;
 using S2Search.Backend.Domain.Interfaces.Providers;
@@ -20,7 +21,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _searchInterfaceValidation = searchInterfaceValidation ?? throw new ArgumentNullException(nameof(searchInterfaceValidation));
-            _connectionString = configuration.GetConnectionString("S2_Search");
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase);
         }
 
         public async Task<SearchInterface> CreateAsync(SearchInterfaceRequest searchInterfaceRequest)

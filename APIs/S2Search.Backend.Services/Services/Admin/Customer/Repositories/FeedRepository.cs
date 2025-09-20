@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.Feeds;
 using S2Search.Backend.Domain.Interfaces.Providers;
@@ -24,7 +25,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _feedValidation = feedValidation ?? throw new ArgumentNullException(nameof(feedValidation));
             _cronDescriber = cronDescriber ?? throw new ArgumentNullException(nameof(cronDescriber));
-            _connectionString = configuration.GetConnectionString("S2_Search");
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase);
         }
 
         public async Task<Feed> CreateAsync(FeedRequest feed)

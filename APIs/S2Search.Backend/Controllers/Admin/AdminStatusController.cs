@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using S2Search.Backend.Domain.Constants;
 using System.Data.SqlClient;
 
 namespace S2Search.Backend.Controllers.Admin
@@ -13,7 +14,7 @@ namespace S2Search.Backend.Controllers.Admin
         public AdminStatusController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _connectionString = configuration.GetConnectionString("S2_Search");
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase);
         }
 
         [HttpGet(Name = "GetAPIStatus")]

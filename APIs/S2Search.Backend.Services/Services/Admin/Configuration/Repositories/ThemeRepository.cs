@@ -1,10 +1,11 @@
-﻿using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using S2Search.Backend.Domain.Configuration.SearchResources;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.Themes;
-using S2Search.Backend.Domain.Interfaces.Repositories;
 using S2Search.Backend.Domain.Interfaces.Providers;
+using S2Search.Backend.Domain.Interfaces.Repositories;
+using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 
 namespace S2Search.Backend.Services.Admin.Configuration.Repositories
 {
@@ -18,7 +19,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _connectionString = configuration.GetConnectionString("S2_Search");
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase);
         }
 
         public async Task<Theme> GetThemeAsync(string customerEndpoint)
