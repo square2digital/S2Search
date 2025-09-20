@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options; // Add this for configuration binding extensions
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Domain.Interfaces.FacetOverrides;
@@ -39,7 +38,6 @@ namespace S2Search.Backend.Services
 {
     public static class ServiceCollectionExtension
     {
-        // Make Configuration nullable and settable
         public static IConfiguration? Configuration { get; set; }
 
         public static IServiceCollection AddAPIServices(this IServiceCollection services)
@@ -72,40 +70,35 @@ namespace S2Search.Backend.Services
 
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddSingleton<IDbContextProvider, DbContextProvider>();
-            services.AddSingleton<ISearchIndexRepository, SearchIndexRepository>();
-            services.AddSingleton<IMemoryCacheService, LazyCacheService>();
-            services.AddSingleton<IAzureSearchService, AzureSearchService>();
-            services.AddSingleton<IAzureFacetService, AzureFacetService>();
-            services.AddSingleton<IFacetHelper, FacetHelper>();
-            services.AddSingleton<IDisplayTextFormatHelper, DisplayTextFormatHelper>();
-            services.AddSingleton<ISearchFilterFormatter, SearchFilterFormatter>();
-            services.AddSingleton<IFacetOverride, EngineSizeOverride>();
-            services.AddSingleton<IFacetOverride, MileageOverride>();
-            services.AddSingleton<IFacetOverride, DoorsOverride>();
-            services.AddSingleton<IFacetOverrideProvider, FacetOverrideProvider>();
-            services.AddSingleton<ISynonymsService, SynonymsService>();
-            services.AddSingleton<IAzureQueueService, AzureQueueService>();
-            services.AddSingleton<IFireForgetService<IAzureQueueService>, FireForgetService<IAzureQueueService>>();
-            services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
-            services.AddSingleton(RedisConnectionMultiplexer(Configuration));
-            services.AddSingleton<IQueueClientProvider, QueueClientProvider>();
-            //services.AddSingleton<ICacheManager, RedisCacheManager>();
-            services.AddSingleton<IQueueManager, QueueManager>();
-            //services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
-            services.AddSingleton<IAzureSearchClientProvider, AzureSearchClientProvider>();
-            services.AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>();
-            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-            //services.AddSingleton<IDashboardManager, DashboardManager>();
-            //services.AddSingleton<IDateTimeCategoryProvider, DateTimeCategoryProvider>();
-            //services.AddSingleton<ISearchInsightsManager, SearchInsightsManager>()
-            //services.AddSingleton<ISearchFacetsFormatManager, SearchFacetsFormatManager>()
-            //services.AddSingleton<IDataPointsExtractionManager, DataPointsExtractionManager>();
-
             services
+                .AddSingleton<IDbContextProvider, DbContextProvider>()
+                .AddSingleton<ISearchIndexRepository, SearchIndexRepository>()
+                .AddSingleton<IMemoryCacheService, LazyCacheService>()
+                .AddSingleton<IAzureSearchService, AzureSearchService>()
+                .AddSingleton<IAzureFacetService, AzureFacetService>()
+                .AddSingleton<IFacetHelper, FacetHelper>()
+                .AddSingleton<IDisplayTextFormatHelper, DisplayTextFormatHelper>()
+                .AddSingleton<ISearchFilterFormatter, SearchFilterFormatter>()
+                .AddSingleton<IFacetOverride, EngineSizeOverride>()
+                .AddSingleton<IFacetOverride, MileageOverride>()
+                .AddSingleton<IFacetOverride, DoorsOverride>()
+                .AddSingleton<IFacetOverrideProvider, FacetOverrideProvider>()
+                .AddSingleton<ISynonymsService, SynonymsService>()
+                .AddSingleton<IAzureQueueService, AzureQueueService>()
+                .AddSingleton<IFireForgetService<IAzureQueueService>, FireForgetService<IAzureQueueService>>()
+                .AddSingleton<IDbConnectionFactory, DbConnectionFactory>()
+                .AddSingleton(RedisConnectionMultiplexer(Configuration))
+                .AddSingleton<IQueueClientProvider, QueueClientProvider>()
+
+                .AddSingleton<IQueueManager, QueueManager>()
+
+                .AddSingleton<IAzureSearchClientProvider, AzureSearchClientProvider>()
+                .AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>()
+                .AddSingleton<IDateTimeProvider, DateTimeProvider>()
+
                 .AddSingleton<ISearchIndexRepository, SearchIndexRepository>()
                 .AddSingleton<IFeedRepository, FeedRepository>()
-                //.AddSingleton<INotificationRuleRepository, NotificationRuleRepository>()
+
                 .AddSingleton<ISearchInterfaceRepository, SearchInterfaceRepository>()
                 .AddSingleton<ISynonymRepository, SynonymRepository>()
                 .AddSingleton<ICustomerRepository, CustomerRepository>()
@@ -122,8 +115,6 @@ namespace S2Search.Backend.Services
                 .AddSingleton<IFeedUploadDestinationManager, FeedUploadDestinationManager>()
                 .AddSingleton<IFeedCredentialsManager, FeedCredentialsManager>()
 
-                //.AddSingleton<INotificationRepository, NotificationRepository>()
-                //.AddSingleton<IDashboardRepository, DashboardRepository>()
                 .AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>()
                 .AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>()
                 .AddSingleton<ISearchInsightsReportRepository, SearchInsightsReportRepository>()
@@ -138,6 +129,16 @@ namespace S2Search.Backend.Services
                 .AddSingleton<ISynonymValidationManager, SynonymValidationManager>()
                 .AddSingleton<IQueryKeyNameValidationManager, QueryKeyNameValidationManager>();
 
+                //services.AddSingleton<ICacheManager, RedisCacheManager>();
+                //.AddSingleton<INotificationRuleRepository, NotificationRuleRepository>()
+                //services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
+                //.AddSingleton<INotificationRepository, NotificationRepository>()
+                //.AddSingleton<IDashboardRepository, DashboardRepository>()
+                //services.AddSingleton<IDashboardManager, DashboardManager>();
+                //services.AddSingleton<IDateTimeCategoryProvider, DateTimeCategoryProvider>();
+                //services.AddSingleton<ISearchInsightsManager, SearchInsightsManager>()
+                //services.AddSingleton<ISearchFacetsFormatManager, SearchFacetsFormatManager>()
+                //services.AddSingleton<IDataPointsExtractionManager, DataPointsExtractionManager>();
 
             return services;
         }
