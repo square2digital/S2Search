@@ -1,14 +1,10 @@
-﻿use CustomerResourceStore
-go
+﻿USE CustomerResourceStore
+GO
     /***************************************************************************************
      Static Variables
-     ----------------------------------------------------------------------------------------
-     These do not change
      ***************************************************************************************/
     DECLARE @Now datetime = GETUTCDATE() 
-    DECLARE @Subscription_ResourceGroupsQuota int = 980 
-    DECLARE @ResourceGroup_ResourceQuota int = 800
-
+    
     /***************************************************************************************
      Dummy Data - Script Start
      ***************************************************************************************/
@@ -17,7 +13,6 @@ go
     DECLARE @CustomerId uniqueidentifier = 'afeb217b-813a-4b9c-82ec-e0221d5e95b1'
     DECLARE @SearchInstanceId uniqueidentifier = '97032266-c1c0-4278-8816-053bbc3a1036'
     DECLARE @ResourceGroup varchar(255) = 'S2Search'
-    DECLARE @ServiceLocation varchar(50) = 'West Europe'
     DECLARE @SearchInstanceEndpoint varchar(250) = 'https://s2-search-dev.search.windows.net'
 	DECLARE @StorageURI varchar(250) = 'https://s2storagedev.blob.core.windows.net'
     DECLARE @AdminKey varchar(255) = 'meh33Ur6Zd7oGUv201TvZAXD5mqTOH9QN1YtFePp86AzSeDwh11h'
@@ -26,7 +21,6 @@ go
     DECLARE @Replicas int = 1
     DECLARE @Partitions int = 1
     DECLARE @IsShared bit = 1
-    DECLARE @SearchInstanceName varchar(255) = 's2-search-dev'
     DECLARE @SearchIndexName varchar(255) = 'vehicles-' + LEFT(CONVERT(varchar(255), NEWID()), 8) --Feeds
     DECLARE @FeedType varchar(20) = 'FTPS'
     DECLARE @FeedCron varchar(50) = '5 * * * *'
@@ -35,7 +29,7 @@ go
     --SearchInterfaces
     DECLARE @InterfaceType varchar(50) = 'API_Consumption'
     DECLARE @InterfaceLogoURL varchar(255) = NULL
-    DECLARE @IntefaceBannerStyle varchar(255) = NULL
+    DECLARE @InterfaceBannerStyle varchar(255) = NULL
     
     --Synonyms
 	DECLARE @SynonymId_1 uniqueidentifier = '36baeafb-a843-4eb1-a2a9-4457d2eabe0d'
@@ -156,22 +150,12 @@ go
      You will need to set these variables for the script to run successfully.
      See the README for instructions on how to set up a ServicePrinciple in Azure
      ***************************************************************************************/
-    --DECLARE @SubscriptionId uniqueidentifier = 'f8cff945-b5e5-462a-9786-d69bd7a0eb34'
-    --DECLARE @SubscriptionName varchar(50) = 'S2-Pay-As-You-Go'
-    --DECLARE @ServicePrinciple_Name varchar(50) = 'TestProvision'
-    --DECLARE @ServicePrinciple_ClientId uniqueidentifier = '5ba3c688-71f9-474a-952f-c7b527a29f65' 
-    --DECLARE @ServicePrinciple_TenantId uniqueidentifier = '0694e993-9911-4269-b7e2-bfd29ca197c6' 
-    --DECLARE @ServicePrinciple_ClientKeyName varchar(50) = 'test' 
-    --DECLARE @ServicePrinciple_ClientKeySecret varchar(100) = '64ZZWyvGfVC~A1e.YF9IjQF.kXx-3hfOn4' 
-    --DECLARE @ServicePrinciple_ClientKeyExpiryDate datetime = '2021-11-11 00:00' 
-    --DECLARE @AzurePricingTier varchar(50) = 'Free'
-
+                                    
      /***************************************************************************************
      Customer Pricing Tiers
      ***************************************************************************************/
      DECLARE @SkuIdFree varchar(50) = 'FREE'
-     DECLARE @SkuIdFreeName varchar(100) = 'S2 Free Tier'
-     DECLARE @SkuIdFreeDescription varchar(255) = 'TBD'
+          DECLARE @SkuIdFreeDescription varchar(255) = 'TBD'
      DECLARE @SkuIdFreeEffectiveFrom datetime = '2021-03-24 00:00:00.000'
 
      DECLARE @SkuIdFreeTrial varchar(50) = 'FREETRIALMARCH'
@@ -195,46 +179,34 @@ go
      Truncate all tables to start with a fresh setup
      ***************************************************************************************/
 
-	DELETE FROM
-		[dbo].Customers
-	DELETE FROM
-		[dbo].[FeedCredentials]
-	DELETE FROM
-		[dbo].Feeds
-	DELETE FROM
-		[dbo].GenericSynonyms
-	DELETE FROM
-		[dbo].SearchIndex
-	DELETE FROM
-		[dbo].SearchIndexKeys
-	DELETE FROM
-		[dbo].SearchInstanceCapacity
-	DELETE FROM
-		[dbo].SearchInstanceKeys
-	DELETE FROM
-		[dbo].SearchInstances
-	DELETE FROM
-		[dbo].SearchInterfaces
-	DELETE FROM
-		[dbo].[Synonyms]
-	DELETE FROM
-		[dbo].Themes
+	TRUNCATE TABLE [dbo].Customers
+	TRUNCATE TABLE [dbo].[FeedCredentials]
+	TRUNCATE TABLE [dbo].Feeds
+	TRUNCATE TABLE [dbo].GenericSynonyms
+	TRUNCATE TABLE [dbo].SearchIndex
+	TRUNCATE TABLE [dbo].SearchIndexKeys
+	TRUNCATE TABLE [dbo].SearchInstanceCapacity
+	TRUNCATE TABLE [dbo].SearchInstanceKeys
+	TRUNCATE TABLE [dbo].SearchInstances
+	TRUNCATE TABLE [dbo].SearchInterfaces
+	TRUNCATE TABLE [dbo].[Synonyms]
+	TRUNCATE TABLE [dbo].Themes
 
-/***************************************************************************************
-Uncomment this if you want to clear down the insights
-***************************************************************************************/
---TRUNCATE TABLE [insights].[SearchInsightsData]
---TRUNCATE TABLE [insights].[SearchIndexRequestLog]
+	/***************************************************************************************
+	Uncomment this if you want to clear down the insights
+	***************************************************************************************/
+	--TRUNCATE TABLE [insights].[SearchInsightsData]
+	--TRUNCATE TABLE [insights].[SearchIndexRequestLog]
 
-/***************************************************************************************
-Initial Setup - Script Start
-***************************************************************************************/
+	/***************************************************************************************
+	Initial Setup - Script Start
+	***************************************************************************************/
 
-PRINT '****************************'
-PRINT 'Setup Configuration Options'
-PRINT '****************************'
+	PRINT '****************************'
+	PRINT 'Setup Configuration Options'
+	PRINT '****************************'
 
-INSERT INTO [dbo].[SearchConfigurationDataTypes]
+	INSERT INTO [dbo].[SearchConfigurationDataTypes]
 		([SearchConfigurationDataTypeId],
 		[DataType])
 	VALUES
@@ -248,72 +220,72 @@ INSERT INTO [dbo].[SearchConfigurationDataTypes]
 	PRINT 'Inserting Search Resource Keys - '
 	PRINT '********************************'
 
-INSERT INTO
-    [dbo].SearchInstanceKeys (
-        SearchInstanceKeyId,
-        SearchInstanceId,
-        KeyType,
-        [Name],
-        ApiKey,
-        CreatedDate,
-        ModifiedDate,
-        IsLatest
-    )
-VALUES
-    (
-        @SearchInstanceKeyId_AdminKey,
-        @SearchInstanceId,
-        'Admin',
-        'Primary Admin key',
-        @AdminKey,
-        @Now,
-        null,
-        1
-    )
-INSERT INTO
-    [dbo].SearchInstanceKeys (
-        SearchInstanceKeyId,
-        SearchInstanceId,
-        KeyType,
-        [Name],
-        ApiKey,
-        CreatedDate,
-        ModifiedDate,
-        IsLatest
-    )
-VALUES
-    (
-        @SearchInstanceKeyId_SecondaryAdminKey,
-        @SearchInstanceId,
-        'Admin',
-        'Secondary Admin key',
-        @SecondaryKey,
-        @Now,
-        null,
-        1
-    )
-INSERT INTO
-    [dbo].SearchInstanceKeys (
-        SearchInstanceKeyId,
-        SearchInstanceId,
-        KeyType,
-        [Name],
-        ApiKey,
-        CreatedDate,
-        ModifiedDate,
-        IsLatest
-    )
-VALUES
-    (
-        @SearchInstanceKeyId_QueryKey,
-        @SearchInstanceId,
-        'Query',
-        'Query key',
-        @QueryKey,
-        @Now,
-        null,
-        1
-    )
+	INSERT INTO
+	[dbo].SearchInstanceKeys (
+		SearchInstanceKeyId,
+		SearchInstanceId,
+		KeyType,
+		[Name],
+		ApiKey,
+		CreatedDate,
+		ModifiedDate,
+		IsLatest
+	)
+	VALUES
+	(
+		@SearchInstanceKeyId_AdminKey,
+		@SearchInstanceId,
+		'Admin',
+		'Primary Admin key',
+		@AdminKey,
+		@Now,
+		null,
+		1
+	)
+	INSERT INTO
+	[dbo].SearchInstanceKeys (
+		SearchInstanceKeyId,
+		SearchInstanceId,
+		KeyType,
+		[Name],
+		ApiKey,
+		CreatedDate,
+		ModifiedDate,
+		IsLatest
+	)
+	VALUES
+	(
+		@SearchInstanceKeyId_SecondaryAdminKey,
+		@SearchInstanceId,
+		'Admin',
+		'Secondary Admin key',
+		@SecondaryKey,
+		@Now,
+		null,
+		1
+	)
+	INSERT INTO
+	[dbo].SearchInstanceKeys (
+		SearchInstanceKeyId,
+		SearchInstanceId,
+		KeyType,
+		[Name],
+		ApiKey,
+		CreatedDate,
+		ModifiedDate,
+		IsLatest
+	)
+	VALUES
+	(
+		@SearchInstanceKeyId_QueryKey,
+		@SearchInstanceId,
+		'Query',
+		'Query key',
+		@QueryKey,
+		@Now,
+		null,
+		1
+	)
 
 	
 	PRINT '************************'
@@ -389,13 +361,13 @@ VALUES
 
 	INSERT INTO
 		[dbo].Feeds (
-		  [FeedType]
-		  ,[FeedScheduleCron]
-		  ,[SearchIndexId]
-		  ,[DataFormat]
-		  ,[CreatedDate]
-		  ,[SupersededDate]
-		  ,[IsLatest]
+			[FeedType]
+			,[FeedScheduleCron]
+			,[SearchIndexId]
+			,[DataFormat]
+			,[CreatedDate]
+			,[SupersededDate]
+			,[IsLatest]
 		)
 	VALUES
 		(
@@ -477,13 +449,13 @@ VALUES
 
 	INSERT INTO
 		[dbo].Feeds (
-		  [FeedType]
-		  ,[FeedScheduleCron]
-		  ,[SearchIndexId]
-		  ,[DataFormat]
-		  ,[CreatedDate]
-		  ,[SupersededDate]
-		  ,[IsLatest]
+			[FeedType]
+			,[FeedScheduleCron]
+			,[SearchIndexId]
+			,[DataFormat]
+			,[CreatedDate]
+			,[SupersededDate]
+			,[IsLatest]
 		)
 	VALUES
 		(
@@ -565,13 +537,13 @@ VALUES
 
 	INSERT INTO
 		[dbo].Feeds (
-		  [FeedType]
-		  ,[FeedScheduleCron]
-		  ,[SearchIndexId]
-		  ,[DataFormat]
-		  ,[CreatedDate]
-		  ,[SupersededDate]
-		  ,[IsLatest]
+			[FeedType]
+			,[FeedScheduleCron]
+			,[SearchIndexId]
+			,[DataFormat]
+			,[CreatedDate]
+			,[SupersededDate]
+			,[IsLatest]
 		)
 	VALUES
 		(
@@ -590,15 +562,15 @@ VALUES
 	PRINT '********************************'
 
 
--- *********************************************************************
--- Local host Interfaces - these are what bind to the 2 test Search Endpoints
--- *********************************************************************
+	-- *********************************************************************
+	-- Local host Interfaces - these are what bind to the 2 test Search Endpoints
+	-- *********************************************************************
 
--- *********************************
--- S2 Demo data - Azure Demo Environment
--- *********************************
-INSERT INTO
-    [dbo].SearchInterfaces (
+	-- *********************************
+	-- S2 Demo data - Azure Demo Environment
+	-- *********************************
+	INSERT INTO
+	[dbo].SearchInterfaces (
 		[SearchIndexId],
 		[SearchEndpoint],
 		[InterfaceType],
@@ -607,24 +579,24 @@ INSERT INTO
 		[CreatedDate],
 		[SupersededDate],
 		[IsLatest]
-    )
-VALUES
-    (
-        @SearchIndexId_1,
+	)
+	VALUES
+	(
+		@SearchIndexId_1,
 		@S2DemoEndpoint,
-        @InterfaceType,
-        @InterfaceLogoURL,
-		@IntefaceBannerStyle,
+		@InterfaceType,
+		@InterfaceLogoURL,
+		@InterfaceBannerStyle,
 		@Now,
 		NULL,
 		1
-    )
+	)
 
--- *********************************
--- harley motors data - Local K8s
--- *********************************
-INSERT INTO
-    [dbo].SearchInterfaces (
+	-- *********************************
+	-- harley motors data - Local K8s
+	-- *********************************
+	INSERT INTO
+	[dbo].SearchInterfaces (
 		[SearchIndexId],
 		[SearchEndpoint],
 		[InterfaceType],
@@ -633,25 +605,25 @@ INSERT INTO
 		[CreatedDate],
 		[SupersededDate],
 		[IsLatest]
-    )
-VALUES
-    (
-        @SearchIndexId_2,
+	)
+	VALUES
+	(
+		@SearchIndexId_2,
 		@HarleyMotorsEndpoint,
-        @InterfaceType,
-        @InterfaceLogoURL,
-		@IntefaceBannerStyle,
+		@InterfaceType,
+		@InterfaceLogoURL,
+		@InterfaceBannerStyle,
 		@Now,
 		NULL,
 		1
-    )
+	)
 	
 
--- *********************************
--- harper motors data - Local K8s
--- *********************************
-INSERT INTO
-    [dbo].SearchInterfaces (
+	-- *********************************
+	-- harper motors data - Local K8s
+	-- *********************************
+	INSERT INTO
+	[dbo].SearchInterfaces (
 		[SearchIndexId],
 		[SearchEndpoint],
 		[InterfaceType],
@@ -660,83 +632,83 @@ INSERT INTO
 		[CreatedDate],
 		[SupersededDate],
 		[IsLatest]
-    )
-VALUES
-    (
-        @SearchIndexId_3,
+	)
+	VALUES
+	(
+		@SearchIndexId_3,
 		@HarperMotorsEndpoint,
-        @InterfaceType,
-        @InterfaceLogoURL,
-		@IntefaceBannerStyle,
+		@InterfaceType,
+		@InterfaceLogoURL,
+		@InterfaceBannerStyle,
 		@Now,
 		NULL,
 		1
-    )
+	)
 
 
 	PRINT '********************************'
 	PRINT 'Inserting Synonyms'
 	PRINT '********************************'
 
-INSERT INTO
-    [dbo].[Synonyms] (
+	INSERT INTO
+	[dbo].[Synonyms] (
 		SynonymId,
-        SearchIndexId,
-        KeyWord,
-        SolrFormat
-    )
-VALUES
-    (
+		SearchIndexId,
+		KeyWord,
+		SolrFormat
+	)
+	VALUES
+	(
 		@SynonymId_1,
-        @SearchIndexId_1,
-        @KeyWord_1,
-        @SolrFormat_1
-    ) 
+		@SearchIndexId_1,
+		@KeyWord_1,
+		@SolrFormat_1
+	) 
 
-INSERT INTO
-    [dbo].[Synonyms] (
+	INSERT INTO
+	[dbo].[Synonyms] (
 		SynonymId,
-        SearchIndexId,
-        KeyWord,
-        SolrFormat
-    )
-VALUES
-    (
+		SearchIndexId,
+		KeyWord,
+		SolrFormat
+	)
+	VALUES
+	(
 		@SynonymId_2,
-        @SearchIndexId_1,
-        @KeyWord_2,
-        @SolrFormat_2
-    ) 
+		@SearchIndexId_1,
+		@KeyWord_2,
+		@SolrFormat_2
+	) 
 
-    PRINT '********************************'
+	PRINT '********************************'
 	PRINT 'Inserting Generic Synonyms'
 	PRINT '********************************'
 
-    INSERT INTO [dbo].GenericSynonyms 
-    (
+	INSERT INTO [dbo].GenericSynonyms 
+	(
 		Id,
-        Category,
-        SolrFormat
-    )
-    VALUES
-        (
-		    @GenericSynonymId_1,
-            @GenericSynonymCategory,
-            @GenericSolrFormat_1
-        ),
-        (
-		    @GenericSynonymId_2,
-            @GenericSynonymCategory,
-            @GenericSolrFormat_2
-        )
+		Category,
+		SolrFormat
+	)
+	VALUES
+		(
+			@GenericSynonymId_1,
+			@GenericSynonymCategory,
+			@GenericSolrFormat_1
+		),
+		(
+			@GenericSynonymId_2,
+			@GenericSynonymCategory,
+			@GenericSolrFormat_2
+		)
 
 	PRINT '********************************'
 	PRINT 'Customer 1 - S2 Demo - Theme Details'
 	PRINT '********************************'
 
-INSERT INTO [dbo].[Themes]
-    (
-		 [ThemeId]
+	INSERT INTO [dbo].[Themes]
+	(
+			[ThemeId]
 		,[PrimaryHexColour]
 		,[SecondaryHexColour]
 		,[NavBarHexColour]
@@ -747,16 +719,16 @@ INSERT INTO [dbo].[Themes]
 		,[CreatedDate]
 		,[ModifiedDate]
 	)
-    VALUES
-    (
+	VALUES
+	(
 		@ThemeId_1,
-        @ThemePrimaryThemeColour_1,
-        @ThemeSecondaryThemeColour_1,
-        @ThemeNavBarColourColour_1,
+		@ThemePrimaryThemeColour_1,
+		@ThemeSecondaryThemeColour_1,
+		@ThemeNavBarColourColour_1,
 		@ThemeLogoURL_1,
 		@ThemeMissingImageURL_1,
-        @CustomerId_JGilmartin_Motors,
-        @SearchIndexId_1,
+		@CustomerId_JGilmartin_Motors,
+		@SearchIndexId_1,
 		@Now,
 		NULL
 	)
@@ -766,8 +738,8 @@ INSERT INTO [dbo].[Themes]
 	PRINT '********************************'
 
 	INSERT INTO [dbo].[Themes]
-    (
-		 [ThemeId]
+	(
+			[ThemeId]
 		,[PrimaryHexColour]
 		,[SecondaryHexColour]
 		,[NavBarHexColour]
@@ -778,16 +750,16 @@ INSERT INTO [dbo].[Themes]
 		,[CreatedDate]
 		,[ModifiedDate]
 	)
-    VALUES
-    (
+	VALUES
+	(
 		@ThemeId_2,
-        @ThemePrimaryThemeColour_2,
-        @ThemeSecondaryThemeColour_2,
-        @ThemeNavBarColourColour_2,
+		@ThemePrimaryThemeColour_2,
+		@ThemeSecondaryThemeColour_2,
+		@ThemeNavBarColourColour_2,
 		@ThemeLogoURL_2,
 		@ThemeMissingImageURL_2,
-        @CustomerId_Harley_Motors,
-        @SearchIndexId_2,
+		@CustomerId_Harley_Motors,
+		@SearchIndexId_2,
 		@Now,
 		NULL
 	)
@@ -797,8 +769,8 @@ INSERT INTO [dbo].[Themes]
 	PRINT '********************************'
 
 	INSERT INTO [dbo].[Themes]
-    (
-		 [ThemeId]
+	(
+			[ThemeId]
 		,[PrimaryHexColour]
 		,[SecondaryHexColour]
 		,[NavBarHexColour]
@@ -809,16 +781,16 @@ INSERT INTO [dbo].[Themes]
 		,[CreatedDate]
 		,[ModifiedDate]
 	)
-    VALUES
-    (
+	VALUES
+	(
 		@ThemeId_3,
-        @ThemePrimaryThemeColour_3,
-        @ThemeSecondaryThemeColour_3,
-        @ThemeNavBarColourColour_3,
+		@ThemePrimaryThemeColour_3,
+		@ThemeSecondaryThemeColour_3,
+		@ThemeNavBarColourColour_3,
 		@ThemeLogoURL_3,
 		@ThemeMissingImageURL_3,
-        @CustomerId_Harper_Motors,
-        @SearchIndexId_3,
+		@CustomerId_Harper_Motors,
+		@SearchIndexId_3,
 		@Now,
 		NULL
 	)	
@@ -828,63 +800,63 @@ INSERT INTO [dbo].[Themes]
 	PRINT '*******************************************'
 
 	INSERT INTO [dbo].[FeedCredentials]
-			   ([Id]
-			   ,[SearchIndexId]
-			   ,[Username]
-			   ,[PasswordHash]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (@FeedId_1
-			   ,@FeedSearchIndexId_1
-			   ,@FeedUsername_1
-			   ,@FeedPasswordHash_1
-			   ,@Now
-			   ,null)
+				([Id]
+				,[SearchIndexId]
+				,[Username]
+				,[PasswordHash]
+				,[CreatedDate]
+				,[ModifiedDate])
+			VALUES
+				(@FeedId_1
+				,@FeedSearchIndexId_1
+				,@FeedUsername_1
+				,@FeedPasswordHash_1
+				,@Now
+				,null)
 
 	PRINT '*******************************************'
 	PRINT 'Search Index 2 FeedCredentials - additional index'
 	PRINT '*******************************************'
 
 	INSERT INTO [dbo].[FeedCredentials]
-			   ([Id]
-			   ,[SearchIndexId]
-			   ,[Username]
-			   ,[PasswordHash]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (@FeedId_2
-			   ,@FeedSearchIndexId_2
-			   ,@FeedUsername_2
-			   ,@FeedPasswordHash_2
-			   ,@Now
-			   ,null)
+				([Id]
+				,[SearchIndexId]
+				,[Username]
+				,[PasswordHash]
+				,[CreatedDate]
+				,[ModifiedDate])
+			VALUES
+				(@FeedId_2
+				,@FeedSearchIndexId_2
+				,@FeedUsername_2
+				,@FeedPasswordHash_2
+				,@Now
+				,null)
 
 	PRINT '*************************************************'
 	PRINT 'Search Index 3 FeedCredentials - additional index'
 	PRINT '*************************************************'
 
 	INSERT INTO [dbo].[FeedCredentials]
-			   ([Id]
-			   ,[SearchIndexId]
-			   ,[Username]
-			   ,[PasswordHash]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (@FeedId_3
-			   ,@FeedSearchIndexId_3
-			   ,@FeedUsername_3
-			   ,@FeedPasswordHash_3
-			   ,@Now
-			   ,null)
+				([Id]
+				,[SearchIndexId]
+				,[Username]
+				,[PasswordHash]
+				,[CreatedDate]
+				,[ModifiedDate])
+			VALUES
+				(@FeedId_3
+				,@FeedSearchIndexId_3
+				,@FeedUsername_3
+				,@FeedPasswordHash_3
+				,@Now
+				,null)
 
 	PRINT '********************************'
 	PRINT 'Dummy Data Script - Complete'
 	PRINT '********************************'
-END
+	END
 
-/***************************************************************************************
- Dummy Data - Script End
- ***************************************************************************************/
+	/***************************************************************************************
+	Dummy Data - Script End
+	***************************************************************************************/
