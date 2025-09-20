@@ -7,7 +7,6 @@
     [OrderIndex]                    INT              CONSTRAINT [DF_SearchConfigurationOptions_OrderIndex] DEFAULT (NULL) NULL,
     [CreatedDate]                   DATETIME         CONSTRAINT [DF_SearchConfigurationOptions_CreatedDate] DEFAULT (getutcdate()) NOT NULL,
     [ModifiedDate]                  DATETIME         NULL,
-    CONSTRAINT [PK_SearchConfigurationOptions] PRIMARY KEY CLUSTERED ([SeachConfigurationOptionId] ASC),
-    CONSTRAINT [FK_SearchConfigurationOptions_SearchConfigurationDataTypes] FOREIGN KEY ([SearchConfigurationDataTypeId]) REFERENCES [dbo].[SearchConfigurationDataTypes] ([SearchConfigurationDataTypeId])
+    CONSTRAINT [PK_SearchConfigurationOptions] PRIMARY KEY CLUSTERED ([SeachConfigurationOptionId] ASC)
 );
 

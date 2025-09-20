@@ -197,6 +197,14 @@ GO
 	DELETE FROM [dbo].SearchInstanceKeys
 	DELETE FROM [dbo].SearchInstances
 	DELETE FROM [dbo].SearchInterfaces
+
+	DELETE FROM
+		[dbo].[SearchConfigurationMappings]
+	DELETE FROM
+		[dbo].[SearchConfigurationOptions]
+	DELETE FROM
+		[dbo].[SearchConfigurationDataTypes]
+
 	DELETE FROM [dbo].[Synonyms]
 	DELETE FROM [dbo].Themes
 
@@ -210,11 +218,63 @@ GO
 	Initial Setup - Script Start
 	***************************************************************************************/
 
-PRINT '********************************'
-PRINT 'Inserting Service Resource Entry'
-PRINT '********************************'
+PRINT '****************************'
+PRINT 'Setup Configuration Options'
+PRINT '****************************'
 
-INSERT INTO
+INSERT INTO [dbo].[SearchConfigurationDataTypes]
+		([SearchConfigurationDataTypeId],
+		[DataType])
+	VALUES
+		(@SearchConfigurationID_Bool, 'Bool'),
+		(@SearchConfigurationID_Int, 'Int'),
+		(@SearchConfigurationID_String, 'String'),
+		(@SearchConfigurationID_Decimal, 'Decimal'),
+		(@SearchConfigurationID_Array, 'Array')
+
+INSERT INTO [dbo].[SearchConfigurationOptions]
+        ([SeachConfigurationOptionId]
+        ,[Key]
+        ,[FriendlyName]
+        ,[Description]
+		,[SearchConfigurationDataTypeId]
+		,[OrderIndex]
+        ,[CreatedDate]
+		,[ModifiedDate])
+    VALUES
+        (@SearchConfigurationOption_EnableAutoComplete_Id
+        ,@SearchConfigurationOption_EnableAutoComplete_Key
+        ,@SearchConfigurationOption_EnableAutoComplete_FriendlyName
+        ,@SearchConfigurationOption_EnableAutoComplete_Description
+		,@SearchConfigurationID_Bool
+		,null
+        ,@Now
+		,null)
+
+INSERT INTO [dbo].[SearchConfigurationOptions]
+        ([SeachConfigurationOptionId]
+        ,[Key]
+        ,[FriendlyName]
+        ,[Description]
+		,[SearchConfigurationDataTypeId]
+		,[OrderIndex]
+        ,[CreatedDate]
+		,[ModifiedDate])
+    VALUES
+        (@SearchConfigurationOption_HideIconVehicleCounts_Id
+        ,@SearchConfigurationOption_HideIconVehicleCounts_Key
+        ,@SearchConfigurationOption_HideIconVehicleCounts_FriendlyName
+        ,@SearchConfigurationOption_HideIconVehicleCounts_Description
+		,@SearchConfigurationID_Bool
+		,null        
+		,@Now
+		,null)
+
+	PRINT '********************************'
+	PRINT 'Inserting Service Resource Entry'
+	PRINT '********************************'
+
+	INSERT INTO
     dbo.SearchInstances (
         SearchInstanceId,
         ServiceName,
@@ -227,7 +287,7 @@ INSERT INTO
         [Partitions],
         IsShared
     )
-VALUES
+	VALUES
     (
         @SearchInstanceId,
         @SearchInstanceName,
@@ -546,6 +606,115 @@ VALUES
 				,@FeedPasswordHash_1
 				,@Now
 				,null)
+
+	PRINT '**********************************************'
+	PRINT 'Setup S2 Demo Data Configuration Mappings'	
+	PRINT '**********************************************'
+
+	INSERT INTO [dbo].[SearchConfigurationMappings]
+			   ([SearchConfigurationMappingId]
+			   ,[Value]
+			   ,[SeachConfigurationOptionId]
+			   ,[SearchIndexId]
+			   ,[CreatedDate]
+			   ,[ModifiedDate])
+		 VALUES
+			   (@SearchConfigurationMapping_5
+			   ,'true'
+			   ,@SearchConfigurationOption_EnableAutoComplete_Id
+			   ,@SearchIndexId_1
+			   ,@Now
+			   ,null)
+
+	INSERT INTO [dbo].[SearchConfigurationMappings]
+			   ([SearchConfigurationMappingId]
+			   ,[Value]
+			   ,[SeachConfigurationOptionId]
+			   ,[SearchIndexId]
+			   ,[CreatedDate]
+			   ,[ModifiedDate])
+		 VALUES
+			   (NEWID() 
+			   ,'false'
+			   ,@SearchConfigurationOption_HideIconVehicleCounts_Id
+			   ,@SearchIndexId_1
+			   ,@Now
+			   ,null)
+
+	INSERT INTO [dbo].[SearchConfigurationMappings]
+			   ([SearchConfigurationMappingId]
+			   ,[Value]
+			   ,[SeachConfigurationOptionId]
+			   ,[SearchIndexId]
+			   ,[CreatedDate]
+			   ,[ModifiedDate])
+		 VALUES
+			   (NEWID() 
+			   ,@SearchConfigurationOption_PlaceholderText_Text_1
+			   ,@SearchConfigurationOption_PlaceholderText_Id_1
+			   ,@SearchIndexId_1
+			   ,@Now
+			   ,null)
+
+	INSERT INTO [dbo].[SearchConfigurationMappings]
+			   ([SearchConfigurationMappingId]
+			   ,[Value]
+			   ,[SeachConfigurationOptionId]
+			   ,[SearchIndexId]
+			   ,[CreatedDate]
+			   ,[ModifiedDate])
+		 VALUES
+			   (NEWID() 
+			   ,@SearchConfigurationOption_PlaceholderText_Text_2
+			   ,@SearchConfigurationOption_PlaceholderText_Id_2
+			   ,@SearchIndexId_1
+			   ,@Now
+			   ,null)
+
+	INSERT INTO [dbo].[SearchConfigurationMappings]
+			   ([SearchConfigurationMappingId]
+			   ,[Value]
+			   ,[SeachConfigurationOptionId]
+			   ,[SearchIndexId]
+			   ,[CreatedDate]
+			   ,[ModifiedDate])
+		 VALUES
+			   (NEWID() 
+			   ,@SearchConfigurationOption_PlaceholderText_Text_3
+			   ,@SearchConfigurationOption_PlaceholderText_Id_3
+			   ,@SearchIndexId_1
+			   ,@Now
+			   ,null)
+
+	INSERT INTO [dbo].[SearchConfigurationMappings]
+			   ([SearchConfigurationMappingId]
+			   ,[Value]
+			   ,[SeachConfigurationOptionId]
+			   ,[SearchIndexId]
+			   ,[CreatedDate]
+			   ,[ModifiedDate])
+		 VALUES
+			   (NEWID() 
+			   ,@SearchConfigurationOption_PlaceholderText_Text_4
+			   ,@SearchConfigurationOption_PlaceholderText_Id_4
+			   ,@SearchIndexId_1
+			   ,@Now
+			   ,null)
+
+	INSERT INTO [dbo].[SearchConfigurationMappings]
+			   ([SearchConfigurationMappingId]
+			   ,[Value]
+			   ,[SeachConfigurationOptionId]
+			   ,[SearchIndexId]
+			   ,[CreatedDate]
+			   ,[ModifiedDate])
+		 VALUES
+			   (NEWID() 
+			   ,@SearchConfigurationOption_PlaceholderText_Text_5
+			   ,@SearchConfigurationOption_PlaceholderText_Id_5
+			   ,@SearchIndexId_1
+			   ,@Now
+			   ,null)
 
 	PRINT '********************************'
 	PRINT 'Dummy Data Script - Complete'

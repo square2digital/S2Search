@@ -159,5 +159,8 @@
     <Build Include="Schemas.sql" />
     <Build Include="logins.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetFeedCredentialsUsername.sql" />
+    <Build Include="dbo\Tables\SearchConfigurationDataTypes.sql" />
+    <Build Include="dbo\Tables\SearchConfigurationMappings.sql" />
+    <Build Include="dbo\Tables\SearchConfigurationOptions.sql" />
   </ItemGroup>
 </Project>
