@@ -1,4 +1,4 @@
-﻿USE CustomerResourceStore
+﻿USE S2_Search
 GO
     /***************************************************************************************
      Static Variables
@@ -178,6 +178,19 @@ GO
      ----------------------------------------------------------------------------------------
      Truncate all tables to start with a fresh setup
      ***************************************************************************************/
+
+	DELETE FROM [dbo].Customers
+	DELETE FROM [dbo].[FeedCredentials]
+	DELETE FROM [dbo].Feeds
+	DELETE FROM [dbo].GenericSynonyms
+	DELETE FROM [dbo].SearchIndex
+	DELETE FROM [dbo].SearchIndexKeys
+	DELETE FROM [dbo].SearchInstanceCapacity
+	DELETE FROM [dbo].SearchInstanceKeys
+	DELETE FROM [dbo].SearchInstances
+	DELETE FROM [dbo].SearchInterfaces
+	DELETE FROM [dbo].[Synonyms]
+	DELETE FROM [dbo].Themes
 
 	TRUNCATE TABLE [dbo].Customers
 	TRUNCATE TABLE [dbo].[FeedCredentials]
@@ -379,183 +392,6 @@ GO
 			null,
 			1
 		) 
-	
-	PRINT '********************************'
-	PRINT 'Inserting Test Customer 2 - '
-	PRINT '********************************'
-
-	INSERT INTO
-		[dbo].Customers (
-			[CustomerId],
-			[BusinessName],
-			[CreatedDate],
-			[ModifiedDate]
-		)
-	VALUES
-		(
-			@CustomerId_Harley_Motors,
-			@BusinessName_2,
-			@Now,
-			NULL
-		) 
-	
-	PRINT '********************************'
-	PRINT 'Inserting Search Index for Test Customer 2 - '
-	PRINT '********************************'
-
-	INSERT INTO
-		[dbo].SearchIndex (
-			SearchIndexId,
-			SearchInstanceId,
-			IndexName,
-			FriendlyName,
-			CustomerId,
-			CreatedDate,
-			PricingSkuId
-		)
-	VALUES
-		(
-			@SearchIndexId_2,
-			@SearchInstanceId,
-			@CustomerIndexName_2,
-			@BusinessName_2,
-			@CustomerId_Harley_Motors,
-			@Now,
-			@SkuIdFree
-		) 
-	
-	PRINT '********************************'
-	PRINT 'Search Index Keys for Test Customer 2 - '
-	PRINT '********************************'
-
-	INSERT INTO
-		[dbo].SearchIndexKeys (
-			[SearchIndexId],
-			[Name],
-			[SearchInstanceKeyId],
-			[CreatedDate]
-		)
-	VALUES
-		(
-			@SearchIndexId_2,
-			@BusinessName_2 + ' test key',
-			@SearchInstanceKeyId_QueryKey,
-			@Now
-		) 
-	
-	PRINT '********************************'
-	PRINT 'Inserting Feed Entry for Test Customer 2 - '
-	PRINT '********************************'
-
-	INSERT INTO
-		[dbo].Feeds (
-			[FeedType]
-			,[FeedScheduleCron]
-			,[SearchIndexId]
-			,[DataFormat]
-			,[CreatedDate]
-			,[SupersededDate]
-			,[IsLatest]
-		)
-	VALUES
-		(
-			@FeedType,
-			@FeedCron,
-			@SearchIndexId_2,
-			@DataFormat,
-			@Now,
-			null,
-			1
-		) 
-	
-	PRINT '********************************'
-	PRINT 'Inserting Test Customer 3 - '
-	PRINT '********************************'
-
-	INSERT INTO
-		[dbo].Customers (
-			[CustomerId],
-			[BusinessName],
-			[CreatedDate],
-			[ModifiedDate]
-		)
-	VALUES
-		(
-			@CustomerId_Harper_Motors,
-			@BusinessName_3,
-			@Now,
-			NULL
-		) 
-	
-	PRINT '********************************'
-	PRINT 'Inserting Search Index for Test Customer 3 - '
-	PRINT '********************************'
-
-	INSERT INTO
-		[dbo].SearchIndex (
-			SearchIndexId,
-			SearchInstanceId,
-			IndexName,
-			FriendlyName,
-			CustomerId,
-			CreatedDate,
-			PricingSkuId
-		)
-	VALUES
-		(
-			@SearchIndexId_3,
-			@SearchInstanceId,
-			@CustomerIndexName_3,
-			@BusinessName_3,
-			@CustomerId_Harper_Motors,
-			@Now,
-			@SkuIdFree
-		) 
-	
-	PRINT '********************************'
-	PRINT 'Search Index Keys for Test Customer 3 - '
-	PRINT '********************************'
-
-	INSERT INTO
-		[dbo].SearchIndexKeys (
-			[SearchIndexId],
-			[Name],
-			[SearchInstanceKeyId],
-			[CreatedDate]
-		)
-	VALUES
-		(
-			@SearchIndexId_3,
-			@BusinessName_3 + ' test key',
-			@SearchInstanceKeyId_QueryKey,
-			@Now
-		) 
-	
-	PRINT '********************************'
-	PRINT 'Inserting Feed Entry for Test Customer 3 - '
-	PRINT '********************************'
-
-	INSERT INTO
-		[dbo].Feeds (
-			[FeedType]
-			,[FeedScheduleCron]
-			,[SearchIndexId]
-			,[DataFormat]
-			,[CreatedDate]
-			,[SupersededDate]
-			,[IsLatest]
-		)
-	VALUES
-		(
-			@FeedType,
-			@FeedCron,
-			@SearchIndexId_3,
-			@DataFormat,
-			@Now,
-			null,
-			1
-		) 	
-
 
 	PRINT '********************************'
 	PRINT 'Inserting Notification Rule Entry'
@@ -591,60 +427,6 @@ GO
 		NULL,
 		1
 	)
-
-	-- *********************************
-	-- harley motors data - Local K8s
-	-- *********************************
-	INSERT INTO
-	[dbo].SearchInterfaces (
-		[SearchIndexId],
-		[SearchEndpoint],
-		[InterfaceType],
-		[LogoURL],
-		[BannerStyle],
-		[CreatedDate],
-		[SupersededDate],
-		[IsLatest]
-	)
-	VALUES
-	(
-		@SearchIndexId_2,
-		@HarleyMotorsEndpoint,
-		@InterfaceType,
-		@InterfaceLogoURL,
-		@InterfaceBannerStyle,
-		@Now,
-		NULL,
-		1
-	)
-	
-
-	-- *********************************
-	-- harper motors data - Local K8s
-	-- *********************************
-	INSERT INTO
-	[dbo].SearchInterfaces (
-		[SearchIndexId],
-		[SearchEndpoint],
-		[InterfaceType],
-		[LogoURL],
-		[BannerStyle],
-		[CreatedDate],
-		[SupersededDate],
-		[IsLatest]
-	)
-	VALUES
-	(
-		@SearchIndexId_3,
-		@HarperMotorsEndpoint,
-		@InterfaceType,
-		@InterfaceLogoURL,
-		@InterfaceBannerStyle,
-		@Now,
-		NULL,
-		1
-	)
-
 
 	PRINT '********************************'
 	PRINT 'Inserting Synonyms'
@@ -733,68 +515,7 @@ GO
 		NULL
 	)
 
-	PRINT '********************************'
-	PRINT 'Customer 2 - harley motors - Theme Details'
-	PRINT '********************************'
 
-	INSERT INTO [dbo].[Themes]
-	(
-			[ThemeId]
-		,[PrimaryHexColour]
-		,[SecondaryHexColour]
-		,[NavBarHexColour]
-		,[LogoURL]
-		,[MissingImageURL]
-		,[CustomerId]
-		,[SearchIndexId]
-		,[CreatedDate]
-		,[ModifiedDate]
-	)
-	VALUES
-	(
-		@ThemeId_2,
-		@ThemePrimaryThemeColour_2,
-		@ThemeSecondaryThemeColour_2,
-		@ThemeNavBarColourColour_2,
-		@ThemeLogoURL_2,
-		@ThemeMissingImageURL_2,
-		@CustomerId_Harley_Motors,
-		@SearchIndexId_2,
-		@Now,
-		NULL
-	)
-
-	PRINT '********************************'
-	PRINT 'Customer 3 - Harper Motors - Theme Details'
-	PRINT '********************************'
-
-	INSERT INTO [dbo].[Themes]
-	(
-			[ThemeId]
-		,[PrimaryHexColour]
-		,[SecondaryHexColour]
-		,[NavBarHexColour]
-		,[LogoURL]
-		,[MissingImageURL]
-		,[CustomerId]
-		,[SearchIndexId]
-		,[CreatedDate]
-		,[ModifiedDate]
-	)
-	VALUES
-	(
-		@ThemeId_3,
-		@ThemePrimaryThemeColour_3,
-		@ThemeSecondaryThemeColour_3,
-		@ThemeNavBarColourColour_3,
-		@ThemeLogoURL_3,
-		@ThemeMissingImageURL_3,
-		@CustomerId_Harper_Motors,
-		@SearchIndexId_3,
-		@Now,
-		NULL
-	)	
-	
 	PRINT '*******************************************'
 	PRINT 'Search Index 1 FeedCredentials'
 	PRINT '*******************************************'
@@ -811,44 +532,6 @@ GO
 				,@FeedSearchIndexId_1
 				,@FeedUsername_1
 				,@FeedPasswordHash_1
-				,@Now
-				,null)
-
-	PRINT '*******************************************'
-	PRINT 'Search Index 2 FeedCredentials - additional index'
-	PRINT '*******************************************'
-
-	INSERT INTO [dbo].[FeedCredentials]
-				([Id]
-				,[SearchIndexId]
-				,[Username]
-				,[PasswordHash]
-				,[CreatedDate]
-				,[ModifiedDate])
-			VALUES
-				(@FeedId_2
-				,@FeedSearchIndexId_2
-				,@FeedUsername_2
-				,@FeedPasswordHash_2
-				,@Now
-				,null)
-
-	PRINT '*************************************************'
-	PRINT 'Search Index 3 FeedCredentials - additional index'
-	PRINT '*************************************************'
-
-	INSERT INTO [dbo].[FeedCredentials]
-				([Id]
-				,[SearchIndexId]
-				,[Username]
-				,[PasswordHash]
-				,[CreatedDate]
-				,[ModifiedDate])
-			VALUES
-				(@FeedId_3
-				,@FeedSearchIndexId_3
-				,@FeedUsername_3
-				,@FeedPasswordHash_3
 				,@Now
 				,null)
 
