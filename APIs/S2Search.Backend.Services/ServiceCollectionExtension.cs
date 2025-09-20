@@ -52,7 +52,7 @@ namespace S2Search.Backend.Services
 
             var appSettings = LoadAppSettings(services);
 
-            return services.AddRedis(appSettings.RedisCacheSettings.RedisConnectionString)
+            return services.AddRedis(appSettings.ConnectionStrings.Redis)
                            .AddServiceDependencies()
                            .AddServices()
                            .AddProviders();
@@ -160,7 +160,7 @@ namespace S2Search.Backend.Services
                 throw new InvalidOperationException("Configuration must be set before calling AddAPIServices.");
             }
                 
-            var appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
+            var appSettings = Configuration.Get<AppSettings>();
 
             if (appSettings == null)
             {
@@ -181,12 +181,12 @@ namespace S2Search.Backend.Services
 
                 try
                 {
-                    var connection = ConnectionMultiplexer.Connect(configuration.GetValue<string>(ConnectionStrings.Redis));
+                    var connection = ConnectionMultiplexer.Connect(configuration.GetValue<string>(ConnectionStringKeys.Redis));
                     return connection;
                 }
                 catch (Exception ex)
                 {
-                    logger.LogCritical(ex, $"Unable to connect to Redis using Configuration Key: '{ConnectionStrings.Redis}'");
+                    logger.LogCritical(ex, $"Unable to connect to Redis using Configuration Key: '{ConnectionStringKeys.Redis}'");
                     throw;
                 }
             };

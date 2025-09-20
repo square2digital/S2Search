@@ -35,6 +35,7 @@
     <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\Models\" />
     <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\Providers\" />
     <Folder Include="Common\S2Search.Common.Models\SearchResource\" />
+    <Folder Include="Common\S2Search.Common.Models\Settings\" />
   </ItemGroup>
 
 </Project>

@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAPIServices();
 
-builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.Configure<AppSettings>(builder.Configuration);
 builder.Services.AddSingleton<IAppSettings>(sp =>
     sp.GetRequiredService<IOptions<AppSettings>>().Value);
 

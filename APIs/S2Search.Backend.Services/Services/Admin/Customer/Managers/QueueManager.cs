@@ -1,25 +1,29 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Messages;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
-using System.Text;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
+using System.Text;
 
 namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
 {
     public class QueueManager : IQueueManager
     {
         private readonly IQueueClientProvider _queueClient;
+        private readonly IConfiguration _configuration;
+        private readonly string _connectionString;
 
-        public QueueManager(IQueueClientProvider queueClient)
+        public QueueManager(IConfiguration configuration, IQueueClientProvider queueClient)
         {
             _queueClient = queueClient;
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.AzureStorage);
         }
 
         public async Task EnqueueMessageAsync(QueuedMessage message)
         {
             string _message = ConvertObjectToBase64String(message.Data);
-            var client = await _queueClient.GetAsync(ConnectionStrings.StorageQueue, message.TargetQueue);
+            var client = await _queueClient.GetAsync(_connectionString, message.TargetQueue);
             await client.SendMessageAsync(_message);
         }
 

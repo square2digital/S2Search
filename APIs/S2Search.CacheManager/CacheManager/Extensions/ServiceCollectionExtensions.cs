@@ -35,12 +35,12 @@ namespace CacheManager.Extensions
 
                 try
                 {
-                    var connection = ConnectionMultiplexer.Connect(configuration.GetValue<string>(ConnectionStrings.Redis));
+                    var connection = ConnectionMultiplexer.Connect(configuration.GetValue<string>(ConnectionStringKeys.Redis));
                     return connection;
                 }
                 catch (Exception ex)
                 {
-                    logger.LogCritical(ex, $"Unable to connect to Redis using Configuration Key: '{ConnectionStrings.Redis}'");
+                    logger.LogCritical(ex, $"Unable to connect to Redis using Configuration Key: '{ConnectionStringKeys.Redis}'");
                     throw;
                 }
             };

@@ -5,16 +5,19 @@ namespace S2Search.Backend.Domain.Models;
 
 public class AppSettings : IAppSettings
 {
-    public bool UseGenericResponse { get; set; }
-    public bool Development { get; set; }
-
     public DemoSearchCredentials DemoSearchCredentials { get; set; }
     public SearchSettings SearchSettings { get; set; }
     public FacetSettings FacetSettings { get; set; }
     public MemoryCacheSettings MemoryCacheSettings { get; set; }
     public RedisCacheSettings RedisCacheSettings { get; set; }
-    public IndexSettings IndexSettings { get; set; }
-    public APIKeys Keys { get; set; }
+    public ConnectionStrings ConnectionStrings { get; set; }
+}
+
+public class ConnectionStrings
+{
+    public string SqlDatabase { get; set; }
+    public string AzureStorage { get; set; }
+    public string Redis { get; set; }
 }
 
 public class SearchSettings
@@ -137,17 +140,4 @@ public class RedisCacheSettings
     public bool EnableRedisCache { get; set; }
     public string RedisConnectionString { get; set; }
     public int DefaultCacheExpiryInSeconds { get; set; }        
-}
-
-public class IndexSettings
-{
-    public string SearchIndexName { get; set; }
-    public string MakesSynonymsMapName { get; set; }
-}
-
-public class APIKeys
-{
-    public string PrimaryAdminKey { get; set; }
-    public string SecondaryAdminKey { get; set; }
-    public string QueryKey { get; set; }
 }

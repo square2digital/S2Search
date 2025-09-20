@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Queues.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Models;
@@ -15,14 +16,17 @@ namespace Services.Processors
         private readonly ILogger logger;
         private readonly IQueueManager queueManager;
         private readonly ICacheManager cacheManager;
+        private readonly string _connectionString;
 
-        public PurgeCacheProcessor(ILogger<PurgeCacheProcessor> logger,
+        public PurgeCacheProcessor(IConfiguration configuration,
+                                   ILogger<PurgeCacheProcessor> logger,
                                    IQueueManager queueManager,
                                    ICacheManager cacheManager)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.queueManager = queueManager ?? throw new ArgumentNullException(nameof(queueManager));
             this.cacheManager = cacheManager ?? throw new ArgumentNullException(nameof(cacheManager));
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.AzureStorage);
         }
 
         public async Task RunAsync(CancellationToken cancellationToken)
@@ -33,7 +37,7 @@ namespace Services.Processors
 
             if (!canConnectToStorageAccount)
             {
-                var message = $"Unable to connect to Storage Account using this Configuration Key: '{ConnectionStrings.StorageQueue}'";
+                var message = $"Unable to connect to Storage Account using this Configuration String: '{_connectionString}'";
                 var exception = new Exception(message);
                 logger.LogCritical(exception, message);
                 return;
