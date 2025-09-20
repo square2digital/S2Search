@@ -7,7 +7,6 @@
     [CreatedDate]      DATETIME         CONSTRAINT [DF_Feeds_CreatedDate] DEFAULT (getutcdate()) NOT NULL,
     [SupersededDate]   DATETIME         NULL,
     [IsLatest]         BIT              CONSTRAINT [DF_Feeds_IsLatest] DEFAULT ((1)) NOT NULL,
-    CONSTRAINT [PK_Feeds] PRIMARY KEY CLUSTERED ([FeedId] ASC),
-    CONSTRAINT [FK_Feeds_SearchIndex] FOREIGN KEY ([SearchIndexId]) REFERENCES [dbo].[SearchIndex] ([SearchIndexId])
+    CONSTRAINT [PK_Feeds] PRIMARY KEY CLUSTERED ([FeedId] ASC)
 );
 

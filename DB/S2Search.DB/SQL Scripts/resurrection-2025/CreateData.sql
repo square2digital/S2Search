@@ -137,7 +137,7 @@ GO
     DECLARE @BusinessName_1 varchar(100) = 'S2 Demo'
 	DECLARE @CustomerIndexName_1 varchar(100) = 's2-demo-vehicles'
 	DECLARE @SearchIndexId_1 uniqueidentifier = '8c663063-4217-4f54-973f-8faec6131b5b'
-	DECLARE @ThemeId_1 uniqueidentifier = '8c663063-4217-4f54-973f-8faec6131b5b' 
+	DECLARE @ThemeId_1 uniqueidentifier = 'f3a9c2e7-4b6e-4d9a-8f3e-9c1d2a7b5e6f' 
     DECLARE @ThemeLogoURL_1 varchar(1000) = @StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg'
 	DECLARE @ThemeMissingImageURL_1 varchar(1000) = @StorageURI + '/assets/image-coming-soon.jpg' 
     DECLARE @ThemePrimaryThemeColour_1 varchar(10) = '#006bd1'
@@ -200,19 +200,6 @@ GO
 	DELETE FROM [dbo].[Synonyms]
 	DELETE FROM [dbo].Themes
 
-	-- TRUNCATE TABLE [dbo].Customers
-	-- TRUNCATE TABLE [dbo].[FeedCredentials]
-	-- TRUNCATE TABLE [dbo].Feeds
-	-- TRUNCATE TABLE [dbo].GenericSynonyms
-	-- TRUNCATE TABLE [dbo].SearchIndex
-	-- TRUNCATE TABLE [dbo].SearchIndexKeys
-	-- TRUNCATE TABLE [dbo].SearchInstanceCapacity
-	-- TRUNCATE TABLE [dbo].SearchInstanceKeys
-	-- TRUNCATE TABLE [dbo].SearchInstances
-	-- TRUNCATE TABLE [dbo].SearchInterfaces
-	-- TRUNCATE TABLE [dbo].[Synonyms]
-	-- TRUNCATE TABLE [dbo].Themes
-
 	/***************************************************************************************
 	Uncomment this if you want to clear down the insights
 	***************************************************************************************/
@@ -223,11 +210,11 @@ GO
 	Initial Setup - Script Start
 	***************************************************************************************/
 
-	PRINT '********************************'
-	PRINT 'Inserting Service Resource Entry'
-	PRINT '********************************'
+PRINT '********************************'
+PRINT 'Inserting Service Resource Entry'
+PRINT '********************************'
 
-	INSERT INTO
+INSERT INTO
     dbo.SearchInstances (
         SearchInstanceId,
         ServiceName,
@@ -240,7 +227,7 @@ GO
         [Partitions],
         IsShared
     )
-	VALUES
+VALUES
     (
         @SearchInstanceId,
         @SearchInstanceName,
@@ -255,7 +242,7 @@ GO
     ) 
 
 	PRINT '********************************'
-	PRINT 'Inserting Search Resource Keys - '
+	PRINT 'Inserting Search Resource Keys'
 	PRINT '********************************'
 
 	INSERT INTO
@@ -331,7 +318,7 @@ GO
 	PRINT '************************'
 	
 	PRINT '************************'
-	PRINT 'Inserting Test Customer 1 - '
+	PRINT 'Inserting Test Customer 1'
 	PRINT '************************'
 
 	INSERT INTO
@@ -350,7 +337,7 @@ GO
 		)
 	
 	PRINT '********************************'
-	PRINT 'Inserting Search Index for Test Customer 1 - '
+	PRINT 'Inserting Search Index for Test Customer 1'
 	PRINT '********************************'
 
 	INSERT INTO
@@ -375,7 +362,7 @@ GO
 		) 
 	
 	PRINT '********************************'
-	PRINT 'Search Index Keys for Test Customer 1 - '
+	PRINT 'Search Index Keys for Test Customer 1'
 	PRINT '********************************'
 
 	INSERT INTO
@@ -394,7 +381,7 @@ GO
 		)
 	
 	PRINT '********************************'
-	PRINT 'Inserting Feed Entry for Test Customer 1 - '
+	PRINT 'Inserting Feed Entry for Test Customer 1'
 	PRINT '********************************'
 
 	INSERT INTO

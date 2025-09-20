@@ -9,8 +9,6 @@
     [SearchIndexId]      UNIQUEIDENTIFIER NULL,
     [CreatedDate]        DATETIME         CONSTRAINT [DF_Theme_CreatedDate] DEFAULT (getutcdate()) NOT NULL,
     [ModifiedDate]       DATETIME         NULL,
-    CONSTRAINT [PK_Themes] PRIMARY KEY CLUSTERED ([ThemeId] ASC),
-    CONSTRAINT [FK_Theme_Customers] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[Customers] ([CustomerId]),
-    CONSTRAINT [FK_Theme_SearchIndex] FOREIGN KEY ([SearchIndexId]) REFERENCES [dbo].[SearchIndex] ([SearchIndexId])
+    CONSTRAINT [PK_Themes] PRIMARY KEY CLUSTERED ([ThemeId] ASC)
 );
 

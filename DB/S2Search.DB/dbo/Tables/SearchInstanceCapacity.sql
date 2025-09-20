@@ -10,7 +10,6 @@
     [DocumentsQuota]   INT              NULL,
     [DocumentsUsed]    NCHAR (10)       NOT NULL,
     [ModifiedDate]     DATETIME         NOT NULL,
-    CONSTRAINT [PK_SearchInstanceCapacity] PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [FK_SearchInstanceCapacity_SearchInstances] FOREIGN KEY ([SearchInstanceId]) REFERENCES [dbo].[SearchInstances] ([SearchInstanceId])
+    CONSTRAINT [PK_SearchInstanceCapacity] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
