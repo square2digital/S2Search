@@ -155,7 +155,7 @@ GO
      Customer Pricing Tiers
      ***************************************************************************************/
      DECLARE @SkuIdFree varchar(50) = 'FREE'
-          DECLARE @SkuIdFreeDescription varchar(255) = 'TBD'
+     DECLARE @SkuIdFreeDescription varchar(255) = 'TBD'
      DECLARE @SkuIdFreeEffectiveFrom datetime = '2021-03-24 00:00:00.000'
 
      DECLARE @SkuIdFreeTrial varchar(50) = 'FREETRIALMARCH'
@@ -172,6 +172,14 @@ GO
      DECLARE @FeedId_1 uniqueidentifier = '7bcc246b-c8e0-4d91-bb8a-ec5f8c7b3230'
 	 DECLARE @FeedUsername_1 varchar(100) = 's2demo_FTP_1'
      DECLARE @FeedPasswordHash_1 varchar(255) = 'xh6NPbvqmDhH6E2vK3mJ'
+
+     /***************************************************************************************
+     Search Instance
+     ***************************************************************************************/
+	 DECLARE @SearchInstanceName varchar(255) = 's2-search-dev'
+	 DECLARE @SubscriptionId uniqueidentifier = 'f8cff945-b5e5-462a-9786-d69bd7a0eb34'
+	 DECLARE @ServiceLocation varchar(50) = 'West Europe'
+	 DECLARE @AzurePricingTier varchar(50) = 'Free'
 
     /***************************************************************************************
      Table Reset
@@ -192,18 +200,18 @@ GO
 	DELETE FROM [dbo].[Synonyms]
 	DELETE FROM [dbo].Themes
 
-	TRUNCATE TABLE [dbo].Customers
-	TRUNCATE TABLE [dbo].[FeedCredentials]
-	TRUNCATE TABLE [dbo].Feeds
-	TRUNCATE TABLE [dbo].GenericSynonyms
-	TRUNCATE TABLE [dbo].SearchIndex
-	TRUNCATE TABLE [dbo].SearchIndexKeys
-	TRUNCATE TABLE [dbo].SearchInstanceCapacity
-	TRUNCATE TABLE [dbo].SearchInstanceKeys
-	TRUNCATE TABLE [dbo].SearchInstances
-	TRUNCATE TABLE [dbo].SearchInterfaces
-	TRUNCATE TABLE [dbo].[Synonyms]
-	TRUNCATE TABLE [dbo].Themes
+	-- TRUNCATE TABLE [dbo].Customers
+	-- TRUNCATE TABLE [dbo].[FeedCredentials]
+	-- TRUNCATE TABLE [dbo].Feeds
+	-- TRUNCATE TABLE [dbo].GenericSynonyms
+	-- TRUNCATE TABLE [dbo].SearchIndex
+	-- TRUNCATE TABLE [dbo].SearchIndexKeys
+	-- TRUNCATE TABLE [dbo].SearchInstanceCapacity
+	-- TRUNCATE TABLE [dbo].SearchInstanceKeys
+	-- TRUNCATE TABLE [dbo].SearchInstances
+	-- TRUNCATE TABLE [dbo].SearchInterfaces
+	-- TRUNCATE TABLE [dbo].[Synonyms]
+	-- TRUNCATE TABLE [dbo].Themes
 
 	/***************************************************************************************
 	Uncomment this if you want to clear down the insights
@@ -215,19 +223,36 @@ GO
 	Initial Setup - Script Start
 	***************************************************************************************/
 
-	PRINT '****************************'
-	PRINT 'Setup Configuration Options'
-	PRINT '****************************'
+	PRINT '********************************'
+	PRINT 'Inserting Service Resource Entry'
+	PRINT '********************************'
 
-	INSERT INTO [dbo].[SearchConfigurationDataTypes]
-		([SearchConfigurationDataTypeId],
-		[DataType])
+	INSERT INTO
+    dbo.SearchInstances (
+        SearchInstanceId,
+        ServiceName,
+        SubscriptionId,
+        ResourceGroup,
+        [Endpoint],
+        [Location],
+        PricingTier,
+        Replicas,
+        [Partitions],
+        IsShared
+    )
 	VALUES
-		(@SearchConfigurationID_Bool, 'Bool'),
-		(@SearchConfigurationID_Int, 'Int'),
-		(@SearchConfigurationID_String, 'String'),
-		(@SearchConfigurationID_Decimal, 'Decimal'),
-		(@SearchConfigurationID_Array, 'Array')
+    (
+        @SearchInstanceId,
+        @SearchInstanceName,
+        @SubscriptionId,
+        @ResourceGroup,
+        @SearchInstanceEndpoint,
+        @ServiceLocation,
+        @AzurePricingTier,
+        @Replicas,
+        @Partitions,
+        @IsShared
+    ) 
 
 	PRINT '********************************'
 	PRINT 'Inserting Search Resource Keys - '
