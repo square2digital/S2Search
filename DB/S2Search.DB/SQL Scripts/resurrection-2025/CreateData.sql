@@ -119,34 +119,23 @@ go
 	-- Azure B2C Test User ID Guid -> 37a0eb6c-fd38-4b11-9486-e61ed6745953
 
 	-- Test User -> Jonathan Gilmartin - user of S2 Demo
-	-- Test User -> Harley Gilmartin - user of Harley Motors
-	-- Test User -> Harper Gilmartin - user of Haper Motors
 	DECLARE @Azure_B2C_User_Jonathan_Gilmartin uniqueidentifier = 'a870f617-c469-4fdc-b76d-98a990577583'
-	DECLARE @Azure_B2C_User_Harley_Gilmartin uniqueidentifier = 'db3e8082-4aa5-4622-84d3-837c72e389b8'	
-	DECLARE @Azure_B2C_User_Harper_Gilmartin uniqueidentifier = '0a0cc61e-f58c-4f84-bff5-faf0bc3b0bb6'
 
 	DECLARE @CustomerId_JGilmartin_Motors uniqueidentifier = @Azure_B2C_User_Jonathan_Gilmartin
-	DECLARE @CustomerId_Harley_Motors uniqueidentifier = @Azure_B2C_User_Harley_Gilmartin
-	DECLARE @CustomerId_Harper_Motors uniqueidentifier = @Azure_B2C_User_Harper_Gilmartin
 		
 	-- ********************************************
 	-- ** S2-Demo Endpoints
 	-- ********************************************	
-	DECLARE @S2DemoEndpoint varchar(100) = 'demo.s2search.co.uk'                        -- BLUE - Corporate colours for Square 2 Digital
-	--DECLARE @JGilmartinMotorsEndpoint varchar(100) = 'jgilmartinmotors.s2search.co.uk'  -- Green
-	DECLARE @HarleyMotorsEndpoint varchar(100) = 'harleygilmartinmotors.s2search.co.uk' -- PURPLE
-	DECLARE @HarperMotorsEndpoint varchar(100) = 'harpergilmartinmotors.s2search.co.uk' -- PURPLE
+	DECLARE @S2DemoEndpoint varchar(100) = 'demo.s2search.co.uk' -- BLUE - Corporate colours for Square 2 Digital
 	
 	-- endpoint overrides
-	DECLARE @LocalK8sEndpoint varchar(100) = 'localhost:3000'
 	DECLARE @LocalDevEndpoint varchar(100) = 'localhost:2997' 	
+	DECLARE @LocalK8sEndpoint varchar(100) = 'localhost:3000'
 
 	-- ********************************************
 	-- use this to override endpoints - useful to setting a search instance to another URL or to localhost
 	-- ********************************************		    
-	SET @S2DemoEndpoint = @LocalK8sEndpoint
-	SET @HarleyMotorsEndpoint = @LocalDevEndpoint
-	--SET @HarleyMotorsEndpoint = @LocalK8sEndpoint
+	SET @S2DemoEndpoint = @LocalDevEndpoint
 
 	-- ************************
     -- S2 Demo  - customer 1
@@ -160,32 +149,6 @@ go
     DECLARE @ThemePrimaryThemeColour_1 varchar(10) = '#006bd1'
     DECLARE @ThemeSecondaryThemeColour_1 varchar(10) = '#003c75'
 	DECLARE @ThemeNavBarColourColour_1 varchar(10) = '#006bd1'   
-
-	-- ******************
-    -- harley gilmartin motors  - customer 2
-	-- ******************    
-    DECLARE @BusinessName_2 varchar(100) = 'Harley Motors'
-	DECLARE @CustomerIndexName_2 varchar(100) = 'harley-motors-vehicles'
-	DECLARE @SearchIndexId_2 uniqueidentifier = '4cdd1c8a-30f4-4bc7-8de4-3f01ca7bc97f'
-	DECLARE @ThemeId_2 uniqueidentifier = '3f62e01c-4ccf-40bb-9bfb-50372d18c977' 
-	DECLARE @ThemeLogoURL_2 varchar(1000) = @StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg'
-	DECLARE @ThemeMissingImageURL_2 varchar(1000) = @StorageURI + '/assets/image-coming-soon.jpg' 
-	DECLARE @ThemePrimaryThemeColour_2 varchar(10) = '#71538f'
-	DECLARE @ThemeSecondaryThemeColour_2 varchar(10) = '#3e056e'
-	DECLARE @ThemeNavBarColourColour_2 varchar(10) = '#7e3cb5'
-
-	-- ******************
-    -- Harper motors  - customer 3
-	-- ******************    
-    DECLARE @BusinessName_3 varchar(100) = 'Harper Motors'
-	DECLARE @CustomerIndexName_3 varchar(100) = 'harper-motors-vehicles'
-	DECLARE @SearchIndexId_3 uniqueidentifier = 'e30f4cb5-dbca-450f-a325-8e9bf2ba232b'
-	DECLARE @ThemeId_3 uniqueidentifier = '5b0f357e-4fbf-466c-9f2b-db93fd1fd5ec' 
-    DECLARE @ThemeLogoURL_3 varchar(1000) = @StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg' 
-	DECLARE @ThemeMissingImageURL_3 varchar(1000) = @StorageURI + '/assets/image-coming-soon.jpg' 
-	DECLARE @ThemePrimaryThemeColour_3 varchar(10) = '#006bd1'
-    DECLARE @ThemeSecondaryThemeColour_3 varchar(10) = '#003c75'
-	DECLARE @ThemeNavBarColourColour_3 varchar(10) = '#006bd1'
    
     /***************************************************************************************
      Required Variables
@@ -193,15 +156,15 @@ go
      You will need to set these variables for the script to run successfully.
      See the README for instructions on how to set up a ServicePrinciple in Azure
      ***************************************************************************************/
-    DECLARE @SubscriptionId uniqueidentifier = 'f8cff945-b5e5-462a-9786-d69bd7a0eb34'
-    DECLARE @SubscriptionName varchar(50) = 'S2-Pay-As-You-Go'
-    DECLARE @ServicePrinciple_Name varchar(50) = 'TestProvision'
-    DECLARE @ServicePrinciple_ClientId uniqueidentifier = '5ba3c688-71f9-474a-952f-c7b527a29f65' 
-    DECLARE @ServicePrinciple_TenantId uniqueidentifier = '0694e993-9911-4269-b7e2-bfd29ca197c6' 
-    DECLARE @ServicePrinciple_ClientKeyName varchar(50) = 'test' 
-    DECLARE @ServicePrinciple_ClientKeySecret varchar(100) = '64ZZWyvGfVC~A1e.YF9IjQF.kXx-3hfOn4' 
-    DECLARE @ServicePrinciple_ClientKeyExpiryDate datetime = '2021-11-11 00:00' 
-    DECLARE @AzurePricingTier varchar(50) = 'Free'
+    --DECLARE @SubscriptionId uniqueidentifier = 'f8cff945-b5e5-462a-9786-d69bd7a0eb34'
+    --DECLARE @SubscriptionName varchar(50) = 'S2-Pay-As-You-Go'
+    --DECLARE @ServicePrinciple_Name varchar(50) = 'TestProvision'
+    --DECLARE @ServicePrinciple_ClientId uniqueidentifier = '5ba3c688-71f9-474a-952f-c7b527a29f65' 
+    --DECLARE @ServicePrinciple_TenantId uniqueidentifier = '0694e993-9911-4269-b7e2-bfd29ca197c6' 
+    --DECLARE @ServicePrinciple_ClientKeyName varchar(50) = 'test' 
+    --DECLARE @ServicePrinciple_ClientKeySecret varchar(100) = '64ZZWyvGfVC~A1e.YF9IjQF.kXx-3hfOn4' 
+    --DECLARE @ServicePrinciple_ClientKeyExpiryDate datetime = '2021-11-11 00:00' 
+    --DECLARE @AzurePricingTier varchar(50) = 'Free'
 
      /***************************************************************************************
      Customer Pricing Tiers
@@ -226,54 +189,36 @@ go
 	 DECLARE @FeedUsername_1 varchar(100) = 's2demo_FTP_1'
      DECLARE @FeedPasswordHash_1 varchar(255) = 'xh6NPbvqmDhH6E2vK3mJ'
 
-	 DECLARE @FeedSearchIndexId_2 uniqueidentifier = @SearchIndexId_2
-	 DECLARE @FeedId_2 uniqueidentifier = '9875c5ef-c652-47fd-be7d-6eb9cc74723a'
-	 DECLARE @FeedUsername_2 varchar(100) = 'jgilmartin_FTP_2'
-     DECLARE @FeedPasswordHash_2 varchar(255) = 'PPk57p7jPXbVQBAK'
-
-	 DECLARE @FeedSearchIndexId_3 uniqueidentifier = @SearchIndexId_3
-	 DECLARE @FeedId_3 uniqueidentifier = '2465c76a-ec51-4d3c-9695-834312f154df'
-	 DECLARE @FeedUsername_3 varchar(100) = 'dpmotors_FTP_3'
-     DECLARE @FeedPasswordHash_3 varchar(255) = '3Hcprz6vvK2nMd4qd4HmP'
-
     /***************************************************************************************
      Table Reset
      ----------------------------------------------------------------------------------------
      Truncate all tables to start with a fresh setup
      ***************************************************************************************/
 
-DELETE FROM
-    dbo.Themes
-DELETE FROM
-    [dbo].[FeedCredentials]
-DELETE FROM
-    dbo.SearchInterfaces
-DELETE FROM
-    dbo.[Synonyms]
-DELETE FROM
-    dbo.GenericSynonyms
-DELETE FROM
-    dbo.Feeds
-DELETE FROM
-	[dbo].[SearchConfigurationMappings]
-DELETE FROM
-	[dbo].[SearchConfigurationOptions]
-DELETE FROM
-    dbo.SearchIndexKeys
-DELETE FROM
-    dbo.SearchIndex
-DELETE FROM
-    dbo.SearchInstanceKeys
-DELETE FROM
-    dbo.SearchInstanceCapacity
-DELETE FROM
-    dbo.SearchInstanceReservations
-DELETE FROM
-    dbo.SearchInstances
-DELETE FROM
-    dbo.ClientKeys
-DELETE FROM
-    dbo.Customers
+	DELETE FROM
+		[dbo].Customers
+	DELETE FROM
+		[dbo].[FeedCredentials]
+	DELETE FROM
+		[dbo].Feeds
+	DELETE FROM
+		[dbo].GenericSynonyms
+	DELETE FROM
+		[dbo].SearchIndex
+	DELETE FROM
+		[dbo].SearchIndexKeys
+	DELETE FROM
+		[dbo].SearchInstanceCapacity
+	DELETE FROM
+		[dbo].SearchInstanceKeys
+	DELETE FROM
+		[dbo].SearchInstances
+	DELETE FROM
+		[dbo].SearchInterfaces
+	DELETE FROM
+		[dbo].[Synonyms]
+	DELETE FROM
+		[dbo].Themes
 
 /***************************************************************************************
 Uncomment this if you want to clear down the insights
@@ -284,6 +229,7 @@ Uncomment this if you want to clear down the insights
 /***************************************************************************************
 Initial Setup - Script Start
 ***************************************************************************************/
+
 PRINT '****************************'
 PRINT 'Setup Configuration Options'
 PRINT '****************************'
@@ -298,185 +244,12 @@ INSERT INTO [dbo].[SearchConfigurationDataTypes]
 		(@SearchConfigurationID_Decimal, 'Decimal'),
 		(@SearchConfigurationID_Array, 'Array')
 
-INSERT INTO [dbo].[SearchConfigurationOptions]
-        ([SeachConfigurationOptionId]
-        ,[Key]
-        ,[FriendlyName]
-        ,[Description]
-		,[SearchConfigurationDataTypeId]
-		,[OrderIndex]
-        ,[CreatedDate]
-		,[ModifiedDate])
-    VALUES
-        (@SearchConfigurationOption_EnableAutoComplete_Id
-        ,@SearchConfigurationOption_EnableAutoComplete_Key
-        ,@SearchConfigurationOption_EnableAutoComplete_FriendlyName
-        ,@SearchConfigurationOption_EnableAutoComplete_Description
-		,@SearchConfigurationID_Bool
-		,null
-        ,@Now
-		,null)
-
-INSERT INTO [dbo].[SearchConfigurationOptions]
-        ([SeachConfigurationOptionId]
-        ,[Key]
-        ,[FriendlyName]
-        ,[Description]
-		,[SearchConfigurationDataTypeId]
-		,[OrderIndex]
-        ,[CreatedDate]
-		,[ModifiedDate])
-    VALUES
-        (@SearchConfigurationOption_HideIconVehicleCounts_Id
-        ,@SearchConfigurationOption_HideIconVehicleCounts_Key
-        ,@SearchConfigurationOption_HideIconVehicleCounts_FriendlyName
-        ,@SearchConfigurationOption_HideIconVehicleCounts_Description
-		,@SearchConfigurationID_Bool
-		,null        
-		,@Now
-		,null)
-
--- **************************
--- Place holder text entries
--- **************************
-INSERT INTO [dbo].[SearchConfigurationOptions]
-        ([SeachConfigurationOptionId]
-        ,[Key]
-        ,[FriendlyName]
-        ,[Description]
-		,[SearchConfigurationDataTypeId]
-		,[OrderIndex]
-        ,[CreatedDate]
-		,[ModifiedDate])
-    VALUES
-        (@SearchConfigurationOption_PlaceholderText_Id_1
-        ,@SearchConfigurationOption_PlaceholderText_Key_1
-        ,@SearchConfigurationOption_PlaceholderText_FriendlyName
-        ,'Placeholder Text 1'
-		,@SearchConfigurationID_String
-        ,1
-		,@Now
-		,null)
-
-INSERT INTO [dbo].[SearchConfigurationOptions]
-        ([SeachConfigurationOptionId]
-        ,[Key]
-        ,[FriendlyName]
-        ,[Description]
-		,[SearchConfigurationDataTypeId]
-		,[OrderIndex]
-        ,[CreatedDate]
-		,[ModifiedDate])
-    VALUES
-        (@SearchConfigurationOption_PlaceholderText_Id_2
-        ,@SearchConfigurationOption_PlaceholderText_Key_2
-        ,@SearchConfigurationOption_PlaceholderText_FriendlyName
-        ,'Placeholder Text 2'
-		,@SearchConfigurationID_String
-        ,2
-		,@Now
-		,null)
-
-INSERT INTO [dbo].[SearchConfigurationOptions]
-        ([SeachConfigurationOptionId]
-        ,[Key]
-        ,[FriendlyName]
-        ,[Description]
-		,[SearchConfigurationDataTypeId]
-		,[OrderIndex]
-        ,[CreatedDate]
-		,[ModifiedDate])
-    VALUES
-        (@SearchConfigurationOption_PlaceholderText_Id_3
-        ,@SearchConfigurationOption_PlaceholderText_Key_3
-        ,@SearchConfigurationOption_PlaceholderText_FriendlyName
-        ,'Placeholder Text 3'
-		,@SearchConfigurationID_String
-        ,3
-		,@Now
-		,null)
-
-INSERT INTO [dbo].[SearchConfigurationOptions]
-        ([SeachConfigurationOptionId]
-        ,[Key]
-        ,[FriendlyName]
-        ,[Description]
-		,[SearchConfigurationDataTypeId]
-		,[OrderIndex]
-        ,[CreatedDate]
-		,[ModifiedDate])
-    VALUES
-        (@SearchConfigurationOption_PlaceholderText_Id_4
-        ,@SearchConfigurationOption_PlaceholderText_Key_4
-        ,@SearchConfigurationOption_PlaceholderText_FriendlyName
-        ,'Placeholder Text 4'
-		,@SearchConfigurationID_String
-        ,4
-		,@Now
-		,null)
-
-INSERT INTO [dbo].[SearchConfigurationOptions]
-        ([SeachConfigurationOptionId]
-        ,[Key]
-        ,[FriendlyName]
-        ,[Description]
-		,[SearchConfigurationDataTypeId]
-		,[OrderIndex]
-        ,[CreatedDate]
-		,[ModifiedDate])
-    VALUES
-        (@SearchConfigurationOption_PlaceholderText_Id_5
-        ,@SearchConfigurationOption_PlaceholderText_Key_5
-        ,@SearchConfigurationOption_PlaceholderText_FriendlyName
-        ,'Placeholder Text 5'
-		,@SearchConfigurationID_String
-        ,5
-		,@Now
-		,null)
-	
-INSERT INTO
-    dbo.ClientKeys (ClientId, [Name], [Value], ExpiryDate)
-VALUES
-    (
-        @ServicePrinciple_ClientId,
-        @ServicePrinciple_ClientKeyName,
-        @ServicePrinciple_ClientKeySecret,
-        @ServicePrinciple_ClientKeyExpiryDate
-    )
-
-INSERT INTO
-    dbo.SearchInstances (
-        SearchInstanceId,
-        ServiceName,
-        SubscriptionId,
-        ResourceGroup,
-        [Endpoint],
-        [Location],
-        PricingTier,
-        Replicas,
-        [Partitions],
-        IsShared
-    )
-VALUES
-    (
-        @SearchInstanceId,
-        @SearchInstanceName,
-        @SubscriptionId,
-        @ResourceGroup,
-        @SearchInstanceEndpoint,
-        @ServiceLocation,
-        @AzurePricingTier,
-        @Replicas,
-        @Partitions,
-        @IsShared
-    ) 
-	
 	PRINT '********************************'
 	PRINT 'Inserting Search Resource Keys - '
 	PRINT '********************************'
 
 INSERT INTO
-    dbo.SearchInstanceKeys (
+    [dbo].SearchInstanceKeys (
         SearchInstanceKeyId,
         SearchInstanceId,
         KeyType,
@@ -498,7 +271,7 @@ VALUES
         1
     )
 INSERT INTO
-    dbo.SearchInstanceKeys (
+    [dbo].SearchInstanceKeys (
         SearchInstanceKeyId,
         SearchInstanceId,
         KeyType,
@@ -520,7 +293,7 @@ VALUES
         1
     )
 INSERT INTO
-    dbo.SearchInstanceKeys (
+    [dbo].SearchInstanceKeys (
         SearchInstanceKeyId,
         SearchInstanceId,
         KeyType,
@@ -552,7 +325,7 @@ VALUES
 	PRINT '************************'
 
 	INSERT INTO
-		dbo.Customers (
+		[dbo].Customers (
 			[CustomerId],
 			[BusinessName],
 			[CreatedDate],
@@ -571,7 +344,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.SearchIndex (
+		[dbo].SearchIndex (
 			SearchIndexId,
 			SearchInstanceId,
 			IndexName,
@@ -596,7 +369,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.SearchIndexKeys (
+		[dbo].SearchIndexKeys (
 			[SearchIndexId],
 			[Name],
 			[SearchInstanceKeyId],
@@ -615,7 +388,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.Feeds (
+		[dbo].Feeds (
 		  [FeedType]
 		  ,[FeedScheduleCron]
 		  ,[SearchIndexId]
@@ -640,7 +413,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.Customers (
+		[dbo].Customers (
 			[CustomerId],
 			[BusinessName],
 			[CreatedDate],
@@ -659,7 +432,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.SearchIndex (
+		[dbo].SearchIndex (
 			SearchIndexId,
 			SearchInstanceId,
 			IndexName,
@@ -684,7 +457,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.SearchIndexKeys (
+		[dbo].SearchIndexKeys (
 			[SearchIndexId],
 			[Name],
 			[SearchInstanceKeyId],
@@ -703,7 +476,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.Feeds (
+		[dbo].Feeds (
 		  [FeedType]
 		  ,[FeedScheduleCron]
 		  ,[SearchIndexId]
@@ -728,7 +501,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.Customers (
+		[dbo].Customers (
 			[CustomerId],
 			[BusinessName],
 			[CreatedDate],
@@ -747,7 +520,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.SearchIndex (
+		[dbo].SearchIndex (
 			SearchIndexId,
 			SearchInstanceId,
 			IndexName,
@@ -772,7 +545,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.SearchIndexKeys (
+		[dbo].SearchIndexKeys (
 			[SearchIndexId],
 			[Name],
 			[SearchInstanceKeyId],
@@ -791,7 +564,7 @@ VALUES
 	PRINT '********************************'
 
 	INSERT INTO
-		dbo.Feeds (
+		[dbo].Feeds (
 		  [FeedType]
 		  ,[FeedScheduleCron]
 		  ,[SearchIndexId]
@@ -825,7 +598,7 @@ VALUES
 -- S2 Demo data - Azure Demo Environment
 -- *********************************
 INSERT INTO
-    dbo.SearchInterfaces (
+    [dbo].SearchInterfaces (
 		[SearchIndexId],
 		[SearchEndpoint],
 		[InterfaceType],
@@ -851,7 +624,7 @@ VALUES
 -- harley motors data - Local K8s
 -- *********************************
 INSERT INTO
-    dbo.SearchInterfaces (
+    [dbo].SearchInterfaces (
 		[SearchIndexId],
 		[SearchEndpoint],
 		[InterfaceType],
@@ -878,7 +651,7 @@ VALUES
 -- harper motors data - Local K8s
 -- *********************************
 INSERT INTO
-    dbo.SearchInterfaces (
+    [dbo].SearchInterfaces (
 		[SearchIndexId],
 		[SearchEndpoint],
 		[InterfaceType],
@@ -906,7 +679,7 @@ VALUES
 	PRINT '********************************'
 
 INSERT INTO
-    dbo.[Synonyms] (
+    [dbo].[Synonyms] (
 		SynonymId,
         SearchIndexId,
         KeyWord,
@@ -921,7 +694,7 @@ VALUES
     ) 
 
 INSERT INTO
-    dbo.[Synonyms] (
+    [dbo].[Synonyms] (
 		SynonymId,
         SearchIndexId,
         KeyWord,
@@ -939,7 +712,7 @@ VALUES
 	PRINT 'Inserting Generic Synonyms'
 	PRINT '********************************'
 
-    INSERT INTO dbo.GenericSynonyms 
+    INSERT INTO [dbo].GenericSynonyms 
     (
 		Id,
         Category,
@@ -1107,338 +880,11 @@ INSERT INTO [dbo].[Themes]
 			   ,@Now
 			   ,null)
 
-	PRINT '**********************************************'
-	PRINT 'Setup S2 Demo Data Configuration Mappings'	
-	PRINT '**********************************************'
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (@SearchConfigurationMapping_5
-			   ,'true'
-			   ,@SearchConfigurationOption_EnableAutoComplete_Id
-			   ,@SearchIndexId_1
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,'false'
-			   ,@SearchConfigurationOption_HideIconVehicleCounts_Id
-			   ,@SearchIndexId_1
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_1
-			   ,@SearchConfigurationOption_PlaceholderText_Id_1
-			   ,@SearchIndexId_1
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_2
-			   ,@SearchConfigurationOption_PlaceholderText_Id_2
-			   ,@SearchIndexId_1
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_3
-			   ,@SearchConfigurationOption_PlaceholderText_Id_3
-			   ,@SearchIndexId_1
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_4
-			   ,@SearchConfigurationOption_PlaceholderText_Id_4
-			   ,@SearchIndexId_1
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_5
-			   ,@SearchConfigurationOption_PlaceholderText_Id_5
-			   ,@SearchIndexId_1
-			   ,@Now
-			   ,null)
-
-	PRINT '*************************************************'
-	PRINT 'Setup harley motors Configuration Mappings'	
-	PRINT '*************************************************'
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,'true'
-			   ,@SearchConfigurationOption_EnableAutoComplete_Id
-			   ,@SearchIndexId_2
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,'false'
-			   ,@SearchConfigurationOption_HideIconVehicleCounts_Id
-			   ,@SearchIndexId_2
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_1
-			   ,@SearchConfigurationOption_PlaceholderText_Id_1
-			   ,@SearchIndexId_2
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_2
-			   ,@SearchConfigurationOption_PlaceholderText_Id_2
-			   ,@SearchIndexId_2
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_3
-			   ,@SearchConfigurationOption_PlaceholderText_Id_3
-			   ,@SearchIndexId_2
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_4
-			   ,@SearchConfigurationOption_PlaceholderText_Id_4
-			   ,@SearchIndexId_2
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_5
-			   ,@SearchConfigurationOption_PlaceholderText_Id_5
-			   ,@SearchIndexId_2
-			   ,@Now
-			   ,null)
-
-	PRINT '**********************************************'
-	PRINT 'Setup harper motors Configuration Mappings'	
-	PRINT '**********************************************'
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (@SearchConfigurationMapping_3
-			   ,'true'
-			   ,@SearchConfigurationOption_EnableAutoComplete_Id
-			   ,@SearchIndexId_3
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,'false'
-			   ,@SearchConfigurationOption_HideIconVehicleCounts_Id
-			   ,@SearchIndexId_3
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_1
-			   ,@SearchConfigurationOption_PlaceholderText_Id_1
-			   ,@SearchIndexId_3
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_2
-			   ,@SearchConfigurationOption_PlaceholderText_Id_2
-			   ,@SearchIndexId_3
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_3
-			   ,@SearchConfigurationOption_PlaceholderText_Id_3
-			   ,@SearchIndexId_3
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_4
-			   ,@SearchConfigurationOption_PlaceholderText_Id_4
-			   ,@SearchIndexId_3
-			   ,@Now
-			   ,null)
-
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
-			   ,[Value]
-			   ,[SeachConfigurationOptionId]
-			   ,[SearchIndexId]
-			   ,[CreatedDate]
-			   ,[ModifiedDate])
-		 VALUES
-			   (NEWID() 
-			   ,@SearchConfigurationOption_PlaceholderText_Text_5
-			   ,@SearchConfigurationOption_PlaceholderText_Id_5
-			   ,@SearchIndexId_3
-			   ,@Now
-			   ,null)
-
-
 	PRINT '********************************'
 	PRINT 'Dummy Data Script - Complete'
 	PRINT '********************************'
 END
+
 /***************************************************************************************
  Dummy Data - Script End
  ***************************************************************************************/
