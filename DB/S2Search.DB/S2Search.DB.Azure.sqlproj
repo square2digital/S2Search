@@ -72,13 +72,14 @@
     <Folder Include="FeedServicesFunc\User Defined Types\" />
     <Folder Include="SearchInsightsFunc\User Defined Types\" />
     <Folder Include="SQL Scripts" />
-    <Folder Include="SQL Scripts\Infra-test-12-12-21" />
-    <Folder Include="SQL Scripts\Infra-test-15-01-22" />
-    <Folder Include="SQL Scripts\Original" />
-    <Folder Include="SQL Scripts\production-demo-Infra-28-01-22" />
-    <Folder Include="SQL Scripts\resurrection-2023" />
-    <Folder Include="SQL Scripts\TestDealers" />
     <Folder Include="SQL Scripts\resurrection-2025" />
+    <Folder Include="SQL Scripts\Legacy" />
+    <Folder Include="SQL Scripts\Legacy\Infra-test-12-12-21" />
+    <Folder Include="SQL Scripts\Legacy\Infra-test-15-01-22" />
+    <Folder Include="SQL Scripts\Legacy\Original" />
+    <Folder Include="SQL Scripts\Legacy\production-demo-Infra-28-01-22" />
+    <Folder Include="SQL Scripts\Legacy\resurrection-2023" />
+    <Folder Include="SQL Scripts\Legacy\TestDealers" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\SearchInstanceKeys.sql" />
@@ -139,12 +140,6 @@
     <Build Include="FeedServicesFunc\Stored Procedures\MergeFeedDocuments.sql" />
     <Build Include="FeedServicesFunc\User Defined Types\NewFeedDocuments.sql" />
     <Build Include="SearchInsightsFunc\User Defined Types\SearchInsightsData.sql" />
-    <None Include="SQL Scripts\Infra-test-12-12-21\CreateData.sql" />
-    <None Include="SQL Scripts\Infra-test-15-01-22\CreateData.sql" />
-    <None Include="SQL Scripts\Original\CreateData.sql" />
-    <None Include="SQL Scripts\production-demo-Infra-28-01-22\CreateData.sql" />
-    <None Include="SQL Scripts\resurrection-2023\CreateData.sql" />
-    <None Include="SQL Scripts\TestDealers\CreateData.sql" />
     <None Include="SQL Scripts\CreateData-SearchInsights.sql" />
     <None Include="SQL Scripts\GetAllCustomerData.sql" />
     <None Include="SQL Scripts\resurrection-2025\CreateData.sql" />
@@ -154,5 +149,11 @@
     <Build Include="dbo\Tables\SearchConfiguration.sql" />
     <Build Include="dbo\Tables\SearchIndexRequestLog.sql" />
     <Build Include="dbo\Tables\SearchInsightsData.sql" />
+    <None Include="SQL Scripts\Legacy\Infra-test-12-12-21\CreateData.sql" />
+    <None Include="SQL Scripts\Legacy\Infra-test-15-01-22\CreateData.sql" />
+    <None Include="SQL Scripts\Legacy\Original\CreateData.sql" />
+    <None Include="SQL Scripts\Legacy\production-demo-Infra-28-01-22\CreateData.sql" />
+    <None Include="SQL Scripts\Legacy\resurrection-2023\CreateData.sql" />
+    <None Include="SQL Scripts\Legacy\TestDealers\CreateData.sql" />
   </ItemGroup>
 </Project>
