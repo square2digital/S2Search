@@ -1,17 +1,9 @@
 ﻿USE S2_Search
 GO
-/***************************************************************************************
-     Static Variables
-     ***************************************************************************************/
-DECLARE @Now datetime = GETUTCDATE()
 
-/***************************************************************************************
-     Dummy Data - Script Start
-     ***************************************************************************************/
-DECLARE @InsertDummyData bit = 1
---NOTE: This will not link to a search resource in Azure, it is purely for setting up a mock instance with the expected data structure
-IF @InsertDummyData = 1 BEGIN
-	PRINT 'Dummy Data Script - Started'
+BEGIN
+	DECLARE @Now datetime = GETUTCDATE()
+
 	--SearchIndex variables
 	DECLARE @CustomerId uniqueidentifier = 'afeb217b-813a-4b9c-82ec-e0221d5e95b1'
 	DECLARE @SearchInstanceId uniqueidentifier = '97032266-c1c0-4278-8816-053bbc3a1036'
@@ -160,63 +152,37 @@ IF @InsertDummyData = 1 BEGIN
 	/***************************************************************************************
 	Uncomment this if you want to clear down the insights
 	***************************************************************************************/
-	--TRUNCATE TABLE [insights].[SearchInsightsData]
-	--TRUNCATE TABLE [insights].[SearchIndexRequestLog]
-
-	/***************************************************************************************
-	Initial Setup - Script Start
-	***************************************************************************************/
+	TRUNCATE TABLE [dbo].[SearchInsightsData]
+	TRUNCATE TABLE [dbo].[SearchIndexRequestLog]
 
 	PRINT '********************************'
 	PRINT 'Inserting Service Resource Entry'
 	PRINT '********************************'
 
-	INSERT INTO
-    dbo.SearchInstances
+	INSERT INTO [dbo].[SearchInstances]
 		(
-		Id,
-		ServiceName,
-		[RootEndpoint],
+		[Id],
+		[ServiceName],
 		[Location],
-		PricingTier,
-		Replicas,
+		[PricingTier],
+		[Replicas],
 		[Partitions],
-		IsShared
+		[IsShared],
+		[Type],
+		[RootEndpoint]
 		)
 	VALUES
 		(
-			@SearchInstanceId,
-			@SearchInstanceName,
-			@SearchInstanceEndpoint,
-			@ServiceLocation,
-			@AzurePricingTier,
-			@Replicas,
-			@Partitions,
-			@IsShared
-    )
-
-INSERT INTO [dbo].[SearchInstances] (
-    [Id],
-    [ServiceName],
-    [Location],
-    [PricingTier],
-    [Replicas],
-    [Partitions],
-    [IsShared],
-    [Type],
-    [RootEndpoint]
-)
-VALUES (
-    @SearchInstanceId,               -- or your actual Id (GUID)
-    @SearchInstanceName,            -- ServiceName
-    @ServiceLocation,             -- Location
-    @AzurePricingTier,             -- PricingTier
-    @Replicas,                      -- Replicas
-    @Partitions,                      -- Partitions
-    @IsShared,                      -- IsShared (0 for false, 1 for true)
-    'Production',           -- Type
-    @SearchInstanceEndpoint    -- RootEndpoint
-);
+			@SearchInstanceId, -- or your actual Id (GUID)
+			@SearchInstanceName, -- ServiceName
+			@ServiceLocation, -- Location
+			@AzurePricingTier, -- PricingTier
+			@Replicas, -- Replicas
+			@Partitions, -- Partitions
+			@IsShared, -- IsShared (0 for false, 1 for true)
+			'Production', -- Type
+			@SearchInstanceEndpoint    -- RootEndpoint
+		);
 
 
 	PRINT '********************************'
@@ -368,33 +334,6 @@ VALUES (
 			null,
 			1
 		)
-
-	PRINT '********************************'
-	PRINT 'Inserting Notification Rule Entry'
-	PRINT '********************************'
-
-	INSERT INTO [dbo].SearchInterfaces
-		(
-		[Id],
-		[SearchEndpoint],
-		[InterfaceType],
-		[LogoURL],
-		[BannerStyle],
-		[CreatedDate],
-		[SupersededDate],
-		[IsLatest]
-		)
-	VALUES
-		(
-			@SearchIndexId_1,
-			@S2DemoEndpoint,
-			@InterfaceType,
-			@InterfaceLogoURL,
-			@InterfaceBannerStyle,
-			@Now,
-			NULL,
-			1
-	)
 
 	PRINT '********************************'
 	PRINT 'Inserting Synonyms'
