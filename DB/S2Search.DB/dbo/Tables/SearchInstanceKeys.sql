@@ -1,12 +1,11 @@
 ﻿CREATE TABLE [dbo].[SearchInstanceKeys] (
-    [SearchInstanceKeyId] UNIQUEIDENTIFIER NOT NULL,
+    [Id]                  UNIQUEIDENTIFIER NOT NULL,
     [SearchInstanceId]    UNIQUEIDENTIFIER NOT NULL,
     [KeyType]             VARCHAR (50)     NOT NULL,
     [Name]                VARCHAR (100)    NOT NULL,
     [ApiKey]              VARCHAR (255)    NOT NULL,
-    [CreatedDate]         DATETIME         CONSTRAINT [DF_SearchInstanceKeys_CreatedDate] DEFAULT (getutcdate()) NOT NULL,
+    [CreatedDate]         DATETIME         DEFAULT (getutcdate()) NOT NULL,
     [ModifiedDate]        DATETIME         NULL,
-    [IsLatest]            BIT              CONSTRAINT [DF_SearchInstanceKeys_IsLatest] DEFAULT ((1)) NOT NULL,
-    CONSTRAINT [PK_SearchInstanceKeys] PRIMARY KEY CLUSTERED ([SearchInstanceKeyId] ASC)
+    [IsLatest]            BIT              DEFAULT ((1)) NOT NULL,
+    CONSTRAINT [PK_SearchInstanceKeys]     PRIMARY KEY CLUSTERED ([Id] ASC)
 );
-

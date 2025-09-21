@@ -13,12 +13,12 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT c.[CustomerId]
+	SELECT c.[Id]
 		  ,c.[BusinessName]
 	  FROM [dbo].[Customers] c 
-	  WHERE c.CustomerId = @CustomerId
+	  WHERE c.Id = @CustomerId
 
-	  SELECT [SearchIndexId]
+	  SELECT [Id]
       ,[CustomerId]
       ,[SearchInstanceId]
       ,[IndexName]

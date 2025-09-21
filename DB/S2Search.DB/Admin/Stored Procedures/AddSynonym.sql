@@ -11,7 +11,7 @@ BEGIN
 
 	INSERT INTO [dbo].[Synonyms]
 	(
-		SynonymId,
+		Id,
 		SearchIndexId,
 		KeyWord,
 		SolrFormat

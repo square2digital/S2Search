@@ -10,7 +10,7 @@ BEGIN
 SELECT TOP 1
 f.DataFormat
 FROM dbo.SearchIndex si
-INNER JOIN dbo.Feeds f on f.SearchIndexId = si.SearchIndexId AND f.IsLatest = 1
+INNER JOIN dbo.Feeds f on f.SearchIndexId = si.Id AND f.IsLatest = 1
 WHERE si.CustomerId = @CustomerId
 AND si.IndexName = @SearchIndexName
 

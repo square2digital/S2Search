@@ -58,8 +58,6 @@
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
-    <Folder Include="insights\" />
-    <Folder Include="insights\Tables\" />
     <Folder Include="Security\" />
     <Folder Include="SearchInsightsFunc\" />
     <Folder Include="SearchInsightsFunc\Stored Procedures\" />
@@ -85,19 +83,13 @@
   <ItemGroup>
     <Build Include="dbo\Tables\SearchInstanceKeys.sql" />
     <Build Include="dbo\Tables\SearchInstances.sql" />
-    <Build Include="dbo\Tables\SearchInterfaces.sql" />
     <Build Include="dbo\Tables\Synonyms.sql" />
     <Build Include="dbo\Tables\Themes.sql" />
-    <Build Include="insights\Tables\SearchIndexRequestLog.sql" />
-    <Build Include="insights\Tables\SearchInsightsData.sql" />
     <Build Include="dbo\Tables\Customers.sql" />
     <Build Include="dbo\Tables\FeedCredentials.sql" />
     <Build Include="dbo\Tables\FeedCurrentDocuments.sql" />
     <Build Include="dbo\Tables\Feeds.sql" />
-    <Build Include="dbo\Tables\GenericSynonyms.sql" />
     <Build Include="dbo\Tables\SearchIndex.sql" />
-    <Build Include="dbo\Tables\SearchIndexKeys.sql" />
-    <Build Include="dbo\Tables\SearchInstanceCapacity.sql" />
     <Build Include="Security\CustomerResourceApi.sql" />
     <Build Include="Security\FeedServicesFunc.sql" />
     <Build Include="Security\ProvisioningServicesFunc.sql" />
@@ -142,7 +134,7 @@
     <Build Include="FeedServicesFunc\Stored Procedures\GetCurrentFeedDocuments.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetCurrentFeedDocumentsTotal.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetFeedDataFormat.sql" />
-    <Build Include="FeedServicesFunc\Stored Procedures\GetLatestGenericSynonymsByCategory.sql" />
+    <Build Include="FeedServicesFunc\Stored Procedures\GetLatestSynonymsByCategory.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetSearchIndexCredentials.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\MergeFeedDocuments.sql" />
     <Build Include="FeedServicesFunc\User Defined Types\NewFeedDocuments.sql" />
@@ -159,8 +151,8 @@
     <Build Include="Schemas.sql" />
     <Build Include="logins.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetFeedCredentialsUsername.sql" />
-    <Build Include="dbo\Tables\SearchConfigurationDataTypes.sql" />
-    <Build Include="dbo\Tables\SearchConfigurationMappings.sql" />
-    <Build Include="dbo\Tables\SearchConfigurationOptions.sql" />
+    <Build Include="dbo\Tables\SearchConfiguration.sql" />
+    <Build Include="dbo\Tables\SearchIndexRequestLog.sql" />
+    <Build Include="dbo\Tables\SearchInsightsData.sql" />
   </ItemGroup>
 </Project>

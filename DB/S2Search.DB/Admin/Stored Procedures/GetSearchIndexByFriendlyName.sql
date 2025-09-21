@@ -8,7 +8,7 @@ AS
 BEGIN
 
 SELECT
-si.SearchIndexId,
+si.Id,
 si.SearchInstanceId,
 si.CustomerId,
 si.FriendlyName,

@@ -13,7 +13,7 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT [ThemeId]
+	SELECT [Id]
       ,[PrimaryHexColour]
       ,[SecondaryHexColour]
       ,[NavBarHexColour]

@@ -12,7 +12,7 @@ BEGIN
 	
 	INSERT INTO dbo.SearchIndex
 	(
-		[SearchIndexId],
+		[Id],
 		[SearchInstanceId],
 		[CustomerId],
 		[IndexName],

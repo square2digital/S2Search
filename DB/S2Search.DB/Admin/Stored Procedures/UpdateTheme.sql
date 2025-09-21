@@ -16,6 +16,6 @@ BEGIN
 		LogoURL = @LogoURL,
 		MissingImageURL = @MissingImageURL,
 		ModifiedDate = GETUTCDATE()
-	WHERE [ThemeId] = @ThemeId
+	WHERE [Id] = @ThemeId
 
 END

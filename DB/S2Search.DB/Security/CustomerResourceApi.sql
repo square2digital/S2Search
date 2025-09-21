@@ -1,3 +1,2 @@
 ﻿CREATE USER [Admin] FOR LOGIN [Admin]
     WITH DEFAULT_SCHEMA = [Admin];
-

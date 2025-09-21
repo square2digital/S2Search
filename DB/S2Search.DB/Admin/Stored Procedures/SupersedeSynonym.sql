@@ -11,7 +11,7 @@ BEGIN
 	SET IsLatest = 0,
 		SupersededDate = GETUTCDATE()
 	WHERE SearchIndexId = @SearchIndexId
-	AND SynonymId = @SynonymId
+	AND Id = @SynonymId
 	AND IsLatest = 1
 	
 END

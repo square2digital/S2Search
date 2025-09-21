@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [SFTPGoServicesFunc].[GetFeedCredentials]
+﻿CREATE PROCEDURE [SFTPGoServicesFunc].[GetFeedCredentials]
 (
 	@SearchIndexId uniqueidentifier,
 	@Username varchar(50)

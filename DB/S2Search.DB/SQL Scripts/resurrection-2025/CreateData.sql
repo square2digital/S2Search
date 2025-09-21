@@ -81,24 +81,21 @@ GO
 	DECLARE @SearchConfigurationOption_PlaceholderText_Key_3 varchar(150) = 'PlaceholderText_3'
 	DECLARE @SearchConfigurationOption_PlaceholderText_Key_4 varchar(150) = 'PlaceholderText_4'
 	DECLARE @SearchConfigurationOption_PlaceholderText_Key_5 varchar(150) = 'PlaceholderText_5'
-	
-	DECLARE @SearchConfigurationOption_PlaceholderText_FriendlyName varchar(500) = 'Enter the text you would like to appear in the search box'
-	DECLARE @SearchConfigurationOption_PlaceholderText_Description varchar(MAX) = 'You can enter up to 5 different placeholders. They will be displayed in a cyclic loop on the search bar. For best results, ensure your placeholders text matches the profile of your stock.'
 
 	DECLARE @Separator varchar(50) = '...     '
 
-	DECLARE @SearchConfigurationOption_PlaceholderText_Text_1 varchar(250) = CONCAT('Mercedes Benz S63 AMG', @Separator)
-	DECLARE @SearchConfigurationOption_PlaceholderText_Text_2 varchar(250) = CONCAT('Porsche Green GT3RS', @Separator)
-	DECLARE @SearchConfigurationOption_PlaceholderText_Text_3 varchar(250) = CONCAT('BMW 7 series Silver', @Separator)
-	DECLARE @SearchConfigurationOption_PlaceholderText_Text_4 varchar(250) = CONCAT('Lexus LS460 Black', @Separator)
-	DECLARE @SearchConfigurationOption_PlaceholderText_Text_5 varchar(250) = CONCAT('Honda Type R Red', @Separator)
+	DECLARE @SearchConfigurationOption_PlaceholderText_Value_1 varchar(250) = CONCAT('Mercedes Benz S63 AMG', @Separator)
+	DECLARE @SearchConfigurationOption_PlaceholderText_Value_2 varchar(250) = CONCAT('Porsche Green GT3RS', @Separator)
+	DECLARE @SearchConfigurationOption_PlaceholderText_Value_3 varchar(250) = CONCAT('BMW 7 series Silver', @Separator)
+	DECLARE @SearchConfigurationOption_PlaceholderText_Value_4 varchar(250) = CONCAT('Lexus LS460 Black', @Separator)
+	DECLARE @SearchConfigurationOption_PlaceholderText_Value_5 varchar(250) = CONCAT('Honda Type R Red', @Separator)
 	
-	--Search Configuration Mappings VALUES
-	DECLARE @SearchConfigurationMapping_1 uniqueidentifier = '4350fbfb-5b7d-4162-92aa-2a3ec39a4a5f'
-	DECLARE @SearchConfigurationMapping_2 uniqueidentifier = '0d4cb168-5bb9-4e4d-8a18-d39afa249eb6'
-	DECLARE @SearchConfigurationMapping_3 uniqueidentifier = 'c0fd3d12-294c-41b0-b3ae-ae82cb6b5ca1'
-	DECLARE @SearchConfigurationMapping_4 uniqueidentifier = '74a225fd-17ab-421a-a69c-662c2f9a9195'
-	DECLARE @SearchConfigurationMapping_5 uniqueidentifier = '0ad0b4cd-65bc-4f11-bcb7-d19e98185d72'
+	--Search Configuration Ids
+	DECLARE @SearchConfigurationID_1 uniqueidentifier = '4350fbfb-5b7d-4162-92aa-2a3ec39a4a5f'
+	DECLARE @SearchConfigurationID_2 uniqueidentifier = '0d4cb168-5bb9-4e4d-8a18-d39afa249eb6'
+	DECLARE @SearchConfigurationID_3 uniqueidentifier = 'c0fd3d12-294c-41b0-b3ae-ae82cb6b5ca1'
+	DECLARE @SearchConfigurationID_4 uniqueidentifier = '74a225fd-17ab-421a-a69c-662c2f9a9195'
+	DECLARE @SearchConfigurationID_5 uniqueidentifier = '0ad0b4cd-65bc-4f11-bcb7-d19e98185d72'
 
 	-- SearchIndexId is set as S2 Demo
     DECLARE @SearchConfigurationID_Bool uniqueidentifier = '9ac59cb9-ce37-4209-95c5-3c5283922ff3'
@@ -187,26 +184,19 @@ GO
      Truncate all tables to start with a fresh setup
      ***************************************************************************************/
 
-	DELETE FROM [dbo].Customers
+	DELETE FROM [dbo].[Customers]
 	DELETE FROM [dbo].[FeedCredentials]
-	DELETE FROM [dbo].Feeds
-	DELETE FROM [dbo].GenericSynonyms
-	DELETE FROM [dbo].SearchIndex
-	DELETE FROM [dbo].SearchIndexKeys
-	DELETE FROM [dbo].SearchInstanceCapacity
+	DELETE FROM [dbo].[FeedCurrentDocuments]
+	DELETE FROM [dbo].[Feeds]
+	DELETE FROM [dbo].[SearchConfiguration]
+	DELETE FROM [dbo].[SearchIndex]
+	DELETE FROM [dbo].[SearchIndexRequestLog]
+	DELETE FROM [dbo].[SearchInsightsData]
 	DELETE FROM [dbo].SearchInstanceKeys
 	DELETE FROM [dbo].SearchInstances
-	DELETE FROM [dbo].SearchInterfaces
-
-	DELETE FROM
-		[dbo].[SearchConfigurationMappings]
-	DELETE FROM
-		[dbo].[SearchConfigurationOptions]
-	DELETE FROM
-		[dbo].[SearchConfigurationDataTypes]
-
 	DELETE FROM [dbo].[Synonyms]
-	DELETE FROM [dbo].Themes
+	DELETE FROM [dbo].[Themes]
+
 
 	/***************************************************************************************
 	Uncomment this if you want to clear down the insights
@@ -276,11 +266,9 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 
 	INSERT INTO
     dbo.SearchInstances (
-        SearchInstanceId,
+        Id,
         ServiceName,
-        SubscriptionId,
-        ResourceGroup,
-        [Endpoint],
+        [RootEndpoint],
         [Location],
         PricingTier,
         Replicas,
@@ -291,8 +279,6 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
     (
         @SearchInstanceId,
         @SearchInstanceName,
-        @SubscriptionId,
-        @ResourceGroup,
         @SearchInstanceEndpoint,
         @ServiceLocation,
         @AzurePricingTier,
@@ -307,7 +293,7 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 
 	INSERT INTO
 	[dbo].SearchInstanceKeys (
-		SearchInstanceKeyId,
+		Id,
 		SearchInstanceId,
 		KeyType,
 		[Name],
@@ -329,7 +315,7 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 	)
 	INSERT INTO
 	[dbo].SearchInstanceKeys (
-		SearchInstanceKeyId,
+		Id,
 		SearchInstanceId,
 		KeyType,
 		[Name],
@@ -351,7 +337,7 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 	)
 	INSERT INTO
 	[dbo].SearchInstanceKeys (
-		SearchInstanceKeyId,
+		Id,
 		SearchInstanceId,
 		KeyType,
 		[Name],
@@ -383,7 +369,7 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 
 	INSERT INTO
 		[dbo].Customers (
-			[CustomerId],
+			[Id],
 			[BusinessName],
 			[CreatedDate],
 			[ModifiedDate]
@@ -402,7 +388,7 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 
 	INSERT INTO
 		[dbo].SearchIndex (
-			SearchIndexId,
+			Id,
 			SearchInstanceId,
 			IndexName,
 			FriendlyName,
@@ -427,7 +413,7 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 
 	INSERT INTO
 		[dbo].SearchIndexKeys (
-			[SearchIndexId],
+			[Id],
 			[Name],
 			[SearchInstanceKeyId],
 			[CreatedDate]
@@ -479,7 +465,7 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 	-- *********************************
 	INSERT INTO
 	[dbo].SearchInterfaces (
-		[SearchIndexId],
+		[Id],
 		[SearchEndpoint],
 		[InterfaceType],
 		[LogoURL],
@@ -506,7 +492,7 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 
 	INSERT INTO
 	[dbo].[Synonyms] (
-		SynonymId,
+		Id,
 		SearchIndexId,
 		KeyWord,
 		SolrFormat
@@ -521,7 +507,7 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 
 	INSERT INTO
 	[dbo].[Synonyms] (
-		SynonymId,
+		Id,
 		SearchIndexId,
 		KeyWord,
 		SolrFormat
@@ -545,16 +531,16 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 		SolrFormat
 	)
 	VALUES
-		(
-			@GenericSynonymId_1,
-			@GenericSynonymCategory,
-			@GenericSolrFormat_1
-		),
-		(
-			@GenericSynonymId_2,
-			@GenericSynonymCategory,
-			@GenericSolrFormat_2
-		)
+	(
+		@GenericSynonymId_1,
+		@GenericSynonymCategory,
+		@GenericSolrFormat_1
+	),
+	(
+		@GenericSynonymId_2,
+		@GenericSynonymCategory,
+		@GenericSolrFormat_2
+	)
 
 	PRINT '********************************'
 	PRINT 'Customer 1 - S2 Demo - Theme Details'
@@ -562,7 +548,7 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 
 	INSERT INTO [dbo].[Themes]
 	(
-			[ThemeId]
+		[Id]
 		,[PrimaryHexColour]
 		,[SecondaryHexColour]
 		,[NavBarHexColour]
@@ -611,8 +597,35 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 	PRINT 'Setup S2 Demo Data Configuration Mappings'	
 	PRINT '**********************************************'
 
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
+	INSERT INTO [dbo].[SearchConfiguration] (
+		[Id],
+		[Value],
+		[SearchIndexId],
+		[Key],
+		[FriendlyName],
+		[Description],
+		[DataType],
+		[OrderIndex],
+		[CreatedDate],
+		[ModifiedDate]
+	)
+	VALUES (
+		NEWID(),                                -- Id
+		'example-value',                        -- Value
+		NEWID(),                                -- SearchIndexId
+		'example-key',                          -- Key
+		'Example Friendly Name',                -- FriendlyName
+		'This is a description of the config.',-- Description
+		'String',                               -- DataType
+		1,                                      -- OrderIndex
+		GETUTCDATE(),                           -- CreatedDate
+		NULL                                    -- ModifiedDate
+	);
+
+
+
+	INSERT INTO [dbo].[SearchConfiguration]
+			   ([Id]
 			   ,[Value]
 			   ,[SeachConfigurationOptionId]
 			   ,[SearchIndexId]
@@ -626,8 +639,8 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 			   ,@Now
 			   ,null)
 
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
+	INSERT INTO [dbo].[SearchConfiguration]
+			   ([Id]
 			   ,[Value]
 			   ,[SeachConfigurationOptionId]
 			   ,[SearchIndexId]
@@ -641,8 +654,8 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 			   ,@Now
 			   ,null)
 
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
+	INSERT INTO [dbo].[SearchConfiguration]
+			   ([Id]
 			   ,[Value]
 			   ,[SeachConfigurationOptionId]
 			   ,[SearchIndexId]
@@ -656,8 +669,8 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 			   ,@Now
 			   ,null)
 
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
+	INSERT INTO [dbo].[SearchConfiguration]
+			   ([Id]
 			   ,[Value]
 			   ,[SeachConfigurationOptionId]
 			   ,[SearchIndexId]
@@ -671,8 +684,8 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 			   ,@Now
 			   ,null)
 
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
+	INSERT INTO [dbo].[SearchConfiguration]
+			   ([Id]
 			   ,[Value]
 			   ,[SeachConfigurationOptionId]
 			   ,[SearchIndexId]
@@ -686,8 +699,8 @@ INSERT INTO [dbo].[SearchConfigurationOptions]
 			   ,@Now
 			   ,null)
 
-	INSERT INTO [dbo].[SearchConfigurationMappings]
-			   ([SearchConfigurationMappingId]
+	INSERT INTO [dbo].[SearchConfiguration]
+			   ([Id]
 			   ,[Value]
 			   ,[SeachConfigurationOptionId]
 			   ,[SearchIndexId]

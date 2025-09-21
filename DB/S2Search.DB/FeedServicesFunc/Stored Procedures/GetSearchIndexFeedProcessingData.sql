@@ -8,15 +8,15 @@ AS
 BEGIN
 
 SELECT
-si.SearchIndexId,
+si.Id,
 LOWER(si.IndexName) as [SearchIndexName],
-i.SearchInstanceId,
+i.Id,
 i.ServiceName as [SearchInstanceName],
-i.[Endpoint],
+i.RootEndpoint,
 ik.ApiKey
 FROM dbo.SearchIndex si
-INNER JOIN dbo.SearchInstances i on i.SearchInstanceId = si.SearchInstanceId
-INNER JOIN dbo.SearchInstanceKeys ik on ik.SearchInstanceId = i.SearchInstanceId 
+INNER JOIN dbo.SearchInstances i on i.Id = si.Id
+INNER JOIN dbo.SearchInstanceKeys ik on ik.Id = i.Id 
 									AND ik.KeyType = 'Admin' 
 									AND ik.Name = 'Primary Admin key' 
 									AND ik.IsLatest = 1
@@ -27,7 +27,7 @@ SELECT TOP 1
 f.DataFormat as FeedDataFormat,
 s.SearchEndpoint
 FROM dbo.SearchIndex si
-INNER JOIN dbo.Feeds f on f.SearchIndexId = si.SearchIndexId AND f.IsLatest = 1
+INNER JOIN dbo.Feeds f on f.SearchIndexId = si.Id AND f.IsLatest = 1
 INNER JOIN dbo.SearchInterfaces s on s.SearchIndexId = si.SearchIndexId AND s.IsLatest = 1
 WHERE si.CustomerId = @CustomerId
 AND si.IndexName = @SearchIndexName

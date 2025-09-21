@@ -8,14 +8,14 @@ AS
 BEGIN
 
 SELECT
-SynonymId,
+Id,
 SearchIndexId,
 KeyWord as [Key],
 SolrFormat,
 CreatedDate
 FROM [dbo].[Synonyms]
 WHERE SearchIndexId = @SearchIndexId
-AND SynonymId = @SynonymId
+AND Id = @SynonymId
 AND IsLatest = 1
 
 END

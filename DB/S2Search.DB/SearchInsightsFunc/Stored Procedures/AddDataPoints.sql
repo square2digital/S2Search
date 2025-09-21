@@ -8,7 +8,7 @@ AS
 BEGIN
 	DECLARE @UtcNow datetime = GETUTCDATE();
 
-	MERGE [insights].[SearchInsightsData] WITH (SERIALIZABLE) as target
+	MERGE [SearchInsightsData] WITH (SERIALIZABLE) as target
 	USING @SearchInsightsData as source
 	ON @searchIndexId = target.SearchIndexId
 	AND source.[DataCategory] = target.[DataCategory]
