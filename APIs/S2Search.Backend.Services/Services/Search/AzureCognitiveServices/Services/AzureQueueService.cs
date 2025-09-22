@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Models;
@@ -13,12 +14,15 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
     {
         private readonly IAzureQueueClientProvider _azureQueueClient;
         private readonly ILogger<AzureQueueService> _logger;
+        private readonly string _connectionString;
 
-        public AzureQueueService(IAzureQueueClientProvider azureQueueClient,
+        public AzureQueueService(IConfiguration configuration,
+                                 IAzureQueueClientProvider azureQueueClient,
                                  ILogger<AzureQueueService> logger)
         {
             _azureQueueClient = azureQueueClient ?? throw new ArgumentNullException(nameof(azureQueueClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.AzureStorage);
         }
 
         public async Task EnqueueMessageAsync(QueuedMessage message)
@@ -26,7 +30,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             try
             {
                 string encodedMessage = ConvertObjectToBase64String(message.Data);
-                var client = await _azureQueueClient.GetAsync(ConnectionStrings.StorageQueue, message.TargetQueue);
+                var client = await _azureQueueClient.GetAsync(_connectionString, message.TargetQueue);
                 await client.SendMessageAsync(encodedMessage);
             }
             catch(Exception ex)

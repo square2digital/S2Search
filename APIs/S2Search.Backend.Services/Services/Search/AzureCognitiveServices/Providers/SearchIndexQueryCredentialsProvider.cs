@@ -44,24 +44,31 @@ namespace Services.Providers
                     };
                 }
 
-                string cacheKey = CacheKeys.QueryCredentials;
-                var redisKey = _redisService.CreateRedisKey(cacheKey, callingHost, HashHelper.GetXXHashString(JsonConvert.SerializeObject(cacheKey)));
-                var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
-
-                if (redisValue != null)
+                if (_appSettings.RedisCacheSettings.EnableRedisCache)
                 {
-                    var searchResults = JsonConvert.DeserializeObject<SearchIndexQueryCredentials>(redisValue);
-                    return searchResults;
+                    string cacheKey = CacheKeys.QueryCredentials;
+                    var redisKey = _redisService.CreateRedisKey(cacheKey, callingHost, HashHelper.GetXXHashString(JsonConvert.SerializeObject(cacheKey)));
+                    var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
+
+                    if (redisValue != null)
+                    {
+                        var searchResults = JsonConvert.DeserializeObject<SearchIndexQueryCredentials>(redisValue);
+                        return searchResults;
+                    }
+
+                    var result = await GetQueryCredentialsAsync(callingHost);
+
+                    if (result != null)
+                    {
+                        await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
+                    }
+
+                    return result;
                 }
-
-                var result = await GetQueryCredentialsAsync(callingHost);
-
-                if (result != null)
+                else
                 {
-                    await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
+                    return await GetQueryCredentialsAsync(callingHost);
                 }
-
-                return result;
             }
             catch (Exception ex)
             {

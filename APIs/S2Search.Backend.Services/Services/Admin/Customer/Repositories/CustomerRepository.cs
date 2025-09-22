@@ -16,7 +16,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         public CustomerRepository(IConfiguration configuration, IDbContextProvider dbContextProvider)
         {
             _dbContext = dbContextProvider;
-            _connectionString = configuration.GetConnectionString("S2_Search");
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase);
         }
 
         public async Task<CustomerIds> GetCustomerById(Guid customerId)

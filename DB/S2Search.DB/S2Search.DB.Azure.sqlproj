@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>S2Search.DB</Name>
+    <Name>S2Search.DB.Azure</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{e3cedc33-f00c-4152-97d8-cc8fb2d421ac}</ProjectGuid>
@@ -58,8 +58,6 @@
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
-    <Folder Include="insights\" />
-    <Folder Include="insights\Tables\" />
     <Folder Include="Security\" />
     <Folder Include="SearchInsightsFunc\" />
     <Folder Include="SearchInsightsFunc\Stored Procedures\" />
@@ -74,30 +72,25 @@
     <Folder Include="FeedServicesFunc\User Defined Types\" />
     <Folder Include="SearchInsightsFunc\User Defined Types\" />
     <Folder Include="SQL Scripts" />
-    <Folder Include="SQL Scripts\Infra-test-12-12-21" />
-    <Folder Include="SQL Scripts\Infra-test-15-01-22" />
-    <Folder Include="SQL Scripts\Original" />
-    <Folder Include="SQL Scripts\production-demo-Infra-28-01-22" />
-    <Folder Include="SQL Scripts\resurrection-2023" />
-    <Folder Include="SQL Scripts\TestDealers" />
     <Folder Include="SQL Scripts\resurrection-2025" />
+    <Folder Include="SQL Scripts\Legacy" />
+    <Folder Include="SQL Scripts\Legacy\Infra-test-12-12-21" />
+    <Folder Include="SQL Scripts\Legacy\Infra-test-15-01-22" />
+    <Folder Include="SQL Scripts\Legacy\Original" />
+    <Folder Include="SQL Scripts\Legacy\production-demo-Infra-28-01-22" />
+    <Folder Include="SQL Scripts\Legacy\resurrection-2023" />
+    <Folder Include="SQL Scripts\Legacy\TestDealers" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\SearchInstanceKeys.sql" />
     <Build Include="dbo\Tables\SearchInstances.sql" />
-    <Build Include="dbo\Tables\SearchInterfaces.sql" />
     <Build Include="dbo\Tables\Synonyms.sql" />
     <Build Include="dbo\Tables\Themes.sql" />
-    <Build Include="insights\Tables\SearchIndexRequestLog.sql" />
-    <Build Include="insights\Tables\SearchInsightsData.sql" />
     <Build Include="dbo\Tables\Customers.sql" />
     <Build Include="dbo\Tables\FeedCredentials.sql" />
     <Build Include="dbo\Tables\FeedCurrentDocuments.sql" />
     <Build Include="dbo\Tables\Feeds.sql" />
-    <Build Include="dbo\Tables\GenericSynonyms.sql" />
     <Build Include="dbo\Tables\SearchIndex.sql" />
-    <Build Include="dbo\Tables\SearchIndexKeys.sql" />
-    <Build Include="dbo\Tables\SearchInstanceCapacity.sql" />
     <Build Include="Security\CustomerResourceApi.sql" />
     <Build Include="Security\FeedServicesFunc.sql" />
     <Build Include="Security\ProvisioningServicesFunc.sql" />
@@ -110,10 +103,8 @@
     <Build Include="SFTPGoServicesFunc\Stored Procedures\GetFeedCredentials.sql" />
     <Build Include="SFTPGoServicesFunc\Stored Procedures\UpdateFeedCredentials.sql" />
     <Build Include="Admin\Stored Procedures\AddFeed.sql" />
-    <Build Include="Admin\Stored Procedures\AddSearchInterface.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchInsightsSearchCountByDateRange.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetSearchIndexFeedProcessingData.sql" />
-    <Build Include="Configuration\Stored Procedures\GetGenericSynonymsByCategory.sql" />
     <Build Include="Configuration\Stored Procedures\GetSearchIndexQueryCredentialsByCustomerEndpoint.sql" />
     <Build Include="Configuration\Stored Procedures\GetThemeByCustomerEndpoint.sql" />
     <Build Include="Admin\Stored Procedures\AddSearchIndex.sql" />
@@ -121,11 +112,9 @@
     <Build Include="Admin\Stored Procedures\GetCustomerByID.sql" />
     <Build Include="Admin\Stored Procedures\GetCustomerFull.sql" />
     <Build Include="Admin\Stored Procedures\GetLatestFeed.sql" />
-    <Build Include="Admin\Stored Procedures\GetLatestSearchInterface.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndex.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndexByFriendlyName.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndexFull.sql" />
-    <Build Include="Admin\Stored Procedures\GetSearchIndexKeysForCustomer.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndexQueryCredentialsByCustomerEndpoint.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchInsightsByDataCategories.sql" />
     <Build Include="Admin\Stored Procedures\GetSynonymById.sql" />
@@ -135,28 +124,31 @@
     <Build Include="Admin\Stored Procedures\GetThemeById.sql" />
     <Build Include="Admin\Stored Procedures\GetThemeBySearchIndexId.sql" />
     <Build Include="Admin\Stored Procedures\SupersedeLatestFeed.sql" />
-    <Build Include="Admin\Stored Procedures\SupersedeLatestSearchInterface.sql" />
     <Build Include="Admin\Stored Procedures\SupersedeSynonym.sql" />
     <Build Include="Admin\Stored Procedures\UpdateSynonym.sql" />
     <Build Include="Admin\Stored Procedures\UpdateTheme.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetCurrentFeedDocuments.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetCurrentFeedDocumentsTotal.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetFeedDataFormat.sql" />
-    <Build Include="FeedServicesFunc\Stored Procedures\GetLatestGenericSynonymsByCategory.sql" />
+    <Build Include="FeedServicesFunc\Stored Procedures\GetLatestSynonymsByCategory.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetSearchIndexCredentials.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\MergeFeedDocuments.sql" />
     <Build Include="FeedServicesFunc\User Defined Types\NewFeedDocuments.sql" />
     <Build Include="SearchInsightsFunc\User Defined Types\SearchInsightsData.sql" />
-    <None Include="SQL Scripts\Infra-test-12-12-21\CreateData.sql" />
-    <None Include="SQL Scripts\Infra-test-15-01-22\CreateData.sql" />
-    <None Include="SQL Scripts\Original\CreateData.sql" />
-    <None Include="SQL Scripts\production-demo-Infra-28-01-22\CreateData.sql" />
-    <None Include="SQL Scripts\resurrection-2023\CreateData.sql" />
-    <None Include="SQL Scripts\TestDealers\CreateData.sql" />
     <None Include="SQL Scripts\CreateData-SearchInsights.sql" />
     <None Include="SQL Scripts\GetAllCustomerData.sql" />
     <None Include="SQL Scripts\resurrection-2025\CreateData.sql" />
     <Build Include="Schemas.sql" />
     <Build Include="logins.sql" />
+    <Build Include="FeedServicesFunc\Stored Procedures\GetFeedCredentialsUsername.sql" />
+    <Build Include="dbo\Tables\SearchConfiguration.sql" />
+    <Build Include="dbo\Tables\SearchIndexRequestLog.sql" />
+    <Build Include="dbo\Tables\SearchInsightsData.sql" />
+    <None Include="SQL Scripts\Legacy\Infra-test-12-12-21\CreateData.sql" />
+    <None Include="SQL Scripts\Legacy\Infra-test-15-01-22\CreateData.sql" />
+    <None Include="SQL Scripts\Legacy\Original\CreateData.sql" />
+    <None Include="SQL Scripts\Legacy\production-demo-Infra-28-01-22\CreateData.sql" />
+    <None Include="SQL Scripts\Legacy\resurrection-2023\CreateData.sql" />
+    <None Include="SQL Scripts\Legacy\TestDealers\CreateData.sql" />
   </ItemGroup>
 </Project>

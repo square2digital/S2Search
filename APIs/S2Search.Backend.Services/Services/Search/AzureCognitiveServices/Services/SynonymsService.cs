@@ -29,20 +29,28 @@ namespace Services.Services
         /// <returns></returns>
         public async Task<List<string>> GetGenericSynonyms(string callingHost, string category = "vehicles")
         {
-            string cacheKey = $"{CacheKeys.Synonyms}";
-            var redisKey = _redisService.CreateRedisKey(callingHost, cacheKey, S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers.HashHelper.GetXXHashString(cacheKey));
-            var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
-
-            if (redisValue != null)
+            if (_appSettings.RedisCacheSettings.EnableRedisCache)
             {
-                var synonyms = JsonConvert.DeserializeObject<List<string>>(redisValue);
-                return synonyms;
+                string cacheKey = $"{CacheKeys.Synonyms}";
+                var redisKey = _redisService.CreateRedisKey(callingHost, cacheKey, S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers.HashHelper.GetXXHashString(cacheKey));
+                var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
+
+                if (redisValue != null)
+                {
+                    var synonyms = JsonConvert.DeserializeObject<List<string>>(redisValue);
+                    return synonyms;
+                }
+
+                var result = await GetGenericSynomynsFactory(category);
+                await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
+
+                return result;
             }
-
-            var result = await GetGenericSynomynsFactory(category);
-            await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
-
-            return result;
+            else
+            {
+                var result = await GetGenericSynomynsFactory(category);
+                return result;
+            }
         }
 
         private async Task<List<string>> GetGenericSynomynsFactory(string category)

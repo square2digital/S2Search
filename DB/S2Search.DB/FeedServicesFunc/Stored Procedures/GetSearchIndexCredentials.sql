@@ -8,15 +8,15 @@ AS
 BEGIN
 
 SELECT
-si.SearchIndexId,
+si.Id,
 LOWER(si.IndexName) as [SearchIndexName],
-i.SearchInstanceId,
+i.Id,
 i.ServiceName as [SearchInstanceName],
-i.[Endpoint],
+i.RootEndpoint,
 ik.ApiKey
 FROM dbo.SearchIndex si
-INNER JOIN dbo.SearchInstances i on i.SearchInstanceId = si.SearchInstanceId
-INNER JOIN dbo.SearchInstanceKeys ik on ik.SearchInstanceId = i.SearchInstanceId 
+INNER JOIN dbo.SearchInstances i on i.Id = si.Id
+INNER JOIN dbo.SearchInstanceKeys ik on ik.Id = i.Id 
 									AND ik.KeyType = 'Admin' 
 									AND ik.Name = 'Primary Admin key' 
 									AND ik.IsLatest = 1

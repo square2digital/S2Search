@@ -8,25 +8,23 @@ AS
 BEGIN
 
 SELECT
-[search].SearchIndexId,
+[search].Id,
 [search].CustomerId,
 [search].IndexName,
 [search].FriendlyName,
-[service].[Endpoint],
+[service].RootEndpoint,
 [service].PricingTier,
 [search].CreatedDate,
-[service].SearchInstanceId,
+[service].Id,
 [service].ServiceName,
-[service].SubscriptionId,
-[service].ResourceGroup,
 [service].[Location],
 [service].PricingTier,
 [service].Replicas,
 [service].[Partitions],
 [service].IsShared
 FROM dbo.SearchIndex [search]
-LEFT OUTER JOIN dbo.SearchInstances [service] on [service].SearchInstanceId = search.SearchInstanceId
-WHERE search.SearchIndexId = @SearchIndexId
+LEFT OUTER JOIN dbo.SearchInstances [service] on [service].Id = search.SearchInstanceId
+WHERE search.Id = @SearchIndexId
 AND search.CustomerId = @CustomerId
 
 END

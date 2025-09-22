@@ -1,12 +1,11 @@
-﻿CREATE TABLE [dbo].[Synonyms] (
-    [SynonymId]      UNIQUEIDENTIFIER NOT NULL,
-    [SearchIndexId]  UNIQUEIDENTIFIER NOT NULL,
-    [KeyWord]        VARCHAR (50)     NOT NULL,
+﻿CREATE TABLE [Synonyms] (
+    [Id]             UNIQUEIDENTIFIER NOT NULL,
+    [Category]       VARCHAR (50)     NULL,           -- Only for generic synonyms
+    [SearchIndexId]  UNIQUEIDENTIFIER NULL,           -- Only for specific synonyms
+    [KeyWord]        VARCHAR (50)     NULL,           -- Only for specific synonyms
     [SolrFormat]     VARCHAR (MAX)    NOT NULL,
-    [CreatedDate]    DATETIME         CONSTRAINT [DF_Synonyms_CreatedDate] DEFAULT (getutcdate()) NOT NULL,
+    [CreatedDate]    DATETIME         DEFAULT (getutcdate()) NOT NULL,
     [SupersededDate] DATETIME         NULL,
-    [IsLatest]       BIT              CONSTRAINT [DF_Synonyms_IsLatest] DEFAULT ((1)) NOT NULL,
-    CONSTRAINT [PK_Synonyms] PRIMARY KEY CLUSTERED ([SynonymId] ASC),
-    CONSTRAINT [FK_Synonyms_SearchIndex] FOREIGN KEY ([SearchIndexId]) REFERENCES [dbo].[SearchIndex] ([SearchIndexId])
+    [IsLatest]       BIT              DEFAULT ((1)) NOT NULL,
+    CONSTRAINT [PK_CombinedSynonyms] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
-

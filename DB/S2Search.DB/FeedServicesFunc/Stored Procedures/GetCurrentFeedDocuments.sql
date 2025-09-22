@@ -9,7 +9,7 @@ AS
 BEGIN
 
 	SELECT
-	[DocumentId]
+	[Id]
 	FROM [dbo].[FeedCurrentDocuments]
 	WHERE SearchIndexId = @SearchIndexId
 	ORDER BY CreatedDate ASC

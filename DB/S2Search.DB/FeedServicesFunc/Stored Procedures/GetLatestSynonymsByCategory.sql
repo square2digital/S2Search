@@ -11,7 +11,7 @@ Id,
 Category,
 SolrFormat,
 CreatedDate
-FROM [dbo].[GenericSynonyms]
+FROM [dbo].[Synonyms]
 WHERE Category = @Category
 AND IsLatest = 1
 

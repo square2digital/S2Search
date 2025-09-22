@@ -17,7 +17,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             _configuration = configuration;
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _connectionString = configuration.GetConnectionString("S2_Search");
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase);
         }
 
         public async Task<IEnumerable<SearchInsight>> GetByCategoriesAsync(Guid searchIndexId,

@@ -44,7 +44,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
             var uploadDestination = _feedUploadDestination.GetDestination(customerId, searchIndex.IndexName, isZip, true);
             var blobName = $"{uploadDestination}/{file.FileName}";
 
-            var blobClient = _blobClientProvider.Get(ConnectionStrings.BlobStorage, FeedUploadDestinations.FeedContainer, blobName);
+            var blobClient = _blobClientProvider.Get(ConnectionStringKeys.AzureStorage, FeedUploadDestinations.FeedContainer, blobName);
             var blobExists = await blobClient.ExistsAsync();
 
             if (blobExists)

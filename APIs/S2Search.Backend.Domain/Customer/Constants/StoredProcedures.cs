@@ -11,8 +11,6 @@ public static class StoredProcedures
     public const string AddSynonym = "[Admin].[AddSynonym]";
     public const string GetCustomerById = "[Admin].[GetCustomerByID]";
     public const string GetCustomerFull = "[Admin].[GetCustomerFull]";
-    public const string GetFeedCredentialsUsername = "[Admin].[GetFeedCredentialsUsername]";
-    public const string GetSearchIndexQueryCredentials = "[CustomerResourceApi].[GetSearchIndexQueryCredentialsByCustomerEndpoint]";
     public const string GetLatestFeed = "[Admin].[GetLatestFeed]";
     public const string GetLatestSearchInterface = "[Admin].[GetLatestSearchInterface]";
     public const string GetSearchIndex = "[Admin].[GetSearchIndex]";
@@ -39,6 +37,12 @@ public static class StoredProcedures
     public const string GetConfigurationForSearchIndex = "[Configuration].[GetConfigurationForSearchIndex]";
     public const string GetGenericSynonymsByCategory = "[Configuration].[GetGenericSynonymsByCategory]";
     public const string GetTheme = "[Configuration].[GetThemeByCustomerEndpoint]";
+    public const string GetSearchIndexQueryCredentials = "[Configuration].[GetSearchIndexQueryCredentialsByCustomerEndpoint]";
+
+    // ***********
+    // Feed
+    // ***********
+    public const string GetFeedCredentialsUsername = "[FeedServicesFunc].[GetFeedCredentialsUsername]";
 
     // ***********
     // SFTPGoServicesFunc

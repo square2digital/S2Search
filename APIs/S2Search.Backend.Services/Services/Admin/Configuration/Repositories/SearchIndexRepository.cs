@@ -4,7 +4,6 @@ using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
 using S2Search.Backend.Domain.Configuration.SearchResources.Synonyms;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
-using S2Search.Backend.Domain.Customer.SearchResources.CustomerPricing;
 using S2Search.Backend.Domain.Customer.SearchResources.SearchIndex;
 using S2Search.Backend.Domain.Customer.SearchResources.SearchInstanceKeys;
 using S2Search.Backend.Domain.Customer.Shared;
@@ -26,9 +25,8 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _connectionString = configuration.GetConnectionString("S2_Search");
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase);
         }
-
 
         public async Task<SearchIndexQueryCredentials> GetQueryCredentialsAsync(string customerEndpoint)
         {

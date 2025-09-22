@@ -66,11 +66,10 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
             try
             {
                 request.CallingHost = StringHelpers.FormatCallingHost(request.CallingHost);
-                var redisEnabled = _appSettings.RedisCacheSettings?.EnableRedisCache ?? true;
                 string redisKey = null;
                 string redisValue = null;
 
-                if (redisEnabled)
+                if (_appSettings.RedisCacheSettings.EnableRedisCache)
                 {
                     try
                     {
@@ -100,7 +99,7 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
                 result = await _azureSearchService.InvokeSearchRequest(request, queryCredentials);
                 Response.Headers.Add("Total-Results", result.SearchProductResult.TotalResults.ToString());
 
-                if (redisEnabled && redisKey != null)
+                if (_appSettings.RedisCacheSettings.EnableRedisCache && redisKey != null)
                 {
                     try
                     {
@@ -185,26 +184,35 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
 
             try
             {
-                callingHost = StringHelpers.FormatCallingHost(callingHost);
-                var redisKey = _redisService.CreateRedisKey(callingHost, "autocomplete", HashHelper.GetXXHashString(JsonConvert.SerializeObject(searchTerm)));
-                var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
-
-                if (redisValue != null)
+                if (_appSettings.RedisCacheSettings.EnableRedisCache)
                 {
-                    return Ok(JsonConvert.DeserializeObject<IEnumerable<string>>(redisValue));
-                }                
 
-                var queryCredentials = await _queryCredentialsProvider.GetAsync(callingHost);
+                    callingHost = StringHelpers.FormatCallingHost(callingHost);
+                    var redisKey = _redisService.CreateRedisKey(callingHost, "autocomplete", HashHelper.GetXXHashString(JsonConvert.SerializeObject(searchTerm)));
+                    var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
 
-                if (queryCredentials == null)
-                {
-                    return BadRequest("CallingHost not recognised.");
+                    if (redisValue != null)
+                    {
+                        return Ok(JsonConvert.DeserializeObject<IEnumerable<string>>(redisValue));
+                    }
+
+                    var queryCredentials = await _queryCredentialsProvider.GetAsync(callingHost);
+                    if (queryCredentials == null)
+                    {
+                        return BadRequest("CallingHost not recognised.");
+                    }
+
+                    var suggestions = await _azureSearchService.AutocompleteWithSuggestions(searchTerm, queryCredentials);
+
+                    await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(suggestions), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
+                    return Ok(suggestions);
                 }
-
-                var suggestions = await _azureSearchService.AutocompleteWithSuggestions(searchTerm, queryCredentials);
-
-                await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(suggestions), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
-                return Ok(suggestions);
+                else
+                {
+                    var queryCredentials = await _queryCredentialsProvider.GetAsync(callingHost);
+                    var suggestions = await _azureSearchService.AutocompleteWithSuggestions(searchTerm, queryCredentials);
+                    return Ok(suggestions);
+                }            
             }
             catch (Exception ex)
             {

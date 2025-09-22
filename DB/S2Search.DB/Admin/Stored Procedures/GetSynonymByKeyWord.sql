@@ -8,7 +8,7 @@ AS
 BEGIN
 
 SELECT
-SynonymId,
+Id,
 SearchIndexId,
 KeyWord as [Key],
 SolrFormat,

@@ -8,7 +8,7 @@ AS
 BEGIN
 	DECLARE @UtcNow datetime = GETUTCDATE();
 
-	MERGE [insights].[SearchIndexRequestLog] WITH (SERIALIZABLE) as target
+	MERGE [SearchIndexRequestLog] WITH (SERIALIZABLE) as target
 	USING (	SELECT @SearchIndexId as [SearchIndexId], @Date as [Date]) as source
 	ON source.[SearchIndexId] = target.[SearchIndexId]
 	AND source.[Date] = target.[Date]

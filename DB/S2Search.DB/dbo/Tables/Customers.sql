@@ -1,8 +1,8 @@
-﻿CREATE TABLE [dbo].[Customers] (
-    [CustomerId]   UNIQUEIDENTIFIER NOT NULL,
+﻿CREATE TABLE Customers (
+    [Id]           UNIQUEIDENTIFIER NOT NULL,
     [BusinessName] VARCHAR (100)    NULL,
-    [CreatedDate]  DATETIME         CONSTRAINT [DF_Customers_CreatedDate] DEFAULT (getutcdate()) NOT NULL,
+    [CustomerEndpoint] VARCHAR (100)    NULL,
+    [CreatedDate]  DATETIME         DEFAULT (getutcdate()) NOT NULL,
     [ModifiedDate] DATETIME         NULL,
-    CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([CustomerId] ASC)
+    CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
-

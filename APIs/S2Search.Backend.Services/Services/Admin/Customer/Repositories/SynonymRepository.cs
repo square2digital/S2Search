@@ -24,7 +24,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _synonymValidation = synonymValidation ?? throw new ArgumentNullException(nameof(synonymValidation));
             _solrConverter = solrConverter ?? throw new ArgumentNullException(nameof(solrConverter));
-            _connectionString = configuration.GetConnectionString("S2_Search");
+            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase);
         }
 
         public async Task<Synonym> CreateAsync(SynonymRequest synonymRequest)

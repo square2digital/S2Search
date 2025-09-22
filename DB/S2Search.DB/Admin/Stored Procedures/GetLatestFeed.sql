@@ -7,7 +7,7 @@ AS
 BEGIN
 
 SELECT TOP 1
-f.FeedId,
+f.Id,
 f.SearchIndexId,
 f.FeedType as [Type],
 f.FeedScheduleCron as ScheduleCron,

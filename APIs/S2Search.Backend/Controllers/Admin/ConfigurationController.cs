@@ -1,87 +1,55 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using S2Search.Backend.Domain.Configuration.SearchResources;
-using S2Search.Backend.Domain.Configuration.SearchResources.Configuration;
-using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
-using S2Search.Backend.Domain.Configuration.SearchResources.Synonyms;
+using S2Search.Backend.Domain.Customer.SearchResources.SearchConfiguration;
 using S2Search.Backend.Domain.Interfaces.Repositories;
 
 namespace S2Search.Backend.Controllers.Admin
 {
-    [Route("api/[controller]")]
+    [Route("api/customers/config")]
     [ApiController]
-    public class ConfigurationController : ControllerBase
-    {
-        private readonly ILogger _logger;
-        private readonly ISearchIndexRepository _searchIndexRepo;
+    public class ConfigurationController : Controller
+    {        
         private readonly IThemeRepository _themeRepo;
-        private readonly ISearchConfigurationRepository _searchUIConfigurationRepo;
+        private readonly ISearchIndexRepository _searchIndexRepo;
+        private readonly ISearchConfigurationRepository _searchConfigurationRepo;
+        private readonly ILogger _logger;
 
-        public ConfigurationController(ILogger<ConfigurationController> logger,
-                                       ISearchIndexRepository searchIndexRepo,
-                                       IThemeRepository themeRepo,
-                                       ISearchConfigurationRepository searchUIConfigurationRepo)
+        public ConfigurationController(IThemeRepository themeRepo,
+            ISearchIndexRepository searchIndexRepo,
+            ISearchConfigurationRepository searchConfigurationRepo,
+            ILogger<QueryCredentialsController> logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _themeRepo = themeRepo ?? throw new ArgumentNullException(nameof(themeRepo));            
             _searchIndexRepo = searchIndexRepo ?? throw new ArgumentNullException(nameof(searchIndexRepo));
-            _themeRepo = themeRepo ?? throw new ArgumentNullException(nameof(themeRepo));
-            _searchUIConfigurationRepo = searchUIConfigurationRepo ?? throw new ArgumentNullException(nameof(searchUIConfigurationRepo));
+            _searchConfigurationRepo = searchConfigurationRepo ?? throw new ArgumentNullException(nameof(searchConfigurationRepo));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
-        /// Retrieve the theme for the requested customerEndpoint
+        /// Insert or Update a config item with a new value
         /// </summary>
-        /// <param name="customerEndpoint">The host that is calling the application consuming this endpoint.</param>
-        [HttpGet("theme/{customerEndpoint}", Name = "GetTheme")]
-        [ProducesResponseType(typeof(Theme), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetTheme(string customerEndpoint)
-        {
-            try
-            {
-                var theme = await _themeRepo.GetThemeAsync(customerEndpoint);
-
-                if (theme == null)
-                {
-                    _logger.LogInformation($"Not found on {nameof(GetTheme)} | CustomerEndpoint: {customerEndpoint}");
-                    return NotFound();
-                }
-
-                return Ok(theme);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error on {nameof(GetTheme)} | CustomerEndpoint: {customerEndpoint} | Message: {ex.Message}");
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Retrieve the Generic Synonyms
-        /// </summary>
-        /// <param name="category">The category of the generic synonyms to retrieve.</param>
+        /// <param name="config"></param>
         /// <returns></returns>
-        [HttpGet("search/GenericSynonyms/{category}", Name = "GetGenericSynonyms")]
-        [ProducesResponseType(typeof(IEnumerable<GenericSynonyms>), StatusCodes.Status200OK)]
+        [HttpPut("update", Name = "UpdateConfig")]
+        [ProducesResponseType(typeof(SearchConfigurationUpdateMapping), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGenericSynonyms(string category = "vehicles")
+        public async Task<ActionResult<bool>> UpdateConfig([FromBody] SearchConfigurationUpdateMapping config)
         {
             try
             {
-                var genericSynonyms = await _searchIndexRepo.GetGenericSynonymsByCategoryAsync(category);
+                var update = await _searchConfigurationRepo.UpdateConfigurationItem(config);
 
-                if (genericSynonyms == null)
+                if (update > 0)
                 {
-                    _logger.LogInformation($"Not found on {nameof(GetGenericSynonyms)} | Generic Synonyms Category: {category}");
-                    return NotFound();
+                    return Ok();
                 }
 
-                return Ok(genericSynonyms);
+                return BadRequest();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error on {nameof(GetGenericSynonyms)} | Generic Synonyms Category: {category} | Message: {ex.Message}");
+                _logger.LogError(ex, $"Error on {nameof(UpdateConfig)} | ConfigId: {config.SearchConfigurationMappingId} | Message: {ex.Message}");
                 throw;
             }
         }

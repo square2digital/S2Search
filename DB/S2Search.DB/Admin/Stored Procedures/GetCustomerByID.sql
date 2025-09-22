@@ -14,8 +14,8 @@ BEGIN
 
     -- Insert statements for procedure here
 	SELECT 
-	c.[CustomerId]
-	,c.[BusinessName]
+	c.[Id],
+	c.[BusinessName]
 	FROM [dbo].[Customers] c 
-	WHERE c.CustomerId = @CustomerId
+	WHERE c.Id = @CustomerId
 END

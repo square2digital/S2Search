@@ -13,7 +13,7 @@ BEGIN
 	SET	[KeyWord] = @KeyWord,
 	[SolrFormat] = @SolrFormat
 	WHERE SearchIndexId = @SearchIndexId
-	AND SynonymId = @SynonymId
+	AND Id = @SynonymId
 	AND IsLatest = 1
 	
 END
