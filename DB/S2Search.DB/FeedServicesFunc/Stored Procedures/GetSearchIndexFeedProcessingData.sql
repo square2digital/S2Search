@@ -27,8 +27,8 @@ SELECT TOP 1
 f.DataFormat as FeedDataFormat,
 c.CustomerEndpoint
 FROM dbo.SearchIndex si
-INNER JOIN dbo.Feeds f on f.SearchIndexId = si.Id AND f.IsLatest = 1
-INNER JOIN dbo.Customers c on t.CustomerId = c.Id
+INNER JOIN dbo.Feeds f on f.SearchIndexId = si.Id
+INNER JOIN dbo.Customers c on si.CustomerId = c.id
 WHERE si.CustomerId = @CustomerId
 AND si.IndexName = @SearchIndexName
 

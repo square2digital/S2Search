@@ -156,12 +156,13 @@ BEGIN
     TRUNCATE TABLE [dbo].[SearchIndexRequestLog]
     
     PRINT '********************************'
-    PRINT 'Inserting Service Resource Entry'
+    PRINT 'Inserting Search Instances Entry'
     PRINT '********************************'
     
     INSERT INTO [dbo].[SearchInstances]
     (
 		[Id],
+    [CustomerId],
 		[ServiceName],
 		[Location],
 		[PricingTier],
@@ -174,6 +175,7 @@ BEGIN
     VALUES
     (
 		@SearchInstanceId, -- or your actual Id (GUID)
+    @CustomerId,
 		@SearchInstanceName, -- ServiceName
 		@ServiceLocation, -- Location
 		@AzurePricingTier, -- PricingTier
