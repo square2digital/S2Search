@@ -47,28 +47,10 @@ AND IsLatest = 1
 
 
 SELECT 
-NotificationRuleId,
-TransmitType,
-Recipients,
-[Trigger]
-FROM dbo.NotificationRules 
-WHERE SearchIndexId = @SearchIndexId 
-AND IsLatest = 1
-
-SELECT 
 Id,
 KeyWord as [Key],
 SolrFormat
 FROM dbo.[Synonyms]
-WHERE SearchIndexId = @SearchIndexId 
-AND IsLatest = 1
-
-SELECT 
-SearchInterfaceId,
-InterfaceType as [Type],
-LogoURL,
-BannerStyle
-FROM dbo.SearchInterfaces 
 WHERE SearchIndexId = @SearchIndexId 
 AND IsLatest = 1
 

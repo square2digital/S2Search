@@ -11,7 +11,7 @@ BEGIN
 SELECT 
 d.[Date],
 d.[Count]
-FROM insights.SearchIndexRequestLog d
+FROM dbo.SearchIndexRequestLog d
 WHERE d.SearchIndexId = @SearchIndexId
 AND d.[Date] BETWEEN @DateFrom AND @DateTo
 

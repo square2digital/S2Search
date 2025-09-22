@@ -103,10 +103,8 @@
     <Build Include="SFTPGoServicesFunc\Stored Procedures\GetFeedCredentials.sql" />
     <Build Include="SFTPGoServicesFunc\Stored Procedures\UpdateFeedCredentials.sql" />
     <Build Include="Admin\Stored Procedures\AddFeed.sql" />
-    <Build Include="Admin\Stored Procedures\AddSearchInterface.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchInsightsSearchCountByDateRange.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetSearchIndexFeedProcessingData.sql" />
-    <Build Include="Configuration\Stored Procedures\GetGenericSynonymsByCategory.sql" />
     <Build Include="Configuration\Stored Procedures\GetSearchIndexQueryCredentialsByCustomerEndpoint.sql" />
     <Build Include="Configuration\Stored Procedures\GetThemeByCustomerEndpoint.sql" />
     <Build Include="Admin\Stored Procedures\AddSearchIndex.sql" />
@@ -114,11 +112,9 @@
     <Build Include="Admin\Stored Procedures\GetCustomerByID.sql" />
     <Build Include="Admin\Stored Procedures\GetCustomerFull.sql" />
     <Build Include="Admin\Stored Procedures\GetLatestFeed.sql" />
-    <Build Include="Admin\Stored Procedures\GetLatestSearchInterface.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndex.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndexByFriendlyName.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndexFull.sql" />
-    <Build Include="Admin\Stored Procedures\GetSearchIndexKeysForCustomer.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchIndexQueryCredentialsByCustomerEndpoint.sql" />
     <Build Include="Admin\Stored Procedures\GetSearchInsightsByDataCategories.sql" />
     <Build Include="Admin\Stored Procedures\GetSynonymById.sql" />
@@ -128,7 +124,6 @@
     <Build Include="Admin\Stored Procedures\GetThemeById.sql" />
     <Build Include="Admin\Stored Procedures\GetThemeBySearchIndexId.sql" />
     <Build Include="Admin\Stored Procedures\SupersedeLatestFeed.sql" />
-    <Build Include="Admin\Stored Procedures\SupersedeLatestSearchInterface.sql" />
     <Build Include="Admin\Stored Procedures\SupersedeSynonym.sql" />
     <Build Include="Admin\Stored Procedures\UpdateSynonym.sql" />
     <Build Include="Admin\Stored Procedures\UpdateTheme.sql" />

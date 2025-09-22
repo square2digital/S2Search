@@ -7,14 +7,14 @@ AS
 BEGIN
 
 SELECT
-t.ThemeId,
+t.Id,
 t.PrimaryHexColour,
 t.SecondaryHexColour,
 t.NavBarHexColour,
 t.LogoURL,
 t.MissingImageURL
 FROM dbo.Themes t
-INNER JOIN dbo.SearchInterfaces sui on sui.SearchIndexId = t.SearchIndexId AND sui.IsLatest = 1
-WHERE sui.SearchEndpoint = @CustomerEndpoint
+INNER JOIN dbo.Customers c on t.CustomerId = c.Id
+WHERE c.CustomerEndpoint = @CustomerEndpoint
 
 END

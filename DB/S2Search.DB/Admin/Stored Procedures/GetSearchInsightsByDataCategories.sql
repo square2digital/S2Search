@@ -14,7 +14,7 @@ d.[DataCategory],
 d.[DataPoint],
 d.[Date],
 d.[Count]
-FROM insights.SearchInsightsData d
+FROM dbo.SearchInsightsData d
 CROSS APPLY string_split(@DataCategories, ',') categories
 WHERE d.SearchIndexId = @SearchIndexId
 AND d.[Date] >= @DateFrom

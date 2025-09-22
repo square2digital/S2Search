@@ -1,5 +1,6 @@
 ﻿CREATE TABLE SearchInstances (
     [Id]               UNIQUEIDENTIFIER NOT NULL,
+    [CustomerId]       UNIQUEIDENTIFIER NOT NULL,
     [ServiceName]      VARCHAR (255)    NOT NULL,
     [Location]         VARCHAR (50)     NOT NULL,
     [PricingTier]      VARCHAR (50)     NOT NULL,
