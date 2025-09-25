@@ -72,7 +72,7 @@
     <Folder Include="FeedServicesFunc\User Defined Types\" />
     <Folder Include="SearchInsightsFunc\User Defined Types\" />
     <Folder Include="SQL Scripts" />
-    <Folder Include="SQL Scripts\resurrection-2025" />
+    <Folder Include="SQL Scripts\Resurrection-2025" />
     <Folder Include="SQL Scripts\Legacy" />
     <Folder Include="SQL Scripts\Legacy\Infra-test-12-12-21" />
     <Folder Include="SQL Scripts\Legacy\Infra-test-15-01-22" />
@@ -80,6 +80,7 @@
     <Folder Include="SQL Scripts\Legacy\production-demo-Infra-28-01-22" />
     <Folder Include="SQL Scripts\Legacy\resurrection-2023" />
     <Folder Include="SQL Scripts\Legacy\TestDealers" />
+    <Folder Include="SQL Scripts\Resurrection-2025\Migration" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\SearchInstanceKeys.sql" />
@@ -150,5 +151,7 @@
     <None Include="SQL Scripts\Legacy\production-demo-Infra-28-01-22\CreateData.sql" />
     <None Include="SQL Scripts\Legacy\resurrection-2023\CreateData.sql" />
     <None Include="SQL Scripts\Legacy\TestDealers\CreateData.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres.sql" />
   </ItemGroup>
 </Project>
