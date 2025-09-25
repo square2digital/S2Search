@@ -11,6 +11,8 @@ SET ANSI_NULLS, ANSI_PADDING, ANSI_WARNINGS, ARITHABORT, CONCAT_NULL_YIELDS_NULL
 
 SET NUMERIC_ROUNDABORT OFF;
 
+CREATE USER [Admin] WITH DEFAULT_SCHEMA = [Admin];
+
 
 GO
 :setvar DatabaseName "S2_Search"
@@ -33,42 +35,6 @@ IF N'$(__IsSqlCmdEnabled)' NOT LIKE N'True'
         PRINT N'SQLCMD mode must be enabled to successfully execute this script.';
         SET NOEXEC ON;
     END
-
-
-GO
-PRINT N'Dropping Permission Permission...';
-
-
-GO
-REVOKE EXECUTE
-    ON SCHEMA::[FeedServicesFunc] TO [FeedServicesFunc] CASCADE;
-
-
-GO
-PRINT N'Dropping Permission Permission...';
-
-
-GO
-REVOKE EXECUTE
-    ON SCHEMA::[ProvisioningServicesFunc] TO [ProvisioningServicesFunc] CASCADE;
-
-
-GO
-PRINT N'Dropping Permission Permission...';
-
-
-GO
-REVOKE EXECUTE
-    ON SCHEMA::[SearchInsightsFunc] TO [SearchInsightsFunc] CASCADE;
-
-
-GO
-PRINT N'Dropping Permission Permission...';
-
-
-GO
-REVOKE EXECUTE
-    ON SCHEMA::[SFTPGoServicesFunc] TO [SFTPGoServicesFunc] CASCADE;
 
 
 GO
@@ -331,7 +297,7 @@ PRINT N'Creating Default Constraint unnamed constraint on [dbo].[Feeds]...';
 
 GO
 ALTER TABLE [dbo].[Feeds]
-    ADD DEFAULT ((1)) FOR [IsLatest];
+    ADD DEFAULT (getutcdate()) FOR [CreatedDate];
 
 
 GO
@@ -340,7 +306,7 @@ PRINT N'Creating Default Constraint unnamed constraint on [dbo].[Feeds]...';
 
 GO
 ALTER TABLE [dbo].[Feeds]
-    ADD DEFAULT (getutcdate()) FOR [CreatedDate];
+    ADD DEFAULT ((1)) FOR [IsLatest];
 
 
 GO
@@ -367,6 +333,15 @@ PRINT N'Creating Default Constraint unnamed constraint on [dbo].[SearchIndexRequ
 
 GO
 ALTER TABLE [dbo].[SearchIndexRequestLog]
+    ADD DEFAULT ((0)) FOR [Count];
+
+
+GO
+PRINT N'Creating Default Constraint unnamed constraint on [dbo].[SearchIndexRequestLog]...';
+
+
+GO
+ALTER TABLE [dbo].[SearchIndexRequestLog]
     ADD DEFAULT (getutcdate()) FOR [Date];
 
 
@@ -380,30 +355,12 @@ ALTER TABLE [dbo].[SearchIndexRequestLog]
 
 
 GO
-PRINT N'Creating Default Constraint unnamed constraint on [dbo].[SearchIndexRequestLog]...';
-
-
-GO
-ALTER TABLE [dbo].[SearchIndexRequestLog]
-    ADD DEFAULT ((0)) FOR [Count];
-
-
-GO
 PRINT N'Creating Default Constraint unnamed constraint on [dbo].[SearchInsightsData]...';
 
 
 GO
 ALTER TABLE [dbo].[SearchInsightsData]
     ADD DEFAULT ((0)) FOR [Count];
-
-
-GO
-PRINT N'Creating Default Constraint unnamed constraint on [dbo].[SearchInsightsData]...';
-
-
-GO
-ALTER TABLE [dbo].[SearchInsightsData]
-    ADD DEFAULT (getutcdate()) FOR [ModifiedDate];
 
 
 GO
@@ -416,12 +373,12 @@ ALTER TABLE [dbo].[SearchInsightsData]
 
 
 GO
-PRINT N'Creating Default Constraint unnamed constraint on [dbo].[SearchInstanceKeys]...';
+PRINT N'Creating Default Constraint unnamed constraint on [dbo].[SearchInsightsData]...';
 
 
 GO
-ALTER TABLE [dbo].[SearchInstanceKeys]
-    ADD DEFAULT ((1)) FOR [IsLatest];
+ALTER TABLE [dbo].[SearchInsightsData]
+    ADD DEFAULT (getutcdate()) FOR [ModifiedDate];
 
 
 GO
@@ -431,6 +388,15 @@ PRINT N'Creating Default Constraint unnamed constraint on [dbo].[SearchInstanceK
 GO
 ALTER TABLE [dbo].[SearchInstanceKeys]
     ADD DEFAULT (getutcdate()) FOR [CreatedDate];
+
+
+GO
+PRINT N'Creating Default Constraint unnamed constraint on [dbo].[SearchInstanceKeys]...';
+
+
+GO
+ALTER TABLE [dbo].[SearchInstanceKeys]
+    ADD DEFAULT ((1)) FOR [IsLatest];
 
 
 GO
