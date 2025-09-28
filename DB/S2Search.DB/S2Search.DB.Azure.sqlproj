@@ -156,6 +156,7 @@
     <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres.sql" />
     <Build Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres_Functions.sql" />
     <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure\SqlAzure.sql" />
-    <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure\CreateData.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure\CreateData_SqlAzure.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres\CreateData_Postgres.sql" />
   </ItemGroup>
 </Project>
