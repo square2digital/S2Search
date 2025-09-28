@@ -1,75 +1,74 @@
-﻿USE S2_Search
-GO
+﻿
 
 BEGIN
-    DECLARE @Now datetime = GETUTCDATE()
+    Now :=  datetime = CURRENT_TIMESTAMP
     
     --SearchIndex variables
-    DECLARE @CustomerId uniqueidentifier = 'afeb217b-813a-4b9c-82ec-e0221d5e95b1'
-    DECLARE @SearchInstanceId uniqueidentifier = '97032266-c1c0-4278-8816-053bbc3a1036'
-    DECLARE @ResourceGroup varchar(255) = 'S2Search'
-    DECLARE @SearchInstanceEndpoint varchar(250) = 'https://s2-search-dev.search.windows.net'
-    DECLARE @StorageURI varchar(250) = 'https://s2storagedev.blob.core.windows.net'
-    DECLARE @AdminKey varchar(255) = 'meh33Ur6Zd7oGUv201TvZAXD5mqTOH9QN1YtFePp86AzSeDwh11h'
-    DECLARE @SecondaryKey varchar(255) = 'Jc6htHDfDNK6MAgGm80ZBFqjsb0RZjkdwfSYxjMh6XAzSeAHeUua'
-    DECLARE @QueryKey varchar(255) = 'JTli3f7UNsq6UP5aarwr6kEuXLziImNklC1EZlI3zSAzSeDZXlvC'
-    DECLARE @Replicas int = 1
-    DECLARE @Partitions int = 1
-    DECLARE @IsShared bit = 1
-    DECLARE @SearchIndexName varchar(255) = 'vehicles-' + LEFT(CONVERT(varchar(255), NEWID()), 8)
+    CustomerId :=  uuid = 'afeb217b-813a-4b9c-82ec-e0221d5e95b1'
+    SearchInstanceId :=  uuid = '97032266-c1c0-4278-8816-053bbc3a1036'
+    ResourceGroup :=  TEXT = 'S2Search'
+    SearchInstanceEndpoint :=  TEXT = 'https://s2-search-dev.search.windows.net'
+    StorageURI :=  TEXT = 'https://s2storagedev.blob.core.windows.net'
+    AdminKey :=  TEXT = 'meh33Ur6Zd7oGUv201TvZAXD5mqTOH9QN1YtFePp86AzSeDwh11h'
+    SecondaryKey :=  TEXT = 'Jc6htHDfDNK6MAgGm80ZBFqjsb0RZjkdwfSYxjMh6XAzSeAHeUua'
+    QueryKey :=  TEXT = 'JTli3f7UNsq6UP5aarwr6kEuXLziImNklC1EZlI3zSAzSeDZXlvC'
+    Replicas :=  int = 1
+    Partitions :=  int = 1
+    IsShared :=  bit = 1
+    SearchIndexName :=  TEXT = 'vehicles-' + LEFT(gen_random_uuid()::text, 8)
     --Feeds
-    DECLARE @FeedType varchar(20) = 'FTPS'
-    DECLARE @FeedCron varchar(50) = '5 * * * *'
-    DECLARE @DataFormat varchar(50) = 'DMS14'
+    FeedType :=  TEXT = 'FTPS'
+    FeedCron :=  TEXT = '5 * * * *'
+    DataFormat :=  TEXT = 'DMS14'
     
     --SearchInterfaces
-    DECLARE @InterfaceType varchar(50) = 'API_Consumption'
-    DECLARE @InterfaceLogoURL varchar(255) = NULL
-    DECLARE @InterfaceBannerStyle varchar(255) = NULL
+    InterfaceType :=  TEXT = 'API_Consumption'
+    InterfaceLogoURL :=  TEXT = NULL
+    InterfaceBannerStyle :=  TEXT = NULL
     
     --Synonyms
-    DECLARE @SynonymId_1 uniqueidentifier = '36baeafb-a843-4eb1-a2a9-4457d2eabe0d'
-    DECLARE @KeyWord_1 varchar(50) = 'BMW'
-    DECLARE @SolrFormat_1 varchar(250) = 'beema, bimma => BMW'
+    SynonymId_1 :=  uuid = '36baeafb-a843-4eb1-a2a9-4457d2eabe0d'
+    KeyWord_1 :=  TEXT = 'BMW'
+    SolrFormat_1 :=  TEXT = 'beema, bimma => BMW'
     
-    DECLARE @SynonymId_2 uniqueidentifier = '08719d6f-4e7f-4c3b-9b9b-b83100441012'
-    DECLARE @KeyWord_2 varchar(50) = 'volkswagen'
-    DECLARE @SolrFormat_2 varchar(250) = 'VW => Volkswagen'
+    SynonymId_2 :=  uuid = '08719d6f-4e7f-4c3b-9b9b-b83100441012'
+    KeyWord_2 :=  TEXT = 'volkswagen'
+    SolrFormat_2 :=  TEXT = 'VW => Volkswagen'
     
     --SearchInstance Keys
-    DECLARE @SearchInstanceKeyId_AdminKey uniqueidentifier = '317e8b8a-c274-499c-a4fb-bacdf8d25e81'
-    DECLARE @SearchInstanceKeyId_SecondaryAdminKey uniqueidentifier = '3e0217e5-38be-4616-a81d-c1693c83aa5c'
-    DECLARE @SearchInstanceKeyId_QueryKey uniqueidentifier = 'fea6648a-f781-4ec0-b8f6-ecf26eb820ac'
+    SearchInstanceKeyId_AdminKey :=  uuid = '317e8b8a-c274-499c-a4fb-bacdf8d25e81'
+    SearchInstanceKeyId_SecondaryAdminKey :=  uuid = '3e0217e5-38be-4616-a81d-c1693c83aa5c'
+    SearchInstanceKeyId_QueryKey :=  uuid = 'fea6648a-f781-4ec0-b8f6-ecf26eb820ac'
     
     -- **************
     -- Configuration
     -- **************
     
     -- Configurations Option 1 - Enable Auto Complete
-    DECLARE @SearchConfiguration_EnableAutoComplete_Id uniqueidentifier = '4d833bb7-c52b-49ed-b42d-84a9814b9274'
-    DECLARE @SearchConfiguration_EnableAutoComplete_Key varchar(150) = 'EnableAutoComplete'
-    DECLARE @SearchConfiguration_EnableAutoComplete_FriendlyName varchar(500) = 'Enable Auto Complete'
-    DECLARE @SearchConfiguration_EnableAutoComplete_Description varchar(MAX) = 'if true, this will configure the search bar to include auto complete suggestions based on the users text inputs'
+    SearchConfiguration_EnableAutoComplete_Id :=  uuid = '4d833bb7-c52b-49ed-b42d-84a9814b9274'
+    SearchConfiguration_EnableAutoComplete_Key :=  TEXT = 'EnableAutoComplete'
+    SearchConfiguration_EnableAutoComplete_FriendlyName :=  TEXT = 'Enable Auto Complete'
+    SearchConfiguration_EnableAutoComplete_Description :=  TEXT = 'if true, this will configure the search bar to include auto complete suggestions based on the users text inputs'
     
     -- Configurations Option 2 - Hide Icon Vehicle Counts
-    DECLARE @SearchConfiguration_HideIconVehicleCounts_Id uniqueidentifier = 'd4d0978e-980c-4237-be79-f2e0ffc0ae06'
-    DECLARE @SearchConfiguration_HideIconVehicleCounts_Key varchar(150) = 'HideIconVehicleCounts'
-    DECLARE @SearchConfiguration_HideIconVehicleCounts_FriendlyName varchar(500) = 'Hide Icon Vehicle Counts'
-    DECLARE @SearchConfiguration_HideIconVehicleCounts_Description varchar(MAX) = 'if true, this will hide the icon vehicle counts on the top nav bar'
+    SearchConfiguration_HideIconVehicleCounts_Id :=  uuid = 'd4d0978e-980c-4237-be79-f2e0ffc0ae06'
+    SearchConfiguration_HideIconVehicleCounts_Key :=  TEXT = 'HideIconVehicleCounts'
+    SearchConfiguration_HideIconVehicleCounts_FriendlyName :=  TEXT = 'Hide Icon Vehicle Counts'
+    SearchConfiguration_HideIconVehicleCounts_Description :=  TEXT = 'if true, this will hide the icon vehicle counts on the top nav bar'
     
     -- Configurations Option 3 - Placeholder Text Array
-    DECLARE @SearchConfiguration_PlaceholderText_Key_1 varchar(150) = 'PlaceholderText_1'
-    DECLARE @SearchConfiguration_PlaceholderText_Key_2 varchar(150) = 'PlaceholderText_2'
-    DECLARE @SearchConfiguration_PlaceholderText_Key_3 varchar(150) = 'PlaceholderText_3'
-    DECLARE @SearchConfiguration_PlaceholderText_Key_4 varchar(150) = 'PlaceholderText_4'
-    DECLARE @SearchConfiguration_PlaceholderText_Key_5 varchar(150) = 'PlaceholderText_5'
+    SearchConfiguration_PlaceholderText_Key_1 :=  TEXT = 'PlaceholderText_1'
+    SearchConfiguration_PlaceholderText_Key_2 :=  TEXT = 'PlaceholderText_2'
+    SearchConfiguration_PlaceholderText_Key_3 :=  TEXT = 'PlaceholderText_3'
+    SearchConfiguration_PlaceholderText_Key_4 :=  TEXT = 'PlaceholderText_4'
+    SearchConfiguration_PlaceholderText_Key_5 :=  TEXT = 'PlaceholderText_5'
     
-    DECLARE @Separator varchar(50) = '...     '
-    DECLARE @SearchConfiguration_PlaceholderText_Value_1 varchar(250) = CONCAT('Mercedes Benz S63 AMG', @Separator)
-    DECLARE @SearchConfiguration_PlaceholderText_Value_2 varchar(250) = CONCAT('Porsche Green GT3RS', @Separator)
-    DECLARE @SearchConfiguration_PlaceholderText_Value_3 varchar(250) = CONCAT('BMW 7 series Silver', @Separator)
-    DECLARE @SearchConfiguration_PlaceholderText_Value_4 varchar(250) = CONCAT('Lexus LS460 Black', @Separator)
-    DECLARE @SearchConfiguration_PlaceholderText_Value_5 varchar(250) = CONCAT('Honda Type R Red', @Separator)
+    Separator :=  TEXT = '...     '
+    SearchConfiguration_PlaceholderText_Value_1 :=  TEXT = CONCAT('Mercedes Benz S63 AMG', @Separator)
+    SearchConfiguration_PlaceholderText_Value_2 :=  TEXT = CONCAT('Porsche Green GT3RS', @Separator)
+    SearchConfiguration_PlaceholderText_Value_3 :=  TEXT = CONCAT('BMW 7 series Silver', @Separator)
+    SearchConfiguration_PlaceholderText_Value_4 :=  TEXT = CONCAT('Lexus LS460 Black', @Separator)
+    SearchConfiguration_PlaceholderText_Value_5 :=  TEXT = CONCAT('Honda Type R Red', @Separator)
     
     -- ***********
     -- customers
@@ -77,58 +76,58 @@ BEGIN
     -- Azure B2C Test User ID Guid -> 37a0eb6c-fd38-4b11-9486-e61ed6745953
     
     -- Test User -> Jonathan Gilmartin - user of S2 Demo
-    DECLARE @Azure_B2C_User_Jonathan_Gilmartin uniqueidentifier = 'a870f617-c469-4fdc-b76d-98a990577583'
-    DECLARE @CustomerId_JGilmartin_Motors uniqueidentifier = @Azure_B2C_User_Jonathan_Gilmartin
+    Azure_B2C_User_Jonathan_Gilmartin :=  uuid = 'a870f617-c469-4fdc-b76d-98a990577583'
+    CustomerId_JGilmartin_Motors :=  uuid = @Azure_B2C_User_Jonathan_Gilmartin
     
     -- ********************************************
     -- ** S2-Demo Endpoints
     -- ********************************************
-    DECLARE @S2DemoEndpoint varchar(100) = 'demo.s2search.co.uk'
+    S2DemoEndpoint :=  TEXT = 'demo.s2search.co.uk'
     -- BLUE - Corporate colours for Square 2 Digital
     
     -- endpoint overrides
-    DECLARE @LocalDevEndpoint varchar(100) = 'localhost:2997'
-    DECLARE @LocalK8sEndpoint varchar(100) = 'localhost:3000'
+    LocalDevEndpoint :=  TEXT = 'localhost:2997'
+    LocalK8sEndpoint :=  TEXT = 'localhost:3000'
     
     -- ********************************************
-    -- use this to override endpoints - useful to setting a search instance to another URL or to localhost
+    -- to override endpoints - useful to setting a search instance to another URL or to localhost
     -- ********************************************
-    SET @S2DemoEndpoint = @LocalDevEndpoint
+    S2DemoEndpoint :=  @LocalDevEndpoint
     
     -- ************************
     -- S2 Demo  - customer 1
     -- ************************
-    DECLARE @BusinessName_1 varchar(100) = 'S2 Demo'
-    DECLARE @CustomerIndexName_1 varchar(100) = 's2-demo-vehicles'
-    DECLARE @SearchIndexId_1 uniqueidentifier = '8c663063-4217-4f54-973f-8faec6131b5b'
-    DECLARE @ThemeId_1 uniqueidentifier = 'f3a9c2e7-4b6e-4d9a-8f3e-9c1d2a7b5e6f'
-    DECLARE @ThemeLogoURL_1 varchar(1000) = @StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg'
-    DECLARE @ThemeMissingImageURL_1 varchar(1000) = @StorageURI + '/assets/image-coming-soon.jpg'
-    DECLARE @ThemePrimaryThemeColour_1 varchar(10) = '#006bd1'
-    DECLARE @ThemeSecondaryThemeColour_1 varchar(10) = '#003c75'
-    DECLARE @ThemeNavBarColourColour_1 varchar(10) = '#006bd1'
+    BusinessName_1 :=  TEXT = 'S2 Demo'
+    CustomerIndexName_1 :=  TEXT = 's2-demo-vehicles'
+    SearchIndexId_1 :=  uuid = '8c663063-4217-4f54-973f-8faec6131b5b'
+    ThemeId_1 :=  uuid = 'f3a9c2e7-4b6e-4d9a-8f3e-9c1d2a7b5e6f'
+    ThemeLogoURL_1 :=  TEXT = @StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg'
+    ThemeMissingImageURL_1 :=  TEXT = @StorageURI + '/assets/image-coming-soon.jpg'
+    ThemePrimaryThemeColour_1 :=  TEXT = '#006bd1'
+    ThemeSecondaryThemeColour_1 :=  TEXT = '#003c75'
+    ThemeNavBarColourColour_1 :=  TEXT = '#006bd1'
     
     /***************************************************************************************
     Customer Pricing Tiers
     ***************************************************************************************/
-    DECLARE @SkuIdFree varchar(50) = 'FREE'
+    SkuIdFree :=  TEXT = 'FREE'
     
     /***************************************************************************************
     Feed Credentials
     ***************************************************************************************/
     -- SearchIndexId is set as S2 Demo
-    DECLARE @FeedSearchIndexId_1 uniqueidentifier = @SearchIndexId_1
-    DECLARE @FeedId_1 uniqueidentifier = '7bcc246b-c8e0-4d91-bb8a-ec5f8c7b3230'
-    DECLARE @FeedUsername_1 varchar(100) = 's2demo_FTP_1'
-    DECLARE @FeedPasswordHash_1 varchar(255) = 'xh6NPbvqmDhH6E2vK3mJ'
+    FeedSearchIndexId_1 :=  uuid = @SearchIndexId_1
+    FeedId_1 :=  uuid = '7bcc246b-c8e0-4d91-bb8a-ec5f8c7b3230'
+    FeedUsername_1 :=  TEXT = 's2demo_FTP_1'
+    FeedPasswordHash_1 :=  TEXT = 'xh6NPbvqmDhH6E2vK3mJ'
     
     /***************************************************************************************
     Search Instance
     ***************************************************************************************/
-    DECLARE @SearchInstanceName varchar(255) = 's2-search-dev'
-    DECLARE @SubscriptionId uniqueidentifier = 'f8cff945-b5e5-462a-9786-d69bd7a0eb34'
-    DECLARE @ServiceLocation varchar(50) = 'West Europe'
-    DECLARE @AzurePricingTier varchar(50) = 'Standard'
+    SearchInstanceName :=  TEXT = 's2-search-dev'
+    SubscriptionId :=  uuid = 'f8cff945-b5e5-462a-9786-d69bd7a0eb34'
+    ServiceLocation :=  TEXT = 'West Europe'
+    AzurePricingTier :=  TEXT = 'Standard'
     
     /***************************************************************************************
     Table Reset
@@ -136,46 +135,46 @@ BEGIN
     Truncate all tables to start with a fresh setup
     ***************************************************************************************/
     
-    DELETE FROM [dbo].[Customers]
-    DELETE FROM [dbo].[FeedCredentials]
-    DELETE FROM [dbo].[FeedCurrentDocuments]
-    DELETE FROM [dbo].[Feeds]
-    DELETE FROM [dbo].[SearchConfiguration]
-    DELETE FROM [dbo].[SearchIndex]
-    DELETE FROM [dbo].[SearchIndexRequestLog]
-    DELETE FROM [dbo].[SearchInsightsData]
-    DELETE FROM [dbo].SearchInstanceKeys
-    DELETE FROM [dbo].SearchInstances
-    DELETE FROM [dbo].[Synonyms]
-    DELETE FROM [dbo].[Themes]
+    DELETE FROM Customers
+    DELETE FROM FeedCredentials
+    DELETE FROM FeedCurrentDocuments
+    DELETE FROM Feeds
+    DELETE FROM SearchConfiguration
+    DELETE FROM SearchIndex
+    DELETE FROM SearchIndexRequestLog
+    DELETE FROM SearchInsightsData
+    DELETE FROM SearchInstanceKeys
+    DELETE FROM SearchInstances
+    DELETE FROM Synonyms
+    DELETE FROM Themes
     
     /***************************************************************************************
     Uncomment this if you want to clear down the insights
     ***************************************************************************************/
-    TRUNCATE TABLE [dbo].[SearchInsightsData]
-    TRUNCATE TABLE [dbo].[SearchIndexRequestLog]
+    TRUNCATE TABLE SearchInsightsData
+    TRUNCATE TABLE SearchIndexRequestLog
     
-    PRINT '********************************'
-    PRINT 'Inserting Search Instances Entry'
-    PRINT '********************************'
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Inserting Search Instances Entry';
+    RAISE NOTICE '********************************';
     
-    INSERT INTO [dbo].[SearchInstances]
+    INSERT INTO SearchInstances
     (
-		[Id],
-    [CustomerId],
-		[ServiceName],
-		[Location],
-		[PricingTier],
-		[Replicas],
-		[Partitions],
-		[IsShared],
-		[Type],
-		[RootEndpoint]
+		"Id",
+        "CustomerId",
+		"ServiceName",
+		"Location",
+		"PricingTier",
+		"Replicas",
+		"Partitions",
+		"IsShared",
+		"Type",
+		"RootEndpoint"
     )
     VALUES
     (
 		@SearchInstanceId, -- or your actual Id (GUID)
-    @CustomerId,
+        @CustomerId,
 		@SearchInstanceName, -- ServiceName
 		@ServiceLocation, -- Location
 		@AzurePricingTier, -- PricingTier
@@ -187,17 +186,16 @@ BEGIN
     );
     
     
-    PRINT '********************************'
-    PRINT 'Inserting Search Resource Keys'
-    PRINT '********************************'
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Inserting Search Resource Keys';
+    RAISE NOTICE '********************************';
     
-    INSERT INTO
-    [dbo].SearchInstanceKeys
+    INSERT INTO SearchInstanceKeys
     (
 		Id,
 		SearchInstanceId,
 		KeyType,
-		[Name],
+		"Name",
 		ApiKey,
 		CreatedDate,
 		ModifiedDate,
@@ -215,12 +213,12 @@ BEGIN
 		1
     )
     INSERT INTO
-    [dbo].SearchInstanceKeys
+    SearchInstanceKeys
     (
 		Id,
 		SearchInstanceId,
 		KeyType,
-		[Name],
+		"Name",
 		ApiKey,
 		CreatedDate,
 		ModifiedDate,
@@ -238,12 +236,12 @@ BEGIN
     1
     )
     INSERT INTO
-    [dbo].SearchInstanceKeys
+    SearchInstanceKeys
     (
 		Id,
 		SearchInstanceId,
 		KeyType,
-		[Name],
+		"Name",
 		ApiKey,
 		CreatedDate,
 		ModifiedDate,
@@ -261,21 +259,21 @@ BEGIN
 		1
     )
         
-    PRINT '************************'
-    PRINT 'Inserting Test Customers'
-    PRINT '************************'
+    RAISE NOTICE '************************';
+    RAISE NOTICE 'Inserting Test Customers';
+    RAISE NOTICE '************************';
     
-    PRINT '************************'
-    PRINT 'Inserting Test Customer 1'
-    PRINT '************************'
+    RAISE NOTICE '************************';
+    RAISE NOTICE 'Inserting Test Customer 1';
+    RAISE NOTICE '************************';
     
     INSERT INTO
-    [dbo].Customers
+    Customers
     (
-		[Id],
-		[BusinessName],
-		[CreatedDate],
-		[ModifiedDate]
+		"Id",
+		"BusinessName",
+		"CreatedDate",
+		"ModifiedDate"
     )
     VALUES
     (
@@ -285,12 +283,12 @@ BEGIN
 		NULL
     )
     
-    PRINT '********************************'
-    PRINT 'Inserting Search Index for Test Customer 1'
-    PRINT '********************************'
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Inserting Search Index for Test Customer 1';
+    RAISE NOTICE '********************************';
     
     INSERT INTO
-    [dbo].SearchIndex
+    SearchIndex
     (
 		Id,
 		SearchInstanceId,
@@ -311,19 +309,19 @@ BEGIN
 		@SkuIdFree
     )
     
-    PRINT '********************************'
-    PRINT 'Inserting Feed Entry for Test Customer 1'
-    PRINT '********************************'
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Inserting Feed Entry for Test Customer 1';
+    RAISE NOTICE '********************************';
     
-    INSERT INTO [dbo].Feeds
+    INSERT INTO Feeds
     (
-		[FeedType]
-		,[FeedScheduleCron]
-		,[SearchIndexId]
-		,[DataFormat]
-		,[CreatedDate]
-		,[SupersededDate]
-		,[IsLatest]
+		"FeedType"
+		,"FeedScheduleCron"
+		,"SearchIndexId"
+		,"DataFormat"
+		,"CreatedDate"
+		,"SupersededDate"
+		,"IsLatest"
     )
     VALUES
     (
@@ -336,11 +334,11 @@ BEGIN
 		1
     )
     
-    PRINT '********************************'
-    PRINT 'Inserting Synonyms'
-    PRINT '********************************'
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Inserting Synonyms';
+    RAISE NOTICE '********************************';
     
-    INSERT INTO [dbo].[Synonyms]
+    INSERT INTO Synonyms
     (
 		Id,
 		SearchIndexId,
@@ -355,7 +353,7 @@ BEGIN
 		@SolrFormat_1
     )
     
-    INSERT INTO [dbo].[Synonyms]
+    INSERT INTO Synonyms
     (
 		Id,
 		SearchIndexId,
@@ -370,22 +368,22 @@ BEGIN
 		@SolrFormat_2
     )
     
-    PRINT '********************************'
-    PRINT 'Customer 1 - S2 Demo - Theme Details'
-    PRINT '********************************'
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Customer 1 - S2 Demo - Theme Details';
+    RAISE NOTICE '********************************';
     
-    INSERT INTO [dbo].[Themes]
+    INSERT INTO Themes
     (
-		[Id]
-		,[PrimaryHexColour]
-		,[SecondaryHexColour]
-		,[NavBarHexColour]
-		,[LogoURL]
-		,[MissingImageURL]
-		,[CustomerId]
-		,[SearchIndexId]
-		,[CreatedDate]
-		,[ModifiedDate]
+		"Id"
+		,"PrimaryHexColour"
+		,"SecondaryHexColour"
+		,"NavBarHexColour"
+		,"LogoURL"
+		,"MissingImageURL"
+		,"CustomerId"
+		,"SearchIndexId"
+		,"CreatedDate"
+		,"ModifiedDate"
     )
     VALUES
     (
@@ -401,17 +399,17 @@ BEGIN
 		NULL
     )
       
-    PRINT '*******************************************'
-    PRINT 'Search Index 1 FeedCredentials'
-    PRINT '*******************************************'
+    RAISE NOTICE '*******************************************';
+    RAISE NOTICE 'Search Index 1 FeedCredentials';
+    RAISE NOTICE '*******************************************';
     
-    INSERT INTO [dbo].[FeedCredentials]
-		([Id]
-		,[SearchIndexId]
-		,[Username]
-		,[PasswordHash]
-		,[CreatedDate]
-		,[ModifiedDate])
+    INSERT INTO FeedCredentials
+		("Id"
+		,"SearchIndexId"
+		,"Username"
+		,"PasswordHash"
+		,"CreatedDate"
+		,"ModifiedDate")
     VALUES
 		(
 		@FeedId_1
@@ -422,88 +420,88 @@ BEGIN
 		, null
 		)
     
-    PRINT '****************************'
-    PRINT 'Setup S2 Demo Data Configuration Mappings'
-    PRINT '****************************'
+    RAISE NOTICE '****************************';
+    RAISE NOTICE 'Setup S2 Demo Data Configuration Mappings';
+    RAISE NOTICE '****************************';
     
     -- Option 1: Enable Auto Complete
-    INSERT INTO [dbo].[SearchConfiguration]
+    INSERT INTO SearchConfiguration
 		(
-		[Id],
-		[Value],
-		[SearchIndexId],
-		[Key],
-		[FriendlyName],
-		[Description],
-		[DataType],
-		[OrderIndex],
-		[CreatedDate],
-		[ModifiedDate]
+		"Id",
+		"Value",
+		"SearchIndexId",
+		"Key",
+		"FriendlyName",
+		"Description",
+		"DataType",
+		"OrderIndex",
+		"CreatedDate",
+		"ModifiedDate"
 		)
     VALUES
     (
 		@SearchConfiguration_EnableAutoComplete_Id,
 		'true',
-		NEWID(), -- Replace with actual SearchIndexId if needed
+		gen_random_uuid(), -- Replace with actual SearchIndexId if needed
 		@SearchConfiguration_EnableAutoComplete_Key,
 		@SearchConfiguration_EnableAutoComplete_FriendlyName,
 		@SearchConfiguration_EnableAutoComplete_Description,
 		'Boolean',
 		NULL,
-		GETUTCDATE(),
+		CURRENT_TIMESTAMP,
 		NULL
     );
     
     -- Option 2: Hide Icon Vehicle Counts
-    INSERT INTO [dbo].[SearchConfiguration]
+    INSERT INTO SearchConfiguration
     (
-		[Id],
-		[Value],
-		[SearchIndexId],
-		[Key],
-		[FriendlyName],
-		[Description],
-		[DataType],
-		[OrderIndex],
-		[CreatedDate],
-		[ModifiedDate]
+		"Id",
+		"Value",
+		"SearchIndexId",
+		"Key",
+		"FriendlyName",
+		"Description",
+		"DataType",
+		"OrderIndex",
+		"CreatedDate",
+		"ModifiedDate"
     )
     VALUES
     (
 		@SearchConfiguration_HideIconVehicleCounts_Id,
 		'true',
-		NEWID(), -- Replace with actual SearchIndexId if needed
+		gen_random_uuid(), -- Replace with actual SearchIndexId if needed
 		@SearchConfiguration_HideIconVehicleCounts_Key,
 		@SearchConfiguration_HideIconVehicleCounts_FriendlyName,
 		@SearchConfiguration_HideIconVehicleCounts_Description,
 		'Boolean',
 		NULL,
-		GETUTCDATE(),
+		CURRENT_TIMESTAMP,
 		NULL
     );
     
     -- Option 3: Placeholder Text Array (5 rows)
-    INSERT INTO [dbo].[SearchConfiguration]
+    INSERT INTO SearchConfiguration
     (
-		[Id],
-		[Value],
-		[SearchIndexId],
-		[Key],
-		[FriendlyName],
-		[Description],
-		[DataType],
-		[OrderIndex],
-		[CreatedDate],
-		[ModifiedDate]
+		"Id",
+		"Value",
+		"SearchIndexId",
+		"Key",
+		"FriendlyName",
+		"Description",
+		"DataType",
+		"OrderIndex",
+		"CreatedDate",
+		"ModifiedDate"
     )
     VALUES
-    (NEWID(), @SearchConfiguration_PlaceholderText_Value_1, NEWID(), @SearchConfiguration_PlaceholderText_Key_1, 'Placeholder Text 1', 'Placeholder for search bar', 'String', 1, GETUTCDATE(), NULL),
-    (NEWID(), @SearchConfiguration_PlaceholderText_Value_2, NEWID(), @SearchConfiguration_PlaceholderText_Key_2, 'Placeholder Text 2', 'Placeholder for search bar', 'String', 2, GETUTCDATE(), NULL),
-    (NEWID(), @SearchConfiguration_PlaceholderText_Value_3, NEWID(), @SearchConfiguration_PlaceholderText_Key_3, 'Placeholder Text 3', 'Placeholder for search bar', 'String', 3, GETUTCDATE(), NULL),
-    (NEWID(), @SearchConfiguration_PlaceholderText_Value_4, NEWID(), @SearchConfiguration_PlaceholderText_Key_4, 'Placeholder Text 4', 'Placeholder for search bar', 'String', 4, GETUTCDATE(), NULL),
-    (NEWID(), @SearchConfiguration_PlaceholderText_Value_5, NEWID(), @SearchConfiguration_PlaceholderText_Key_5, 'Placeholder Text 5', 'Placeholder for search bar', 'String', 5, GETUTCDATE(), NULL);
+    (gen_random_uuid(), @SearchConfiguration_PlaceholderText_Value_1, gen_random_uuid(), @SearchConfiguration_PlaceholderText_Key_1, 'Placeholder Text 1', 'Placeholder for search bar', 'String', 1, CURRENT_TIMESTAMP, NULL),
+    (gen_random_uuid(), @SearchConfiguration_PlaceholderText_Value_2, gen_random_uuid(), @SearchConfiguration_PlaceholderText_Key_2, 'Placeholder Text 2', 'Placeholder for search bar', 'String', 2, CURRENT_TIMESTAMP, NULL),
+    (gen_random_uuid(), @SearchConfiguration_PlaceholderText_Value_3, gen_random_uuid(), @SearchConfiguration_PlaceholderText_Key_3, 'Placeholder Text 3', 'Placeholder for search bar', 'String', 3, CURRENT_TIMESTAMP, NULL),
+    (gen_random_uuid(), @SearchConfiguration_PlaceholderText_Value_4, gen_random_uuid(), @SearchConfiguration_PlaceholderText_Key_4, 'Placeholder Text 4', 'Placeholder for search bar', 'String', 4, CURRENT_TIMESTAMP, NULL),
+    (gen_random_uuid(), @SearchConfiguration_PlaceholderText_Value_5, gen_random_uuid(), @SearchConfiguration_PlaceholderText_Key_5, 'Placeholder Text 5', 'Placeholder for search bar', 'String', 5, CURRENT_TIMESTAMP, NULL);
         
-    PRINT '********************************'
-    PRINT 'Script - Complete'
-    PRINT '********************************'
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Script - Complete';
+    RAISE NOTICE '********************************';
 END
