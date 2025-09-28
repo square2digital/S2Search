@@ -44,82 +44,58 @@ DROP FUNCTION IF EXISTS AddFeed(uuid, TEXT, TEXT);
 -- Function Definitions
 -- =============================
 
-CREATE OR REPLACE FUNCTION GetCustomerByID(
-    CustomerId uuid
-) RETURNS TABLE (...) AS $$
+CREATE OR REPLACE FUNCTION GetCustomerByID(CustomerId uuid)
+RETURNS TABLE (Id uuid, BusinessName text) AS $$
 BEGIN
-	-- Add the parameters for the stored procedure here
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    -- Insert statements for procedure here
-	SELECT
-	c.Id,
-	c.BusinessName
-	FROM dbo.Customers c
-	WHERE c.Id = CustomerId
+    RETURN QUERY
+    SELECT c.Id, c.BusinessName
+    FROM Customers c
+    WHERE c.Id = CustomerId;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetCustomerFull(
-    CustomerId uuid
-) RETURNS TABLE (...) AS $$
+CREATE OR REPLACE FUNCTION GetCustomerFull(CustomerId uuid)
+RETURNS TABLE (
+    Id uuid,
+    BusinessName text
+) AS $$
 BEGIN
-	-- Add the parameters for the stored procedure here
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    -- Insert statements for procedure here
-	SELECT c.Id
-		  ,c.BusinessName
-	  FROM dbo.Customers c
-	  WHERE c.Id = CustomerId
-
-	  SELECT Id
-      ,CustomerId
-      ,SearchInstanceId
-      ,IndexName
-      ,FriendlyName
-      ,CreatedDate
-	  FROM dbo.SearchIndex s
-	  WHERE s.CustomerId = CustomerId
-
+    RETURN QUERY
+    SELECT c.Id, c.BusinessName
+    FROM Customers c
+    WHERE c.Id = CustomerId;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetLatestFeed(
-    SearchIndexId uuid
-) RETURNS TABLE (...) AS $$
+CREATE OR REPLACE FUNCTION GetLatestFeed(SearchIndexId uuid)
+RETURNS TABLE (
+    Id uuid,
+    SearchIndexId uuid,
+    FeedType text,
+    FeedScheduleCron text,
+    CreatedDate timestamp,
+    SupersededDate timestamp,
+    IsLatest boolean
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT LIMIT 1
-f.Id,
-f.SearchIndexId,
-f.FeedType as Type,
-f.FeedScheduleCron as ScheduleCron,
-f.CreatedDate,
-f.SupersededDate,
-f.IsLatest
-FROM dbo.Feeds f
-WHERE f.SearchIndexId = SearchIndexId
-AND f.IsLatest = 1
-
+    RETURN QUERY
+    SELECT
+        f.Id,
+        f.SearchIndexId,
+        f.FeedType,
+        f.FeedScheduleCron,
+        f.CreatedDate,
+        f.SupersededDate,
+        f.IsLatest
+    FROM dbo.Feeds f
+    WHERE f.SearchIndexId = SearchIndexId
+      AND f.IsLatest = 1
+    LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndex(
-    SearchIndexId uuid,,
+    SearchIndexId uuid,
     CustomerId uuid
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -153,7 +129,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexByFriendlyName(
-    CustomerId uuid,,
+    CustomerId uuid,
     FriendlyName TEXT(100)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -177,7 +153,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexFull(
-    SearchIndexId uuid,,
+    SearchIndexId uuid,
     CustomerId uuid
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -243,9 +219,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchInsightsByDataCategories(
-    SearchIndexId uuid,,
-    DateFrom TIMESTAMP,,
-    DateTo TIMESTAMP,,
+    SearchIndexId uuid,
+    DateFrom TIMESTAMP,
+    DateTo TIMESTAMP,
     DataCategories TEXT(1000)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -271,8 +247,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchInsightsSearchCountByDateRange(
-    SearchIndexId uuid,,
-    DateFrom TIMESTAMP,,
+    SearchIndexId uuid,
+    DateFrom TIMESTAMP,
     DateTo TIMESTAMP
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -293,7 +269,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSynonymById(
-    SearchIndexId uuid,,
+    SearchIndexId uuid,
     SynonymId uuid
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -318,7 +294,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSynonymByKeyWord(
-    SearchIndexId uuid,,
+    SearchIndexId uuid,
     KeyWord TEXT(30)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -469,7 +445,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION SupersedeSynonym(
-    SearchIndexId uuid,,
+    SearchIndexId uuid,
     SynonymId uuid
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -490,9 +466,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateSynonym(
-    SearchIndexId uuid,,
-    SynonymId uuid,,
-    KeyWord TEXT(50),,
+    SearchIndexId uuid,
+    SynonymId uuid,
+    KeyWord TEXT(50),
     SolrFormat TEXT(max)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -513,11 +489,11 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateTheme(
-    ThemeId uuid,,
-    PrimaryHexColour nTEXT(10),,
-    SecondaryHexColour nTEXT(10),,
-    NavBarHexColour nTEXT(10),,
-    LogoURL nTEXT(1000),,
+    ThemeId uuid,
+    PrimaryHexColour nTEXT(10),
+    SecondaryHexColour nTEXT(10),
+    NavBarHexColour nTEXT(10),
+    LogoURL nTEXT(1000),
     MissingImageURL nTEXT(1000)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -589,8 +565,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetCurrentFeedDocuments(
-    SearchIndexId uuid,,
-    PageNumber int,,
+    SearchIndexId uuid,
+    PageNumber int,
     PageSize int
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -651,7 +627,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetFeedDataFormat(
-    CustomerId uuid,,
+    CustomerId uuid,
     SearchIndexName TEXT(60)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -694,7 +670,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexCredentials(
-    CustomerId uuid,,
+    CustomerId uuid,
     SearchIndexName TEXT(60)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -724,7 +700,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexFeedProcessingData(
-    CustomerId uuid,,
+    CustomerId uuid,
     SearchIndexName TEXT(60)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -763,7 +739,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION MergeFeedDocuments(
-    SearchIndexId uuid,,
+    SearchIndexId uuid,
     NewFeedDocuments [newfeeddocuments]
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -788,7 +764,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION AddDataPoints(
-    SearchIndexId uuid,,
+    SearchIndexId uuid,
     SearchInsightsData [searchinsightsdata]
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -815,7 +791,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION AddSearchRequest(
-    SearchIndexId uuid,,
+    SearchIndexId uuid,
     Date date
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -841,8 +817,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION AddFeedCredentials(
-    SearchIndexId uuid,,
-    Username TEXT(50),,
+    SearchIndexId uuid,
+    Username TEXT(50),
     PasswordHash TEXT(250)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -870,7 +846,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteFeedCredentials(
-    SearchIndexId uuid,,
+    SearchIndexId uuid,
     Username TEXT(50)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -888,7 +864,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetFeedCredentials(
-    SearchIndexId uuid,,
+    SearchIndexId uuid,
     Username TEXT(50)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -910,8 +886,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateFeedCredentials(
-    SearchIndexId uuid,,
-    Username TEXT(50),,
+    SearchIndexId uuid,
+    Username TEXT(50),
     PasswordHash TEXT(250)
 ) RETURNS TABLE (...) AS $$
 BEGIN
@@ -931,8 +907,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION AddFeed(
-    SearchIndexId uuid,,
-    FeedType TEXT(20),,
+    SearchIndexId uuid,
+    FeedType TEXT(20),
     FeedCron TEXT(255)
 ) RETURNS TABLE (...) AS $$
 BEGIN
