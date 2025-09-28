@@ -503,58 +503,58 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateTheme(
     ThemeId uuid,
-    PrimaryHexColour nTEXT(10),
-    SecondaryHexColour nTEXT(10),
-    NavBarHexColour nTEXT(10),
-    LogoURL nTEXT(1000),
-    MissingImageURL nTEXT(1000)
-) RETURNS TABLE (...) AS $$
+    PrimaryHexColour text,
+    SecondaryHexColour text,
+    NavBarHexColour text,
+    LogoURL text,
+    MissingImageURL text
+) RETURNS int AS $$
+DECLARE
+    rows_updated int;
 BEGIN
-AS
-BEGIN
-
-	UPDATE dbo.Themes
-	SET PrimaryHexColour = PrimaryHexColour,
-		SecondaryHexColour = SecondaryHexColour,
-		NavBarHexColour = NavBarHexColour,
-		LogoURL = LogoURL,
-		MissingImageURL = MissingImageURL,
-		ModifiedDate = CURRENT_TIMESTAMP
-	WHERE Id = ThemeId
-
+    UPDATE dbo.Themes
+    SET PrimaryHexColour = PrimaryHexColour,
+        SecondaryHexColour = SecondaryHexColour,
+        NavBarHexColour = NavBarHexColour,
+        LogoURL = LogoURL,
+        MissingImageURL = MissingImageURL,
+        ModifiedDate = CURRENT_TIMESTAMP
+    WHERE Id = ThemeId;
+    GET DIAGNOSTICS rows_updated = ROW_COUNT;
+    RETURN rows_updated;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexQueryCredentialsByCustomerEndpoint(
-    CustomerEndpoint TEXT(250)
-) RETURNS TABLE (...) AS $$
+    CustomerEndpoint TEXT
+) RETURNS TABLE (
+    Id uuid,
+    SearchIndexName text,
+    SearchInstanceName text,
+    SearchInstanceEndpoint text,
+    QueryApiKey text
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-si.Id,
-LOWER(si.IndexName) as SearchIndexName,
-i.ServiceName as SearchInstanceName,
-i.RootEndpoint as SearchInstanceEndpoint,
-ik.ApiKey as QueryApiKey
-FROM dbo.SearchIndex si
-INNER JOIN dbo.Customers c on c.Id = si.CustomerId
-INNER JOIN dbo.SearchInstances i on i.Id = si.Id
-INNER JOIN dbo.SearchInstanceKeys ik on ik.Id = i.Id
-									AND ik.KeyType = 'Query'
-									AND ik.Name = 'Query key'
-									AND ik.IsLatest = 1
-WHERE c.CustomerEndpoint = CustomerEndpoint
-
+    RETURN QUERY
+    SELECT
+        si.Id,
+        LOWER(si.IndexName) as SearchIndexName,
+        i.ServiceName as SearchInstanceName,
+        i.RootEndpoint as SearchInstanceEndpoint,
+        ik.ApiKey as QueryApiKey
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.Customers c on c.Id = si.CustomerId
+    INNER JOIN dbo.SearchInstances i on i.Id = si.SearchInstanceId
+    INNER JOIN dbo.SearchInstanceKeys ik on ik.SearchInstanceId = i.Id
+        AND ik.KeyType = 'Query'
+        AND ik.Name = 'Query key'
+        AND ik.IsLatest = 1
+    WHERE c.CustomerEndpoint = CustomerEndpoint;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetThemeByCustomerEndpoint(
-    CustomerEndpoint TEXT(250)
+    CustomerEndpoint TEXT
 ) RETURNS TABLE (...) AS $$
 BEGIN
 (
@@ -641,7 +641,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetFeedDataFormat(
     CustomerId uuid,
-    SearchIndexName TEXT(60)
+    SearchIndexName TEXT
 ) RETURNS TABLE (...) AS $$
 BEGIN
 (
@@ -661,7 +661,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLatestGenericSynonymsByCategory(
-    Category TEXT(50)
+    Category TEXT
 ) RETURNS TABLE (...) AS $$
 BEGIN
 (
@@ -684,7 +684,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexCredentials(
     CustomerId uuid,
-    SearchIndexName TEXT(60)
+    SearchIndexName TEXT
 ) RETURNS TABLE (...) AS $$
 BEGIN
 (
@@ -714,7 +714,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexFeedProcessingData(
     CustomerId uuid,
-    SearchIndexName TEXT(60)
+    SearchIndexName TEXT
 ) RETURNS TABLE (...) AS $$
 BEGIN
 (
@@ -831,8 +831,8 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION AddFeedCredentials(
     SearchIndexId uuid,
-    Username TEXT(50),
-    PasswordHash TEXT(250)
+    Username TEXT,
+    PasswordHash TEXT
 ) RETURNS TABLE (...) AS $$
 BEGIN
 (
@@ -860,7 +860,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteFeedCredentials(
     SearchIndexId uuid,
-    Username TEXT(50)
+    Username TEXT
 ) RETURNS TABLE (...) AS $$
 BEGIN
 (
@@ -878,7 +878,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetFeedCredentials(
     SearchIndexId uuid,
-    Username TEXT(50)
+    Username TEXT
 ) RETURNS TABLE (...) AS $$
 BEGIN
 (
@@ -900,8 +900,8 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateFeedCredentials(
     SearchIndexId uuid,
-    Username TEXT(50),
-    PasswordHash TEXT(250)
+    Username TEXT,
+    PasswordHash TEXT
 ) RETURNS TABLE (...) AS $$
 BEGIN
 (
@@ -921,8 +921,8 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION AddFeed(
     SearchIndexId uuid,
-    FeedType TEXT(20),
-    FeedCron TEXT(255)
+    FeedType TEXT,
+    FeedCron TEXT
 ) RETURNS TABLE (...) AS $$
 BEGIN
 (
