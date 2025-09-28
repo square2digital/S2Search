@@ -97,58 +97,67 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION GetSearchIndex(
     SearchIndexId uuid,
     CustomerId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    CustomerId uuid,
+    IndexName text,
+    FriendlyName text,
+    RootEndpoint text,
+    PricingTier text,
+    CreatedDate timestamp,
+    InstanceId uuid,
+    ServiceName text,
+    Location text,
+    InstancePricingTier text,
+    Replicas int,
+    Partitions int,
+    IsShared boolean
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-search.Id,
-search.CustomerId,
-search.IndexName,
-search.FriendlyName,
-service.RootEndpoint,
-service.PricingTier,
-search.CreatedDate,
-service.Id,
-service.ServiceName,
-service.Location,
-service.PricingTier,
-service.Replicas,
-service.Partitions,
-service.IsShared
-FROM dbo.SearchIndex search
-LEFT OUTER JOIN dbo.SearchInstances service on service.Id = search.SearchInstanceId
-WHERE search.Id = SearchIndexId
-AND search.CustomerId = CustomerId
-
+    RETURN QUERY
+    SELECT
+        search.Id,
+        search.CustomerId,
+        search.IndexName,
+        search.FriendlyName,
+        service.RootEndpoint,
+        service.PricingTier,
+        search.CreatedDate,
+        service.Id,
+        service.ServiceName,
+        service.Location,
+        service.PricingTier,
+        service.Replicas,
+        service.Partitions,
+        service.IsShared
+    FROM dbo.SearchIndex search
+    LEFT OUTER JOIN dbo.SearchInstances service ON service.Id = search.SearchInstanceId
+    WHERE search.Id = SearchIndexId
+      AND search.CustomerId = CustomerId;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexByFriendlyName(
     CustomerId uuid,
-    FriendlyName TEXT(100)
-) RETURNS TABLE (...) AS $$
+    FriendlyName TEXT
+) RETURNS TABLE (
+    Id uuid,
+    SearchInstanceId uuid,
+    CustomerId uuid,
+    FriendlyName text,
+    IndexName text
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-si.Id,
-si.SearchInstanceId,
-si.CustomerId,
-si.FriendlyName,
-si.IndexName
-FROM dbo.SearchIndex si
-WHERE si.CustomerId = CustomerId
-AND si.FriendlyName = FriendlyName
-
+    RETURN QUERY
+    SELECT
+        si.Id,
+        si.SearchInstanceId,
+        si.CustomerId,
+        si.FriendlyName,
+        si.IndexName
+    FROM dbo.SearchIndex si
+    WHERE si.CustomerId = CustomerId
+      AND si.FriendlyName = FriendlyName;
 END;
 $$ LANGUAGE plpgsql;
 
