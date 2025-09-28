@@ -82,6 +82,7 @@
     <Folder Include="SQL Scripts\Legacy\TestDealers" />
     <Folder Include="SQL Scripts\Resurrection-2025\Migration" />
     <Folder Include="SQL Scripts\Resurrection-2025\Migration\Postgres" />
+    <Folder Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\SearchInstanceKeys.sql" />
@@ -139,7 +140,6 @@
     <Build Include="SearchInsightsFunc\User Defined Types\SearchInsightsData.sql" />
     <None Include="SQL Scripts\CreateData-SearchInsights.sql" />
     <None Include="SQL Scripts\GetAllCustomerData.sql" />
-    <None Include="SQL Scripts\resurrection-2025\CreateData.sql" />
     <Build Include="Schemas.sql" />
     <Build Include="logins.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetFeedCredentialsUsername.sql" />
@@ -152,9 +152,10 @@
     <None Include="SQL Scripts\Legacy\production-demo-Infra-28-01-22\CreateData.sql" />
     <None Include="SQL Scripts\Legacy\resurrection-2023\CreateData.sql" />
     <None Include="SQL Scripts\Legacy\TestDealers\CreateData.sql" />
-    <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure.sql" />
     <Build Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres_Tables.sql" />
     <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres.sql" />
     <Build Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres_Functions.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure\SqlAzure.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure\CreateData.sql" />
   </ItemGroup>
 </Project>
