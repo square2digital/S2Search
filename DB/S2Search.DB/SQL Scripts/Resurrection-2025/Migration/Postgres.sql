@@ -16,7 +16,7 @@ CREATE TABLE Customers (
     CustomerEndpoint TEXT           NULL,
     CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ModifiedDate     TIMESTAMP      NULL,
-    CONSTRAINT PK_Users PRIMARY KEY (Id ASC)
+    CONSTRAINT PK_Users PRIMARY KEY (Id)
 );
 
 CREATE TABLE FeedCredentials (
@@ -74,8 +74,8 @@ CREATE TABLE SearchIndex (
 CREATE TABLE SearchIndexRequestLog (
     Id               UUID           NOT NULL,
     SearchIndexId    UUID           NOT NULL,
-    [Count]          INT            NOT NULL DEFAULT 0,
-    [Date]           TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Count            INT            NOT NULL DEFAULT 0,
+    Date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ModifiedDate     TIMESTAMP      NOT NULL,
     CONSTRAINT PK_SearchIndexRequestLog PRIMARY KEY (Id)
@@ -86,8 +86,8 @@ CREATE TABLE SearchInsightsData (
     SearchIndexId    UUID           NOT NULL,
     DataCatery       TEXT           NOT NULL,
     DataPoint        TEXT           NOT NULL,
-    [Count]          INT            NOT NULL DEFAULT 0,
-    [Date]           TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Count            INT            NOT NULL DEFAULT 0,
+    Date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ModifiedDate     TIMESTAMP      NOT NULL,
     CONSTRAINT PK_SearchInsightsData PRIMARY KEY (Id)
@@ -102,7 +102,7 @@ CREATE TABLE SearchInstanceKeys (
     CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ModifiedDate     TIMESTAMP      NULL,
     IsLatest         BOOLEAN        NOT NULL DEFAULT TRUE,
-    CONSTRAINT PK_SearchInstanceKeys PRIMARY KEY (Id ASC)
+    CONSTRAINT PK_SearchInstanceKeys PRIMARY KEY (Id)
 );
 
 CREATE TABLE SearchInstances (
@@ -112,11 +112,11 @@ CREATE TABLE SearchInstances (
     Location         TEXT           NOT NULL,
     PricingTier      TEXT           NOT NULL,
     Replicas         INT            NULL,
-    [Partitions]     INT            NULL,
+    Partitions       INT            NULL,
     IsShared         BOOLEAN        NOT NULL,
     Type             TEXT           NOT NULL,
     RootEndpoint     TEXT           NULL,
-    CONSTRAINT PK_SearchInstances PRIMARY KEY (Id ASC)
+    CONSTRAINT PK_SearchInstances PRIMARY KEY (Id)
 );
 
 CREATE TABLE Synonyms (
