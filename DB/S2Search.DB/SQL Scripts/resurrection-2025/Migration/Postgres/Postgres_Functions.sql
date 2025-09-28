@@ -164,66 +164,71 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION GetSearchIndexFull(
     SearchIndexId uuid,
     CustomerId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    CustomerId uuid,
+    IndexName text,
+    FriendlyName text,
+    RootEndpoint text,
+    PricingTier text,
+    CreatedDate timestamp,
+    InstanceId uuid,
+    ServiceName text,
+    Location text,
+    InstancePricingTier text,
+    Replicas int,
+    Partitions int,
+    IsShared boolean
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-search.Id,
-search.CustomerId,
-search.IndexName,
-search.FriendlyName,
-service.RootEndpoint,
-service.PricingTier,
-search.CreatedDate,
-service.Id,
-service.ServiceName,
-service.Location,
-service.PricingTier,
-service.Replicas,
-service.Partitions,
-service.IsShared
-FROM dbo.SearchIndex search
-LEFT OUTER JOIN dbo.SearchInstances service on service.Id = search.Id
-WHERE search.Id = SearchIndexId
-AND search.CustomerId = CustomerId
-
---If no results it didnt match on SearchIndexId and CustomerId so override the SearchIndexId so that the other selects do not return a result
-IF ROWCOUNT = 0
-BEGIN
-	SET SearchIndexId = NULL
+    RETURN QUERY
+    SELECT
+        search.Id,
+        search.CustomerId,
+        search.IndexName,
+        search.FriendlyName,
+        service.RootEndpoint,
+        service.PricingTier,
+        search.CreatedDate,
+        service.Id,
+        service.ServiceName,
+        service.Location,
+        service.PricingTier,
+        service.Replicas,
+        service.Partitions,
+        service.IsShared
+    FROM dbo.SearchIndex search
+    LEFT OUTER JOIN dbo.SearchInstances service ON service.Id = search.Id
+    WHERE search.Id = SearchIndexId
+      AND search.CustomerId = CustomerId;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexQueryCredentialsByCustomerEndpoint(
-    CustomerEndpoint TEXT(250)
-) RETURNS TABLE (...) AS $$
+    CustomerEndpoint TEXT
+) RETURNS TABLE (
+    Id uuid,
+    SearchIndexName text,
+    SearchInstanceName text,
+    SearchInstanceEndpoint text,
+    ApiKey text
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-si.Id,
-LOWER(si.IndexName) as SearchIndexName,
-i.ServiceName as SearchInstanceName,
-i.RootEndpoint as SearchInstanceEndpoint,
-ik.ApiKey
-FROM dbo.SearchIndex si
-INNER JOIN dbo.SearchInstances i on i.Id = si.SearchInstanceId
-INNER JOIN dbo.Customers c on si.CustomerId = c.Id
-INNER JOIN dbo.SearchInstanceKeys ik on ik.SearchInstanceId = i.Id
-									AND ik.KeyType = 'Query'
-									AND ik.Name = 'Query key'
-									AND ik.IsLatest = 1
-WHERE c.CustomerEndpoint = CustomerEndpoint
-
+    RETURN QUERY
+    SELECT
+        si.Id,
+        LOWER(si.IndexName) as SearchIndexName,
+        i.ServiceName as SearchInstanceName,
+        i.RootEndpoint as SearchInstanceEndpoint,
+        ik.ApiKey
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.SearchInstances i ON i.Id = si.SearchInstanceId
+    INNER JOIN dbo.Customers c ON si.CustomerId = c.Id
+    INNER JOIN dbo.SearchInstanceKeys ik ON ik.SearchInstanceId = i.Id
+        AND ik.KeyType = 'Query'
+        AND ik.Name = 'Query key'
+        AND ik.IsLatest = 1
+    WHERE c.CustomerEndpoint = CustomerEndpoint;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -231,27 +236,26 @@ CREATE OR REPLACE FUNCTION GetSearchInsightsByDataCategories(
     SearchIndexId uuid,
     DateFrom TIMESTAMP,
     DateTo TIMESTAMP,
-    DataCategories TEXT(1000)
-) RETURNS TABLE (...) AS $$
+    DataCategories TEXT
+) RETURNS TABLE (
+    DataCategory text,
+    DataPoint text,
+    Date timestamp,
+    Count int
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-d.DataCategory,
-d.DataPoint,
-d.Date,
-d.Count
-FROM dbo.SearchInsightsData d
-CROSS APPLY string_split(DataCategories, ',') categories
-WHERE d.SearchIndexId = SearchIndexId
-AND d.Date >= DateFrom
-AND d.Date <= DateTo
-AND categories.value = d.DataCategory
-
+    RETURN QUERY
+    SELECT
+        d.DataCategory,
+        d.DataPoint,
+        d.Date,
+        d.Count
+    FROM dbo.SearchInsightsData d
+    JOIN unnest(string_to_array(DataCategories, ',')) AS categories(category)
+        ON d.DataCategory = categories.category
+    WHERE d.SearchIndexId = SearchIndexId
+      AND d.Date >= DateFrom
+      AND d.Date <= DateTo;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -259,241 +263,241 @@ CREATE OR REPLACE FUNCTION GetSearchInsightsSearchCountByDateRange(
     SearchIndexId uuid,
     DateFrom TIMESTAMP,
     DateTo TIMESTAMP
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Date timestamp,
+    Count int
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-d.Date,
-d.Count
-FROM dbo.SearchIndexRequestLog d
-WHERE d.SearchIndexId = SearchIndexId
-AND d.Date BETWEEN DateFrom AND DateTo
-
+    RETURN QUERY
+    SELECT
+        d.Date,
+        d.Count
+    FROM dbo.SearchIndexRequestLog d
+    WHERE d.SearchIndexId = SearchIndexId
+      AND d.Date BETWEEN DateFrom AND DateTo;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSynonymById(
     SearchIndexId uuid,
     SynonymId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    SearchIndexId uuid,
+    Key text,
+    SolrFormat text,
+    CreatedDate timestamp
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-Id,
-SearchIndexId,
-KeyWord as Key,
-SolrFormat,
-CreatedDate
-FROM dbo.Synonyms
-WHERE SearchIndexId = SearchIndexId
-AND Id = SynonymId
-AND IsLatest = 1
-
+    RETURN QUERY
+    SELECT
+        Id,
+        SearchIndexId,
+        KeyWord as Key,
+        SolrFormat,
+        CreatedDate
+    FROM dbo.Synonyms
+    WHERE SearchIndexId = SearchIndexId
+      AND Id = SynonymId
+      AND IsLatest = 1;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSynonymByKeyWord(
     SearchIndexId uuid,
-    KeyWord TEXT(30)
-) RETURNS TABLE (...) AS $$
+    KeyWord TEXT
+) RETURNS TABLE (
+    Id uuid,
+    SearchIndexId uuid,
+    Key text,
+    SolrFormat text,
+    CreatedDate timestamp
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-Id,
-SearchIndexId,
-KeyWord as Key,
-SolrFormat,
-CreatedDate
-FROM dbo.Synonyms
-WHERE SearchIndexId = SearchIndexId
-AND KeyWord = KeyWord
-AND IsLatest = 1
-
+    RETURN QUERY
+    SELECT
+        Id,
+        SearchIndexId,
+        KeyWord as Key,
+        SolrFormat,
+        CreatedDate
+    FROM dbo.Synonyms
+    WHERE SearchIndexId = SearchIndexId
+      AND KeyWord = KeyWord
+      AND IsLatest = 1;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSynonyms(
     SearchIndexId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    SearchIndexId uuid,
+    Key text,
+    SolrFormat text,
+    CreatedDate timestamp
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-Id,
-SearchIndexId,
-KeyWord as Key,
-SolrFormat,
-CreatedDate
-FROM dbo.Synonyms
-WHERE SearchIndexId = SearchIndexId
-AND IsLatest = 1
-
+    RETURN QUERY
+    SELECT
+        Id,
+        SearchIndexId,
+        KeyWord as Key,
+        SolrFormat,
+        CreatedDate
+    FROM dbo.Synonyms
+    WHERE SearchIndexId = SearchIndexId
+      AND IsLatest = 1;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetThemeByCustomerId(
     CustomerId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    PrimaryHexColour text,
+    SecondaryHexColour text,
+    NavBarHexColour text,
+    LogoURL text,
+    MissingImageURL text,
+    CustomerId uuid,
+    SearchIndexId uuid,
+    CreatedDate timestamp,
+    ModifiedDate timestamp
+) AS $$
 BEGIN
-	-- Add the parameters for the stored procedure here
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    -- Insert statements for procedure here
-	SELECT Id
-      ,PrimaryHexColour
-      ,SecondaryHexColour
-      ,NavBarHexColour
-      ,LogoURL
-	  ,MissingImageURL
-      ,CustomerId
-      ,SearchIndexId
-      ,CreatedDate
-      ,ModifiedDate
-	FROM dbo.Themes
-	WHERE CustomerId = CustomerId
-
+    RETURN QUERY
+    SELECT
+        Id,
+        PrimaryHexColour,
+        SecondaryHexColour,
+        NavBarHexColour,
+        LogoURL,
+        MissingImageURL,
+        CustomerId,
+        SearchIndexId,
+        CreatedDate,
+        ModifiedDate
+    FROM dbo.Themes
+    WHERE CustomerId = CustomerId;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetThemeById(
     ThemeId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    PrimaryHexColour text,
+    SecondaryHexColour text,
+    NavBarHexColour text,
+    LogoURL text,
+    MissingImageURL text,
+    CustomerId uuid,
+    SearchIndexId uuid,
+    CreatedDate timestamp,
+    ModifiedDate timestamp
+) AS $$
 BEGIN
-	-- Add the parameters for the stored procedure here
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    -- Insert statements for procedure here
-	SELECT Id
-      ,PrimaryHexColour
-      ,SecondaryHexColour
-      ,NavBarHexColour
-      ,LogoURL
-	  ,MissingImageURL
-      ,CustomerId
-      ,SearchIndexId
-      ,CreatedDate
-      ,ModifiedDate
-	FROM dbo.Themes
-	WHERE Id = ThemeId
-
+    RETURN QUERY
+    SELECT
+        Id,
+        PrimaryHexColour,
+        SecondaryHexColour,
+        NavBarHexColour,
+        LogoURL,
+        MissingImageURL,
+        CustomerId,
+        SearchIndexId,
+        CreatedDate,
+        ModifiedDate
+    FROM dbo.Themes
+    WHERE Id = ThemeId;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetThemeBySearchIndexId(
     SearchIndexId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    PrimaryHexColour text,
+    SecondaryHexColour text,
+    NavBarHexColour text,
+    LogoURL text,
+    MissingImageURL text,
+    CustomerId uuid,
+    SearchIndexId uuid,
+    CreatedDate timestamp,
+    ModifiedDate timestamp
+) AS $$
 BEGIN
-	-- Add the parameters for the stored procedure here
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    -- Insert statements for procedure here
-	SELECT Id
-      ,PrimaryHexColour
-      ,SecondaryHexColour
-      ,NavBarHexColour
-      ,LogoURL
-	  ,MissingImageURL
-      ,CustomerId
-      ,SearchIndexId
-      ,CreatedDate
-      ,ModifiedDate
-	FROM dbo.Themes
-	WHERE SearchIndexId = SearchIndexId
-
+    RETURN QUERY
+    SELECT
+        Id,
+        PrimaryHexColour,
+        SecondaryHexColour,
+        NavBarHexColour,
+        LogoURL,
+        MissingImageURL,
+        CustomerId,
+        SearchIndexId,
+        CreatedDate,
+        ModifiedDate
+    FROM dbo.Themes
+    WHERE SearchIndexId = SearchIndexId;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION SupersedeLatestFeed(
     SearchIndexId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS int AS $$
+DECLARE
+    rows_updated int;
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-	UPDATE dbo.Feeds
-	SET IsLatest = 0,
-		SupersededDate = CURRENT_TIMESTAMP
-	WHERE SearchIndexId = SearchIndexId
-	AND IsLatest = 1
-
+    UPDATE dbo.Feeds
+    SET IsLatest = 0,
+        SupersededDate = CURRENT_TIMESTAMP
+    WHERE SearchIndexId = SearchIndexId
+      AND IsLatest = 1;
+    GET DIAGNOSTICS rows_updated = ROW_COUNT;
+    RETURN rows_updated;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION SupersedeSynonym(
     SearchIndexId uuid,
     SynonymId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS int AS $$
+DECLARE
+    rows_updated int;
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-	UPDATE dbo.Synonyms
-	SET IsLatest = 0,
-		SupersededDate = CURRENT_TIMESTAMP
-	WHERE SearchIndexId = SearchIndexId
-	AND Id = SynonymId
-	AND IsLatest = 1
-
+    UPDATE dbo.Synonyms
+    SET IsLatest = 0,
+        SupersededDate = CURRENT_TIMESTAMP
+    WHERE SearchIndexId = SearchIndexId
+      AND Id = SynonymId
+      AND IsLatest = 1;
+    GET DIAGNOSTICS rows_updated = ROW_COUNT;
+    RETURN rows_updated;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateSynonym(
     SearchIndexId uuid,
     SynonymId uuid,
-    KeyWord TEXT(50),
-    SolrFormat TEXT(max)
-) RETURNS TABLE (...) AS $$
+    KeyWord TEXT,
+    SolrFormat TEXT
+) RETURNS int AS $$
+DECLARE
+    rows_updated int;
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-	UPDATE dbo.Synonyms
-	SET	KeyWord = KeyWord,
-	SolrFormat = SolrFormat
-	WHERE SearchIndexId = SearchIndexId
-	AND Id = SynonymId
-	AND IsLatest = 1
-
+    UPDATE dbo.Synonyms
+    SET KeyWord = KeyWord,
+        SolrFormat = SolrFormat
+    WHERE SearchIndexId = SearchIndexId
+      AND Id = SynonymId
+      AND IsLatest = 1;
+    GET DIAGNOSTICS rows_updated = ROW_COUNT;
+    RETURN rows_updated;
 END;
 $$ LANGUAGE plpgsql;
 
