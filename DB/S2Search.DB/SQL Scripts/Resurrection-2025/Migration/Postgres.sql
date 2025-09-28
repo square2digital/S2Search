@@ -36,8 +36,8 @@ CREATE TABLE FeedCurrentDocuments (
 
 CREATE TABLE Feeds (
     Id               UUID           NOT NULL,
-    FeedType         TEXT(20)       NOT NULL,
-    FeedScheduleCron TEXT(255)      NOT NULL,
+    FeedType         TEXT           NOT NULL,
+    FeedScheduleCron TEXT           NOT NULL,
     SearchIndexId    UUID           NOT NULL,
     DataFormat       TEXT           NOT NULL,
     CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -156,7 +156,7 @@ CREATE OR REPLACE FUNCTION Admin.AddSearchIndex (
     CustomerId UUID,
     IndexName TEXT,
     FriendlyName TEXT
-) AS $$
+) RETURNS void AS $$
 BEGIN
     INSERT INTO dbo.SearchIndex (
         Id,
@@ -173,15 +173,15 @@ BEGIN
         FriendlyName,
         CURRENT_TIMESTAMP
     );
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.AddSynonym
 CREATE OR REPLACE FUNCTION Admin.AddSynonym (
     SynonymId UUID,
     SearchIndexId UUID,
-    KeyWord TEXT(50),
+    KeyWord TEXT,
     SolrFormat TEXT
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     INSERT INTO Synonyms (
         Id,
@@ -195,22 +195,22 @@ BEGIN
         SolrFormat
     );
     SELECT SynonymId AS SynonymId;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetCustomerByID
 CREATE OR REPLACE FUNCTION Admin.GetCustomerByID (
     CustomerId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT c.Id, c.BusinessName
     FROM Customers c
     WHERE c.Id = CustomerId;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetCustomerFull
 CREATE OR REPLACE FUNCTION Admin.GetCustomerFull (
     CustomerId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT c.Id, c.BusinessName
     FROM Customers c
@@ -219,27 +219,27 @@ BEGIN
     SELECT Id, CustomerId, SearchInstanceId, IndexName, FriendlyName, CreatedDate
     FROM SearchIndex s
     WHERE s.CustomerId = CustomerId;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetLatestFeed
 CREATE OR REPLACE FUNCTION Admin.GetLatestFeed (
     SearchIndexId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT f.Id, f.SearchIndexId, f.FeedType AS Type, f.FeedScheduleCron AS ScheduleCron, f.CreatedDate, f.SupersededDate, f.IsLatest
     FROM dbo.Feeds f
     WHERE f.SearchIndexId = SearchIndexId
       AND f.IsLatest = 1
     LIMIT 1;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetSearchIndex
 CREATE OR REPLACE FUNCTION Admin.GetSearchIndex (
     SearchIndexId UUID,
     CustomerId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
-    SELECT search.Id, search.CustomerId, search.IndexName, search.FriendlyName, service.RootEND;point, service.PricingTier, search.CreatedDate, service.Id, service.ServiceName, service.Location, service.PricingTier, service.Replicas, service.Partitions, service.IsShared
+    SELECT search.Id, search.CustomerId, search.IndexName, search.FriendlyName, service.RootEND LANGUAGE plpgsql;point, service.PricingTier, search.CreatedDate, service.Id, service.ServiceName, service.Location, service.PricingTier, service.Replicas, service.Partitions, service.IsShared
     FROM dbo.SearchIndex search
     LEFT OUTER JOIN dbo.SearchInstances service ON service.Id = search.SearchInstanceId
     WHERE search.Id = SearchIndexId
@@ -249,22 +249,22 @@ END;
 -- Creating Procedure Admin.GetSearchIndexByFriendlyName
 CREATE OR REPLACE FUNCTION Admin.GetSearchIndexByFriendlyName (
     CustomerId UUID,
-    FriendlyName TEXT(100)
-) AS $$
+    FriendlyName TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT si.Id, si.SearchInstanceId, si.CustomerId, si.FriendlyName, si.IndexName
     FROM dbo.SearchIndex si
     WHERE si.CustomerId = CustomerId
       AND si.FriendlyName = FriendlyName;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetSearchIndexFull
 CREATE OR REPLACE FUNCTION Admin.GetSearchIndexFull (
     SearchIndexId UUID,
     CustomerId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
-    SELECT search.Id, search.CustomerId, search.IndexName, search.FriendlyName, service.RootEND;point, service.PricingTier, search.CreatedDate, service.Id, service.ServiceName, service.Location, service.PricingTier, service.Replicas, service.Partitions, service.IsShared
+    SELECT search.Id, search.CustomerId, search.IndexName, search.FriendlyName, service.RootEND LANGUAGE plpgsql;point, service.PricingTier, search.CreatedDate, service.Id, service.ServiceName, service.Location, service.PricingTier, service.Replicas, service.Partitions, service.IsShared
     FROM dbo.SearchIndex search
     LEFT OUTER JOIN dbo.SearchInstances service ON service.Id = search.Id
     WHERE search.Id = SearchIndexId
@@ -286,10 +286,10 @@ END;
 
 -- Creating Procedure Admin.GetSearchIndexQueryCredentialsByCustomerEND;point
 CREATE OR REPLACE FUNCTION Admin.GetSearchIndexQueryCredentialsByCustomerEND;point (
-    CustomerEND;point TEXT(250)
-) AS $$
+    CustomerEND;point TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
-    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.ServiceName AS SearchInstanceName, i.RootEND;point AS SearchInstanceEND;point, ik.ApiKey
+    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.ServiceName AS SearchInstanceName, i.RootEND LANGUAGE plpgsql;point AS SearchInstanceEND;point, ik.ApiKey
     FROM dbo.SearchIndex si
     INNER JOIN dbo.SearchInstances i ON i.Id = si.SearchInstanceId
     INNER JOIN dbo.Customers c ON si.CustomerId = c.Id
@@ -305,8 +305,8 @@ CREATE OR REPLACE FUNCTION Admin.GetSearchInsightsByDataCateries (
     SearchIndexId UUID,
     DateFrom TIMESTAMP,
     DateTo TIMESTAMP,
-    DataCateries TEXT(1000)
-) AS $$
+    DataCateries TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT d.DataCatery, d.DataPoint, d.Date, d.Count
     FROM dbo.SearchInsightsData d
@@ -315,105 +315,105 @@ BEGIN
       AND d.Date >= DateFrom
       AND d.Date <= DateTo
       AND cateries.value = d.DataCatery;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetSearchInsightsSearchCountByDateRange
 CREATE OR REPLACE FUNCTION Admin.GetSearchInsightsSearchCountByDateRange (
     SearchIndexId UUID,
     DateFrom TIMESTAMP,
     DateTo TIMESTAMP
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT d.Date, d.Count
     FROM dbo.SearchIndexRequestLog d
     WHERE d.SearchIndexId = SearchIndexId
       AND d.Date BETWEEN DateFrom AND DateTo;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetSynonymById
 CREATE OR REPLACE FUNCTION Admin.GetSynonymById (
     SearchIndexId UUID,
     SynonymId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT Id, SearchIndexId, KeyWord AS Key, SolrFormat, CreatedDate
     FROM Synonyms
     WHERE SearchIndexId = SearchIndexId
       AND Id = SynonymId
       AND IsLatest = 1;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetSynonymByKeyWord
 CREATE OR REPLACE FUNCTION Admin.GetSynonymByKeyWord (
     SearchIndexId UUID,
-    KeyWord TEXT(30)
-) AS $$
+    KeyWord TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT Id, SearchIndexId, KeyWord AS Key, SolrFormat, CreatedDate
     FROM Synonyms
     WHERE SearchIndexId = SearchIndexId
       AND KeyWord = KeyWord
       AND IsLatest = 1;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetSynonyms
 CREATE OR REPLACE FUNCTION Admin.GetSynonyms (
     SearchIndexId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT Id, SearchIndexId, KeyWord AS Key, SolrFormat, CreatedDate
     FROM Synonyms
     WHERE SearchIndexId = SearchIndexId
       AND IsLatest = 1;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetThemeByCustomerId
 CREATE OR REPLACE FUNCTION Admin.GetThemeByCustomerId (
     CustomerId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT Id, PrimaryHexColour, SecondaryHexColour, NavBarHexColour, LoURL, MissingImageURL, CustomerId, SearchIndexId, CreatedDate, ModifiedDate
     FROM Themes
     WHERE CustomerId = CustomerId;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetThemeById
 CREATE OR REPLACE FUNCTION Admin.GetThemeById (
     ThemeId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT Id, PrimaryHexColour, SecondaryHexColour, NavBarHexColour, LoURL, MissingImageURL, CustomerId, SearchIndexId, CreatedDate, ModifiedDate
     FROM Themes
     WHERE Id = ThemeId;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.GetThemeBySearchIndexId
 CREATE OR REPLACE FUNCTION Admin.GetThemeBySearchIndexId (
     SearchIndexId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT Id, PrimaryHexColour, SecondaryHexColour, NavBarHexColour, LoURL, MissingImageURL, CustomerId, SearchIndexId, CreatedDate, ModifiedDate
     FROM Themes
     WHERE SearchIndexId = SearchIndexId;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.SupersedeLatestFeed
 CREATE OR REPLACE FUNCTION Admin.SupersedeLatestFeed (
     SearchIndexId UUID
-) AS $$
+) RETURNS void AS $$
 BEGIN
     UPDATE dbo.Feeds
     SET IsLatest = 0,
         SupersededDate = CURRENT_TIMESTAMP
     WHERE SearchIndexId = SearchIndexId
       AND IsLatest = 1;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.SupersedeSynonym
 CREATE OR REPLACE FUNCTION Admin.SupersedeSynonym (
     SearchIndexId UUID,
     SynonymId UUID
-) AS $$
+) RETURNS void AS $$
 BEGIN
     UPDATE Synonyms
     SET IsLatest = 0,
@@ -421,15 +421,15 @@ BEGIN
     WHERE SearchIndexId = SearchIndexId
       AND Id = SynonymId
       AND IsLatest = 1;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.UpdateSynonym
 CREATE OR REPLACE FUNCTION Admin.UpdateSynonym (
     SearchIndexId UUID,
     SynonymId UUID,
-    KeyWord TEXT(50),
+    KeyWord TEXT,
     SolrFormat TEXT
-) AS $$
+) RETURNS void AS $$
 BEGIN
     UPDATE Synonyms
     SET KeyWord = KeyWord,
@@ -437,17 +437,17 @@ BEGIN
     WHERE SearchIndexId = SearchIndexId
       AND Id = SynonymId
       AND IsLatest = 1;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.UpdateTheme
 CREATE OR REPLACE FUNCTION Admin.UpdateTheme (
     ThemeId UUID,
-    PrimaryHexColour TEXT(10),
-    SecondaryHexColour TEXT(10),
-    NavBarHexColour TEXT(10),
-    LoURL TEXT(1000),
-    MissingImageURL TEXT(1000)
-) AS $$
+    PrimaryHexColour TEXT,
+    SecondaryHexColour TEXT,
+    NavBarHexColour TEXT,
+    LoURL TEXT,
+    MissingImageURL TEXT
+) RETURNS void AS $$
 BEGIN
     UPDATE Themes
     SET PrimaryHexColour = PrimaryHexColour,
@@ -457,14 +457,14 @@ BEGIN
         MissingImageURL = MissingImageURL,
         ModifiedDate = CURRENT_TIMESTAMP
     WHERE Id = ThemeId;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Configuration.GetSearchIndexQueryCredentialsByCustomerEND;point
 CREATE OR REPLACE FUNCTION Configuration.GetSearchIndexQueryCredentialsByCustomerEND;point (
-    CustomerEND;point TEXT(250)
-) AS $$
+    CustomerEND;point TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
-    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.ServiceName AS SearchInstanceName, i.RootEND;point AS SearchInstanceEND;point, ik.ApiKey AS QueryApiKey
+    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.ServiceName AS SearchInstanceName, i.RootEND LANGUAGE plpgsql;point AS SearchInstanceEND;point, ik.ApiKey AS QueryApiKey
     FROM dbo.SearchIndex si
     INNER JOIN dbo.Customers c ON c.Id = si.CustomerId
     INNER JOIN dbo.SearchInstances i ON i.Id = si.Id
@@ -477,13 +477,13 @@ END;
 
 -- Creating Procedure Configuration.GetThemeByCustomerEND;point
 CREATE OR REPLACE FUNCTION Configuration.GetThemeByCustomerEND;point (
-    CustomerEND;point TEXT(250)
-) AS $$
+    CustomerEND;point TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT t.Id, t.PrimaryHexColour, t.SecondaryHexColour, t.NavBarHexColour, t.LoURL, t.MissingImageURL
     FROM dbo.Themes t
     INNER JOIN dbo.Customers c ON t.CustomerId = c.Id
-    WHERE c.CustomerEND;point = CustomerEND;point;
+    WHERE c.CustomerEND LANGUAGE plpgsql;point = CustomerEND;point;
 END;
 
 -- Creating Procedure FeedServicesFunc.GetCurrentFeedDocuments
@@ -491,7 +491,7 @@ CREATE OR REPLACE FUNCTION FeedServicesFunc.GetCurrentFeedDocuments (
     SearchIndexId UUID,
     PageNumber INT,
     PageSize INT
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT Id
     FROM FeedCurrentDocuments
@@ -499,34 +499,34 @@ BEGIN
     ORDER BY CreatedDate ASC
     OFFSET (PageNumber - 1) * PageSize ROWS
     LIMIT PageSize;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure FeedServicesFunc.GetCurrentFeedDocumentsTotal
 CREATE OR REPLACE FUNCTION FeedServicesFunc.GetCurrentFeedDocumentsTotal (
     SearchIndexId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT COUNT(1) AS TotalDocuments
     FROM FeedCurrentDocuments
     WHERE SearchIndexId = SearchIndexId;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure FeedServicesFunc.GetFeedCredentialsUsername
 CREATE OR REPLACE FUNCTION FeedServicesFunc.GetFeedCredentialsUsername (
     SearchIndexId UUID
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT fc.SearchIndexId, fc.Username, fc.CreatedDate, fc.ModifiedDate
     FROM dbo.FeedCredentials fc
     WHERE fc.SearchIndexId = SearchIndexId
     LIMIT 1;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure FeedServicesFunc.GetFeedDataFormat
 CREATE OR REPLACE FUNCTION FeedServicesFunc.GetFeedDataFormat (
     CustomerId UUID,
-    SearchIndexName TEXT(60)
-) AS $$
+    SearchIndexName TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT f.DataFormat
     FROM dbo.SearchIndex si
@@ -534,26 +534,26 @@ BEGIN
     WHERE si.CustomerId = CustomerId
       AND si.IndexName = SearchIndexName
     LIMIT 1;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure FeedServicesFunc.GetLatestGenericSynonymsByCatery
 CREATE OR REPLACE FUNCTION FeedServicesFunc.GetLatestGenericSynonymsByCatery (
-    Catery TEXT(50)
-) AS $$
+    Catery TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT Id, Catery, SolrFormat, CreatedDate
     FROM Synonyms
     WHERE Catery = Catery
       AND IsLatest = 1;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure FeedServicesFunc.GetSearchIndexCredentials
 CREATE OR REPLACE FUNCTION FeedServicesFunc.GetSearchIndexCredentials (
     CustomerId UUID,
-    SearchIndexName TEXT(60)
-) AS $$
+    SearchIndexName TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
-    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.Id, i.ServiceName AS SearchInstanceName, i.RootEND;point, ik.ApiKey
+    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.Id, i.ServiceName AS SearchInstanceName, i.RootEND LANGUAGE plpgsql;point, ik.ApiKey
     FROM dbo.SearchIndex si
     INNER JOIN dbo.SearchInstances i ON i.Id = si.Id
     INNER JOIN dbo.SearchInstanceKeys ik ON ik.Id = i.Id
@@ -567,10 +567,10 @@ END;
 -- Creating Procedure FeedServicesFunc.GetSearchIndexFeedProcessingData
 CREATE OR REPLACE FUNCTION FeedServicesFunc.GetSearchIndexFeedProcessingData (
     CustomerId UUID,
-    SearchIndexName TEXT(60)
-) AS $$
+    SearchIndexName TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
-    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.Id, i.ServiceName AS SearchInstanceName, i.RootEND;point, ik.ApiKey
+    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.Id, i.ServiceName AS SearchInstanceName, i.RootEND LANGUAGE plpgsql;point, ik.ApiKey
     FROM dbo.SearchIndex si
     INNER JOIN dbo.SearchInstances i ON i.Id = si.Id
     INNER JOIN dbo.SearchInstanceKeys ik ON ik.Id = i.Id
@@ -593,7 +593,7 @@ END;
 CREATE OR REPLACE FUNCTION FeedServicesFunc.MergeFeedDocuments (
     SearchIndexId UUID,
     NewFeedDocuments NewFeedDocuments READONLY
-) AS $$
+) RETURNS void AS $$
 BEGIN
     DECLARE UtcNow TIMESTAMP = CURRENT_TIMESTAMP;
     MERGE INTO FeedCurrentDocuments AS target
@@ -607,13 +607,13 @@ BEGIN
         VALUES (source.DocumentId, SearchIndexId)
     WHEN NOT MATCHED BY source AND target.SearchIndexId = SearchIndexId THEN
         DELETE;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure SearchInsightsFunc.AddDataPoints
 CREATE OR REPLACE FUNCTION SearchInsightsFunc.AddDataPoints (
     SearchIndexId UUID,
     SearchInsightsData SearchInsightsData READONLY
-) AS $$
+) RETURNS void AS $$
 BEGIN
     DECLARE UtcNow TIMESTAMP = CURRENT_TIMESTAMP;
     MERGE INTO SearchInsightsData AS target
@@ -628,13 +628,13 @@ BEGIN
     WHEN NOT MATCHED THEN
         INSERT (SearchIndexId, DataCatery, DataPoint, Count, Date, ModifiedDate)
         VALUES (SearchIndexId, source.DataCatery, source.DataPoint, 1, source.Date, UtcNow);
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure SearchInsightsFunc.AddSearchRequest
 CREATE OR REPLACE FUNCTION SearchInsightsFunc.AddSearchRequest (
     SearchIndexId UUID,
     Date DATE
-) AS $$
+) RETURNS TABLE (...) AS $$
 BEGIN
     DECLARE UtcNow TIMESTAMP = CURRENT_TIMESTAMP;
     MERGE INTO SearchIndexRequestLog AS target
@@ -647,14 +647,14 @@ BEGIN
     WHEN NOT MATCHED THEN
         INSERT (SearchIndexId, Count, Date, ModifiedDate)
         VALUES (SearchIndexId, 1, Date, UtcNow);
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure SFTPServicesFunc.AddFeedCredentials
 CREATE OR REPLACE FUNCTION SFTPServicesFunc.AddFeedCredentials (
     SearchIndexId UUID,
-    Username TEXT(50),
-    PasswordHash TEXT(250)
-) AS $$
+    Username TEXT,
+    PasswordHash TEXT
+) RETURNS void AS $$
 BEGIN
     INSERT INTO dbo.FeedCredentials (
         Id,
@@ -663,57 +663,57 @@ BEGIN
         PasswordHash,
         CreatedDate
     ) VALUES (
-        gen_random_uuid(),
+        gen_random_UUID(),
         SearchIndexId,
         Username,
         PasswordHash,
         CURRENT_TIMESTAMP
     );
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure SFTPServicesFunc.DeleteFeedCredentials
 CREATE OR REPLACE FUNCTION SFTPServicesFunc.DeleteFeedCredentials (
     SearchIndexId UUID,
-    Username TEXT(50)
-) AS $$
+    Username TEXT
+) RETURNS void AS $$
 BEGIN
     DELETE FROM dbo.FeedCredentials
     WHERE SearchIndexId = SearchIndexId
       AND Username = Username;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure SFTPServicesFunc.GetFeedCredentials
 CREATE OR REPLACE FUNCTION SFTPServicesFunc.GetFeedCredentials (
     SearchIndexId UUID,
-    Username TEXT(50)
-) AS $$
+    Username TEXT
+) RETURNS TABLE (...) AS $$
 BEGIN
     SELECT SearchIndexId, Username, CreatedDate
     FROM FeedCredentials
     WHERE SearchIndexId = SearchIndexId
       AND Username = Username;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure SFTPServicesFunc.UpdateFeedCredentials
 CREATE OR REPLACE FUNCTION SFTPServicesFunc.UpdateFeedCredentials (
     SearchIndexId UUID,
-    Username TEXT(50),
-    PasswordHash TEXT(250)
-) AS $$
+    Username TEXT,
+    PasswordHash TEXT
+) RETURNS void AS $$
 BEGIN
     UPDATE dbo.FeedCredentials
     SET PasswordHash = PasswordHash,
         ModifiedDate = CURRENT_TIMESTAMP
     WHERE SearchIndexId = SearchIndexId
       AND Username = Username;
-END;
+END LANGUAGE plpgsql;
 
 -- Creating Procedure Admin.AddFeed
 CREATE OR REPLACE FUNCTION Admin.AddFeed (
     SearchIndexId UUID,
-    FeedType TEXT(20),
-    FeedCron TEXT(255)
-) AS $$
+    FeedType TEXT,
+    FeedCron TEXT
+) RETURNS void AS $$
 BEGIN
     EXEC Admin.SupersedeLatestFeed SearchIndexId = SearchIndexId;
     INSERT INTO dbo.Feeds (
@@ -725,6 +725,6 @@ BEGIN
         FeedType,
         FeedCron
     );
-END;
+END LANGUAGE plpgsql;
 
 -- Update complete.
