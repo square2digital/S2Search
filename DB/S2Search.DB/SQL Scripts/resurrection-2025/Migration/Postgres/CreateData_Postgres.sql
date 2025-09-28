@@ -12,7 +12,7 @@ DECLARE
     Replicas BOOLEAN := TRUE;
     Partitions BOOLEAN := TRUE;
     IsShared BOOLEAN := TRUE;
-    SearchIndexName TEXT := 'vehicles-' + LEFT(gen_random_uuid()::text, 8);
+    SearchIndexName TEXT := 'vehicles-' || LEFT(gen_random_uuid()::text, 8);
     --Feeds
     FeedType TEXT := 'FTPS';
     FeedCron TEXT := '5 * * * *';
@@ -98,8 +98,8 @@ DECLARE
     CustomerIndexName_1 TEXT := 's2-demo-vehicles';
     SearchIndexId_1 uuid := '8c663063-4217-4f54-973f-8faec6131b5b';
     ThemeId_1 uuid := 'f3a9c2e7-4b6e-4d9a-8f3e-9c1d2a7b5e6f';
-    ThemeLogoURL_1 TEXT := StorageURI + '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg';
-    ThemeMissingImageURL_1 TEXT := StorageURI + '/assets/image-coming-soon.jpg';
+    ThemeLogoURL_1 TEXT := StorageURI || '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg';
+    ThemeMissingImageURL_1 TEXT := StorageURI || '/assets/image-coming-soon.jpg';
     ThemePrimaryThemeColour_1 TEXT := '#006bd1';
     ThemeSecondaryThemeColour_1 TEXT := '#003c75';
     ThemeNavBarColourColour_1 TEXT := '#006bd1';
