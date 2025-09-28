@@ -81,6 +81,7 @@
     <Folder Include="SQL Scripts\Legacy\resurrection-2023" />
     <Folder Include="SQL Scripts\Legacy\TestDealers" />
     <Folder Include="SQL Scripts\Resurrection-2025\Migration" />
+    <Folder Include="SQL Scripts\Resurrection-2025\Migration\Postgres" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\SearchInstanceKeys.sql" />
@@ -152,6 +153,7 @@
     <None Include="SQL Scripts\Legacy\resurrection-2023\CreateData.sql" />
     <None Include="SQL Scripts\Legacy\TestDealers\CreateData.sql" />
     <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure.sql" />
-    <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres.sql" />
+    <Build Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres_Tables.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres.sql" />
   </ItemGroup>
 </Project>
