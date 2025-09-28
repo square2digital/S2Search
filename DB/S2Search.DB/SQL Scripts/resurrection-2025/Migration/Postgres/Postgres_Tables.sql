@@ -7,6 +7,23 @@ the code is regenerated.
 */
 
 -- =============================
+-- Drop Table Definitions
+-- =============================
+
+DROP TABLE IF EXISTS Customers;
+DROP TABLE IF EXISTS FeedCredentials;
+DROP TABLE IF EXISTS FeedCurrentDocuments;
+DROP TABLE IF EXISTS Feeds;
+DROP TABLE IF EXISTS SearchConfiguration;
+DROP TABLE IF EXISTS SearchIndex;
+DROP TABLE IF EXISTS SearchIndexRequestLog;
+DROP TABLE IF EXISTS SearchInsightsData;
+DROP TABLE IF EXISTS SearchInstanceKeys;
+DROP TABLE IF EXISTS SearchInstances;
+DROP TABLE IF EXISTS Synonyms;
+DROP TABLE IF EXISTS Themes;
+
+-- =============================
 -- Table Definitions
 -- =============================
 
