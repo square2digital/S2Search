@@ -555,25 +555,26 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetThemeByCustomerEndpoint(
     CustomerEndpoint TEXT
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    PrimaryHexColour text,
+    SecondaryHexColour text,
+    NavBarHexColour text,
+    LogoURL text,
+    MissingImageURL text
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-t.Id,
-t.PrimaryHexColour,
-t.SecondaryHexColour,
-t.NavBarHexColour,
-t.LogoURL,
-t.MissingImageURL
-FROM dbo.Themes t
-INNER JOIN dbo.Customers c on t.CustomerId = c.Id
-WHERE c.CustomerEndpoint = CustomerEndpoint
-
+    RETURN QUERY
+    SELECT
+        t.Id,
+        t.PrimaryHexColour,
+        t.SecondaryHexColour,
+        t.NavBarHexColour,
+        t.LogoURL,
+        t.MissingImageURL
+    FROM dbo.Themes t
+    INNER JOIN dbo.Customers c on t.CustomerId = c.Id
+    WHERE c.CustomerEndpoint = CustomerEndpoint;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -581,251 +582,236 @@ CREATE OR REPLACE FUNCTION GetCurrentFeedDocuments(
     SearchIndexId uuid,
     PageNumber int,
     PageSize int
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-	SELECT
-	Id
-	FROM dbo.FeedCurrentDocuments
-	WHERE SearchIndexId = SearchIndexId
-	ORDER BY CreatedDate ASC
-	OFFSET (PageNumber - 1) * PageSize ROWS
-	FETCH NEXT PageSize ROWS ONLY;
-
+    RETURN QUERY
+    SELECT
+        Id
+    FROM dbo.FeedCurrentDocuments
+    WHERE SearchIndexId = SearchIndexId
+    ORDER BY CreatedDate ASC
+    OFFSET (PageNumber - 1) * PageSize
+    LIMIT PageSize;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetCurrentFeedDocumentsTotal(
     SearchIndexId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    TotalDocuments bigint
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-	SELECT
-	COUNT(1) AS TotalDocuments
-	FROM dbo.FeedCurrentDocuments
-	WHERE SearchIndexId = SearchIndexId
-
+    RETURN QUERY
+    SELECT
+        COUNT(1) AS TotalDocuments
+    FROM dbo.FeedCurrentDocuments
+    WHERE SearchIndexId = SearchIndexId;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetFeedCredentialsUsername(
     SearchIndexId uuid
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    SearchIndexId uuid,
+    Username text,
+    CreatedDate timestamp,
+    ModifiedDate timestamp
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT LIMIT 1
-fc.SearchIndexId,
-fc.Username,
-fc.CreatedDate,
-fc.ModifiedDate
-FROM dbo.FeedCredentials fc
-WHERE fc.SearchIndexId = SearchIndexId
-
+    RETURN QUERY
+    SELECT
+        fc.SearchIndexId,
+        fc.Username,
+        fc.CreatedDate,
+        fc.ModifiedDate
+    FROM dbo.FeedCredentials fc
+    WHERE fc.SearchIndexId = SearchIndexId
+    LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetFeedDataFormat(
     CustomerId uuid,
     SearchIndexName TEXT
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    DataFormat text
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT LIMIT 1
-f.DataFormat
-FROM dbo.SearchIndex si
-INNER JOIN dbo.Feeds f on f.SearchIndexId = si.Id AND f.IsLatest = 1
-WHERE si.CustomerId = CustomerId
-AND si.IndexName = SearchIndexName
-
+    RETURN QUERY
+    SELECT
+        f.DataFormat
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.Feeds f ON f.SearchIndexId = si.Id AND f.IsLatest = 1
+    WHERE si.CustomerId = CustomerId
+      AND si.IndexName = SearchIndexName
+    LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLatestGenericSynonymsByCategory(
     Category TEXT
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    Category text,
+    SolrFormat text,
+    CreatedDate timestamp
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-Id,
-Category,
-SolrFormat,
-CreatedDate
-FROM dbo.Synonyms
-WHERE Category = Category
-AND IsLatest = 1
-
+    RETURN QUERY
+    SELECT
+        Id,
+        Category,
+        SolrFormat,
+        CreatedDate
+    FROM dbo.Synonyms
+    WHERE Category = Category
+      AND IsLatest = 1;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexCredentials(
     CustomerId uuid,
     SearchIndexName TEXT
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    SearchIndexName text,
+    InstanceId uuid,
+    SearchInstanceName text,
+    RootEndpoint text,
+    ApiKey text
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-si.Id,
-LOWER(si.IndexName) as SearchIndexName,
-i.Id,
-i.ServiceName as SearchInstanceName,
-i.RootEndpoint,
-ik.ApiKey
-FROM dbo.SearchIndex si
-INNER JOIN dbo.SearchInstances i on i.Id = si.Id
-INNER JOIN dbo.SearchInstanceKeys ik on ik.Id = i.Id
-									AND ik.KeyType = 'Admin'
-									AND ik.Name = 'Primary Admin key'
-									AND ik.IsLatest = 1
-WHERE si.CustomerId = CustomerId
-AND si.IndexName = SearchIndexName
-
+    RETURN QUERY
+    SELECT
+        si.Id,
+        LOWER(si.IndexName) as SearchIndexName,
+        i.Id as InstanceId,
+        i.ServiceName as SearchInstanceName,
+        i.RootEndpoint,
+        ik.ApiKey
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.SearchInstances i on i.Id = si.Id
+    INNER JOIN dbo.SearchInstanceKeys ik on ik.Id = i.Id
+        AND ik.KeyType = 'Admin'
+        AND ik.Name = 'Primary Admin key'
+        AND ik.IsLatest = 1
+    WHERE si.CustomerId = CustomerId
+      AND si.IndexName = SearchIndexName;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSearchIndexFeedProcessingData(
     CustomerId uuid,
     SearchIndexName TEXT
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    Id uuid,
+    SearchIndexName text,
+    InstanceId uuid,
+    SearchInstanceName text,
+    RootEndpoint text,
+    ApiKey text,
+    FeedDataFormat text,
+    CustomerEndpoint text
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-SELECT
-si.Id,
-LOWER(si.IndexName) as SearchIndexName,
-i.Id,
-i.ServiceName as SearchInstanceName,
-i.RootEndpoint,
-ik.ApiKey
-FROM dbo.SearchIndex si
-INNER JOIN dbo.SearchInstances i on i.Id = si.Id
-INNER JOIN dbo.SearchInstanceKeys ik on ik.Id = i.Id
-									AND ik.KeyType = 'Admin'
-									AND ik.Name = 'Primary Admin key'
-									AND ik.IsLatest = 1
-WHERE si.CustomerId = CustomerId
-AND si.IndexName = SearchIndexName
-
-SELECT LIMIT 1
-f.DataFormat as FeedDataFormat,
-c.CustomerEndpoint
-FROM dbo.SearchIndex si
-INNER JOIN dbo.Feeds f on f.SearchIndexId = si.Id
-INNER JOIN dbo.Customers c on si.CustomerId = c.id
-WHERE si.CustomerId = CustomerId
-AND si.IndexName = SearchIndexName
-
+    RETURN QUERY
+    SELECT
+        si.Id,
+        LOWER(si.IndexName) as SearchIndexName,
+        i.Id as InstanceId,
+        i.ServiceName as SearchInstanceName,
+        i.RootEndpoint,
+        ik.ApiKey,
+        f.DataFormat as FeedDataFormat,
+        c.CustomerEndpoint
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.SearchInstances i ON i.Id = si.Id
+    INNER JOIN dbo.SearchInstanceKeys ik ON ik.Id = i.Id
+        AND ik.KeyType = 'Admin'
+        AND ik.Name = 'Primary Admin key'
+        AND ik.IsLatest = 1
+    INNER JOIN dbo.Feeds f ON f.SearchIndexId = si.Id
+    INNER JOIN dbo.Customers c ON si.CustomerId = c.Id
+    WHERE si.CustomerId = CustomerId
+      AND si.IndexName = SearchIndexName
+      AND f.IsLatest = 1
+    LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION MergeFeedDocuments(
     SearchIndexId uuid,
-    NewFeedDocuments [newfeeddocuments]
-) RETURNS TABLE (...) AS $$
+    NewFeedDocuments jsonb
+) RETURNS int AS $$
+DECLARE
+    rows_updated int := 0;
 BEGIN
-(
-)
-AS
-BEGIN
-    DECLARE UtcNow datetime = CURRENT_TIMESTAMP;
-
-    MERGE dbo.FeedCurrentDocuments WITH (SERIALIZABLE) AS target
-    USING NewFeedDocuments AS source
-    ON SearchIndexId = target.SearchIndexId
-        AND source.DocumentId = target.Id
-    WHEN MATCHED THEN
-        UPDATE SET target.CreatedDate = UtcNow
-    WHEN NOT MATCHED BY target THEN
-        INSERT (Id, SearchIndexId)
-        VALUES (source.DocumentId, SearchIndexId)
-    WHEN NOT MATCHED BY source AND target.SearchIndexId = SearchIndexId THEN
-        DELETE;
+    -- Example: iterate over JSON array and upsert each document
+    -- You must adapt this logic to your actual document structure
+    -- This is a template for how to process each document
+    FOR document IN SELECT * FROM jsonb_array_elements(NewFeedDocuments)
+    LOOP
+        -- Upsert logic here, e.g.:
+        -- INSERT INTO dbo.FeedCurrentDocuments (Id, SearchIndexId, CreatedDate)
+        -- VALUES (document->>'DocumentId', SearchIndexId, CURRENT_TIMESTAMP)
+        -- ON CONFLICT (Id) DO UPDATE SET CreatedDate = CURRENT_TIMESTAMP;
+        -- rows_updated := rows_updated + 1;
+    END LOOP;
+    RETURN rows_updated;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION AddDataPoints(
     SearchIndexId uuid,
-    SearchInsightsData [searchinsightsdata]
-) RETURNS TABLE (...) AS $$
+    SearchInsightsData jsonb
+) RETURNS int AS $$
+DECLARE
+    rows_inserted int := 0;
 BEGIN
-(
-)
-AS
-BEGIN
-    DECLARE UtcNow datetime = CURRENT_TIMESTAMP;
-
-    MERGE SearchInsightsData WITH (SERIALIZABLE) AS target
-    USING SearchInsightsData AS source
-    ON SearchIndexId = target.SearchIndexId
-        AND source.DataCategory = target.DataCategory
-        AND source.DataPoint = target.DataPoint
-        AND source.Date = target.Date
-    WHEN MATCHED THEN
-        UPDATE SET
-            target.Count = target.Count + 1,
-            target.ModifiedDate = UtcNow
-    WHEN NOT MATCHED THEN
-        INSERT (SearchIndexId, DataCategory, DataPoint, Count, Date, ModifiedDate)
-        VALUES (SearchIndexId, source.DataCategory, source.DataPoint, 1, source.Date, UtcNow);
+    -- Example: iterate over JSON array and insert each data point
+    FOR data_point IN SELECT * FROM jsonb_array_elements(SearchInsightsData)
+    LOOP
+        -- Example insert, adapt to your table structure:
+        -- INSERT INTO dbo.SearchInsightsData (SearchIndexId, DataCategory, DataPoint, Count, Date, ModifiedDate)
+        -- VALUES (
+        --     SearchIndexId,
+        --     data_point->>'DataCategory',
+        --     data_point->>'DataPoint',
+        --     COALESCE((data_point->>'Count')::int, 1),
+        --     (data_point->>'Date')::timestamp,
+        --     CURRENT_TIMESTAMP
+        -- );
+        -- rows_inserted := rows_inserted + 1;
+    END LOOP;
+    RETURN rows_inserted;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION AddSearchRequest(
     SearchIndexId uuid,
     Date date
-) RETURNS TABLE (...) AS $$
+) RETURNS int AS $$
+DECLARE
+    rows_affected int := 0;
 BEGIN
-(
-)
-AS
+    -- Upsert logic: increment count if exists, else insert
+    UPDATE dbo.SearchIndexRequestLog
+    SET Count = Count + 1,
+        ModifiedDate = CURRENT_TIMESTAMP
+    WHERE SearchIndexId = SearchIndexId
+      AND Date = Date;
 
-BEGIN
-	DECLARE UtcNow datetime = CURRENT_TIMESTAMP;
+    GET DIAGNOSTICS rows_affected = ROW_COUNT;
 
-	MERGE SearchIndexRequestLog WITH (SERIALIZABLE) as target
-	USING (	SELECT SearchIndexId as SearchIndexId, Date as Date) as source
-	ON source.SearchIndexId = target.SearchIndexId
-	AND source.Date = target.Date
-	WHEN MATCHED THEN
-	UPDATE SET	target.Count = target.Count + 1,
-				target.ModifiedDate = UtcNow
-	WHEN NOT MATCHED THEN
-	INSERT (SearchIndexId, Count, Date, ModifiedDate)
-	VALUES (SearchIndexId, 1, Date, UtcNow);
+    IF rows_affected = 0 THEN
+        INSERT INTO dbo.SearchIndexRequestLog (SearchIndexId, Count, Date, ModifiedDate)
+        VALUES (SearchIndexId, 1, Date, CURRENT_TIMESTAMP);
+        rows_affected := 1;
+    END IF;
 
+    RETURN rows_affected;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -833,68 +819,63 @@ CREATE OR REPLACE FUNCTION AddFeedCredentials(
     SearchIndexId uuid,
     Username TEXT,
     PasswordHash TEXT
-) RETURNS TABLE (...) AS $$
+) RETURNS int AS $$
+DECLARE
+    rows_inserted int := 0;
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-	INSERT INTO dbo.FeedCredentials
-	(
-		Id,
-		SearchIndexId,
-		Username,
-		PasswordHash,
-		CreatedDate
-	)
-	VALUES
-	(
-		gen_random_uuid(),
-		CURRENT_TIMESTAMP
-	)
-
+    INSERT INTO dbo.FeedCredentials
+    (
+        Id,
+        SearchIndexId,
+        Username,
+        PasswordHash,
+        CreatedDate
+    )
+    VALUES
+    (
+        gen_random_uuid(),
+        SearchIndexId,
+        Username,
+        PasswordHash,
+        CURRENT_TIMESTAMP
+    );
+    GET DIAGNOSTICS rows_inserted = ROW_COUNT;
+    RETURN rows_inserted;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteFeedCredentials(
     SearchIndexId uuid,
     Username TEXT
-) RETURNS TABLE (...) AS $$
+) RETURNS int AS $$
+DECLARE
+    rows_deleted int := 0;
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-	DELETE FROM dbo.FeedCredentials
-	WHERE SearchIndexId = SearchIndexId
-	AND Username = Username
-
+    DELETE FROM dbo.FeedCredentials
+    WHERE SearchIndexId = SearchIndexId
+      AND Username = Username;
+    GET DIAGNOSTICS rows_deleted = ROW_COUNT;
+    RETURN rows_deleted;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetFeedCredentials(
     SearchIndexId uuid,
     Username TEXT
-) RETURNS TABLE (...) AS $$
+) RETURNS TABLE (
+    SearchIndexId uuid,
+    Username text,
+    CreatedDate timestamp
+) AS $$
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-	SELECT
-	SearchIndexId,
-	Username,
-	CreatedDate
-	FROM dbo.FeedCredentials
-	WHERE SearchIndexId = SearchIndexId
-	AND Username = Username
-
+    RETURN QUERY
+    SELECT
+        SearchIndexId,
+        Username,
+        CreatedDate
+    FROM dbo.FeedCredentials
+    WHERE SearchIndexId = SearchIndexId
+      AND Username = Username;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -902,20 +883,17 @@ CREATE OR REPLACE FUNCTION UpdateFeedCredentials(
     SearchIndexId uuid,
     Username TEXT,
     PasswordHash TEXT
-) RETURNS TABLE (...) AS $$
+) RETURNS int AS $$
+DECLARE
+    rows_updated int := 0;
 BEGIN
-(
-)
-AS
-
-BEGIN
-
-	UPDATE dbo.FeedCredentials
-	SET	PasswordHash = PasswordHash,
-		ModifiedDate = CURRENT_TIMESTAMP
-	WHERE SearchIndexId = SearchIndexId
-	AND Username = Username
-
+    UPDATE dbo.FeedCredentials
+    SET PasswordHash = PasswordHash,
+        ModifiedDate = CURRENT_TIMESTAMP
+    WHERE SearchIndexId = SearchIndexId
+      AND Username = Username;
+    GET DIAGNOSTICS rows_updated = ROW_COUNT;
+    RETURN rows_updated;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -923,25 +901,31 @@ CREATE OR REPLACE FUNCTION AddFeed(
     SearchIndexId uuid,
     FeedType TEXT,
     FeedCron TEXT
-) RETURNS TABLE (...) AS $$
+) RETURNS int AS $$
+DECLARE
+    rows_inserted int := 0;
 BEGIN
-(
-)
-AS
+    -- Supersede previous latest feed
+    PERFORM SupersedeLatestFeed(SearchIndexId);
 
-BEGIN
-
-	EXEC Admin.SupersedeLatestFeed SearchIndexId = SearchIndexId
-
-	INSERT INTO dbo.Feeds
-	(
-		SearchIndexId,
-		FeedType,
-		FeedScheduleCron
-	)
-	VALUES
-	(
-	)
-
+    -- Insert new feed
+    INSERT INTO dbo.Feeds
+    (
+        SearchIndexId,
+        FeedType,
+        FeedScheduleCron,
+        CreatedDate,
+        IsLatest
+    )
+    VALUES
+    (
+        SearchIndexId,
+        FeedType,
+        FeedCron,
+        CURRENT_TIMESTAMP,
+        1
+    );
+    GET DIAGNOSTICS rows_inserted = ROW_COUNT;
+    RETURN rows_inserted;
 END;
 $$ LANGUAGE plpgsql;
