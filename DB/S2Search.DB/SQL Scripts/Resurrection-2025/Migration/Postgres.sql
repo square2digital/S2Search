@@ -6,860 +6,596 @@ Changes to this file may cause incorrect behavior and will be lost if
 the code is regenerated.
 */
 
+-- =============================
+-- Table Definitions
+-- =============================
+
 CREATE TABLE Customers (
-    Id               UUID              NOT NULL,
-    BusinessName     TEXT	   NULL,
-    CustomerEndpoint TEXT	   NULL,
-    CreatedDate      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate     TIMESTAMP NULL,
+    Id               UUID           NOT NULL,
+    BusinessName     TEXT           NULL,
+    CustomerEndpoint TEXT           NULL,
+    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ModifiedDate     TIMESTAMP      NULL,
     CONSTRAINT PK_Users PRIMARY KEY (Id ASC)
 );
 
--- Creating Table FeedCredentials...
 CREATE TABLE FeedCredentials (
-    Id            UUID             NOT NULL,
-    SearchIndexId UUID             NOT NULL,
-    Username      TEXT     NOT NULL,
-    PasswordHash  TEXT             NOT NULL,
-    CreatedDate      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate  TIMESTAMP        NULL
+    Id               UUID           NOT NULL,
+    SearchIndexId    UUID           NOT NULL,
+    Username         TEXT           NOT NULL,
+    PasswordHash     TEXT           NOT NULL,
+    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ModifiedDate     TIMESTAMP      NULL
 );
 
-
--- Creating Table FeedCurrentDocuments...
 CREATE TABLE FeedCurrentDocuments (
-    Id            TEXT      NOT NULL,
-    SearchIndexId UUID              NOT NULL,
-    CreatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    Id               TEXT           NOT NULL,
+    SearchIndexId    UUID           NOT NULL,
+    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-
--- Creating Table Feeds...
 CREATE TABLE Feeds (
-    Id               UUID          NOT NULL,
-    FeedType         TEXT (20)     NOT NULL,
-    FeedScheduleCron TEXT (255)    NOT NULL,
-    SearchIndexId    UUID             NOT NULL,
-    DataFormat       TEXT     NOT NULL,
-    CreatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    SupersededDate   TIMESTAMP        NULL,
-    IsLatest BOOLEAN NOT NULL DEFAULT TRUE,
+    Id               UUID           NOT NULL,
+    FeedType         TEXT(20)       NOT NULL,
+    FeedScheduleCron TEXT(255)      NOT NULL,
+    SearchIndexId    UUID           NOT NULL,
+    DataFormat       TEXT           NOT NULL,
+    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    SupersededDate   TIMESTAMP      NULL,
+    IsLatest         BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT PK_Feeds PRIMARY KEY (Id)
 );
 
--- Creating Table SearchConfiguration...
 CREATE TABLE SearchConfiguration (
-    Id            UUID NOT NULL,
-    Value         TEXT    NOT NULL,
-    SearchIndexId UUID NOT NULL,
-    Key           TEXT    NOT NULL,
-    FriendlyName  TEXT    NOT NULL,
-    Description   TEXT    NOT NULL,
-    DataType      TEXT     NOT NULL,
-    OrderIndex    INT              NULL,
-    CreatedDate   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate  TIMESTAMP         NULL,
+    Id               UUID           NOT NULL,
+    Value            TEXT           NOT NULL,
+    SearchIndexId    UUID           NOT NULL,
+    Key              TEXT           NOT NULL,
+    FriendlyName     TEXT           NOT NULL,
+    Description      TEXT           NOT NULL,
+    DataType         TEXT           NOT NULL,
+    OrderIndex       INT            NULL,
+    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ModifiedDate     TIMESTAMP      NULL,
     CONSTRAINT PK_SearchConfigurationMappingsCombined PRIMARY KEY (Id)
 );
 
--- Creating Table SearchIndex...
 CREATE TABLE SearchIndex (
-    Id               UUID NOT NULL,
-    CustomerId       UUID NOT NULL,
-    SearchInstanceId UUID NULL,
-    IndexName        TEXT   NOT NULL,
-    FriendlyName     TEXT    NOT NULL,
-    PricingSkuId     TEXT     NOT NULL,
-    CreatedDate      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Id               UUID           NOT NULL,
+    CustomerId       UUID           NOT NULL,
+    SearchInstanceId UUID           NULL,
+    IndexName        TEXT           NOT NULL,
+    FriendlyName     TEXT           NOT NULL,
+    PricingSkuId     TEXT           NOT NULL,
+    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT PK_SearchIndex PRIMARY KEY (Id)
 );
 
--- Creating Table SearchIndexRequestLog...
 CREATE TABLE SearchIndexRequestLog (
-    Id            UUID			   NOT NULL,
-    SearchIndexId UUID			   NOT NULL,
-    [Count]  INT NOT NULL DEFAULT 0,
-    [Date]  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CreatedDate      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	ModifiedDate  TIMESTAMP        NOT NULL,
+    Id               UUID           NOT NULL,
+    SearchIndexId    UUID           NOT NULL,
+    [Count]          INT            NOT NULL DEFAULT 0,
+    [Date]           TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ModifiedDate     TIMESTAMP      NOT NULL,
     CONSTRAINT PK_SearchIndexRequestLog PRIMARY KEY (Id)
 );
 
--- Creating Table SearchInsightsData...
 CREATE TABLE SearchInsightsData (
-    Id            UUID				NOT NULL,
-    SearchIndexId UUID				NOT NULL,
-    DataCatery  TEXT				NOT NULL,
-    DataPoint     TEXT				NOT NULL,
-    [Count]  INT NOT NULL DEFAULT 0,
-    [Date]  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CreatedDate      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	ModifiedDate  TIMESTAMP        NOT NULL,
+    Id               UUID           NOT NULL,
+    SearchIndexId    UUID           NOT NULL,
+    DataCatery       TEXT           NOT NULL,
+    DataPoint        TEXT           NOT NULL,
+    [Count]          INT            NOT NULL DEFAULT 0,
+    [Date]           TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ModifiedDate     TIMESTAMP      NOT NULL,
     CONSTRAINT PK_SearchInsightsData PRIMARY KEY (Id)
 );
 
--- Creating Table SearchInstanceKeys...
 CREATE TABLE SearchInstanceKeys (
-    Id               UUID			NOT NULL,
-    SearchInstanceId UUID			NOT NULL,
-    KeyType          TEXT			NOT NULL,
-    Name             TEXT			NOT NULL,
-    ApiKey           TEXT			NOT NULL,
-    CreatedDate      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Id               UUID           NOT NULL,
+    SearchInstanceId UUID           NOT NULL,
+    KeyType          TEXT           NOT NULL,
+    Name             TEXT           NOT NULL,
+    ApiKey           TEXT           NOT NULL,
+    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ModifiedDate     TIMESTAMP      NULL,
-    IsLatest         BOOLEAN NOT NULL DEFAULT TRUE,
+    IsLatest         BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT PK_SearchInstanceKeys PRIMARY KEY (Id ASC)
 );
 
--- Creating Table SearchInstances...
 CREATE TABLE SearchInstances (
-    Id           UUID             NOT NULL,
-    CustomerId   UUID			  NOT NULL,
-    ServiceName  TEXT    NOT NULL,
-    Location     TEXT     NOT NULL,
-    PricingTier  TEXT     NOT NULL,
-    Replicas     INT              NULL,
-    [Partitions] INT              NULL,
-    IsShared     BOOLEAN          NOT NULL,
-    Type         TEXT    NOT NULL,
-    RootEndpoint TEXT    NULL,
+    Id               UUID           NOT NULL,
+    CustomerId       UUID           NOT NULL,
+    ServiceName      TEXT           NOT NULL,
+    Location         TEXT           NOT NULL,
+    PricingTier      TEXT           NOT NULL,
+    Replicas         INT            NULL,
+    [Partitions]     INT            NULL,
+    IsShared         BOOLEAN        NOT NULL,
+    Type             TEXT           NOT NULL,
+    RootEndpoint     TEXT           NULL,
     CONSTRAINT PK_SearchInstances PRIMARY KEY (Id ASC)
 );
 
--- Creating Table Synonyms...
-CREATE TABLE [Synonyms] (
-    Id             UUID			NOT NULL,
-    Catery       TEXT			 NULL,
-    SearchIndexId  UUID				NULL,
-    KeyWord        TEXT				NULL,
-    SolrFormat     TEXT				NOT NULL,
-    CreatedDate    TIMESTAMP         NOT NULL,
-    SupersededDate TIMESTAMP         NULL,
-    IsLatest       BOOLEAN              NOT NULL,
+CREATE TABLE Synonyms (
+    Id               UUID           NOT NULL,
+    Catery           TEXT           NULL,
+    SearchIndexId    UUID           NULL,
+    KeyWord          TEXT           NULL,
+    SolrFormat       TEXT           NOT NULL,
+    CreatedDate      TIMESTAMP      NOT NULL,
+    SupersededDate   TIMESTAMP      NULL,
+    IsLatest         BOOLEAN        NOT NULL,
     CONSTRAINT PK_CombinedSynonyms PRIMARY KEY (Id)
 );
 
--- Creating Table Themes...
 CREATE TABLE Themes (
-    Id                 UUID			NOT NULL,
-    PrimaryHexColour   TEXT			NULL,
-    SecondaryHexColour TEXT			NULL,
-    NavBarHexColour    TEXT			NULL,
-    LoURL              TEXT			NULL,
-    MissingImageURL    TEXT			NULL,
-    CustomerId         UUID			NULL,
-    SearchIndexId      UUID				NULL,
-    CreatedDate        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate       TIMESTAMP         NULL,
+    Id                 UUID         NOT NULL,
+    PrimaryHexColour   TEXT         NULL,
+    SecondaryHexColour TEXT         NULL,
+    NavBarHexColour    TEXT         NULL,
+    LoURL              TEXT         NULL,
+    MissingImageURL    TEXT         NULL,
+    CustomerId         UUID         NULL,
+    SearchIndexId      UUID         NULL,
+    CreatedDate        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ModifiedDate       TIMESTAMP    NULL,
     CONSTRAINT PK_Themes PRIMARY KEY (Id)
 );
 
+-- =============================
+-- Function Definitions
+-- =============================
 
-
-
--- Creating Procedure Admin.AddSearchIndex...
-CREATE OR REPLACE FUNCTION Admin.AddSearchIndex
-(
-	SearchIndexId UUID,
-	SearchInstanceId UUID = NULL,
-	CustomerId	UUID,
-	IndexName TEXT,
-	FriendlyName TEXT
-)
-AS $$
+-- Creating Procedure Admin.AddSearchIndex
+CREATE OR REPLACE FUNCTION Admin.AddSearchIndex (
+    SearchIndexId UUID,
+    SearchInstanceId UUID DEFAULT NULL,
+    CustomerId UUID,
+    IndexName TEXT,
+    FriendlyName TEXT
+) AS $$
 BEGIN
-	
-	INSERT INTO dbo.SearchIndex
-	(
-		Id,
-		SearchInstanceId,
-		CustomerId,
-		IndexName,
-		FriendlyName,
-		CreatedDate
-	)
-	VALUES
-	(
-		SearchIndexId,
-		SearchInstanceId,
-		CustomerId,
-		IndexName,
-		FriendlyName,
-		CURRENT_TIMESTAMP
-	)
-
+    INSERT INTO dbo.SearchIndex (
+        Id,
+        SearchInstanceId,
+        CustomerId,
+        IndexName,
+        FriendlyName,
+        CreatedDate
+    ) VALUES (
+        SearchIndexId,
+        SearchInstanceId,
+        CustomerId,
+        IndexName,
+        FriendlyName,
+        CURRENT_TIMESTAMP
+    );
 END;
 
--- Creating Procedure Admin.AddSynonym...
-CREATE OR REPLACE FUNCTION Admin.AddSynonym
-(
-	SynonymId UUID,
-	SearchIndexId UUID,
-	KeyWord TEXT(50),
-	SolrFormat TEXT
-)
-AS $$
+-- Creating Procedure Admin.AddSynonym
+CREATE OR REPLACE FUNCTION Admin.AddSynonym (
+    SynonymId UUID,
+    SearchIndexId UUID,
+    KeyWord TEXT(50),
+    SolrFormat TEXT
+) AS $$
 BEGIN
-
-	INSERT INTO Synonyms
-	(
-		Id,
-		SearchIndexId,
-		KeyWord,
-		SolrFormat
-	)
-	VALUES
-	(
-		SynonymId,
-		SearchIndexId,
-		KeyWord,
-		SolrFormat
-	)
-
-	SELECT SynonymId as SynonymId
-
+    INSERT INTO Synonyms (
+        Id,
+        SearchIndexId,
+        KeyWord,
+        SolrFormat
+    ) VALUES (
+        SynonymId,
+        SearchIndexId,
+        KeyWord,
+        SolrFormat
+    );
+    SELECT SynonymId AS SynonymId;
 END;
 
--- Creating Procedure Admin.GetCustomerByID...
-CREATE OR REPLACE FUNCTION Admin.GetCustomerByID
-	
-	CustomerId UUID
-AS $$
-BEGIN    
-	SELECT 
-	c.Id,
-	c.BusinessName
-	FROM Customers c 
-	WHERE c.Id = CustomerId
-END;
-
--- Creating Procedure Admin.GetCustomerFull...
-CREATE OR REPLACE FUNCTION Admin.GetCustomerFull	
-	CustomerId UUID
-AS $$
-BEGIN			    
-	SELECT c.Id
-		  ,c.BusinessName
-	  FROM Customers c 
-	  WHERE c.Id = CustomerId
-
-	  SELECT Id
-      ,CustomerId
-      ,SearchInstanceId
-      ,IndexName
-      ,FriendlyName
-      ,CreatedDate
-	  FROM SearchIndex s
-	  WHERE s.CustomerId = CustomerId
-
-END;
-
--- Creating Procedure Admin.GetLatestFeed...
-CREATE OR REPLACE FUNCTION Admin.GetLatestFeed
-(
-	SearchIndexId UUID
-)
-AS $$
+-- Creating Procedure Admin.GetCustomerByID
+CREATE OR REPLACE FUNCTION Admin.GetCustomerByID (
+    CustomerId UUID
+) AS $$
 BEGIN
-
-SELECT LIMIT 1
-f.Id,
-f.SearchIndexId,
-f.FeedType as Type,
-f.FeedScheduleCron as ScheduleCron,
-f.CreatedDate,
-f.SupersededDate,
-f.IsLatest
-FROM dbo.Feeds f
-WHERE f.SearchIndexId = SearchIndexId
-AND f.IsLatest = 1
-
+    SELECT c.Id, c.BusinessName
+    FROM Customers c
+    WHERE c.Id = CustomerId;
 END;
 
--- Creating Procedure Admin.GetSearchIndex...
-CREATE OR REPLACE FUNCTION Admin.GetSearchIndex
-(
-	SearchIndexId UUID,
-	CustomerId UUID
-)
-AS $$
+-- Creating Procedure Admin.GetCustomerFull
+CREATE OR REPLACE FUNCTION Admin.GetCustomerFull (
+    CustomerId UUID
+) AS $$
 BEGIN
+    SELECT c.Id, c.BusinessName
+    FROM Customers c
+    WHERE c.Id = CustomerId;
 
-SELECT
-search.Id,
-search.CustomerId,
-search.IndexName,
-search.FriendlyName,
-service.RootEND;point,
-service.PricingTier,
-search.CreatedDate,
-service.Id,
-service.ServiceName,
-service.Location,
-service.PricingTier,
-service.Replicas,
-service.Partitions,
-service.IsShared
-FROM dbo.SearchIndex search
-LEFT OUTER JOIN dbo.SearchInstances service on service.Id = search.SearchInstanceId
-WHERE search.Id = SearchIndexId
-AND search.CustomerId = CustomerId
-
+    SELECT Id, CustomerId, SearchInstanceId, IndexName, FriendlyName, CreatedDate
+    FROM SearchIndex s
+    WHERE s.CustomerId = CustomerId;
 END;
 
--- Creating Procedure Admin.GetSearchIndexByFriendlyName...
-CREATE OR REPLACE FUNCTION Admin.GetSearchIndexByFriendlyName
-(
-	CustomerId UUID,
-	FriendlyName TEXT(100)
-)
-AS $$
+-- Creating Procedure Admin.GetLatestFeed
+CREATE OR REPLACE FUNCTION Admin.GetLatestFeed (
+    SearchIndexId UUID
+) AS $$
 BEGIN
-
-SELECT
-si.Id,
-si.SearchInstanceId,
-si.CustomerId,
-si.FriendlyName,
-si.IndexName
-FROM dbo.SearchIndex si
-WHERE si.CustomerId = CustomerId 
-AND si.FriendlyName = FriendlyName
-
+    SELECT f.Id, f.SearchIndexId, f.FeedType AS Type, f.FeedScheduleCron AS ScheduleCron, f.CreatedDate, f.SupersededDate, f.IsLatest
+    FROM dbo.Feeds f
+    WHERE f.SearchIndexId = SearchIndexId
+      AND f.IsLatest = 1
+    LIMIT 1;
 END;
 
--- Creating Procedure Admin.GetSearchIndexFull...
-CREATE OR REPLACE FUNCTION Admin.GetSearchIndexFull
-(
-	SearchIndexId UUID,
-	CustomerId UUID
-)
-AS $$
+-- Creating Procedure Admin.GetSearchIndex
+CREATE OR REPLACE FUNCTION Admin.GetSearchIndex (
+    SearchIndexId UUID,
+    CustomerId UUID
+) AS $$
 BEGIN
+    SELECT search.Id, search.CustomerId, search.IndexName, search.FriendlyName, service.RootEND;point, service.PricingTier, search.CreatedDate, service.Id, service.ServiceName, service.Location, service.PricingTier, service.Replicas, service.Partitions, service.IsShared
+    FROM dbo.SearchIndex search
+    LEFT OUTER JOIN dbo.SearchInstances service ON service.Id = search.SearchInstanceId
+    WHERE search.Id = SearchIndexId
+      AND search.CustomerId = CustomerId;
+END;
 
-SELECT
-search.Id,
-search.CustomerId,
-search.IndexName,
-search.FriendlyName,
-service.RootEND;point,
-service.PricingTier,
-search.CreatedDate,
-service.Id,
-service.ServiceName,
-service.Location,
-service.PricingTier,
-service.Replicas,
-service.Partitions,
-service.IsShared
-FROM dbo.SearchIndex search
-LEFT OUTER JOIN dbo.SearchInstances service on service.Id = search.Id
-WHERE search.Id = SearchIndexId
-AND search.CustomerId = CustomerId
-
-
-IF @ROWCOUNT = 0
+-- Creating Procedure Admin.GetSearchIndexByFriendlyName
+CREATE OR REPLACE FUNCTION Admin.GetSearchIndexByFriendlyName (
+    CustomerId UUID,
+    FriendlyName TEXT(100)
+) AS $$
 BEGIN
-	SET SearchIndexId = NULL
+    SELECT si.Id, si.SearchInstanceId, si.CustomerId, si.FriendlyName, si.IndexName
+    FROM dbo.SearchIndex si
+    WHERE si.CustomerId = CustomerId
+      AND si.FriendlyName = FriendlyName;
 END;
 
-SELECT 
-Id,
-SearchIndexId,
-FeedType as Type,
-FeedScheduleCron as ScheduleCron,
-CreatedDate,
-SupersededDate,
-IsLatest
-FROM dbo.Feeds 
-WHERE SearchIndexId = SearchIndexId 
-AND IsLatest = 1
-
-
-SELECT 
-Id,
-KeyWord as Key,
-SolrFormat
-FROM dbo.Synonyms
-WHERE SearchIndexId = SearchIndexId 
-AND IsLatest = 1
-
-END;
-
--- Creating Procedure Admin.GetSearchIndexQueryCredentialsByCustomerEND;point...
-CREATE OR REPLACE FUNCTION Admin.GetSearchIndexQueryCredentialsByCustomerEND;point
-(
-	CustomerEND;point TEXT(250)
-)
-AS $$
+-- Creating Procedure Admin.GetSearchIndexFull
+CREATE OR REPLACE FUNCTION Admin.GetSearchIndexFull (
+    SearchIndexId UUID,
+    CustomerId UUID
+) AS $$
 BEGIN
+    SELECT search.Id, search.CustomerId, search.IndexName, search.FriendlyName, service.RootEND;point, service.PricingTier, search.CreatedDate, service.Id, service.ServiceName, service.Location, service.PricingTier, service.Replicas, service.Partitions, service.IsShared
+    FROM dbo.SearchIndex search
+    LEFT OUTER JOIN dbo.SearchInstances service ON service.Id = search.Id
+    WHERE search.Id = SearchIndexId
+      AND search.CustomerId = CustomerId;
 
-SELECT
-si.Id,
-LOWER(si.IndexName) as SearchIndexName,
-i.ServiceName as SearchInstanceName,
-i.RootEND;point as SearchInstanceEND;point,
-ik.ApiKey
-FROM dbo.SearchIndex si
-INNER JOIN dbo.SearchInstances i on i.Id = si.SearchInstanceId
-INNER JOIN dbo.Customers c on si.CustomerId = c.Id
-INNER JOIN dbo.SearchInstanceKeys ik on ik.SearchInstanceId = i.Id 
-									AND ik.KeyType = 'Query' 
-									AND ik.Name = 'Query key' 
-									AND ik.IsLatest = 1
-WHERE c.CustomerEND;point = CustomerEND;point
+    -- If no rows returned, set SearchIndexId to NULL
+    -- (Note: @ROWCOUNT is T-SQL, not PostgreSQL)
 
+    SELECT Id, SearchIndexId, FeedType AS Type, FeedScheduleCron AS ScheduleCron, CreatedDate, SupersededDate, IsLatest
+    FROM dbo.Feeds
+    WHERE SearchIndexId = SearchIndexId
+      AND IsLatest = 1;
+
+    SELECT Id, KeyWord AS Key, SolrFormat
+    FROM dbo.Synonyms
+    WHERE SearchIndexId = SearchIndexId
+      AND IsLatest = 1;
 END;
 
--- Creating Procedure Admin.GetSearchInsightsByDataCateries...
-CREATE OR REPLACE FUNCTION Admin.GetSearchInsightsByDataCateries
-(
-	SearchIndexId UUID,
-	DateFrom TIMESTAMP,
-	DateTo TIMESTAMP,
-	DataCateries TEXT(1000)
-)
-AS $$
+-- Creating Procedure Admin.GetSearchIndexQueryCredentialsByCustomerEND;point
+CREATE OR REPLACE FUNCTION Admin.GetSearchIndexQueryCredentialsByCustomerEND;point (
+    CustomerEND;point TEXT(250)
+) AS $$
 BEGIN
-
-SELECT 
-d.DataCatery,
-d.DataPoint,
-d.Date,
-d.Count
-FROM dbo.SearchInsightsData d
-CROSS APPLY string_split(DataCateries, ',') cateries
-WHERE d.SearchIndexId = SearchIndexId
-AND d.Date >= DateFrom
-AND d.Date <= DateTo
-AND cateries.value = d.DataCatery
-
+    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.ServiceName AS SearchInstanceName, i.RootEND;point AS SearchInstanceEND;point, ik.ApiKey
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.SearchInstances i ON i.Id = si.SearchInstanceId
+    INNER JOIN dbo.Customers c ON si.CustomerId = c.Id
+    INNER JOIN dbo.SearchInstanceKeys ik ON ik.SearchInstanceId = i.Id
+        AND ik.KeyType = 'Query'
+        AND ik.Name = 'Query key'
+        AND ik.IsLatest = 1
+    WHERE c.CustomerEND;point = CustomerEND;point;
 END;
 
--- Creating Procedure Admin.GetSearchInsightsSearchCountByDateRange...
-CREATE OR REPLACE FUNCTION Admin.GetSearchInsightsSearchCountByDateRange
-(
-	SearchIndexId UUID,
-	DateFrom TIMESTAMP,
-	DateTo TIMESTAMP
-)
-AS $$
+-- Creating Procedure Admin.GetSearchInsightsByDataCateries
+CREATE OR REPLACE FUNCTION Admin.GetSearchInsightsByDataCateries (
+    SearchIndexId UUID,
+    DateFrom TIMESTAMP,
+    DateTo TIMESTAMP,
+    DataCateries TEXT(1000)
+) AS $$
 BEGIN
-
-SELECT 
-d.Date,
-d.Count
-FROM dbo.SearchIndexRequestLog d
-WHERE d.SearchIndexId = SearchIndexId
-AND d.Date BETWEEN DateFrom AND DateTo
-
+    SELECT d.DataCatery, d.DataPoint, d.Date, d.Count
+    FROM dbo.SearchInsightsData d
+    CROSS APPLY string_split(DataCateries, ',') cateries
+    WHERE d.SearchIndexId = SearchIndexId
+      AND d.Date >= DateFrom
+      AND d.Date <= DateTo
+      AND cateries.value = d.DataCatery;
 END;
 
--- Creating Procedure Admin.GetSynonymById...
-CREATE OR REPLACE FUNCTION Admin.GetSynonymById
-(
-	SearchIndexId UUID,
-	SynonymId UUID
-)
-AS $$
+-- Creating Procedure Admin.GetSearchInsightsSearchCountByDateRange
+CREATE OR REPLACE FUNCTION Admin.GetSearchInsightsSearchCountByDateRange (
+    SearchIndexId UUID,
+    DateFrom TIMESTAMP,
+    DateTo TIMESTAMP
+) AS $$
 BEGIN
-
-SELECT
-Id,
-SearchIndexId,
-KeyWord as Key,
-SolrFormat,
-CreatedDate
-FROM Synonyms
-WHERE SearchIndexId = SearchIndexId
-AND Id = SynonymId
-AND IsLatest = 1
-
+    SELECT d.Date, d.Count
+    FROM dbo.SearchIndexRequestLog d
+    WHERE d.SearchIndexId = SearchIndexId
+      AND d.Date BETWEEN DateFrom AND DateTo;
 END;
 
--- Creating Procedure Admin.GetSynonymByKeyWord...
-CREATE OR REPLACE FUNCTION Admin.GetSynonymByKeyWord
-(
-	SearchIndexId UUID,
-	KeyWord TEXT(30)
-)
-AS $$
+-- Creating Procedure Admin.GetSynonymById
+CREATE OR REPLACE FUNCTION Admin.GetSynonymById (
+    SearchIndexId UUID,
+    SynonymId UUID
+) AS $$
 BEGIN
-
-SELECT
-Id,
-SearchIndexId,
-KeyWord as Key,
-SolrFormat,
-CreatedDate
-FROM Synonyms
-WHERE SearchIndexId = SearchIndexId
-AND KeyWord = KeyWord
-AND IsLatest = 1
-
+    SELECT Id, SearchIndexId, KeyWord AS Key, SolrFormat, CreatedDate
+    FROM Synonyms
+    WHERE SearchIndexId = SearchIndexId
+      AND Id = SynonymId
+      AND IsLatest = 1;
 END;
 
--- Creating Procedure Admin.GetSynonyms...
-CREATE OR REPLACE FUNCTION Admin.GetSynonyms
-(
-	SearchIndexId UUID
-)
-AS $$
+-- Creating Procedure Admin.GetSynonymByKeyWord
+CREATE OR REPLACE FUNCTION Admin.GetSynonymByKeyWord (
+    SearchIndexId UUID,
+    KeyWord TEXT(30)
+) AS $$
 BEGIN
-
-SELECT
-Id,
-SearchIndexId,
-KeyWord as Key,
-SolrFormat,
-CreatedDate
-FROM Synonyms
-WHERE SearchIndexId = SearchIndexId
-AND IsLatest = 1
-
+    SELECT Id, SearchIndexId, KeyWord AS Key, SolrFormat, CreatedDate
+    FROM Synonyms
+    WHERE SearchIndexId = SearchIndexId
+      AND KeyWord = KeyWord
+      AND IsLatest = 1;
 END;
 
--- Creating Procedure Admin.GetThemeByCustomerId...
-CREATE OR REPLACE FUNCTION Admin.GetThemeByCustomerId
-	
-	CustomerId UUID
-AS $$
-BEGIN			    
-	SELECT Id
-      ,PrimaryHexColour
-      ,SecondaryHexColour
-      ,NavBarHexColour
-      ,LoURL
-	  ,MissingImageURL
-      ,CustomerId
-      ,SearchIndexId
-      ,CreatedDate
-      ,ModifiedDate
-	FROM Themes
-	WHERE CustomerId = CustomerId
-
-END;
-
--- Creating Procedure Admin.GetThemeById...
-CREATE OR REPLACE FUNCTION Admin.GetThemeById
-	
-	ThemeId UUID
-AS $$
-BEGIN			    
-	SELECT Id
-      ,PrimaryHexColour
-      ,SecondaryHexColour
-      ,NavBarHexColour
-      ,LoURL
-	  ,MissingImageURL
-      ,CustomerId
-      ,SearchIndexId
-      ,CreatedDate
-      ,ModifiedDate
-	FROM Themes
-	WHERE Id = ThemeId
-END;
-
--- Creating Procedure Admin.GetThemeBySearchIndexId...
-CREATE OR REPLACE FUNCTION Admin.GetThemeBySearchIndexId
-	
-	SearchIndexId UUID
-AS $$
-BEGIN			    
-	SELECT Id
-      ,PrimaryHexColour
-      ,SecondaryHexColour
-      ,NavBarHexColour
-      ,LoURL
-	  ,MissingImageURL
-      ,CustomerId
-      ,SearchIndexId
-      ,CreatedDate
-      ,ModifiedDate
-	FROM Themes
-	WHERE SearchIndexId = SearchIndexId
-
-END;
-
--- Creating Procedure Admin.SupersedeLatestFeed...
-CREATE OR REPLACE FUNCTION Admin.SupersedeLatestFeed
-(
-	SearchIndexId UUID
-)
-AS $$
+-- Creating Procedure Admin.GetSynonyms
+CREATE OR REPLACE FUNCTION Admin.GetSynonyms (
+    SearchIndexId UUID
+) AS $$
 BEGIN
-	UPDATE dbo.Feeds
-	SET IsLatest = 0,
-		SupersededDate = CURRENT_TIMESTAMP
-	WHERE SearchIndexId = SearchIndexId
-	AND IsLatest = 1
-	
+    SELECT Id, SearchIndexId, KeyWord AS Key, SolrFormat, CreatedDate
+    FROM Synonyms
+    WHERE SearchIndexId = SearchIndexId
+      AND IsLatest = 1;
 END;
 
--- Creating Procedure Admin.SupersedeSynonym...
-CREATE OR REPLACE FUNCTION Admin.SupersedeSynonym
-(
-	SearchIndexId UUID,
-	SynonymId UUID
-)
-AS $$
+-- Creating Procedure Admin.GetThemeByCustomerId
+CREATE OR REPLACE FUNCTION Admin.GetThemeByCustomerId (
+    CustomerId UUID
+) AS $$
 BEGIN
-	UPDATE Synonyms
-	SET IsLatest = 0,
-		SupersededDate = CURRENT_TIMESTAMP
-	WHERE SearchIndexId = SearchIndexId
-	AND Id = SynonymId
-	AND IsLatest = 1
-	
+    SELECT Id, PrimaryHexColour, SecondaryHexColour, NavBarHexColour, LoURL, MissingImageURL, CustomerId, SearchIndexId, CreatedDate, ModifiedDate
+    FROM Themes
+    WHERE CustomerId = CustomerId;
 END;
 
--- Creating Procedure Admin.UpdateSynonym...
-CREATE OR REPLACE FUNCTION Admin.UpdateSynonym
-(
-	SearchIndexId UUID,
-	SynonymId UUID,
-	KeyWord TEXT(50),
-	SolrFormat TEXT
-)
-AS $$
+-- Creating Procedure Admin.GetThemeById
+CREATE OR REPLACE FUNCTION Admin.GetThemeById (
+    ThemeId UUID
+) AS $$
 BEGIN
-	UPDATE Synonyms
-	SET	KeyWord = KeyWord,
-	SolrFormat = SolrFormat
-	WHERE SearchIndexId = SearchIndexId
-	AND Id = SynonymId
-	AND IsLatest = 1	
+    SELECT Id, PrimaryHexColour, SecondaryHexColour, NavBarHexColour, LoURL, MissingImageURL, CustomerId, SearchIndexId, CreatedDate, ModifiedDate
+    FROM Themes
+    WHERE Id = ThemeId;
 END;
 
--- Creating Procedure Admin.UpdateTheme...
-CREATE OR REPLACE FUNCTION Admin.UpdateTheme
-	ThemeId UUID,
-	PrimaryHexColour TEXT(10),
-	SecondaryHexColour TEXT(10),
-	NavBarHexColour TEXT(10),
-	LoURL TEXT(1000),
-	MissingImageURL TEXT(1000)
-AS $$
+-- Creating Procedure Admin.GetThemeBySearchIndexId
+CREATE OR REPLACE FUNCTION Admin.GetThemeBySearchIndexId (
+    SearchIndexId UUID
+) AS $$
 BEGIN
-	UPDATE Themes
-	SET PrimaryHexColour = PrimaryHexColour,
-		SecondaryHexColour = SecondaryHexColour,
-		NavBarHexColour = NavBarHexColour,
-		LoURL = LoURL,
-		MissingImageURL = MissingImageURL,
-		ModifiedDate = CURRENT_TIMESTAMP
-	WHERE Id = ThemeId
+    SELECT Id, PrimaryHexColour, SecondaryHexColour, NavBarHexColour, LoURL, MissingImageURL, CustomerId, SearchIndexId, CreatedDate, ModifiedDate
+    FROM Themes
+    WHERE SearchIndexId = SearchIndexId;
 END;
 
--- Creating Procedure Configuration.GetSearchIndexQueryCredentialsByCustomerEND;point...
-CREATE OR REPLACE FUNCTION Configuration.GetSearchIndexQueryCredentialsByCustomerEND;point
-(
-	CustomerEND;point TEXT(250)
-)
-AS $$
+-- Creating Procedure Admin.SupersedeLatestFeed
+CREATE OR REPLACE FUNCTION Admin.SupersedeLatestFeed (
+    SearchIndexId UUID
+) AS $$
 BEGIN
-
-SELECT
-si.Id,
-LOWER(si.IndexName) as SearchIndexName,
-i.ServiceName as SearchInstanceName,
-i.RootEND;point as SearchInstanceEND;point,
-ik.ApiKey as QueryApiKey
-FROM dbo.SearchIndex si
-INNER JOIN dbo.Customers c on c.Id = si.CustomerId
-INNER JOIN dbo.SearchInstances i on i.Id = si.Id
-INNER JOIN dbo.SearchInstanceKeys ik on ik.Id = i.Id 
-									AND ik.KeyType = 'Query' 
-									AND ik.Name = 'Query key' 
-									AND ik.IsLatest = 1
-WHERE c.CustomerEND;point = CustomerEND;point
-
+    UPDATE dbo.Feeds
+    SET IsLatest = 0,
+        SupersededDate = CURRENT_TIMESTAMP
+    WHERE SearchIndexId = SearchIndexId
+      AND IsLatest = 1;
 END;
 
--- Creating Procedure Configuration.GetThemeByCustomerEND;point...
-CREATE OR REPLACE FUNCTION Configuration.GetThemeByCustomerEND;point
-(
-	CustomerEND;point TEXT(250)
-)
-AS $$
+-- Creating Procedure Admin.SupersedeSynonym
+CREATE OR REPLACE FUNCTION Admin.SupersedeSynonym (
+    SearchIndexId UUID,
+    SynonymId UUID
+) AS $$
 BEGIN
-
-SELECT
-t.Id,
-t.PrimaryHexColour,
-t.SecondaryHexColour,
-t.NavBarHexColour,
-t.LoURL,
-t.MissingImageURL
-FROM dbo.Themes t
-INNER JOIN dbo.Customers c on t.CustomerId = c.Id
-WHERE c.CustomerEND;point = CustomerEND;point
-
+    UPDATE Synonyms
+    SET IsLatest = 0,
+        SupersededDate = CURRENT_TIMESTAMP
+    WHERE SearchIndexId = SearchIndexId
+      AND Id = SynonymId
+      AND IsLatest = 1;
 END;
 
--- Creating Procedure FeedServicesFunc.GetCurrentFeedDocuments...
-CREATE OR REPLACE FUNCTION FeedServicesFunc.GetCurrentFeedDocuments
-(
-	SearchIndexId UUID,
-	PageNumber int,
-	PageSize int
-)
-AS $$
+-- Creating Procedure Admin.UpdateSynonym
+CREATE OR REPLACE FUNCTION Admin.UpdateSynonym (
+    SearchIndexId UUID,
+    SynonymId UUID,
+    KeyWord TEXT(50),
+    SolrFormat TEXT
+) AS $$
 BEGIN
-
-	SELECT
-	Id
-	FROM FeedCurrentDocuments
-	WHERE SearchIndexId = SearchIndexId
-	ORDER BY CreatedDate ASC
-	OFFSET PageNumber - 1 * PageSize ROWS
-	LIMIT PageSize;
-
+    UPDATE Synonyms
+    SET KeyWord = KeyWord,
+        SolrFormat = SolrFormat
+    WHERE SearchIndexId = SearchIndexId
+      AND Id = SynonymId
+      AND IsLatest = 1;
 END;
 
--- Creating Procedure FeedServicesFunc.GetCurrentFeedDocumentsTotal...
-CREATE OR REPLACE FUNCTION FeedServicesFunc.GetCurrentFeedDocumentsTotal
-(
-	SearchIndexId UUID
-)
-AS $$
+-- Creating Procedure Admin.UpdateTheme
+CREATE OR REPLACE FUNCTION Admin.UpdateTheme (
+    ThemeId UUID,
+    PrimaryHexColour TEXT(10),
+    SecondaryHexColour TEXT(10),
+    NavBarHexColour TEXT(10),
+    LoURL TEXT(1000),
+    MissingImageURL TEXT(1000)
+) AS $$
 BEGIN
-
-	SELECT 
-	COUNT(1) AS TotalDocuments
-	FROM FeedCurrentDocuments 
-	WHERE SearchIndexId = SearchIndexId
-
+    UPDATE Themes
+    SET PrimaryHexColour = PrimaryHexColour,
+        SecondaryHexColour = SecondaryHexColour,
+        NavBarHexColour = NavBarHexColour,
+        LoURL = LoURL,
+        MissingImageURL = MissingImageURL,
+        ModifiedDate = CURRENT_TIMESTAMP
+    WHERE Id = ThemeId;
 END;
 
--- Creating Procedure FeedServicesFunc.GetFeedCredentialsUsername...
-CREATE OR REPLACE FUNCTION FeedServicesFunc.GetFeedCredentialsUsername
-(
-	SearchIndexId UUID
-)
-AS $$
+-- Creating Procedure Configuration.GetSearchIndexQueryCredentialsByCustomerEND;point
+CREATE OR REPLACE FUNCTION Configuration.GetSearchIndexQueryCredentialsByCustomerEND;point (
+    CustomerEND;point TEXT(250)
+) AS $$
 BEGIN
-
-SELECT LIMIT 1
-fc.SearchIndexId,
-fc.Username,
-fc.CreatedDate,
-fc.ModifiedDate
-FROM dbo.FeedCredentials fc
-WHERE fc.SearchIndexId = SearchIndexId
-
+    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.ServiceName AS SearchInstanceName, i.RootEND;point AS SearchInstanceEND;point, ik.ApiKey AS QueryApiKey
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.Customers c ON c.Id = si.CustomerId
+    INNER JOIN dbo.SearchInstances i ON i.Id = si.Id
+    INNER JOIN dbo.SearchInstanceKeys ik ON ik.Id = i.Id
+        AND ik.KeyType = 'Query'
+        AND ik.Name = 'Query key'
+        AND ik.IsLatest = 1
+    WHERE c.CustomerEND;point = CustomerEND;point;
 END;
 
--- Creating Procedure FeedServicesFunc.GetFeedDataFormat...
-CREATE OR REPLACE FUNCTION FeedServicesFunc.GetFeedDataFormat
-(
-	CustomerId UUID,
-	SearchIndexName TEXT(60)
-)
-AS $$
+-- Creating Procedure Configuration.GetThemeByCustomerEND;point
+CREATE OR REPLACE FUNCTION Configuration.GetThemeByCustomerEND;point (
+    CustomerEND;point TEXT(250)
+) AS $$
 BEGIN
-
-SELECT LIMIT 1
-f.DataFormat
-FROM dbo.SearchIndex si
-INNER JOIN dbo.Feeds f on f.SearchIndexId = si.Id AND f.IsLatest = 1
-WHERE si.CustomerId = CustomerId
-AND si.IndexName = SearchIndexName
-
+    SELECT t.Id, t.PrimaryHexColour, t.SecondaryHexColour, t.NavBarHexColour, t.LoURL, t.MissingImageURL
+    FROM dbo.Themes t
+    INNER JOIN dbo.Customers c ON t.CustomerId = c.Id
+    WHERE c.CustomerEND;point = CustomerEND;point;
 END;
 
--- Creating Procedure FeedServicesFunc.GetLatestGenericSynonymsByCatery...
-CREATE OR REPLACE FUNCTION FeedServicesFunc.GetLatestGenericSynonymsByCatery
-(
-	Catery TEXT(50)
-)
-AS $$
+-- Creating Procedure FeedServicesFunc.GetCurrentFeedDocuments
+CREATE OR REPLACE FUNCTION FeedServicesFunc.GetCurrentFeedDocuments (
+    SearchIndexId UUID,
+    PageNumber INT,
+    PageSize INT
+) AS $$
 BEGIN
-
-SELECT
-Id,
-Catery,
-SolrFormat,
-CreatedDate
-FROM Synonyms
-WHERE Catery = Catery
-AND IsLatest = 1
-
+    SELECT Id
+    FROM FeedCurrentDocuments
+    WHERE SearchIndexId = SearchIndexId
+    ORDER BY CreatedDate ASC
+    OFFSET (PageNumber - 1) * PageSize ROWS
+    LIMIT PageSize;
 END;
 
--- Creating Procedure FeedServicesFunc.GetSearchIndexCredentials...
-CREATE OR REPLACE FUNCTION FeedServicesFunc.GetSearchIndexCredentials
-(
-	CustomerId UUID,
-	SearchIndexName TEXT(60)
-)
-AS $$
+-- Creating Procedure FeedServicesFunc.GetCurrentFeedDocumentsTotal
+CREATE OR REPLACE FUNCTION FeedServicesFunc.GetCurrentFeedDocumentsTotal (
+    SearchIndexId UUID
+) AS $$
 BEGIN
-
-SELECT
-si.Id,
-LOWER(si.IndexName) as SearchIndexName,
-i.Id,
-i.ServiceName as SearchInstanceName,
-i.RootEND;point,
-ik.ApiKey
-FROM dbo.SearchIndex si
-INNER JOIN dbo.SearchInstances i on i.Id = si.Id
-INNER JOIN dbo.SearchInstanceKeys ik on ik.Id = i.Id 
-									AND ik.KeyType = 'Admin' 
-									AND ik.Name = 'Primary Admin key' 
-									AND ik.IsLatest = 1
-WHERE si.CustomerId = CustomerId
-AND si.IndexName = SearchIndexName
-
+    SELECT COUNT(1) AS TotalDocuments
+    FROM FeedCurrentDocuments
+    WHERE SearchIndexId = SearchIndexId;
 END;
 
--- Creating Procedure FeedServicesFunc.GetSearchIndexFeedProcessingData...
-CREATE OR REPLACE FUNCTION FeedServicesFunc.GetSearchIndexFeedProcessingData
-(
-	CustomerId UUID,
-	SearchIndexName TEXT(60)
-)
-AS $$
+-- Creating Procedure FeedServicesFunc.GetFeedCredentialsUsername
+CREATE OR REPLACE FUNCTION FeedServicesFunc.GetFeedCredentialsUsername (
+    SearchIndexId UUID
+) AS $$
 BEGIN
-
-SELECT
-si.Id,
-LOWER(si.IndexName) as SearchIndexName,
-i.Id,
-i.ServiceName as SearchInstanceName,
-i.RootEND;point,
-ik.ApiKey
-FROM dbo.SearchIndex si
-INNER JOIN dbo.SearchInstances i on i.Id = si.Id
-INNER JOIN dbo.SearchInstanceKeys ik on ik.Id = i.Id 
-									AND ik.KeyType = 'Admin' 
-									AND ik.Name = 'Primary Admin key' 
-									AND ik.IsLatest = 1
-WHERE si.CustomerId = CustomerId
-AND si.IndexName = SearchIndexName
-
-SELECT LIMIT 1
-f.DataFormat as FeedDataFormat,
-c.CustomerEND;point
-FROM dbo.SearchIndex si
-INNER JOIN dbo.Feeds f on f.SearchIndexId = si.Id
-INNER JOIN dbo.Customers c on si.CustomerId = c.id
-WHERE si.CustomerId = CustomerId
-AND si.IndexName = SearchIndexName
-
+    SELECT fc.SearchIndexId, fc.Username, fc.CreatedDate, fc.ModifiedDate
+    FROM dbo.FeedCredentials fc
+    WHERE fc.SearchIndexId = SearchIndexId
+    LIMIT 1;
 END;
 
--- Creating Procedure FeedServicesFunc.MergeFeedDocuments...
-CREATE OR REPLACE FUNCTION FeedServicesFunc.MergeFeedDocuments
-(
+-- Creating Procedure FeedServicesFunc.GetFeedDataFormat
+CREATE OR REPLACE FUNCTION FeedServicesFunc.GetFeedDataFormat (
+    CustomerId UUID,
+    SearchIndexName TEXT(60)
+) AS $$
+BEGIN
+    SELECT f.DataFormat
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.Feeds f ON f.SearchIndexId = si.Id AND f.IsLatest = 1
+    WHERE si.CustomerId = CustomerId
+      AND si.IndexName = SearchIndexName
+    LIMIT 1;
+END;
+
+-- Creating Procedure FeedServicesFunc.GetLatestGenericSynonymsByCatery
+CREATE OR REPLACE FUNCTION FeedServicesFunc.GetLatestGenericSynonymsByCatery (
+    Catery TEXT(50)
+) AS $$
+BEGIN
+    SELECT Id, Catery, SolrFormat, CreatedDate
+    FROM Synonyms
+    WHERE Catery = Catery
+      AND IsLatest = 1;
+END;
+
+-- Creating Procedure FeedServicesFunc.GetSearchIndexCredentials
+CREATE OR REPLACE FUNCTION FeedServicesFunc.GetSearchIndexCredentials (
+    CustomerId UUID,
+    SearchIndexName TEXT(60)
+) AS $$
+BEGIN
+    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.Id, i.ServiceName AS SearchInstanceName, i.RootEND;point, ik.ApiKey
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.SearchInstances i ON i.Id = si.Id
+    INNER JOIN dbo.SearchInstanceKeys ik ON ik.Id = i.Id
+        AND ik.KeyType = 'Admin'
+        AND ik.Name = 'Primary Admin key'
+        AND ik.IsLatest = 1
+    WHERE si.CustomerId = CustomerId
+      AND si.IndexName = SearchIndexName;
+END;
+
+-- Creating Procedure FeedServicesFunc.GetSearchIndexFeedProcessingData
+CREATE OR REPLACE FUNCTION FeedServicesFunc.GetSearchIndexFeedProcessingData (
+    CustomerId UUID,
+    SearchIndexName TEXT(60)
+) AS $$
+BEGIN
+    SELECT si.Id, LOWER(si.IndexName) AS SearchIndexName, i.Id, i.ServiceName AS SearchInstanceName, i.RootEND;point, ik.ApiKey
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.SearchInstances i ON i.Id = si.Id
+    INNER JOIN dbo.SearchInstanceKeys ik ON ik.Id = i.Id
+        AND ik.KeyType = 'Admin'
+        AND ik.Name = 'Primary Admin key'
+        AND ik.IsLatest = 1
+    WHERE si.CustomerId = CustomerId
+      AND si.IndexName = SearchIndexName;
+
+    SELECT f.DataFormat AS FeedDataFormat, c.CustomerEND;point
+    FROM dbo.SearchIndex si
+    INNER JOIN dbo.Feeds f ON f.SearchIndexId = si.Id
+    INNER JOIN dbo.Customers c ON si.CustomerId = c.id
+    WHERE si.CustomerId = CustomerId
+      AND si.IndexName = SearchIndexName
+    LIMIT 1;
+END;
+
+-- Creating Procedure FeedServicesFunc.MergeFeedDocuments
+CREATE OR REPLACE FUNCTION FeedServicesFunc.MergeFeedDocuments (
     SearchIndexId UUID,
     NewFeedDocuments NewFeedDocuments READONLY
-)
-AS $$
+) AS $$
 BEGIN
     DECLARE UtcNow TIMESTAMP = CURRENT_TIMESTAMP;
-
     MERGE INTO FeedCurrentDocuments AS target
     USING NewFeedDocuments AS source
     ON SearchIndexId = target.SearchIndexId
@@ -873,16 +609,13 @@ BEGIN
         DELETE;
 END;
 
--- Creating Procedure SearchInsightsFunc.AddDataPoints...
-CREATE OR REPLACE FUNCTION SearchInsightsFunc.AddDataPoints
-(
+-- Creating Procedure SearchInsightsFunc.AddDataPoints
+CREATE OR REPLACE FUNCTION SearchInsightsFunc.AddDataPoints (
     SearchIndexId UUID,
     SearchInsightsData SearchInsightsData READONLY
-)
-AS $$
+) AS $$
 BEGIN
     DECLARE UtcNow TIMESTAMP = CURRENT_TIMESTAMP;
-
     MERGE INTO SearchInsightsData AS target
     USING SearchInsightsData AS source
     ON SearchIndexId = target.SearchIndexId
@@ -890,139 +623,108 @@ BEGIN
         AND source.DataPoint = target.DataPoint
         AND source.Date = target.Date
     WHEN MATCHED THEN
-        UPDATE SET 
-            target.Count = target.Count + 1,
-            target.ModifiedDate = UtcNow
+        UPDATE SET target.Count = target.Count + 1,
+                   target.ModifiedDate = UtcNow
     WHEN NOT MATCHED THEN
         INSERT (SearchIndexId, DataCatery, DataPoint, Count, Date, ModifiedDate)
         VALUES (SearchIndexId, source.DataCatery, source.DataPoint, 1, source.Date, UtcNow);
 END;
 
--- Creating Procedure SearchInsightsFunc.AddSearchRequest...
-CREATE OR REPLACE FUNCTION SearchInsightsFunc.AddSearchRequest
-(
-	SearchIndexId UUID,
-	Date date
-)
-AS $$
+-- Creating Procedure SearchInsightsFunc.AddSearchRequest
+CREATE OR REPLACE FUNCTION SearchInsightsFunc.AddSearchRequest (
+    SearchIndexId UUID,
+    Date DATE
+) AS $$
 BEGIN
-	DECLARE UtcNow TIMESTAMP = CURRENT_TIMESTAMP;
-
-	MERGE INTO SearchIndexRequestLog AS target
-	USING (	SELECT SearchIndexId as SearchIndexId, Date as Date) as source
-	ON source.SearchIndexId = target.SearchIndexId
-	AND source.Date = target.Date
-	WHEN MATCHED THEN
-	UPDATE SET	target.Count = target.Count + 1, 
-				target.ModifiedDate = UtcNow
-	WHEN NOT MATCHED THEN
-	INSERT (SearchIndexId, Count, Date, ModifiedDate)
-	VALUES (SearchIndexId, 1, Date, UtcNow);
-
+    DECLARE UtcNow TIMESTAMP = CURRENT_TIMESTAMP;
+    MERGE INTO SearchIndexRequestLog AS target
+    USING (SELECT SearchIndexId AS SearchIndexId, Date AS Date) AS source
+    ON source.SearchIndexId = target.SearchIndexId
+        AND source.Date = target.Date
+    WHEN MATCHED THEN
+        UPDATE SET target.Count = target.Count + 1,
+                   target.ModifiedDate = UtcNow
+    WHEN NOT MATCHED THEN
+        INSERT (SearchIndexId, Count, Date, ModifiedDate)
+        VALUES (SearchIndexId, 1, Date, UtcNow);
 END;
 
--- Creating Procedure SFTPServicesFunc.AddFeedCredentials...
-CREATE OR REPLACE FUNCTION SFTPServicesFunc.AddFeedCredentials
-(
-	SearchIndexId UUID,
-	Username TEXT(50),
-	PasswordHash TEXT(250)
-)
-AS $$
+-- Creating Procedure SFTPServicesFunc.AddFeedCredentials
+CREATE OR REPLACE FUNCTION SFTPServicesFunc.AddFeedCredentials (
+    SearchIndexId UUID,
+    Username TEXT(50),
+    PasswordHash TEXT(250)
+) AS $$
 BEGIN
-	
-	INSERT INTO dbo.FeedCredentials
-	(
-		Id,
-		SearchIndexId,
-		Username,
-		PasswordHash,
-		CreatedDate
-	)
-	VALUES
-	(
-		gen_random_uuid(),
-		SearchIndexId,
-		Username,
-		PasswordHash,
-		CURRENT_TIMESTAMP
-	)
-
+    INSERT INTO dbo.FeedCredentials (
+        Id,
+        SearchIndexId,
+        Username,
+        PasswordHash,
+        CreatedDate
+    ) VALUES (
+        gen_random_uuid(),
+        SearchIndexId,
+        Username,
+        PasswordHash,
+        CURRENT_TIMESTAMP
+    );
 END;
 
--- Creating Procedure SFTPServicesFunc.DeleteFeedCredentials...
-CREATE OR REPLACE FUNCTION SFTPServicesFunc.DeleteFeedCredentials
-(
-	SearchIndexId UUID,
-	Username TEXT(50)
-)
-AS $$
+-- Creating Procedure SFTPServicesFunc.DeleteFeedCredentials
+CREATE OR REPLACE FUNCTION SFTPServicesFunc.DeleteFeedCredentials (
+    SearchIndexId UUID,
+    Username TEXT(50)
+) AS $$
 BEGIN
-	
-	DELETE FROM dbo.FeedCredentials
-	WHERE SearchIndexId = SearchIndexId
-	AND Username = Username
-
+    DELETE FROM dbo.FeedCredentials
+    WHERE SearchIndexId = SearchIndexId
+      AND Username = Username;
 END;
 
--- Creating Procedure SFTPServicesFunc.GetFeedCredentials...
-CREATE OR REPLACE FUNCTION SFTPServicesFunc.GetFeedCredentials
-(
-	SearchIndexId UUID,
-	Username TEXT(50)
-)
-AS $$
+-- Creating Procedure SFTPServicesFunc.GetFeedCredentials
+CREATE OR REPLACE FUNCTION SFTPServicesFunc.GetFeedCredentials (
+    SearchIndexId UUID,
+    Username TEXT(50)
+) AS $$
 BEGIN
-	
-	SELECT
-	SearchIndexId,
-	Username,
-	CreatedDate
-	FROM FeedCredentials
-	WHERE SearchIndexId = SearchIndexId
-	AND Username = Username
-
+    SELECT SearchIndexId, Username, CreatedDate
+    FROM FeedCredentials
+    WHERE SearchIndexId = SearchIndexId
+      AND Username = Username;
 END;
 
--- Creating Procedure SFTPServicesFunc.UpdateFeedCredentials...
-CREATE OR REPLACE FUNCTION SFTPServicesFunc.UpdateFeedCredentials
-(
-	SearchIndexId UUID,
-	Username TEXT(50),
-	PasswordHash TEXT(250)
-)
-AS $$
+-- Creating Procedure SFTPServicesFunc.UpdateFeedCredentials
+CREATE OR REPLACE FUNCTION SFTPServicesFunc.UpdateFeedCredentials (
+    SearchIndexId UUID,
+    Username TEXT(50),
+    PasswordHash TEXT(250)
+) AS $$
 BEGIN
-	
-	UPDATE dbo.FeedCredentials
-	SET	PasswordHash = PasswordHash,
-		ModifiedDate = CURRENT_TIMESTAMP
-	WHERE SearchIndexId = SearchIndexId
-	AND Username = Username
-
+    UPDATE dbo.FeedCredentials
+    SET PasswordHash = PasswordHash,
+        ModifiedDate = CURRENT_TIMESTAMP
+    WHERE SearchIndexId = SearchIndexId
+      AND Username = Username;
 END;
 
--- Creating Procedure Admin.AddFeed...
-CREATE OR REPLACE FUNCTION Admin.AddFeed
-(
-	SearchIndexId UUID,
-	FeedType TEXT(20),
-	FeedCron TEXT(255)
-)
-AS $$
+-- Creating Procedure Admin.AddFeed
+CREATE OR REPLACE FUNCTION Admin.AddFeed (
+    SearchIndexId UUID,
+    FeedType TEXT(20),
+    FeedCron TEXT(255)
+) AS $$
 BEGIN
-	EXEC Admin.SupersedeLatestFeed SearchIndexId = SearchIndexId
-	INSERT INTO dbo.Feeds
-	(
-		SearchIndexId,
-		FeedType,
-		FeedScheduleCron
-	)
-	VALUES
-	(
-		SearchIndexId,
-		FeedType,
-		FeedCron
-	)
+    EXEC Admin.SupersedeLatestFeed SearchIndexId = SearchIndexId;
+    INSERT INTO dbo.Feeds (
+        SearchIndexId,
+        FeedType,
+        FeedScheduleCron
+    ) VALUES (
+        SearchIndexId,
+        FeedType,
+        FeedCron
+    );
 END;
+
 -- Update complete.
