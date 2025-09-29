@@ -2,68 +2,70 @@
 -- Drop Function Definitions
 -- =============================
 
-DROP FUNCTION IF EXISTS AddSearchIndex(uuid, uuid, uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS AddSynonym(uuid, uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS GetCustomerByID(uuid);
-DROP FUNCTION IF EXISTS GetCustomerFull(uuid);
-DROP FUNCTION IF EXISTS GetLatestFeed(uuid);
-DROP FUNCTION IF EXISTS GetSearchIndex(uuid, uuid);
-DROP FUNCTION IF EXISTS GetSearchIndexByFriendlyName(uuid, TEXT);
-DROP FUNCTION IF EXISTS GetSearchIndexFull(uuid, uuid);
-DROP FUNCTION IF EXISTS GetSearchIndexQueryCredentialsByCustomerEndpoint(TEXT);
-DROP FUNCTION IF EXISTS GetSearchInsightsByDataCateries(uuid, TIMESTAMP, TIMESTAMP, TEXT);
-DROP FUNCTION IF EXISTS GetSearchInsightsSearchCountByDateRange(uuid, TIMESTAMP, TIMESTAMP);
-DROP FUNCTION IF EXISTS GetSynonymById(uuid, uuid);
-DROP FUNCTION IF EXISTS GetSynonymByKeyWord(uuid, TEXT);
-DROP FUNCTION IF EXISTS GetSynonyms(uuid);
-DROP FUNCTION IF EXISTS GetThemeByCustomerId(uuid);
-DROP FUNCTION IF EXISTS GetThemeById(uuid);
-DROP FUNCTION IF EXISTS GetThemeBySearchIndexId(uuid);
-DROP FUNCTION IF EXISTS SupersedeLatestFeed(uuid);
-DROP FUNCTION IF EXISTS SupersedeSynonym(uuid, uuid);
-DROP FUNCTION IF EXISTS UpdateSynonym(uuid, uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS UpdateTheme(uuid, TEXT, TEXT, TEXT, TEXT, TEXT);
-DROP FUNCTION IF EXISTS GetSearchIndexQueryCredentialsByCustomerEndpoint(TEXT);
-DROP FUNCTION IF EXISTS GetCurrentFeedDocuments(uuid, INT, INT);
-DROP FUNCTION IF EXISTS GetCurrentFeedDocumentsTotal(uuid);
-DROP FUNCTION IF EXISTS GetFeedCredentialsUsername(uuid);
-DROP FUNCTION IF EXISTS GetFeedDataFormat(uuid, TEXT);
-DROP FUNCTION IF EXISTS GetLatestGenericSynonymsByCatery(TEXT);
-DROP FUNCTION IF EXISTS GetSearchIndexCredentials(uuid, TEXT);
-DROP FUNCTION IF EXISTS GetSearchIndexFeedProcessingData(uuid, TEXT);
-DROP FUNCTION IF EXISTS MergeFeedDocuments(uuid, NewFeedDocuments);
-DROP FUNCTION IF EXISTS AddDataPoints(uuid, SearchInsightsData);
-DROP FUNCTION IF EXISTS AddSearchRequest(uuid, DATE);
-DROP FUNCTION IF EXISTS AddFeedCredentials(uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS DeleteFeedCredentials(uuid, TEXT);
-DROP FUNCTION IF EXISTS GetFeedCredentials(uuid, TEXT);
-DROP FUNCTION IF EXISTS UpdateFeedCredentials(uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS AddFeed(uuid, TEXT, TEXT);
+DROP FUNCTION IF EXISTS add_search_index(uuid, uuid, uuid, TEXT, TEXT);
+DROP FUNCTION IF EXISTS add_synonym(uuid, uuid, TEXT, TEXT);
+DROP FUNCTION IF EXISTS get_customer_by_id(uuid);
+DROP FUNCTION IF EXISTS get_customer_full(uuid);
+DROP FUNCTION IF EXISTS get_latest_feed(uuid);
+DROP FUNCTION IF EXISTS get_search_index(uuid, uuid);
+DROP FUNCTION IF EXISTS get_search_index_by_friendly_name(uuid, TEXT);
+DROP FUNCTION IF EXISTS get_search_index_full(uuid, uuid);
+DROP FUNCTION IF EXISTS get_search_index_query_credentials_by_customer_endpoint(TEXT);
+DROP FUNCTION IF EXISTS get_search_insights_by_data_cateries(uuid, TIMESTAMP, TIMESTAMP, TEXT);
+DROP FUNCTION IF EXISTS get_search_insights_search_count_by_date_range(uuid, TIMESTAMP, TIMESTAMP);
+DROP FUNCTION IF EXISTS get_synonym_by_id(uuid, uuid);
+DROP FUNCTION IF EXISTS get_synonym_by_key_word(uuid, TEXT);
+DROP FUNCTION IF EXISTS get_synonyms(uuid);
+DROP FUNCTION IF EXISTS get_theme_by_customer_id(uuid);
+DROP FUNCTION IF EXISTS get_theme_by_id(uuid);
+DROP FUNCTION IF EXISTS get_theme_by_search_index_id(uuid);
+DROP FUNCTION IF EXISTS supersede_latest_feed(uuid);
+DROP FUNCTION IF EXISTS supersede_synonym(uuid, uuid);
+DROP FUNCTION IF EXISTS update_synonym(uuid, uuid, TEXT, TEXT);
+DROP FUNCTION IF EXISTS update_theme(uuid, TEXT, TEXT, TEXT, TEXT, TEXT);
+DROP FUNCTION IF EXISTS get_search_index_query_credentials_by_customer_endpoint(TEXT);
+DROP FUNCTION IF EXISTS get_current_feed_documents(uuid, INT, INT);
+DROP FUNCTION IF EXISTS get_current_feed_documents_total(uuid);
+DROP FUNCTION IF EXISTS get_feed_credentials_username(uuid);
+DROP FUNCTION IF EXISTS get_feed_data_format(uuid, TEXT);
+DROP FUNCTION IF EXISTS get_latest_generic_synonyms_by_catery(TEXT);
+DROP FUNCTION IF EXISTS get_search_index_credentials(uuid, TEXT);
+DROP FUNCTION IF EXISTS get_search_index_feed_processing_data(uuid, TEXT);
+DROP FUNCTION IF EXISTS merge_feed_documents(uuid, new_feed_documents);
+DROP FUNCTION IF EXISTS add_data_points(uuid, search_insights_data);
+DROP FUNCTION IF EXISTS add_search_request(uuid, DATE);
+DROP FUNCTION IF EXISTS add_feed_credentials(uuid, TEXT, TEXT);
+DROP FUNCTION IF EXISTS delete_feed_credentials(uuid, TEXT);
+DROP FUNCTION IF EXISTS get_feed_credentials(uuid, TEXT);
+DROP FUNCTION IF EXISTS update_feed_credentials(uuid, TEXT, TEXT);
+DROP FUNCTION IF EXISTS add_feed(uuid, TEXT, TEXT);
 
 -- =============================
 -- Function Definitions
 -- =============================
 
-CREATE OR REPLACE FUNCTION GetCustomerByID(CustomerId uuid)
-RETURNS TABLE (Id uuid, BusinessName text) AS $$
+CREATE OR REPLACE FUNCTION get_customer_by_id(customer_id uuid)
+RETURNS TABLE (id uuid, business_name text) AS $$
 BEGIN
     RETURN QUERY
-    SELECT c.Id, c.BusinessName
-    FROM Customers c
-    WHERE c.Id = CustomerId;
+    SELECT c.id, c.business_name
+    FROM customers c
+    WHERE c.id = customer_id;
 END;
+
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetCustomerFull(CustomerId uuid)
+
+CREATE OR REPLACE FUNCTION get_customer_full(customer_id uuid)
 RETURNS TABLE (
-    Id uuid,
-    BusinessName text
+    id uuid,
+    business_name text
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT c.Id, c.BusinessName
-    FROM Customers c
-    WHERE c.Id = CustomerId;
+    SELECT c.id, c.business_name
+    FROM customers c
+    WHERE c.id = customer_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -71,31 +73,31 @@ $$ LANGUAGE plpgsql;
 -- 1. GetLatestFeed
 -- ==============================
 
-CREATE OR REPLACE FUNCTION GetLatestFeed(
-    p_SearchIndexId uuid
+CREATE OR REPLACE FUNCTION get_latest_feed(
+    p_search_index_id uuid
 )
 RETURNS TABLE (
-    Id uuid,
-    SearchIndexId uuid,
-    FeedType text,
-    FeedScheduleCron text,
-    CreatedDate timestamp,
-    SupersededDate timestamp,
-    IsLatest boolean
+    id uuid,
+    search_index_id uuid,
+    feed_type text,
+    feed_schedule_cron text,
+    created_date timestamp,
+    superseded_date timestamp,
+    is_latest boolean
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        f.Id,
-        f.SearchIndexId,
-        f.FeedType,
-        f.FeedScheduleCron,
-        f.CreatedDate,
-        f.SupersededDate,
-        f.IsLatest
-    FROM Feeds f
-    WHERE f.SearchIndexId = p_SearchIndexId
-      AND f.IsLatest = 1
+        f.id,
+        f.search_index_id,
+        f.feed_type,
+        f.feed_schedule_cron,
+        f.created_date,
+        f.superseded_date,
+        f.is_latest
+    FROM feeds f
+    WHERE f.search_index_id = p_search_index_id
+      AND f.is_latest = 1
     LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
@@ -104,46 +106,46 @@ $$ LANGUAGE plpgsql;
 -- 2. GetSearchIndex
 -- ==============================
 
-CREATE OR REPLACE FUNCTION GetSearchIndex(
-    p_SearchIndexId uuid,
-    p_CustomerId uuid
+CREATE OR REPLACE FUNCTION get_search_index(
+    p_search_index_id uuid,
+    p_customer_id uuid
 ) RETURNS TABLE (
-    Id uuid,
-    CustomerId uuid,
-    IndexName text,
-    FriendlyName text,
-    RootEndpoint text,
-    PricingTier text,
-    CreatedDate timestamp,
-    InstanceId uuid,
-    ServiceName text,
-    Location text,
-    InstancePricingTier text,
-    Replicas int,
-    Partitions int,
-    IsShared boolean
+    id uuid,
+    customer_id uuid,
+    index_name text,
+    friendly_name text,
+    root_endpoint text,
+    pricing_tier text,
+    created_date timestamp,
+    instance_id uuid,
+    service_name text,
+    location text,
+    instance_pricing_tier text,
+    replicas int,
+    partitions int,
+    is_shared boolean
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        search.Id,
-        search.CustomerId,
-        search.IndexName,
-        search.FriendlyName,
-        service.RootEndpoint,
-        service.PricingTier,
-        search.CreatedDate,
-        service.Id,
-        service.ServiceName,
-        service.Location,
-        service.PricingTier,
-        service.Replicas,
-        service.Partitions,
-        service.IsShared
-    FROM SearchIndex search
-    LEFT OUTER JOIN SearchInstances service ON service.Id = search.SearchInstanceId
-    WHERE search.Id = p_SearchIndexId
-      AND search.CustomerId = p_CustomerId;
+        search.id,
+        search.customer_id,
+        search.index_name,
+        search.friendly_name,
+        service.root_endpoint,
+        service.pricing_tier,
+        search.created_date,
+        service.id,
+        service.service_name,
+        service.location,
+        service.pricing_tier,
+        service.replicas,
+        service.partitions,
+        service.is_shared
+    FROM search_index search
+    LEFT OUTER JOIN search_instances service ON service.id = search.search_instance_id
+    WHERE search.id = p_search_index_id
+      AND search.customer_id = p_customer_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -151,27 +153,27 @@ $$ LANGUAGE plpgsql;
 -- 3. GetSearchIndexByFriendlyName
 -- ==============================
 
-CREATE OR REPLACE FUNCTION GetSearchIndexByFriendlyName(
-    p_CustomerId uuid,
-    p_FriendlyName TEXT
+CREATE OR REPLACE FUNCTION get_search_index_by_friendly_name(
+    p_customer_id uuid,
+    p_friendly_name TEXT
 ) RETURNS TABLE (
-    Id uuid,
-    SearchInstanceId uuid,
-    CustomerId uuid,
-    FriendlyName text,
-    IndexName text
+    id uuid,
+    search_instance_id uuid,
+    customer_id uuid,
+    friendly_name text,
+    index_name text
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        si.Id,
-        si.SearchInstanceId,
-        si.CustomerId,
-        si.FriendlyName,
-        si.IndexName
-    FROM dbo.SearchIndex si
-    WHERE si.CustomerId = p_CustomerId
-      AND si.FriendlyName = p_FriendlyName;
+        si.id,
+        si.search_instance_id,
+        si.customer_id,
+        si.friendly_name,
+        si.index_name
+    FROM dbo.search_index si
+    WHERE si.customer_id = p_customer_id
+      AND si.friendly_name = p_friendly_name;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -179,46 +181,46 @@ $$ LANGUAGE plpgsql;
 -- 4. GetSearchIndexFull
 -- ==============================
 
-CREATE OR REPLACE FUNCTION GetSearchIndexFull(
-    p_SearchIndexId uuid,
-    p_CustomerId uuid
+CREATE OR REPLACE FUNCTION get_search_index_full(
+    p_search_index_id uuid,
+    p_customer_id uuid
 ) RETURNS TABLE (
-    Id uuid,
-    CustomerId uuid,
-    IndexName text,
-    FriendlyName text,
-    RootEndpoint text,
-    PricingTier text,
-    CreatedDate timestamp,
-    InstanceId uuid,
-    ServiceName text,
-    Location text,
-    InstancePricingTier text,
-    Replicas int,
-    Partitions int,
-    IsShared boolean
+    id uuid,
+    customer_id uuid,
+    index_name text,
+    friendly_name text,
+    root_endpoint text,
+    pricing_tier text,
+    created_date timestamp,
+    instance_id uuid,
+    service_name text,
+    location text,
+    instance_pricing_tier text,
+    replicas int,
+    partitions int,
+    is_shared boolean
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        search.Id,
-        search.CustomerId,
-        search.IndexName,
-        search.FriendlyName,
-        service.RootEndpoint,
-        service.PricingTier,
-        search.CreatedDate,
-        service.Id,
-        service.ServiceName,
-        service.Location,
-        service.PricingTier,
-        service.Replicas,
-        service.Partitions,
-        service.IsShared
-    FROM dbo.SearchIndex search
-    LEFT OUTER JOIN dbo.SearchInstances service ON service.Id = search.Id
-    WHERE search.Id = p_SearchIndexId
-      AND search.CustomerId = p_CustomerId;
+        search.id,
+        search.customer_id,
+        search.index_name,
+        search.friendly_name,
+        service.root_endpoint,
+        service.pricing_tier,
+        search.created_date,
+        service.id,
+        service.service_name,
+        service.location,
+        service.pricing_tier,
+        service.replicas,
+        service.partitions,
+        service.is_shared
+    FROM dbo.search_index search
+    LEFT OUTER JOIN dbo.search_instances service ON service.id = search.id
+    WHERE search.id = p_search_index_id
+      AND search.customer_id = p_customer_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -226,28 +228,28 @@ $$ LANGUAGE plpgsql;
 -- 5. GetSynonymById
 -- ==============================
 
-CREATE OR REPLACE FUNCTION GetSynonymById(
-    p_SearchIndexId uuid,
-    p_SynonymId uuid
+CREATE OR REPLACE FUNCTION get_synonym_by_id(
+    p_search_index_id uuid,
+    p_synonym_id uuid
 ) RETURNS TABLE (
-    Id uuid,
-    SearchIndexId uuid,
-    Key text,
-    SolrFormat text,
-    CreatedDate timestamp
+    id uuid,
+    search_index_id uuid,
+    key text,
+    solr_format text,
+    created_date timestamp
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        Id,
-        SearchIndexId,
-        KeyWord as Key,
-        SolrFormat,
-        CreatedDate
-    FROM dbo.Synonyms
-    WHERE SearchIndexId = p_SearchIndexId
-      AND Id = p_SynonymId
-      AND IsLatest = 1;
+        id,
+        search_index_id,
+        keyword AS key,
+        solr_format,
+        created_date
+    FROM dbo.synonyms
+    WHERE search_index_id = p_search_index_id
+      AND id = p_synonym_id
+      AND is_latest = 1;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -255,28 +257,28 @@ $$ LANGUAGE plpgsql;
 -- 6. GetSynonymByKeyWord
 -- ==============================
 
-CREATE OR REPLACE FUNCTION GetSynonymByKeyWord(
-    p_SearchIndexId uuid,
-    p_KeyWord TEXT
+CREATE OR REPLACE FUNCTION get_synonym_by_key_word(
+    p_search_index_id uuid,
+    p_key_word TEXT
 ) RETURNS TABLE (
-    Id uuid,
-    SearchIndexId uuid,
-    Key text,
-    SolrFormat text,
-    CreatedDate timestamp
+    id uuid,
+    search_index_id uuid,
+    key text,
+    solr_format text,
+    created_date timestamp
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        Id,
-        SearchIndexId,
-        KeyWord as Key,
-        SolrFormat,
-        CreatedDate
-    FROM dbo.Synonyms
-    WHERE SearchIndexId = p_SearchIndexId
-      AND KeyWord = p_KeyWord
-      AND IsLatest = 1;
+        id,
+        search_index_id,
+        keyword AS key,
+        solr_format,
+        created_date
+    FROM dbo.synonyms
+    WHERE search_index_id = p_search_index_id
+      AND keyword = p_key_word
+      AND is_latest = 1;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -284,17 +286,17 @@ $$ LANGUAGE plpgsql;
 -- 7. SupersedeLatestFeed
 -- ==============================
 
-CREATE OR REPLACE FUNCTION SupersedeLatestFeed(
-    p_SearchIndexId uuid
+CREATE OR REPLACE FUNCTION supersede_latest_feed(
+    p_search_index_id uuid
 ) RETURNS int AS $$
 DECLARE
     rows_updated int;
 BEGIN
-    UPDATE dbo.Feeds
-    SET IsLatest = 0,
-        SupersededDate = CURRENT_TIMESTAMP
-    WHERE SearchIndexId = p_SearchIndexId
-      AND IsLatest = 1;
+    UPDATE dbo.feeds
+    SET is_latest = 0,
+        superseded_date = CURRENT_TIMESTAMP
+    WHERE search_index_id = p_search_index_id
+      AND is_latest = 1;
     GET DIAGNOSTICS rows_updated = ROW_COUNT;
     RETURN rows_updated;
 END;
@@ -304,19 +306,19 @@ $$ LANGUAGE plpgsql;
 -- 8. SupersedeSynonym
 -- ==============================
 
-CREATE OR REPLACE FUNCTION SupersedeSynonym(
-    p_SearchIndexId uuid,
-    p_SynonymId uuid
+CREATE OR REPLACE FUNCTION supersede_synonym(
+    p_search_index_id uuid,
+    p_synonym_id uuid
 ) RETURNS int AS $$
 DECLARE
     rows_updated int;
 BEGIN
-    UPDATE dbo.Synonyms
-    SET IsLatest = 0,
-        SupersededDate = CURRENT_TIMESTAMP
-    WHERE SearchIndexId = p_SearchIndexId
-      AND Id = p_SynonymId
-      AND IsLatest = 1;
+    UPDATE dbo.synonyms
+    SET is_latest = 0,
+        superseded_date = CURRENT_TIMESTAMP
+    WHERE search_index_id = p_search_index_id
+      AND id = p_synonym_id
+      AND is_latest = 1;
     GET DIAGNOSTICS rows_updated = ROW_COUNT;
     RETURN rows_updated;
 END;
@@ -326,21 +328,21 @@ $$ LANGUAGE plpgsql;
 -- 9. UpdateSynonym
 -- ==============================
 
-CREATE OR REPLACE FUNCTION UpdateSynonym(
-    p_SearchIndexId uuid,
-    p_SynonymId uuid,
-    p_KeyWord TEXT,
-    p_SolrFormat TEXT
+CREATE OR REPLACE FUNCTION update_synonym(
+    p_search_index_id uuid,
+    p_synonym_id uuid,
+    p_key_word TEXT,
+    p_solr_format TEXT
 ) RETURNS int AS $$
 DECLARE
     rows_updated int;
 BEGIN
-    UPDATE dbo.Synonyms
-    SET KeyWord = p_KeyWord,
-        SolrFormat = p_SolrFormat
-    WHERE SearchIndexId = p_SearchIndexId
-      AND Id = p_SynonymId
-      AND IsLatest = 1;
+    UPDATE dbo.synonyms
+    SET keyword = p_key_word,
+        solr_format = p_solr_format
+    WHERE search_index_id = p_search_index_id
+      AND id = p_synonym_id
+      AND is_latest = 1;
     GET DIAGNOSTICS rows_updated = ROW_COUNT;
     RETURN rows_updated;
 END;
@@ -350,16 +352,16 @@ $$ LANGUAGE plpgsql;
 -- 10. DeleteFeedCredentials
 -- ==============================
 
-CREATE OR REPLACE FUNCTION DeleteFeedCredentials(
-    p_SearchIndexId uuid,
-    p_Username TEXT
+CREATE OR REPLACE FUNCTION delete_feed_credentials(
+    p_search_index_id uuid,
+    p_username TEXT
 ) RETURNS int AS $$
 DECLARE
     rows_deleted int := 0;
 BEGIN
-    DELETE FROM dbo.FeedCredentials
-    WHERE SearchIndexId = p_SearchIndexId
-      AND Username = p_Username;
+    DELETE FROM dbo.feed_credentials
+    WHERE search_index_id = p_search_index_id
+      AND username = p_username;
     GET DIAGNOSTICS rows_deleted = ROW_COUNT;
     RETURN rows_deleted;
 END;
@@ -369,23 +371,23 @@ $$ LANGUAGE plpgsql;
 -- 11. GetFeedCredentials
 -- ==============================
 
-CREATE OR REPLACE FUNCTION GetFeedCredentials(
-    p_SearchIndexId uuid,
-    p_Username TEXT
+CREATE OR REPLACE FUNCTION get_feed_credentials(
+    p_search_index_id uuid,
+    p_username TEXT
 ) RETURNS TABLE (
-    SearchIndexId uuid,
-    Username text,
-    CreatedDate timestamp
+    search_index_id uuid,
+    username text,
+    created_date timestamp
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        SearchIndexId,
-        Username,
-        CreatedDate
-    FROM dbo.FeedCredentials
-    WHERE SearchIndexId = p_SearchIndexId
-      AND Username = p_Username;
+        search_index_id,
+        username,
+        created_date
+    FROM dbo.feed_credentials
+    WHERE search_index_id = p_search_index_id
+      AND username = p_username;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -393,19 +395,19 @@ $$ LANGUAGE plpgsql;
 -- 12. UpdateFeedCredentials
 -- ==============================
 
-CREATE OR REPLACE FUNCTION UpdateFeedCredentials(
-    p_SearchIndexId uuid,
-    p_Username TEXT,
-    p_PasswordHash TEXT
+CREATE OR REPLACE FUNCTION update_feed_credentials(
+    p_search_index_id uuid,
+    p_username TEXT,
+    p_password_hash TEXT
 ) RETURNS int AS $$
 DECLARE
     rows_updated int := 0;
 BEGIN
-    UPDATE dbo.FeedCredentials
-    SET PasswordHash = p_PasswordHash,
-        ModifiedDate = CURRENT_TIMESTAMP
-    WHERE SearchIndexId = p_SearchIndexId
-      AND Username = p_Username;
+    UPDATE dbo.feed_credentials
+    SET password_hash = p_password_hash,
+        modified_date = CURRENT_TIMESTAMP
+    WHERE search_index_id = p_search_index_id
+      AND username = p_username;
     GET DIAGNOSTICS rows_updated = ROW_COUNT;
     RETURN rows_updated;
 END;
@@ -415,31 +417,29 @@ $$ LANGUAGE plpgsql;
 -- 13. AddFeed
 -- ==============================
 
-CREATE OR REPLACE FUNCTION AddFeed(
-    p_SearchIndexId uuid,
-    p_FeedType TEXT,
-    p_FeedCron TEXT
+CREATE OR REPLACE FUNCTION add_feed(
+    p_search_index_id uuid,
+    p_feed_type TEXT,
+    p_feed_cron TEXT
 ) RETURNS int AS $$
 DECLARE
     rows_inserted int := 0;
 BEGIN
     -- Supersede previous latest feed
-    PERFORM SupersedeLatestFeed(p_SearchIndexId);
+    PERFORM supersede_latest_feed(p_search_index_id);
 
     -- Insert new feed
-    INSERT INTO dbo.Feeds
-    (
-        SearchIndexId,
-        FeedType,
-        FeedScheduleCron,
-        CreatedDate,
-        IsLatest
+    INSERT INTO dbo.feeds (
+        search_index_id,
+        feed_type,
+        feed_schedule_cron,
+        created_date,
+        is_latest
     )
-    VALUES
-    (
-        p_SearchIndexId,
-        p_FeedType,
-        p_FeedCron,
+    VALUES (
+        p_search_index_id,
+        p_feed_type,
+        p_feed_cron,
         CURRENT_TIMESTAMP,
         1
     );

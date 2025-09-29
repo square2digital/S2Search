@@ -10,154 +10,154 @@ the code is regenerated.
 -- Drop Table Definitions
 -- =============================
 
-DROP TABLE IF EXISTS Customers;
-DROP TABLE IF EXISTS FeedCredentials;
-DROP TABLE IF EXISTS FeedCurrentDocuments;
-DROP TABLE IF EXISTS Feeds;
-DROP TABLE IF EXISTS SearchConfiguration;
-DROP TABLE IF EXISTS SearchIndex;
-DROP TABLE IF EXISTS SearchIndexRequestLog;
-DROP TABLE IF EXISTS SearchInsightsData;
-DROP TABLE IF EXISTS SearchInstanceKeys;
-DROP TABLE IF EXISTS SearchInstances;
-DROP TABLE IF EXISTS Synonyms;
-DROP TABLE IF EXISTS Themes;
+DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS feed_credentials;
+DROP TABLE IF EXISTS feed_current_documents;
+DROP TABLE IF EXISTS feeds;
+DROP TABLE IF EXISTS search_configuration;
+DROP TABLE IF EXISTS search_index;
+DROP TABLE IF EXISTS search_index_request_log;
+DROP TABLE IF EXISTS search_insights_data;
+DROP TABLE IF EXISTS search_instance_keys;
+DROP TABLE IF EXISTS search_instances;
+DROP TABLE IF EXISTS synonyms;
+DROP TABLE IF EXISTS themes;
 
 -- =============================
 -- Table Definitions
 -- =============================
 
-CREATE TABLE Customers (
-    Id               UUID           NOT NULL,
-    BusinessName     TEXT           NULL,
-    CustomerEndpoint TEXT           NULL,
-    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate     TIMESTAMP      NULL,
-    CONSTRAINT PK_Users PRIMARY KEY (Id)
+CREATE TABLE customers (
+    id               UUID           NOT NULL,
+    business_name     TEXT           NULL,
+    customer_endpoint TEXT           NULL,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP      NULL,
+    constraint PK_Users PRIMARY KEY (Id)
 );
 
-CREATE TABLE FeedCredentials (
-    Id               UUID           NOT NULL,
-    SearchIndexId    UUID           NOT NULL,
-    Username         TEXT           NOT NULL,
-    PasswordHash     TEXT           NOT NULL,
-    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate     TIMESTAMP      NULL
+CREATE TABLE feed_credentials (
+    id               UUID           NOT NULL,
+    search_index_id    UUID           NOT NULL,
+    username         TEXT           NOT NULL,
+    password_hash     TEXT           NOT NULL,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP      NULL
 );
 
-CREATE TABLE FeedCurrentDocuments (
-    Id               TEXT           NOT NULL,
-    SearchIndexId    UUID           NOT NULL,
-    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE feed_current_documents (
+    id               TEXT           NOT NULL,
+    search_index_id    UUID           NOT NULL,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Feeds (
-    Id               UUID           NOT NULL,
-    FeedType         TEXT           NOT NULL,
-    FeedScheduleCron TEXT           NOT NULL,
-    SearchIndexId    UUID           NOT NULL,
-    DataFormat       TEXT           NOT NULL,
-    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    SupersededDate   TIMESTAMP      NULL,
-    IsLatest         BOOLEAN        NOT NULL DEFAULT TRUE,
-    CONSTRAINT PK_Feeds PRIMARY KEY (Id)
+CREATE TABLE feeds (
+    id               UUID           NOT NULL,
+    feed_type         TEXT           NOT NULL,
+    feed_schedule_cron TEXT           NOT NULL,
+    search_index_id    UUID           NOT NULL,
+    data_format       TEXT           NOT NULL,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    superseded_date   TIMESTAMP      NULL,
+    is_latest         BOOLEAN        NOT NULL DEFAULT TRUE,
+    constraint PK_Feeds PRIMARY KEY (Id)
 );
 
-CREATE TABLE SearchConfiguration (
-    Id               UUID           NOT NULL,
-    Value            TEXT           NOT NULL,
-    SearchIndexId    UUID           NOT NULL,
-    Key              TEXT           NOT NULL,
-    FriendlyName     TEXT           NOT NULL,
-    Description      TEXT           NOT NULL,
-    DataType         TEXT           NOT NULL,
-    OrderIndex       INT            NULL,
-    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate     TIMESTAMP      NULL,
-    CONSTRAINT PK_SearchConfigurationMappingsCombined PRIMARY KEY (Id)
+CREATE TABLE search_configuration (
+    id               UUID           NOT NULL,
+    value            TEXT           NOT NULL,
+    search_index_id    UUID           NOT NULL,
+    key              TEXT           NOT NULL,
+    friendly_name     TEXT           NOT NULL,
+    description      TEXT           NOT NULL,
+    data_type         TEXT           NOT NULL,
+    order_index       INT            NULL,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP      NULL,
+    constraint PK_SearchConfigurationMappingsCombined PRIMARY KEY (Id)
 );
 
-CREATE TABLE SearchIndex (
-    Id               UUID           NOT NULL,
-    CustomerId       UUID           NOT NULL,
-    SearchInstanceId UUID           NULL,
-    IndexName        TEXT           NOT NULL,
-    FriendlyName     TEXT           NOT NULL,
-    PricingSkuId     TEXT           NOT NULL,
-    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT PK_SearchIndex PRIMARY KEY (Id)
+CREATE TABLE search_index (
+    id               UUID           NOT NULL,
+    customer_id       UUID           NOT NULL,
+    search_instance_id UUID           NULL,
+    index_name        TEXT           NOT NULL,
+    friendly_name     TEXT           NOT NULL,
+    pricing_sku_id     TEXT           NOT NULL,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint PK_SearchIndex PRIMARY KEY (Id)
 );
 
-CREATE TABLE SearchIndexRequestLog (
-    Id               UUID           NOT NULL,
-    SearchIndexId    UUID           NOT NULL,
-    Count            INT            NOT NULL DEFAULT 0,
-    Date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate     TIMESTAMP      NOT NULL,
-    CONSTRAINT PK_SearchIndexRequestLog PRIMARY KEY (Id)
+CREATE TABLE search_index_request_log (
+    id               UUID           NOT NULL,
+    search_index_id    UUID           NOT NULL,
+    count            INT            NOT NULL DEFAULT 0,
+    date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP      NOT NULL,
+    constraint PK_SearchIndexRequestLog PRIMARY KEY (Id)
 );
 
-CREATE TABLE SearchInsightsData (
-    Id               UUID           NOT NULL,
-    SearchIndexId    UUID           NOT NULL,
-    DataCatery       TEXT           NOT NULL,
-    DataPoint        TEXT           NOT NULL,
-    Count            INT            NOT NULL DEFAULT 0,
-    Date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate     TIMESTAMP      NOT NULL,
-    CONSTRAINT PK_SearchInsightsData PRIMARY KEY (Id)
+CREATE TABLE search_insights_data (
+    id               UUID           NOT NULL,
+    search_index_id    UUID           NOT NULL,
+    data_catery       TEXT           NOT NULL,
+    data_point        TEXT           NOT NULL,
+    count            INT            NOT NULL DEFAULT 0,
+    date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP      NOT NULL,
+    constraint PK_SearchInsightsData PRIMARY KEY (Id)
 );
 
-CREATE TABLE SearchInstanceKeys (
-    Id               UUID           NOT NULL,
-    SearchInstanceId UUID           NOT NULL,
-    KeyType          TEXT           NOT NULL,
-    Name             TEXT           NOT NULL,
-    ApiKey           TEXT           NOT NULL,
-    CreatedDate      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate     TIMESTAMP      NULL,
-    IsLatest         BOOLEAN        NOT NULL DEFAULT TRUE,
-    CONSTRAINT PK_SearchInstanceKeys PRIMARY KEY (Id)
+CREATE TABLE search_instance_keys (
+    id               UUID           NOT NULL,
+    search_instance_id UUID           NOT NULL,
+    key_type          TEXT           NOT NULL,
+    name             TEXT           NOT NULL,
+    api_key           TEXT           NOT NULL,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP      NULL,
+    is_latest         BOOLEAN        NOT NULL DEFAULT TRUE,
+    constraint PK_SearchInstanceKeys PRIMARY KEY (Id)
 );
 
-CREATE TABLE SearchInstances (
-    Id               UUID           NOT NULL,
-    CustomerId       UUID           NOT NULL,
-    ServiceName      TEXT           NOT NULL,
-    Location         TEXT           NOT NULL,
-    PricingTier      TEXT           NOT NULL,
-    Replicas         INT            NULL,
-    Partitions       INT            NULL,
-    IsShared         BOOLEAN        NOT NULL,
-    Type             TEXT           NOT NULL,
-    RootEndpoint     TEXT           NULL,
-    CONSTRAINT PK_SearchInstances PRIMARY KEY (Id)
+CREATE TABLE search_instances (
+    id               UUID           NOT NULL,
+    customer_id       UUID           NOT NULL,
+    service_name      TEXT           NOT NULL,
+    location         TEXT           NOT NULL,
+    pricing_tier      TEXT           NOT NULL,
+    replicas         INT            NULL,
+    partitions       INT            NULL,
+    is_shared         BOOLEAN        NOT NULL,
+    type             TEXT           NOT NULL,
+    root_endpoint     TEXT           NULL,
+    constraint PK_SearchInstances PRIMARY KEY (Id)
 );
 
-CREATE TABLE Synonyms (
-    Id               UUID           NOT NULL,
-    Catery           TEXT           NULL,
-    SearchIndexId    UUID           NULL,
-    KeyWord          TEXT           NULL,
-    SolrFormat       TEXT           NOT NULL,
-    CreatedDate      TIMESTAMP      NOT NULL,
-    SupersededDate   TIMESTAMP      NULL,
-    IsLatest         BOOLEAN        NOT NULL,
-    CONSTRAINT PK_CombinedSynonyms PRIMARY KEY (Id)
+CREATE TABLE synonyms (
+    id               UUID           NOT NULL,
+    catery           TEXT           NULL,
+    search_index_id    UUID           NULL,
+    key_word          TEXT           NULL,
+    solr_format       TEXT           NOT NULL,
+    created_date      TIMESTAMP      NOT NULL,
+    superseded_date   TIMESTAMP      NULL,
+    is_latest         BOOLEAN        NOT NULL,
+    constraint PK_CombinedSynonyms PRIMARY KEY (Id)
 );
 
-CREATE TABLE Themes (
-    Id                 UUID         NOT NULL,
-    PrimaryHexColour   TEXT         NULL,
-    SecondaryHexColour TEXT         NULL,
-    NavBarHexColour    TEXT         NULL,
-    LoURL              TEXT         NULL,
-    MissingImageURL    TEXT         NULL,
-    CustomerId         UUID         NULL,
-    SearchIndexId      UUID         NULL,
-    CreatedDate        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ModifiedDate       TIMESTAMP    NULL,
-    CONSTRAINT PK_Themes PRIMARY KEY (Id)
+CREATE TABLE themes (
+    id                 UUID         NOT NULL,
+    primary_hex_colour   TEXT         NULL,
+    secondary_hex_colour TEXT         NULL,
+    nav_bar_hex_colour    TEXT         NULL,
+    lo_url              TEXT         NULL,
+    missing_image_url    TEXT         NULL,
+    customer_id         UUID         NULL,
+    search_index_id      UUID         NULL,
+    created_date        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date       TIMESTAMP    NULL,
+    constraint PK_Themes PRIMARY KEY (Id)
 );
