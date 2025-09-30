@@ -9,8 +9,8 @@ DECLARE
     AdminKey  TEXT  := 'meh33Ur6Zd7oGUv201TvZAXD5mqTOH9QN1YtFePp86AzSeDwh11h';
     SecondaryKey   TEXT := 'Jc6htHDfDNK6MAgGm80ZBFqjsb0RZjkdwfSYxjMh6XAzSeAHeUua';
     QueryKey TEXT := 'JTli3f7UNsq6UP5aarwr6kEuXLziImNklC1EZlI3zSAzSeDZXlvC';
-    Replicas BOOLEAN := TRUE;
-    Partitions BOOLEAN := TRUE;
+    Replicas INT := 1;
+    Partitions INT := 1;
     IsShared BOOLEAN := TRUE;
     SearchIndexName TEXT := 'vehicles-' || LEFT(gen_random_uuid()::text, 8);
     --Feeds
@@ -151,8 +151,8 @@ BEGIN
     /***************************************************************************************
     Uncomment this if you want to clear down the insights
     ***************************************************************************************/
-    TRUNCATE TABLE SearchInsightsData;
-    TRUNCATE TABLE SearchIndexRequestLog;
+    TRUNCATE TABLE search_insights_data;
+    TRUNCATE TABLE search_index_request_log;
     
     RAISE NOTICE '********************************';
     RAISE NOTICE 'Inserting Search Instances Entry';
@@ -210,7 +210,7 @@ BEGIN
 		AdminKey,
 		CURRENT_TIMESTAMP,
 		null,
-		1
+		TRUE
     );
 
     INSERT INTO search_instance_keys
@@ -233,7 +233,7 @@ BEGIN
 		SecondaryKey,
 		CURRENT_TIMESTAMP,
 		null,
-    1
+        TRUE
     );
 
     INSERT INTO search_instance_keys
@@ -256,7 +256,7 @@ BEGIN
 		QueryKey,
 		CURRENT_TIMESTAMP,
 		null,
-		1
+		TRUE
     );
         
     RAISE NOTICE '************************';
@@ -313,23 +313,25 @@ BEGIN
     
     INSERT INTO feeds
     (
-		feed_type
-		,feed_scheduleCron
-		,search_index_id
-		,data_format
-		,created_date
-		,superseded_date
-		,is_latest
+        id,
+		feed_type,
+		feed_schedule_cron,
+		search_index_id,
+		data_format,
+		created_date,
+		superseded_date,
+		is_latest
     )
     VALUES
     (
+        gen_random_uuid(),
 		FeedType,
 		FeedCron,
 		SearchIndexId_1,
 		DataFormat,
 		CURRENT_TIMESTAMP,
 		null,
-		1
+		TRUE
     );
     
     RAISE NOTICE '********************************';
@@ -372,16 +374,16 @@ BEGIN
     
     INSERT INTO themes
     (
-		id
-		,primary_hex_colour
-		,secondary_hex_colour
-		,nav_bar_hex_colour
-		,logo_url
-		,missing_image_url
-		,customer_id
-		,search_index_id
-		,created_date
-		,modified_date
+		id,
+		primary_hex_colour,
+		secondary_hex_colour,
+		nav_bar_hex_colour,
+		logo_url,
+		missing_image_url,
+		customer_id,
+		search_index_id,
+		created_date,
+		modified_date
     )
     VALUES
     (

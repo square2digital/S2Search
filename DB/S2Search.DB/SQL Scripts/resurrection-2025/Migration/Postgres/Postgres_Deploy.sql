@@ -16,7 +16,6 @@ DROP TABLE IF EXISTS feed_current_documents;
 DROP TABLE IF EXISTS feeds;
 DROP TABLE IF EXISTS search_configuration;
 DROP TABLE IF EXISTS search_index;
-DROP TABLE IF EXISTS search_index_request_log;
 DROP TABLE IF EXISTS search_insights_data;
 DROP TABLE IF EXISTS search_instance_keys;
 DROP TABLE IF EXISTS search_instances;
@@ -91,16 +90,6 @@ CREATE TABLE search_index (
     constraint PK_SearchIndex PRIMARY KEY (Id)
 );
 
-CREATE TABLE search_index_request_log (
-    id               UUID           NOT NULL,
-    search_index_id    UUID           NOT NULL,
-    count            INT            NOT NULL DEFAULT 0,
-    date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP      NOT NULL,
-    constraint PK_SearchIndexRequestLog PRIMARY KEY (Id)
-);
-
 CREATE TABLE search_instance_keys (
     id               UUID           NOT NULL,
     search_instance_id UUID           NOT NULL,
@@ -114,22 +103,22 @@ CREATE TABLE search_instance_keys (
 );
 
 CREATE TABLE search_instances (
-    id               UUID           NOT NULL,
+    id                UUID           NOT NULL,
     customer_id       UUID           NOT NULL,
     service_name      TEXT           NOT NULL,
-    location         TEXT           NOT NULL,
+    location          TEXT           NOT NULL,
     pricing_tier      TEXT           NOT NULL,
-    replicas         INT            NULL,
-    partitions       INT            NULL,
+    replicas          INT            NULL,
+    partitions        INT            NULL,
     is_shared         BOOLEAN        NOT NULL,
-    type             TEXT           NOT NULL,
+    type              TEXT           NOT NULL,
     root_endpoint     TEXT           NULL,
     constraint PK_SearchInstances PRIMARY KEY (Id)
 );
 
 CREATE TABLE synonyms (
     id               UUID           NOT NULL,
-    catery           TEXT           NULL,
+    category           TEXT           NULL,
     search_index_id    UUID           NULL,
     key_word          TEXT           NULL,
     solr_format       TEXT           NOT NULL,
@@ -154,23 +143,25 @@ CREATE TABLE themes (
 );
 
 CREATE TABLE search_insights_data (
-    id              INT              NOT NULL,
-    search_index_id UUID             NOT NULL,
-    data_category   TEXT             NOT NULL,
-    data_point      TEXT             NOT NULL,
-    count           INT              NOT NULL,
-    date            TIMESTAMP        NOT NULL,
-    modified_date   TIMESTAMP        NOT NULL,
-    CONSTRAINT PK_SearchInsightsData PRIMARY KEY (id)
+    id               UUID           NOT NULL,
+    search_index_id    UUID           NOT NULL,
+    data_catery       TEXT           NOT NULL,
+    data_point        TEXT           NOT NULL,
+    count            INT            NOT NULL DEFAULT 0,
+    date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP      NOT NULL,
+    constraint PK_SearchInsightsData PRIMARY KEY (Id)
 );
 
 CREATE TABLE search_index_request_log (
-    id              INT              NOT NULL,
-    search_index_id UUID             NOT NULL,
-    count           INT              DEFAULT ((0)) NOT NULL,
-    date            TIMESTAMP        DEFAULT (getutcdate()) NOT NULL,
-    modified_date   TIMESTAMP        DEFAULT (getutcdate()) NOT NULL,
-    CONSTRAINT PK_SearchIndexRequestLog PRIMARY KEY (id)
+    id               UUID           NOT NULL,
+    search_index_id    UUID           NOT NULL,
+    count            INT            NOT NULL DEFAULT 0,
+    date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP      NOT NULL,
+    constraint PK_SearchIndexRequestLog PRIMARY KEY (Id)
 );
 
 -- =============================
