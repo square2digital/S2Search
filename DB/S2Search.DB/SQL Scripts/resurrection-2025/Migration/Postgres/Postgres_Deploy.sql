@@ -30,21 +30,21 @@ DROP TABLE IF EXISTS search_index_request_log;
 -- =============================
 
 CREATE TABLE customers (
-    id               UUID           NOT NULL,
-    business_name     TEXT           NULL,
-    customer_endpoint TEXT           NULL,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP      NULL,
+    id                  UUID           NOT NULL,
+    business_name       TEXT           NULL,
+    customer_endpoint   TEXT           NULL,
+    created_date        TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date       TIMESTAMP      NULL,
     constraint PK_Users PRIMARY KEY (Id)
 );
 
 CREATE TABLE feed_credentials (
-    id               UUID           NOT NULL,
-    search_index_id    UUID           NOT NULL,
-    username         TEXT           NOT NULL,
-    password_hash     TEXT           NOT NULL,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP      NULL
+    id                 UUID          NOT NULL,
+    search_index_id    UUID          NOT NULL,
+    username           TEXT          NOT NULL,
+    password_hash      TEXT          NOT NULL,
+    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date      TIMESTAMP     NULL
 );
 
 CREATE TABLE feed_current_documents (
@@ -117,14 +117,14 @@ CREATE TABLE search_instances (
 );
 
 CREATE TABLE synonyms (
-    id               UUID           NOT NULL,
+    id                 UUID           NOT NULL,
     category           TEXT           NULL,
     search_index_id    UUID           NULL,
-    key_word          TEXT           NULL,
-    solr_format       TEXT           NOT NULL,
-    created_date      TIMESTAMP      NOT NULL,
-    superseded_date   TIMESTAMP      NULL,
-    is_latest         BOOLEAN        NOT NULL,
+    key_word           TEXT           NULL,
+    solr_format        TEXT           NOT NULL,
+    created_date       TIMESTAMP      NOT NULL,
+    superseded_date    TIMESTAMP      NULL,
+    is_latest          BOOLEAN        NOT NULL,
     constraint PK_CombinedSynonyms PRIMARY KEY (Id)
 );
 
@@ -133,7 +133,7 @@ CREATE TABLE themes (
     primary_hex_colour   TEXT         NULL,
     secondary_hex_colour TEXT         NULL,
     nav_bar_hex_colour   TEXT         NULL,
-    lo_url               TEXT         NULL,
+    logo_url             TEXT         NULL,
     missing_image_url    TEXT         NULL,
     customer_id          UUID         NULL,
     search_index_id      UUID         NULL,

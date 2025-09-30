@@ -343,14 +343,18 @@ BEGIN
 		id,
 		search_index_id,
 		key_word,
-		solr_format
+		solr_format,
+        created_date,
+        is_latest
     )
     VALUES
     (
 		SynonymId_1,
 		SearchIndexId_1,
 		KeyWord_1,
-		SolrFormat_1
+		SolrFormat_1,
+        CURRENT_TIMESTAMP,
+        TRUE
     );
     
     INSERT INTO synonyms
@@ -358,14 +362,18 @@ BEGIN
 		id,
 		search_index_id,
 		key_word,
-		solr_format
+		solr_format,
+        created_date,
+        is_latest
     )
     VALUES
     (
 		SynonymId_2,
 		SearchIndexId_1,
 		KeyWord_2,
-		SolrFormat_2
+		SolrFormat_2,
+        CURRENT_TIMESTAMP,
+        TRUE
     );
     
     RAISE NOTICE '********************************';
@@ -405,12 +413,12 @@ BEGIN
     
     INSERT INTO feed_credentials
 	(
-        Id,
-		SearchIndexId,
-		Username,
-		PasswordHash,
-		CreatedDate,
-		ModifiedDate
+        id,
+		search_index_id,
+		username,
+		password_hash,
+		created_date,
+		modified_date
     )
     VALUES
 	(
@@ -428,18 +436,18 @@ BEGIN
     
     -- Option 1: Enable Auto Complete
     INSERT INTO search_configuration
-		(
-		Id,
-		Value,
-		SearchIndexId,
-		Key,
-		FriendlyName,
-		Description,
-		DataType,
-		OrderIndex,
-		CreatedDate,
-		ModifiedDate
-		)
+	(
+		id,
+		value,
+		search_index_id,
+		key,
+		friendly_name,
+		description,
+		data_type,
+		order_index,
+		created_date,
+		modified_date
+	)
     VALUES
     (
 		SearchConfiguration_EnableAutoComplete_Id,
@@ -457,16 +465,16 @@ BEGIN
     -- Option 2: Hide Icon Vehicle Counts
     INSERT INTO search_configuration
     (
-		Id,
-		Value,
-		SearchIndexId,
-		Key,
-		FriendlyName,
-		Description,
-		DataType,
-		OrderIndex,
-		CreatedDate,
-		ModifiedDate
+		id,
+		value,
+		search_index_id,
+		key,
+		friendly_name,
+		description,
+		data_type,
+		order_index,
+		created_date,
+		modified_date
     )
     VALUES
     (
@@ -485,16 +493,16 @@ BEGIN
     -- Option 3: Placeholder Text Array (5 rows)
     INSERT INTO search_configuration
     (
-		Id,
-		Value,
-		SearchIndexId,
-		Key,
-		FriendlyName,
-		Description,
-		DataType,
-		OrderIndex,
-		CreatedDate,
-		ModifiedDate
+		id,
+		value,
+		search_index_id,
+		key,
+		friendly_name,
+		description,
+		data_type,
+		order_index,
+		created_date,
+		modified_date
     )
     VALUES
     (gen_random_uuid(), SearchConfiguration_PlaceholderText_Value_1, gen_random_uuid(), SearchConfiguration_PlaceholderText_Key_1, 'Placeholder Text 1', 'Placeholder for search bar', 'String', 1, CURRENT_TIMESTAMP, NULL),
