@@ -72,7 +72,7 @@
     <Folder Include="FeedServicesFunc\User Defined Types\" />
     <Folder Include="SearchInsightsFunc\User Defined Types\" />
     <Folder Include="SQL Scripts" />
-    <Folder Include="SQL Scripts\resurrection-2025" />
+    <Folder Include="SQL Scripts\Resurrection-2025" />
     <Folder Include="SQL Scripts\Legacy" />
     <Folder Include="SQL Scripts\Legacy\Infra-test-12-12-21" />
     <Folder Include="SQL Scripts\Legacy\Infra-test-15-01-22" />
@@ -80,6 +80,9 @@
     <Folder Include="SQL Scripts\Legacy\production-demo-Infra-28-01-22" />
     <Folder Include="SQL Scripts\Legacy\resurrection-2023" />
     <Folder Include="SQL Scripts\Legacy\TestDealers" />
+    <Folder Include="SQL Scripts\Resurrection-2025\Migration" />
+    <Folder Include="SQL Scripts\Resurrection-2025\Migration\Postgres" />
+    <Folder Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\SearchInstanceKeys.sql" />
@@ -137,7 +140,6 @@
     <Build Include="SearchInsightsFunc\User Defined Types\SearchInsightsData.sql" />
     <None Include="SQL Scripts\CreateData-SearchInsights.sql" />
     <None Include="SQL Scripts\GetAllCustomerData.sql" />
-    <None Include="SQL Scripts\resurrection-2025\CreateData.sql" />
     <Build Include="Schemas.sql" />
     <Build Include="logins.sql" />
     <Build Include="FeedServicesFunc\Stored Procedures\GetFeedCredentialsUsername.sql" />
@@ -150,5 +152,9 @@
     <None Include="SQL Scripts\Legacy\production-demo-Infra-28-01-22\CreateData.sql" />
     <None Include="SQL Scripts\Legacy\resurrection-2023\CreateData.sql" />
     <None Include="SQL Scripts\Legacy\TestDealers\CreateData.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres_Deploy.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure\SqlAzure_Deploy.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure\CreateData_SqlAzure.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres\CreateData_Postgres.sql" />
   </ItemGroup>
 </Project>
