@@ -23,6 +23,9 @@ DROP TABLE IF EXISTS search_instances;
 DROP TABLE IF EXISTS synonyms;
 DROP TABLE IF EXISTS themes;
 
+DROP TABLE IF EXISTS search_insights_data;
+DROP TABLE IF EXISTS search_index_request_log;
+
 -- =============================
 -- Table Definitions
 -- =============================
@@ -98,18 +101,6 @@ CREATE TABLE search_index_request_log (
     constraint PK_SearchIndexRequestLog PRIMARY KEY (Id)
 );
 
-CREATE TABLE search_insights_data (
-    id               UUID           NOT NULL,
-    search_index_id    UUID           NOT NULL,
-    data_catery       TEXT           NOT NULL,
-    data_point        TEXT           NOT NULL,
-    count            INT            NOT NULL DEFAULT 0,
-    date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP      NOT NULL,
-    constraint PK_SearchInsightsData PRIMARY KEY (Id)
-);
-
 CREATE TABLE search_instance_keys (
     id               UUID           NOT NULL,
     search_instance_id UUID           NOT NULL,
@@ -149,17 +140,37 @@ CREATE TABLE synonyms (
 );
 
 CREATE TABLE themes (
-    id                 UUID         NOT NULL,
+    id                   UUID         NOT NULL,
     primary_hex_colour   TEXT         NULL,
     secondary_hex_colour TEXT         NULL,
-    nav_bar_hex_colour    TEXT         NULL,
-    lo_url              TEXT         NULL,
+    nav_bar_hex_colour   TEXT         NULL,
+    lo_url               TEXT         NULL,
     missing_image_url    TEXT         NULL,
-    customer_id         UUID         NULL,
+    customer_id          UUID         NULL,
     search_index_id      UUID         NULL,
-    created_date        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date       TIMESTAMP    NULL,
+    created_date         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date        TIMESTAMP    NULL,
     constraint PK_Themes PRIMARY KEY (Id)
+);
+
+CREATE TABLE search_insights_data (
+    id              INT              NOT NULL,
+    search_index_id UUID             NOT NULL,
+    data_category   TEXT             NOT NULL,
+    data_point      TEXT             NOT NULL,
+    count           INT              NOT NULL,
+    date            TIMESTAMP        NOT NULL,
+    modified_date   TIMESTAMP        NOT NULL,
+    CONSTRAINT PK_SearchInsightsData PRIMARY KEY (id)
+);
+
+CREATE TABLE search_index_request_log (
+    id              INT              NOT NULL,
+    search_index_id UUID             NOT NULL,
+    count           INT              DEFAULT ((0)) NOT NULL,
+    date            TIMESTAMP        DEFAULT (getutcdate()) NOT NULL,
+    modified_date   TIMESTAMP        DEFAULT (getutcdate()) NOT NULL,
+    CONSTRAINT PK_SearchIndexRequestLog PRIMARY KEY (id)
 );
 
 -- =============================
