@@ -153,9 +153,9 @@
     <None Include="SQL Scripts\Legacy\resurrection-2023\CreateData.sql" />
     <None Include="SQL Scripts\Legacy\TestDealers\CreateData.sql" />
     <Build Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres_Tables.sql" />
-    <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres_Deploy.sql" />
     <Build Include="SQL Scripts\Resurrection-2025\Migration\Postgres\Postgres_Functions.sql" />
-    <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure\SqlAzure.sql" />
+    <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure\SqlAzure_Deploy.sql" />
     <None Include="SQL Scripts\Resurrection-2025\Migration\SqlAzure\CreateData_SqlAzure.sql" />
     <None Include="SQL Scripts\Resurrection-2025\Migration\Postgres\CreateData_Postgres.sql" />
   </ItemGroup>

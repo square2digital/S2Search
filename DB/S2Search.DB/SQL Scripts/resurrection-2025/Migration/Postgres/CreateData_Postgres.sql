@@ -135,18 +135,18 @@ DECLARE
 BEGIN
     -- your logic here
     
-    DELETE FROM Customers;
-    DELETE FROM FeedCredentials;
-    DELETE FROM FeedCurrentDocuments;
-    DELETE FROM Feeds;
-    DELETE FROM SearchConfiguration;
-    DELETE FROM SearchIndex;
-    DELETE FROM SearchIndexRequestLog;
-    DELETE FROM SearchInsightsData;
-    DELETE FROM SearchInstanceKeys;
-    DELETE FROM SearchInstances;
-    DELETE FROM Synonyms;
-    DELETE FROM Themes;
+    DELETE FROM customers;
+    DELETE FROM feed_credentials;
+    DELETE FROM feed_current_documents;
+    DELETE FROM feeds;
+    DELETE FROM search_configuration;
+    DELETE FROM search_index;
+    DELETE FROM search_index_request_log;
+    DELETE FROM search_insights_data;
+    DELETE FROM search_instance_keys;
+    DELETE FROM search_instances;
+    DELETE FROM synonyms;
+    DELETE FROM themes;
     
     /***************************************************************************************
     Uncomment this if you want to clear down the insights
@@ -158,18 +158,18 @@ BEGIN
     RAISE NOTICE 'Inserting Search Instances Entry';
     RAISE NOTICE '********************************';
     
-    INSERT INTO SearchInstances
+    INSERT INTO search_instances
     (
-		"Id",
-        "CustomerId",
-		"ServiceName",
-		"Location",
-		"PricingTier",
-		"Replicas",
-		"Partitions",
-		"IsShared",
-		"Type",
-		"RootEndpoint"
+		id,
+        customer_id,
+		service_name,
+		location,
+		pricing_tier,
+		replicas,
+		partitions,
+		is_shared,
+		type,
+		root_endpoint
     )
     VALUES
     (
@@ -190,16 +190,16 @@ BEGIN
     RAISE NOTICE 'Inserting Search Resource Keys';
     RAISE NOTICE '********************************';
     
-    INSERT INTO SearchInstanceKeys
+    INSERT INTO search_instance_keys
     (
-		Id,
-		SearchInstanceId,
-		KeyType,
-		"Name",
-		ApiKey,
-		CreatedDate,
-		ModifiedDate,
-		IsLatest
+		id,
+		search_instance_id,
+		key_type,
+		name,
+		api_key,
+		created_date,
+		modified_date,
+		is_latest
     )
     VALUES
     (
@@ -213,16 +213,16 @@ BEGIN
 		1
     );
 
-    INSERT INTO SearchInstanceKeys
+    INSERT INTO search_instance_keys
     (
-		Id,
-		SearchInstanceId,
-		KeyType,
-		"Name",
-		ApiKey,
-		CreatedDate,
-		ModifiedDate,
-		IsLatest
+		id,
+		search_instance_id,
+		key_type,
+		name,
+		api_key,
+		created_date,
+		modified_date,
+		is_latest
     )
     VALUES
     (
@@ -236,16 +236,16 @@ BEGIN
     1
     );
 
-    INSERT INTO SearchInstanceKeys
+    INSERT INTO search_instance_keys
     (
-		Id,
-		SearchInstanceId,
-		KeyType,
-		"Name",
-		ApiKey,
-		CreatedDate,
-		ModifiedDate,
-		IsLatest
+		id,
+		search_instance_id,
+		key_type,
+		name,
+		api_key,
+		created_date,
+		modified_date,
+		is_latest
     )
     VALUES
     (
@@ -267,12 +267,12 @@ BEGIN
     RAISE NOTICE 'Inserting Test Customer 1';
     RAISE NOTICE '************************';
     
-    INSERT INTO Customers
+    INSERT INTO customers
     (
-		"Id",
-		"BusinessName",
-		"CreatedDate",
-		"ModifiedDate"
+		id,
+		business_name,
+		created_date,
+		modified_date
     )
     VALUES
     (
@@ -286,15 +286,15 @@ BEGIN
     RAISE NOTICE 'Inserting Search Index for Test Customer 1';
     RAISE NOTICE '********************************';
     
-    INSERT INTO SearchIndex
+    INSERT INTO search_index
     (
-		Id,
-		SearchInstanceId,
-		IndexName,
-		FriendlyName,
-		CustomerId,
-		CreatedDate,
-		PricingSkuId
+		id,
+		search_instance_id,
+		index_name,
+		friendly_name,
+		customer_id,
+		created_date,
+		pricing_sku_id
     )
     VALUES
     (
@@ -311,15 +311,15 @@ BEGIN
     RAISE NOTICE 'Inserting Feed Entry for Test Customer 1';
     RAISE NOTICE '********************************';
     
-    INSERT INTO Feeds
+    INSERT INTO feeds
     (
-		"FeedType"
-		,"FeedScheduleCron"
-		,"SearchIndexId"
-		,"DataFormat"
-		,"CreatedDate"
-		,"SupersededDate"
-		,"IsLatest"
+		feed_type
+		,feed_scheduleCron
+		,search_index_id
+		,data_format
+		,created_date
+		,superseded_date
+		,is_latest
     )
     VALUES
     (
@@ -336,12 +336,12 @@ BEGIN
     RAISE NOTICE 'Inserting Synonyms';
     RAISE NOTICE '********************************';
     
-    INSERT INTO Synonyms
+    INSERT INTO synonyms
     (
-		Id,
-		SearchIndexId,
-		KeyWord,
-		SolrFormat
+		id,
+		search_index_id,
+		key_word,
+		solr_format
     )
     VALUES
     (
@@ -351,12 +351,12 @@ BEGIN
 		SolrFormat_1
     );
     
-    INSERT INTO Synonyms
+    INSERT INTO synonyms
     (
-		Id,
-		SearchIndexId,
-		KeyWord,
-		SolrFormat
+		id,
+		search_index_id,
+		key_word,
+		solr_format
     )
     VALUES
     (
@@ -370,18 +370,18 @@ BEGIN
     RAISE NOTICE 'Customer 1 - S2 Demo - Theme Details';
     RAISE NOTICE '********************************';
     
-    INSERT INTO Themes
+    INSERT INTO themes
     (
-		"Id"
-		,"PrimaryHexColour"
-		,"SecondaryHexColour"
-		,"NavBarHexColour"
-		,"LogoURL"
-		,"MissingImageURL"
-		,"CustomerId"
-		,"SearchIndexId"
-		,"CreatedDate"
-		,"ModifiedDate"
+		id
+		,primary_hex_colour
+		,secondary_hex_colour
+		,nav_bar_hex_colour
+		,logo_url
+		,missing_image_url
+		,customer_id
+		,search_index_id
+		,created_date
+		,modified_date
     )
     VALUES
     (
@@ -401,21 +401,23 @@ BEGIN
     RAISE NOTICE 'Search Index 1 FeedCredentials';
     RAISE NOTICE '*******************************************';
     
-    INSERT INTO FeedCredentials
-		("Id"
-		,"SearchIndexId"
-		,"Username"
-		,"PasswordHash"
-		,"CreatedDate"
-		,"ModifiedDate")
+    INSERT INTO feed_credentials
+	(
+        Id,
+		SearchIndexId,
+		Username,
+		PasswordHash,
+		CreatedDate,
+		ModifiedDate
+    )
     VALUES
-		(
-		FeedId_1
-		, FeedSearchIndexId_1
-		, FeedUsername_1
-		, FeedPasswordHash_1
-		, CURRENT_TIMESTAMP
-		, null
+	(
+		 FeedId_1,
+		 FeedSearchIndexId_1,
+		 FeedUsername_1,
+		 FeedPasswordHash_1,
+		 CURRENT_TIMESTAMP,
+		 null
 	);
     
     RAISE NOTICE '****************************';
@@ -423,18 +425,18 @@ BEGIN
     RAISE NOTICE '****************************';
     
     -- Option 1: Enable Auto Complete
-    INSERT INTO SearchConfiguration
+    INSERT INTO search_configuration
 		(
-		"Id",
-		"Value",
-		"SearchIndexId",
-		"Key",
-		"FriendlyName",
-		"Description",
-		"DataType",
-		"OrderIndex",
-		"CreatedDate",
-		"ModifiedDate"
+		Id,
+		Value,
+		SearchIndexId,
+		Key,
+		FriendlyName,
+		Description,
+		DataType,
+		OrderIndex,
+		CreatedDate,
+		ModifiedDate
 		)
     VALUES
     (
@@ -451,18 +453,18 @@ BEGIN
     );
     
     -- Option 2: Hide Icon Vehicle Counts
-    INSERT INTO SearchConfiguration
+    INSERT INTO search_configuration
     (
-		"Id",
-		"Value",
-		"SearchIndexId",
-		"Key",
-		"FriendlyName",
-		"Description",
-		"DataType",
-		"OrderIndex",
-		"CreatedDate",
-		"ModifiedDate"
+		Id,
+		Value,
+		SearchIndexId,
+		Key,
+		FriendlyName,
+		Description,
+		DataType,
+		OrderIndex,
+		CreatedDate,
+		ModifiedDate
     )
     VALUES
     (
@@ -479,18 +481,18 @@ BEGIN
     );
     
     -- Option 3: Placeholder Text Array (5 rows)
-    INSERT INTO SearchConfiguration
+    INSERT INTO search_configuration
     (
-		"Id",
-		"Value",
-		"SearchIndexId",
-		"Key",
-		"FriendlyName",
-		"Description",
-		"DataType",
-		"OrderIndex",
-		"CreatedDate",
-		"ModifiedDate"
+		Id,
+		Value,
+		SearchIndexId,
+		Key,
+		FriendlyName,
+		Description,
+		DataType,
+		OrderIndex,
+		CreatedDate,
+		ModifiedDate
     )
     VALUES
     (gen_random_uuid(), SearchConfiguration_PlaceholderText_Value_1, gen_random_uuid(), SearchConfiguration_PlaceholderText_Key_1, 'Placeholder Text 1', 'Placeholder for search bar', 'String', 1, CURRENT_TIMESTAMP, NULL),
