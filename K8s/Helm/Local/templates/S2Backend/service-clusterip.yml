@@ -9,5 +9,5 @@ spec:
   selector:
     app: s2search-backend
   ports:
-    - port: 80
-      targetPort: 80
+    - port: { { .Values.S2Backend.service.port } }
+      targetPort: { { .Values.S2Backend.service.port } }
