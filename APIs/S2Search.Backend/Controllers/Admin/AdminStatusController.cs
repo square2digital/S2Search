@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using S2Search.Backend.Domain.Constants;
-using System.Data.SqlClient;
+using Npgsql;
 
 namespace S2Search.Backend.Controllers.Admin
 {
@@ -31,7 +31,7 @@ namespace S2Search.Backend.Controllers.Admin
         {
             try
             {
-                using var connection = new SqlConnection(_connectionString);
+                using var connection = new NpgsqlConnection(_connectionString);
                 connection.Open();
                 return Ok(new { status = "Database connection successful" });
             }
