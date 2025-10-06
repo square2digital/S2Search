@@ -18,109 +18,109 @@ namespace S2Search.Backend.Services.Services
             _dbConnection = dbConnection ?? throw new ArgumentNullException(nameof(dbConnection));
         }
 
-        public int Execute(string connectionString, string procedureName, object parameters) => 
-            DapperExecute(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public int Execute(string connectionString, string sqlQuery, object parameters) => 
+            DapperExecute(connectionString, sqlQuery, parameters);
 
-        public async Task<int> ExecuteAsync(string connectionString, string procedureName, object parameters) => 
-            await DapperExecuteAsync(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public async Task<int> ExecuteAsync(string connectionString, string sqlQuery, object parameters) => 
+            await DapperExecuteAsync(connectionString, sqlQuery, parameters);
 
-        public T ExecuteScalar<T>(string connectionString, string procedureName, object parameters) => 
-            DapperExecuteScalar<T>(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public T ExecuteScalar<T>(string connectionString, string sqlQuery, object parameters) => 
+            DapperExecuteScalar<T>(connectionString, sqlQuery, parameters);
 
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, string procedureName, object parameters) => 
-            await DapperExecuteScalarAsync<T>(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public async Task<T> ExecuteScalarAsync<T>(string connectionString, string sqlQuery, object parameters) => 
+            await DapperExecuteScalarAsync<T>(connectionString, sqlQuery, parameters);
 
-        public IEnumerable<T> Query<T>(string connectionString, string procedureName, object parameters) => 
-            DapperQuery<T>(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public IEnumerable<T> Query<T>(string connectionString, string sqlQuery, object parameters) => 
+            DapperQuery<T>(connectionString, sqlQuery, parameters);
 
-        public async Task<IEnumerable<T>> QueryAsync<T>(string connectionString, string procedureName, object parameters) => 
-            await DapperQueryAsync<T>(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public async Task<IEnumerable<T>> QueryAsync<T>(string connectionString, string sqlQuery, object parameters) => 
+            await DapperQueryAsync<T>(connectionString, sqlQuery, parameters);
 
-        public T QueryFirstOrDefault<T>(string connectionString, string procedureName, object parameters) => 
-            DapperQueryFirstOrDefault<T>(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public T QueryFirstOrDefault<T>(string connectionString, string sqlQuery, object parameters) => 
+            DapperQueryFirstOrDefault<T>(connectionString, sqlQuery, parameters);
 
-        public async Task<T> QueryFirstOrDefaultAsync<T>(string connectionString, string procedureName, object parameters) => 
-            await DapperQueryFirstOrDefaultAsync<T>(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public async Task<T> QueryFirstOrDefaultAsync<T>(string connectionString, string sqlQuery, object parameters) => 
+            await DapperQueryFirstOrDefaultAsync<T>(connectionString, sqlQuery, parameters);
 
-        public T QuerySingleOrDefault<T>(string connectionString, string procedureName, object parameters) => 
-            DapperQuerySingleOrDefault<T>(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public T QuerySingleOrDefault<T>(string connectionString, string sqlQuery, object parameters) => 
+            DapperQuerySingleOrDefault<T>(connectionString, sqlQuery, parameters);
 
-        public async Task<T> QuerySingleOrDefaultAsync<T>(string connectionString, string procedureName, object parameters) => 
-            await DapperQuerySingleOrDefaultAsync<T>(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public async Task<T> QuerySingleOrDefaultAsync<T>(string connectionString, string sqlQuery, object parameters) => 
+            await DapperQuerySingleOrDefaultAsync<T>(connectionString, sqlQuery, parameters);
 
-        public T QueryMultiple<T>(string connectionString, string procedureName, object parameters) => 
-            DapperQueryMultiple<T>(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public T QueryMultiple<T>(string connectionString, string sqlQuery, object parameters) => 
+            DapperQueryMultiple<T>(connectionString, sqlQuery, parameters);
 
-        public async Task<T> QueryMultipleAsync<T>(string connectionString, string procedureName, object parameters) => 
-            await DapperQueryMultipleAsync<T>(connectionString, procedureName, ParameterHelper.ParseParameters(procedureName, parameters));
+        public async Task<T> QueryMultipleAsync<T>(string connectionString, string sqlQuery, object parameters) => 
+            await DapperQueryMultipleAsync<T>(connectionString, sqlQuery, parameters);
 
-        private int DapperExecute(string connectionString, string procedureName, object parameters)
+        private int DapperExecute(string connectionString, string sqlQuery, object parameters)
         {
             var connection = _dbConnection.Create(connectionString);
-            return connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return connection.Execute(sqlQuery, parameters, commandType: CommandType.Text);
         }
 
-        private async Task<int> DapperExecuteAsync(string connectionString, string procedureName, object parameters)
+        private async Task<int> DapperExecuteAsync(string connectionString, string sqlQuery, object parameters)
         {
             var connection = _dbConnection.Create(connectionString);
-            return await connection.ExecuteAsync(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return await connection.ExecuteAsync(sqlQuery, parameters, commandType: CommandType.Text);
         }
 
-        private T DapperExecuteScalar<T>(string connectionString, string procedureName, object parameters)
+        private T DapperExecuteScalar<T>(string connectionString, string sqlQuery, object parameters)
         {
             var connection = _dbConnection.Create(connectionString);
-            return connection.ExecuteScalar<T>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return connection.ExecuteScalar<T>(sqlQuery, parameters, commandType: CommandType.Text);
         }
 
-        private async Task<T> DapperExecuteScalarAsync<T>(string connectionString, string procedureName, object parameters)
+        private async Task<T> DapperExecuteScalarAsync<T>(string connectionString, string sqlQuery, object parameters)
         {
             var connection = _dbConnection.Create(connectionString);
-            return await connection.ExecuteScalarAsync<T>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return await connection.ExecuteScalarAsync<T>(sqlQuery, parameters, commandType: CommandType.Text);
         }
 
-        private IEnumerable<T> DapperQuery<T>(string connectionString, string procedureName, object parameters)
+        private IEnumerable<T> DapperQuery<T>(string connectionString, string sqlQuery, object parameters)
         {
             var connection = _dbConnection.Create(connectionString);
-            return connection.Query<T>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return connection.Query<T>(sqlQuery, parameters, commandType: CommandType.Text);
         }
 
-        private async Task<IEnumerable<T>> DapperQueryAsync<T>(string connectionString, string procedureName, object parameters)
+        private async Task<IEnumerable<T>> DapperQueryAsync<T>(string connectionString, string sqlQuery, object parameters)
         {
             var connection = _dbConnection.Create(connectionString);
-            return await connection.QueryAsync<T>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QueryAsync<T>(sqlQuery, parameters, commandType: CommandType.Text);
         }
 
-        private T DapperQueryFirstOrDefault<T>(string connectionString, string procedureName, object parameters)
+        private T DapperQueryFirstOrDefault<T>(string connectionString, string sqlQuery, object parameters)
         {
             var connection = _dbConnection.Create(connectionString);
-            return connection.QueryFirstOrDefault<T>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return connection.QueryFirstOrDefault<T>(sqlQuery, parameters, commandType: CommandType.Text);
         }
 
-        private async Task<T> DapperQueryFirstOrDefaultAsync<T>(string connectionString, string procedureName, object parameters)
+        private async Task<T> DapperQueryFirstOrDefaultAsync<T>(string connectionString, string sqlQuery, object parameters)
         {
             var connection = _dbConnection.Create(connectionString);
-            return await connection.QueryFirstOrDefaultAsync<T>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QueryFirstOrDefaultAsync<T>(sqlQuery, parameters, commandType: CommandType.Text);
         }
 
-        private T DapperQuerySingleOrDefault<T>(string connectionString, string procedureName, object parameters)
+        private T DapperQuerySingleOrDefault<T>(string connectionString, string sqlQuery, object parameters)
         {
             var connection = _dbConnection.Create(connectionString);
-            return connection.QuerySingleOrDefault<T>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return connection.QuerySingleOrDefault<T>(sqlQuery, parameters, commandType: CommandType.Text);
         }
 
-        private async Task<T> DapperQuerySingleOrDefaultAsync<T>(string connectionString, string procedureName, object parameters)
+        private async Task<T> DapperQuerySingleOrDefaultAsync<T>(string connectionString, string sqlQuery, object parameters)
         {
             var connection = _dbConnection.Create(connectionString);
-            return await connection.QuerySingleOrDefaultAsync<T>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QuerySingleOrDefaultAsync<T>(sqlQuery, parameters, commandType: CommandType.Text);
         }
 
-        private T DapperQueryMultiple<T>(string connectionString, string procedureName, object parameters)
+        private T DapperQueryMultiple<T>(string connectionString, string sqlQuery, object parameters)
         {
             var data = new ExpandoObject();
             var customObjectMap = CustomObjectMapHelper.Create<T>();
 
             var connection = _dbConnection.Create(connectionString);
-            using (var result = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure))
+            using (var result = connection.QueryMultiple(sqlQuery, parameters, commandType: CommandType.Text))
             {
                 MapCustomObjects(customObjectMap, data, result);
             }
@@ -130,13 +130,13 @@ namespace S2Search.Backend.Services.Services
             return returnObject;
         }
 
-        private async Task<T> DapperQueryMultipleAsync<T>(string connectionString, string procedureName, object parameters)
+        private async Task<T> DapperQueryMultipleAsync<T>(string connectionString, string sqlQuery, object parameters)
         {
             var data = new ExpandoObject();
             var customObjectMap = CustomObjectMapHelper.Create<T>();
 
             var connection = _dbConnection.Create(connectionString);
-            using (var result = await connection.QueryMultipleAsync(procedureName, parameters, commandType: CommandType.StoredProcedure))
+            using (var result = await connection.QueryMultipleAsync(sqlQuery, parameters, commandType: CommandType.Text))
             {
                 await MapCustomObjectsAsync(customObjectMap, data, result);
             }

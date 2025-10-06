@@ -31,11 +31,4 @@
     <ProjectReference Include="..\S2Search.Backend.Services\S2Search.Backend.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\Models\" />
-    <Folder Include="Common\S2Search.Common.Database.Sql.Dapper\Providers\" />
-    <Folder Include="Common\S2Search.Common.Models\SearchResource\" />
-    <Folder Include="Common\S2Search.Common.Models\Settings\" />
-  </ItemGroup>
-
 </Project>
