@@ -126,7 +126,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
 
         public async Task<SearchIndex> GetAsync(Guid customerId, Guid searchIndexId)
         {
-            object parameters = new Dictionary<string, object>()
+            var parameters = new Dictionary<string, object>()
             {
                 { "SearchIndexId", searchIndexId },
                 { "CustomerId", customerId }
@@ -148,7 +148,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
 
         public async Task<SearchIndexFull> GetFullAsync(Guid customerId, Guid searchIndexId)
         {
-            object parameters = new Dictionary<string, object>()
+            var parameters = new Dictionary<string, object>()
             {
                 { "SearchIndexId", searchIndexId },
                 { "CustomerId", customerId }

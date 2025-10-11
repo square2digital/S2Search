@@ -18,124 +18,127 @@ namespace S2Search.Backend.Services.Services
             _dbConnection = dbConnection ?? throw new ArgumentNullException(nameof(dbConnection));
         }
 
-        public int Execute(string connectionString, string functionName, object parameters) => 
+        public int Execute(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             DapperExecute(connectionString, functionName, parameters);
 
-        public async Task<int> ExecuteAsync(string connectionString, string functionName, object parameters) => 
+        public async Task<int> ExecuteAsync(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             await DapperExecuteAsync(connectionString, functionName, parameters);
 
-        public T ExecuteScalar<T>(string connectionString, string functionName, object parameters) => 
+        public T ExecuteScalar<T>(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             DapperExecuteScalar<T>(connectionString, functionName, parameters);
 
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, string functionName, object parameters) => 
+        public async Task<T> ExecuteScalarAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             await DapperExecuteScalarAsync<T>(connectionString, functionName, parameters);
 
-        public IEnumerable<T> Query<T>(string connectionString, string functionName, object parameters) => 
+        public IEnumerable<T> Query<T>(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             DapperQuery<T>(connectionString, functionName, parameters);
 
-        public async Task<IEnumerable<T>> QueryAsync<T>(string connectionString, string functionName, object parameters) => 
+        public async Task<IEnumerable<T>> QueryAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             await DapperQueryAsync<T>(connectionString, functionName, parameters);
 
-        public T QueryFirstOrDefault<T>(string connectionString, string functionName, object parameters) => 
+        public T QueryFirstOrDefault<T>(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             DapperQueryFirstOrDefault<T>(connectionString, functionName, parameters);
 
-        public async Task<T> QueryFirstOrDefaultAsync<T>(string connectionString, string functionName, object parameters) => 
+        public async Task<T> QueryFirstOrDefaultAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             await DapperQueryFirstOrDefaultAsync<T>(connectionString, functionName, parameters);
 
-        public T QuerySingleOrDefault<T>(string connectionString, string functionName, object parameters) => 
+        public T QuerySingleOrDefault<T>(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             DapperQuerySingleOrDefault<T>(connectionString, functionName, parameters);
 
-        public async Task<T> QuerySingleOrDefaultAsync<T>(string connectionString, string functionName, object parameters) => 
+        public async Task<T> QuerySingleOrDefaultAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             await DapperQuerySingleOrDefaultAsync<T>(connectionString, functionName, parameters);
 
-        public T QueryMultiple<T>(string connectionString, string functionName, object parameters) => 
+        public T QueryMultiple<T>(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             DapperQueryMultiple<T>(connectionString, functionName, parameters);
 
-        public async Task<T> QueryMultipleAsync<T>(string connectionString, string functionName, object parameters) => 
+        public async Task<T> QueryMultipleAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters) => 
             await DapperQueryMultipleAsync<T>(connectionString, functionName, parameters);
 
-        private string BuildFunctionCall(string functionName, object parameters)
+        private string BuildFunctionCall(string functionName, Dictionary<string, object> parameters)
         {
+            var query = string.Empty;
+
             if (parameters == null)
                 return $"SELECT * FROM {functionName}()";
 
-            var paramNames = parameters.GetType().GetProperties()
-                .Select(p => $"@{p.Name}");
-            var paramList = string.Join(", ", paramNames);
-            return $"SELECT * FROM {functionName}({paramList})";
+            var paramNames = parameters.Values.Select(p => $"{p},");
+            var paramList = string.Join(", ", paramNames).Trim(',');
+            query = $"SELECT * FROM {functionName}({paramList})";
+
+            return query;
         }
 
-        private int DapperExecute(string connectionString, string functionName, object parameters)
+        private int DapperExecute(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var connection = _dbConnection.Create(connectionString);
             var sql = BuildFunctionCall(functionName, parameters);
             return connection.Execute(sql, parameters, commandType: CommandType.Text);
         }
 
-        private async Task<int> DapperExecuteAsync(string connectionString, string functionName, object parameters)
+        private async Task<int> DapperExecuteAsync(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var connection = _dbConnection.Create(connectionString);
             var sql = BuildFunctionCall(functionName, parameters);
             return await connection.ExecuteAsync(sql, parameters, commandType: CommandType.Text);
         }
 
-        private T DapperExecuteScalar<T>(string connectionString, string functionName, object parameters)
+        private T DapperExecuteScalar<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var connection = _dbConnection.Create(connectionString);
             var sql = BuildFunctionCall(functionName, parameters);
             return connection.ExecuteScalar<T>(sql, parameters, commandType: CommandType.Text);
         }
 
-        private async Task<T> DapperExecuteScalarAsync<T>(string connectionString, string functionName, object parameters)
+        private async Task<T> DapperExecuteScalarAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var connection = _dbConnection.Create(connectionString);
             var sql = BuildFunctionCall(functionName, parameters);
             return await connection.ExecuteScalarAsync<T>(sql, parameters, commandType: CommandType.Text);
         }
 
-        private IEnumerable<T> DapperQuery<T>(string connectionString, string functionName, object parameters)
+        private IEnumerable<T> DapperQuery<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var connection = _dbConnection.Create(connectionString);
             var sql = BuildFunctionCall(functionName, parameters);
             return connection.Query<T>(sql, parameters, commandType: CommandType.Text);
         }
 
-        private async Task<IEnumerable<T>> DapperQueryAsync<T>(string connectionString, string functionName, object parameters)
+        private async Task<IEnumerable<T>> DapperQueryAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var connection = _dbConnection.Create(connectionString);
             var sql = BuildFunctionCall(functionName, parameters);
             return await connection.QueryAsync<T>(sql, parameters, commandType: CommandType.Text);
         }
 
-        private T DapperQueryFirstOrDefault<T>(string connectionString, string functionName, object parameters)
+        private T DapperQueryFirstOrDefault<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var connection = _dbConnection.Create(connectionString);
             var sql = BuildFunctionCall(functionName, parameters);
             return connection.QueryFirstOrDefault<T>(sql, parameters, commandType: CommandType.Text);
         }
 
-        private async Task<T> DapperQueryFirstOrDefaultAsync<T>(string connectionString, string functionName, object parameters)
+        private async Task<T> DapperQueryFirstOrDefaultAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var connection = _dbConnection.Create(connectionString);
             var sql = BuildFunctionCall(functionName, parameters);
             return await connection.QueryFirstOrDefaultAsync<T>(sql, parameters, commandType: CommandType.Text);
         }
 
-        private T DapperQuerySingleOrDefault<T>(string connectionString, string functionName, object parameters)
+        private T DapperQuerySingleOrDefault<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var connection = _dbConnection.Create(connectionString);
             var sql = BuildFunctionCall(functionName, parameters);
             return connection.QuerySingleOrDefault<T>(sql, parameters, commandType: CommandType.Text);
         }
 
-        private async Task<T> DapperQuerySingleOrDefaultAsync<T>(string connectionString, string functionName, object parameters)
+        private async Task<T> DapperQuerySingleOrDefaultAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var connection = _dbConnection.Create(connectionString);
             var sql = BuildFunctionCall(functionName, parameters);
             return await connection.QuerySingleOrDefaultAsync<T>(sql, parameters, commandType: CommandType.Text);
         }
 
-        private T DapperQueryMultiple<T>(string connectionString, string functionName, object parameters)
+        private T DapperQueryMultiple<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var data = new ExpandoObject();
             var customObjectMap = CustomObjectMapHelper.Create<T>();
@@ -152,7 +155,7 @@ namespace S2Search.Backend.Services.Services
             return returnObject;
         }
 
-        private async Task<T> DapperQueryMultipleAsync<T>(string connectionString, string functionName, object parameters)
+        private async Task<T> DapperQueryMultipleAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
             var data = new ExpandoObject();
             var customObjectMap = CustomObjectMapHelper.Create<T>();
