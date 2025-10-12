@@ -7,7 +7,7 @@ the code is regenerated.
 */
 
 -- =============================
--- Drop Table Definitions
+DO $$ BEGIN RAISE NOTICE 'Drop Table Definitions Start...'; END $$;
 -- =============================
 
 DROP TABLE IF EXISTS customers;
@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS search_insights_data;
 DROP TABLE IF EXISTS search_index_request_log;
 
 -- =============================
--- Table Definitions
+DO $$ BEGIN RAISE NOTICE 'Table Definitions'; END $$;
 -- =============================
 
 CREATE TABLE customers (
@@ -165,7 +165,7 @@ CREATE TABLE search_index_request_log (
 );
 
 -- =============================
--- Drop Function Definitions
+DO $$ BEGIN RAISE NOTICE 'Drop Function Definitions'; END $$;
 -- =============================
 
 DROP FUNCTION IF EXISTS add_search_index(uuid, uuid, uuid, TEXT, TEXT);
@@ -207,7 +207,7 @@ DROP FUNCTION IF EXISTS update_feed_credentials(uuid, TEXT, TEXT);
 DROP FUNCTION IF EXISTS add_feed(uuid, TEXT, TEXT);
 
 -- =============================
--- Function Definitions
+DO $$ BEGIN RAISE NOTICE 'Function Definitions'; END $$;
 -- =============================
 
 CREATE OR REPLACE FUNCTION get_customer_by_id(customer_id uuid)
@@ -235,9 +235,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- ==============================
--- 1. GetLatestFeed
--- ==============================
+-- =============================
+DO $$ BEGIN RAISE NOTICE '1. GetLatestFeed'; END $$;
+-- =============================
 
 CREATE OR REPLACE FUNCTION get_latest_feed(
     p_search_index_id uuid
