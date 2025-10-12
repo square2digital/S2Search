@@ -73,9 +73,9 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var searchIndex = await GetAsync(keyGenerationRequest.CustomerId, keyGenerationRequest.SearchIndexId);
 
-            if (!searchIndex.SearchInstanceId.HasValue)
+            if (!searchIndex.search_instance_id.HasValue)
             {
-                throw new Exception($"{nameof(searchIndex.SearchInstanceId)} is null");
+                throw new Exception($"{nameof(searchIndex.search_instance_id)} is null");
             }
 
             var SearchInstanceKeyGenerationRequest = ConvertToSearchInstanceKeyGenerationRequest(keyGenerationRequest, searchIndex);
@@ -88,8 +88,8 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             return new SearchInstanceKeyGenerationRequest()
             {
-                SearchIndexId = searchIndex.SearchIndexId,
-                SearchInstanceId = searchIndex.SearchInstanceId.Value,
+                SearchIndexId = searchIndex.id,
+                SearchInstanceId = searchIndex.search_instance_id.Value,
                 KeysToGenerate = keyGenerationRequest.KeysToGenerate.Select(keyName => new SearchInstanceKeyRequest()
                 {
                     Name = keyName,
@@ -103,7 +103,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
             return new SearchInstanceQueryKeyDeletionRequest()
             {
                 SearchIndexId = keyGenerationRequest.SearchIndexId,
-                SearchInstanceId = searchIndex.SearchInstanceId.Value,
+                SearchInstanceId = searchIndex.search_instance_id.Value,
                 KeysToDelete = keyGenerationRequest.KeysToDelete.Select(keyToDelete => new QueryKey()
                 {
                     Name = keyToDelete.Name,
@@ -187,9 +187,9 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var searchIndex = await GetAsync(keyDeletionRequest.CustomerId, keyDeletionRequest.SearchIndexId);
 
-            if (!searchIndex.SearchInstanceId.HasValue)
+            if (!searchIndex.search_instance_id.HasValue)
             {
-                throw new Exception($"{nameof(searchIndex.SearchInstanceId)} is null");
+                throw new Exception($"{nameof(searchIndex.search_instance_id)} is null");
             }
 
             var SearchInstanceKeyGenerationRequest = ConvertToSearchInstanceQueryKeyDeletionRequest(keyDeletionRequest, searchIndex);
