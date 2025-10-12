@@ -63,7 +63,7 @@ namespace S2Search.Backend.Services.Services
 
             var paramNames = parameters.Values.Select(p => $"{p},");
             var paramList = string.Join(", ", paramNames).Trim(',');
-            query = $"SELECT * FROM {functionName}({paramList})";
+            query = $"SELECT * FROM {functionName}('{paramList}')";
 
             return query;
         }
