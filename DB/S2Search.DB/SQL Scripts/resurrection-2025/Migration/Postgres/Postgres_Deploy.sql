@@ -714,7 +714,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '18. get_synonyms'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonyms(
-    search_index_id UUID
+    p_search_index_id UUID
 )
 RETURNS TABLE (
     id UUID,
@@ -732,7 +732,7 @@ BEGIN
         s.solr_format,
         s.created_date
     FROM dbo.synonyms s
-    WHERE s.search_index_id = search_index_id
+    WHERE s.search_index_id = p_search_index_id
       AND s.is_latest = TRUE;
 END;
 $$ LANGUAGE plpgsql;
