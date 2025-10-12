@@ -601,11 +601,11 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '14. add_search_index'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_search_index(
-    search_index_id UUID DEFAULT NULL,
-    search_instance_id UUID DEFAULT NULL,
-    customer_id UUID DEFAULT NULL,
+    search_index_id UUID,
+    customer_id UUID,
     index_name TEXT,
-    friendly_name TEXT
+    friendly_name TEXT,
+    search_instance_id UUID DEFAULT NULL
 )
 RETURNS VOID AS $$
 BEGIN
