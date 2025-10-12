@@ -601,11 +601,11 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '14. add_search_index'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_search_index(
-    search_index_id UUID,
+    search_index_id UUID DEFAULT NULL,
     search_instance_id UUID DEFAULT NULL,
-    customer_id UUID,
-    index_name VARCHAR(60),
-    friendly_name VARCHAR(100)
+    customer_id UUID DEFAULT NULL,
+    index_name TEXT,
+    friendly_name TEXT
 )
 RETURNS VOID AS $$
 BEGIN
@@ -634,7 +634,7 @@ DO $$ BEGIN RAISE NOTICE '15. dd_synonym'; END $$;
 CREATE OR REPLACE FUNCTION add_synonym(
     synonym_id UUID,
     search_index_id UUID,
-    key_word VARCHAR(50),
+    key_word TEXT,
     solr_format TEXT
 )
 RETURNS UUID AS $$
