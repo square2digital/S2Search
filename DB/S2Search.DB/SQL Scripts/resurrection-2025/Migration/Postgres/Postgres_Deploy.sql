@@ -174,7 +174,7 @@ DROP FUNCTION IF EXISTS get_search_index(uuid, uuid);
 DROP FUNCTION IF EXISTS get_search_index_by_friendly_name(uuid, TEXT);
 DROP FUNCTION IF EXISTS get_search_index_full(uuid, uuid);
 DROP FUNCTION IF EXISTS get_search_index_query_credentials_by_customer_endpoint(TEXT);
-DROP FUNCTION IF EXISTS get_search_insights_by_data_cateries(uuid, TIMESTAMP, TIMESTAMP, TEXT);
+DROP FUNCTION IF EXISTS get_search_insights_by_data_categories(uuid, TIMESTAMP, TIMESTAMP, TEXT);
 DROP FUNCTION IF EXISTS get_search_insights_search_count_by_date_range(uuid, TIMESTAMP, TIMESTAMP);
 DROP FUNCTION IF EXISTS get_synonym_by_id(uuid, uuid);
 DROP FUNCTION IF EXISTS get_synonym_by_key_word(uuid, TEXT);
@@ -902,7 +902,7 @@ $$ LANGUAGE plpgsql;
 -- =============================
 DO $$ BEGIN RAISE NOTICE '24. get_search_index_query_credentials_by_customer_endpoint'; END $$;
 -- =============================
-CREATE OR REPLACE FUNCTION admin.get_search_index_query_credentials_by_customer_endpoint(
+CREATE OR REPLACE FUNCTION get_search_index_query_credentials_by_customer_endpoint(
     customer_endpoint TEXT
 )
 RETURNS TABLE (
@@ -935,7 +935,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '25. get_feed_credentials_username'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_feed_credentials_username(
-    search_index_id UUID
+    p_search_index_id UUID
 )
 RETURNS TABLE (
     search_index_id UUID,
@@ -951,7 +951,7 @@ BEGIN
         fc.created_date,
         fc.modified_date
     FROM dbo.feed_credentials fc
-    WHERE fc.search_index_id = search_index_id
+    WHERE fc.search_index_id = p_search_index_id
     ORDER BY fc.created_date
     LIMIT 1;
 END;
@@ -961,8 +961,8 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '26. get_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_feed_credentials(
-    search_index_id UUID,
-    username TEXT
+    p_search_index_id UUID,
+    p_username TEXT
 )
 RETURNS TABLE (
     search_index_id UUID,
@@ -976,7 +976,7 @@ BEGIN
         fc.username,
         fc.created_date
     FROM dbo.feed_credentials fc
-    WHERE fc.search_index_id = search_index_id
-      AND fc.username = username;
+    WHERE fc.search_index_id = p_search_index_id
+      AND fc.username = p_username;
 END;
 $$ LANGUAGE plpgsql;
