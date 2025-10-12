@@ -813,7 +813,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '21. get_theme_by_search_index_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_search_index_id(
-    search_index_id UUID
+    p_search_index_id UUID
 )
 RETURNS TABLE (
     id UUID,
@@ -841,7 +841,7 @@ BEGIN
         t.created_date,
         t.modified_date
     FROM dbo.themes t
-    WHERE t.search_index_id = search_index_id;
+    WHERE t.search_index_id = p_search_index_id;
 END;
 $$ LANGUAGE plpgsql;
 
