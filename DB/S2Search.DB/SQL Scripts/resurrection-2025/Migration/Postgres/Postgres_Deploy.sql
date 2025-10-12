@@ -55,38 +55,38 @@ CREATE TABLE feed_current_documents (
 
 CREATE TABLE feeds (
     id               UUID           NOT NULL,
-    feed_type         TEXT           NOT NULL,
-    feed_schedule_cron TEXT           NOT NULL,
-    search_index_id    UUID           NOT NULL,
-    data_format       TEXT           NOT NULL,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    superseded_date   TIMESTAMP      NULL,
-    is_latest         BOOLEAN        NOT NULL DEFAULT TRUE,
+    feed_type         TEXT          NOT NULL,
+    feed_schedule_cron TEXT         NOT NULL,
+    search_index_id    UUID         NOT NULL,
+    data_format       TEXT          NOT NULL,
+    created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    superseded_date   TIMESTAMP     NULL,
+    is_latest         BOOLEAN       NOT NULL DEFAULT TRUE,
     constraint PK_Feeds PRIMARY KEY (Id)
 );
 
 CREATE TABLE search_configuration (
     id               UUID           NOT NULL,
     value            TEXT           NOT NULL,
-    search_index_id    UUID           NOT NULL,
+    search_index_id    UUID         NOT NULL,
     key              TEXT           NOT NULL,
-    friendly_name     TEXT           NOT NULL,
+    friendly_name     TEXT          NOT NULL,
     description      TEXT           NOT NULL,
-    data_type         TEXT           NOT NULL,
-    order_index       INT            NULL,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP      NULL,
+    data_type         TEXT          NOT NULL,
+    order_index       INT           NULL,
+    created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP     NULL,
     constraint PK_SearchConfigurationMappingsCombined PRIMARY KEY (Id)
 );
 
 CREATE TABLE search_index (
     id               UUID           NOT NULL,
-    customer_id       UUID           NOT NULL,
-    search_instance_id UUID           NULL,
-    index_name        TEXT           NOT NULL,
-    friendly_name     TEXT           NOT NULL,
-    pricing_sku_id     TEXT           NOT NULL,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    customer_id       UUID          NOT NULL,
+    search_instance_id UUID         NULL,
+    index_name        TEXT          NOT NULL,
+    friendly_name     TEXT          NOT NULL,
+    pricing_sku_id     TEXT         NOT NULL,
+    created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     constraint PK_SearchIndex PRIMARY KEY (Id)
 );
 
@@ -611,5 +611,390 @@ BEGIN
     );
     GET DIAGNOSTICS rows_inserted = ROW_COUNT;
     RETURN rows_inserted;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 14. add_search_index
+-- ==============================
+CREATE OR REPLACE FUNCTION add_search_index(
+    search_index_id UUID,
+    search_instance_id UUID DEFAULT NULL,
+    customer_id UUID,
+    index_name VARCHAR(60),
+    friendly_name VARCHAR(100)
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO dbo.search_index (
+        id,
+        search_instance_id,
+        customer_id,
+        index_name,
+        friendly_name,
+        created_date
+    )
+    VALUES (
+        search_index_id,
+        search_instance_id,
+        customer_id,
+        index_name,
+        friendly_name,
+        CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 15. dd_synonym
+-- ==============================
+CREATE OR REPLACE FUNCTION add_synonym(
+    synonym_id UUID,
+    search_index_id UUID,
+    key_word VARCHAR(50),
+    solr_format TEXT
+)
+RETURNS UUID AS $$
+BEGIN
+    INSERT INTO dbo.synonyms (
+        id,
+        search_index_id,
+        key_word,
+        solr_format
+    )
+    VALUES (
+        synonym_id,
+        search_index_id,
+        key_word,
+        solr_format
+    );
+
+    RETURN synonym_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 16. get_search_insights_by_data_categories
+-- ==============================
+CREATE OR REPLACE FUNCTION get_search_insights_by_data_categories(
+    search_index_id UUID,
+    date_from TIMESTAMP,
+    date_to TIMESTAMP,
+    data_categories TEXT
+)
+RETURNS TABLE (
+    data_category TEXT,
+    data_point TEXT,
+    date DATE,
+    count INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        d.data_category,
+        d.data_point,
+        d.date,
+        d.count
+    FROM dbo.search_insights_data d
+    JOIN unnest(string_to_array(data_categories, ',')) AS category(value)
+        ON category.value = d.data_category
+    WHERE d.search_index_id = search_index_id
+      AND d.date >= date_from
+      AND d.date <= date_to;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 17. get_search_insights_search_count_by_date_range
+-- ==============================
+CREATE OR REPLACE FUNCTION get_search_insights_search_count_by_date_range(
+    search_index_id UUID,
+    date_from TIMESTAMP,
+    date_to TIMESTAMP
+)
+RETURNS TABLE (
+    date DATE,
+    count INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        d.date,
+        d.count
+    FROM dbo.search_index_request_log d
+    WHERE d.search_index_id = search_index_id
+      AND d.date BETWEEN date_from AND date_to;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 18. get_synonyms
+-- ==============================
+CREATE OR REPLACE FUNCTION get_synonyms(
+    search_index_id UUID
+)
+RETURNS TABLE (
+    id UUID,
+    search_index_id UUID,
+    key TEXT,
+    solr_format TEXT,
+    created_date TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        s.id,
+        s.search_index_id,
+        s.key_word AS key,
+        s.solr_format,
+        s.created_date
+    FROM dbo.synonyms s
+    WHERE s.search_index_id = search_index_id
+      AND s.is_latest = TRUE;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 19. get_theme_by_customer_id
+-- ==============================
+CREATE OR REPLACE FUNCTION get_theme_by_customer_id(
+    customer_id UUID
+)
+RETURNS TABLE (
+    id UUID,
+    primary_hex_colour TEXT,
+    secondary_hex_colour TEXT,
+    nav_bar_hex_colour TEXT,
+    logo_url TEXT,
+    missing_image_url TEXT,
+    customer_id UUID,
+    search_index_id UUID,
+    created_date TIMESTAMP,
+    modified_date TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        t.id,
+        t.primary_hex_colour,
+        t.secondary_hex_colour,
+        t.nav_bar_hex_colour,
+        t.logo_url,
+        t.missing_image_url,
+        t.customer_id,
+        t.search_index_id,
+        t.created_date,
+        t.modified_date
+    FROM dbo.themes t
+    WHERE t.customer_id = customer_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 20. get_theme_by_id
+-- ==============================
+
+CREATE OR REPLACE FUNCTION get_theme_by_id(
+    theme_id UUID
+)
+RETURNS TABLE (
+    id UUID,
+    primary_hex_colour TEXT,
+    secondary_hex_colour TEXT,
+    nav_bar_hex_colour TEXT,
+    logo_url TEXT,
+    missing_image_url TEXT,
+    customer_id UUID,
+    search_index_id UUID,
+    created_date TIMESTAMP,
+    modified_date TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        t.id,
+        t.primary_hex_colour,
+        t.secondary_hex_colour,
+        t.nav_bar_hex_colour,
+        t.logo_url,
+        t.missing_image_url,
+        t.customer_id,
+        t.search_index_id,
+        t.created_date,
+        t.modified_date
+    FROM dbo.themes t
+    WHERE t.id = theme_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 21. get_theme_by_search_index_id
+-- ==============================
+CREATE OR REPLACE FUNCTION get_theme_by_search_index_id(
+    search_index_id UUID
+)
+RETURNS TABLE (
+    id UUID,
+    primary_hex_colour TEXT,
+    secondary_hex_colour TEXT,
+    nav_bar_hex_colour TEXT,
+    logo_url TEXT,
+    missing_image_url TEXT,
+    customer_id UUID,
+    search_index_id UUID,
+    created_date TIMESTAMP,
+    modified_date TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        t.id,
+        t.primary_hex_colour,
+        t.secondary_hex_colour,
+        t.nav_bar_hex_colour,
+        t.logo_url,
+        t.missing_image_url,
+        t.customer_id,
+        t.search_index_id,
+        t.created_date,
+        t.modified_date
+    FROM dbo.themes t
+    WHERE t.search_index_id = search_index_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 22. update_theme
+-- ==============================
+CREATE OR REPLACE FUNCTION update_theme(
+    theme_id UUID,
+    primary_hex_colour TEXT,
+    secondary_hex_colour TEXT,
+    nav_bar_hex_colour TEXT,
+    logo_url TEXT,
+    missing_image_url TEXT
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE dbo.themes
+    SET
+        primary_hex_colour = primary_hex_colour,
+        secondary_hex_colour = secondary_hex_colour,
+        nav_bar_hex_colour = nav_bar_hex_colour,
+        logo_url = logo_url,
+        missing_image_url = missing_image_url,
+        modified_date = CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
+    WHERE id = theme_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 23. get_theme_by_customer_endpoint
+-- ==============================
+CREATE OR REPLACE FUNCTION get_theme_by_customer_endpoint(
+    customer_endpoint TEXT
+)
+RETURNS TABLE (
+    id UUID,
+    primary_hex_colour TEXT,
+    secondary_hex_colour TEXT,
+    nav_bar_hex_colour TEXT,
+    logo_url TEXT,
+    missing_image_url TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        t.id,
+        t.primary_hex_colour,
+        t.secondary_hex_colour,
+        t.nav_bar_hex_colour,
+        t.logo_url,
+        t.missing_image_url
+    FROM dbo.themes t
+    INNER JOIN dbo.customers c ON t.customer_id = c.id
+    WHERE c.customer_endpoint = customer_endpoint;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 24. get_search_index_query_credentials_by_customer_endpoint
+-- ==============================
+CREATE OR REPLACE FUNCTION admin.get_search_index_query_credentials_by_customer_endpoint(
+    customer_endpoint TEXT
+)
+RETURNS TABLE (
+    id UUID,
+    search_index_name TEXT,
+    search_instance_name TEXT,
+    search_instance_endpoint TEXT,
+    api_key TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        si.id,
+        LOWER(si.index_name) AS search_index_name,
+        i.service_name AS search_instance_name,
+        i.root_endpoint AS search_instance_endpoint,
+        ik.api_key
+    FROM dbo.search_index si
+    INNER JOIN dbo.search_instances i ON i.id = si.search_instance_id
+    INNER JOIN dbo.customers c ON si.customer_id = c.id
+    INNER JOIN dbo.search_instance_keys ik ON ik.search_instance_id = i.id
+        AND ik.key_type = 'Query'
+        AND ik.name = 'Query key'
+        AND ik.is_latest = TRUE
+    WHERE c.customer_endpoint = customer_endpoint;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 25. get_feed_credentials_username
+-- ==============================
+CREATE OR REPLACE FUNCTION get_feed_credentials_username(
+    search_index_id UUID
+)
+RETURNS TABLE (
+    search_index_id UUID,
+    username TEXT,
+    created_date TIMESTAMP,
+    modified_date TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        fc.search_index_id,
+        fc.username,
+        fc.created_date,
+        fc.modified_date
+    FROM dbo.feed_credentials fc
+    WHERE fc.search_index_id = search_index_id
+    ORDER BY fc.created_date
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================
+-- 26. get_feed_credentials
+-- ==============================
+CREATE OR REPLACE FUNCTION get_feed_credentials(
+    search_index_id UUID,
+    username TEXT
+)
+RETURNS TABLE (
+    search_index_id UUID,
+    username TEXT,
+    created_date TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        fc.search_index_id,
+        fc.username,
+        fc.created_date
+    FROM dbo.feed_credentials fc
+    WHERE fc.search_index_id = search_index_id
+      AND fc.username = username;
 END;
 $$ LANGUAGE plpgsql;
