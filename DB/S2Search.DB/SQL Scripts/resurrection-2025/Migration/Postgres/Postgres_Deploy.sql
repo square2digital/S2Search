@@ -741,7 +741,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '19. get_theme_by_customer_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_customer_id(
-    customer_id UUID
+    p_customer_id UUID
 )
 RETURNS TABLE (
     id UUID,
@@ -769,7 +769,7 @@ BEGIN
         t.created_date,
         t.modified_date
     FROM dbo.themes t
-    WHERE t.customer_id = customer_id;
+    WHERE t.customer_id = p_customer_id;
 END;
 $$ LANGUAGE plpgsql;
 
