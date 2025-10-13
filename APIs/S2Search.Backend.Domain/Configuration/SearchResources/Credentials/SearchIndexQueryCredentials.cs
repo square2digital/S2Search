@@ -4,10 +4,10 @@ namespace S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
 
 public class SearchIndexQueryCredentials
 {
-    public Guid SearchIndexId { get; set; }
+    public Guid id { get; set; }
     public string QueryApiKey { get; set; }
-    public string SearchIndexName { get; set; }
-    public string SearchInstanceName { get; set; }
-    public string SearchInstanceEndpoint { get; set; }
-    public string ApiKey { get; set; }
+    public string search_index_name { get; set; }
+    public string search_instance_name { get; set; }
+    public string search_instance_endpoint { get; set; }
+    public string api_key { get; set; }
 }

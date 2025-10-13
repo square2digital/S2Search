@@ -36,11 +36,11 @@ namespace Services.Providers
                 {
                     return new SearchIndexQueryCredentials()
                     {
-                        SearchIndexId = _appSettings.DemoSearchCredentials.SearchCredentialsIndexId,
+                        id = _appSettings.DemoSearchCredentials.SearchCredentialsIndexId,
                         QueryApiKey = _appSettings.DemoSearchCredentials.SearchCredentialsQueryKey,
-                        SearchIndexName = _appSettings.DemoSearchCredentials.SearchCredentialsIndexName,
-                        SearchInstanceEndpoint = _appSettings.DemoSearchCredentials.SearchCredentialsInstanceEndpoint,
-                        SearchInstanceName = _appSettings.DemoSearchCredentials.SearchCredentialsInstanceName
+                        search_index_name = _appSettings.DemoSearchCredentials.SearchCredentialsIndexName,
+                        search_instance_endpoint = _appSettings.DemoSearchCredentials.SearchCredentialsInstanceEndpoint,
+                        search_instance_name = _appSettings.DemoSearchCredentials.SearchCredentialsInstanceName
                     };
                 }
 
@@ -84,11 +84,11 @@ namespace Services.Providers
                 var queryCredentials = await _searchIndexRepo.GetQueryCredentials(callingHost);
                 var azureSearchResource = new SearchIndexQueryCredentials()
                 {
-                    SearchIndexId = queryCredentials.SearchIndexId,
-                    SearchInstanceEndpoint = queryCredentials.SearchInstanceEndpoint,
-                    SearchInstanceName = queryCredentials.SearchInstanceName,
-                    SearchIndexName = queryCredentials.SearchIndexName,
-                    QueryApiKey = queryCredentials.ApiKey
+                    id = queryCredentials.id,
+                    search_instance_endpoint = queryCredentials.search_instance_endpoint,
+                    search_instance_name = queryCredentials.search_instance_name,
+                    search_index_name = queryCredentials.search_index_name,
+                    QueryApiKey = queryCredentials.api_key
                 };
 
                 return azureSearchResource;

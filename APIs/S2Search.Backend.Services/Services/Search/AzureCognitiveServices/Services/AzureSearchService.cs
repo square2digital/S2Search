@@ -109,7 +109,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
         {
             return new SearchInsightMessage()
             {
-                SearchIndexId = targetSearchResource.SearchIndexId,
+                SearchIndexId = targetSearchResource.id,
                 ActualSearchQuery = request.SearchTerm,
                 LuceneSearchQuery = luceneSearch,
                 Filters = request.Filters,
@@ -155,7 +155,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
 
         private SearchClient GetSearchClient(SearchIndexQueryCredentials targetSearchResource)
         {
-            return _searchClientProvider.GetSearchClient(targetSearchResource.SearchInstanceEndpoint, targetSearchResource.SearchIndexName, targetSearchResource.QueryApiKey);
+            return _searchClientProvider.GetSearchClient(targetSearchResource.search_instance_endpoint, targetSearchResource.search_index_name, targetSearchResource.QueryApiKey);
         }
 
         public async Task<IEnumerable<string>> AutocompleteWithSuggestions(string searchTerm, SearchIndexQueryCredentials targetSearchResource)
