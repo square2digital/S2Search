@@ -235,6 +235,9 @@ DROP FUNCTION IF EXISTS delete_feed_credentials(uuid, TEXT);
 DROP FUNCTION IF EXISTS get_feed_credentials(uuid, TEXT);
 DROP FUNCTION IF EXISTS update_feed_credentials(uuid, TEXT, TEXT);
 DROP FUNCTION IF EXISTS add_feed(uuid, TEXT, TEXT);
+DROP FUNCTION IF EXISTS get_theme_by_customer_endpoint(TEXT);
+DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, TEXT, TEXT, UUID);
+
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'Function Definitions'; END $$;
