@@ -10,7 +10,6 @@ namespace S2Search.Backend.Controllers.Admin
     [ApiController]
     public class SynonymsController : ControllerBase
     {
-        private readonly ISearchIndexRepository _searchIndexRepo;
         private readonly ISynonymRepository _synonymRepo;
         private readonly ILogger _logger;
 
@@ -18,7 +17,6 @@ namespace S2Search.Backend.Controllers.Admin
                                   ISearchIndexRepository searchIndexRepo,
                                   ILogger<SynonymsController> logger)
         {
-            _searchIndexRepo = searchIndexRepo ?? throw new ArgumentNullException(nameof(searchIndexRepo));
             _synonymRepo = synonymRepo ?? throw new ArgumentNullException(nameof(synonymRepo));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -179,36 +177,6 @@ namespace S2Search.Backend.Controllers.Admin
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(Delete)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Retrieve the Generic Synonyms
-        /// </summary>
-        /// <param name="category">The category of the generic synonyms to retrieve.</param>
-        /// <returns></returns>
-        [HttpGet("search/GenericSynonyms/{category}", Name = "GetGenericSynonyms")]
-        [ProducesResponseType(typeof(IEnumerable<GenericSynonyms>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGenericSynonyms(string category = "vehicles")
-        {
-            try
-            {
-                var genericSynonyms = await _searchIndexRepo.GetGenericSynonymsByCategoryAsync(category);
-
-                if (genericSynonyms == null)
-                {
-                    _logger.LogInformation($"Not found on {nameof(GetGenericSynonyms)} | Generic Synonyms Category: {category}");
-                    return NotFound();
-                }
-
-                return Ok(genericSynonyms);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error on {nameof(GetGenericSynonyms)} | Generic Synonyms Category: {category} | Message: {ex.Message}");
                 throw;
             }
         }

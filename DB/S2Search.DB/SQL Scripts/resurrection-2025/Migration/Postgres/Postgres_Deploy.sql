@@ -36,6 +36,9 @@ CREATE TABLE customers (
     constraint PK_Users PRIMARY KEY (Id)
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'feed_credentials'; END $$;
+-- =============================
 CREATE TABLE feed_credentials (
     id                 UUID          NOT NULL,
     search_index_id    UUID          NOT NULL,
@@ -45,12 +48,18 @@ CREATE TABLE feed_credentials (
     modified_date      TIMESTAMP     NULL
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'feed_current_documents'; END $$;
+-- =============================
 CREATE TABLE feed_current_documents (
     id               TEXT           NOT NULL,
     search_index_id    UUID           NOT NULL,
     created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'feeds'; END $$;
+-- =============================
 CREATE TABLE feeds (
     id               UUID           NOT NULL,
     feed_type         TEXT          NOT NULL,
@@ -63,6 +72,9 @@ CREATE TABLE feeds (
     constraint PK_Feeds PRIMARY KEY (Id)
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'search_configuration'; END $$;
+-- =============================
 CREATE TABLE search_configuration (
     id               UUID           NOT NULL,
     value            TEXT           NOT NULL,
@@ -77,6 +89,9 @@ CREATE TABLE search_configuration (
     constraint PK_SearchConfigurationMappingsCombined PRIMARY KEY (Id)
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'search_index'; END $$;
+-- =============================
 CREATE TABLE search_index (
     id               UUID           NOT NULL,
     customer_id       UUID          NOT NULL,
@@ -88,6 +103,9 @@ CREATE TABLE search_index (
     constraint PK_SearchIndex PRIMARY KEY (Id)
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'search_instance_keys'; END $$;
+-- =============================
 CREATE TABLE search_instance_keys (
     id               UUID           NOT NULL,
     search_instance_id UUID           NOT NULL,
@@ -100,6 +118,9 @@ CREATE TABLE search_instance_keys (
     constraint PK_SearchInstanceKeys PRIMARY KEY (Id)
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'search_instances'; END $$;
+-- =============================
 CREATE TABLE search_instances (
     id                UUID           NOT NULL,
     customer_id       UUID           NOT NULL,
@@ -114,6 +135,9 @@ CREATE TABLE search_instances (
     constraint PK_SearchInstances PRIMARY KEY (Id)
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'synonyms'; END $$;
+-- =============================
 CREATE TABLE synonyms (
     id                 UUID           NOT NULL,
     category           TEXT           NULL,
@@ -126,6 +150,9 @@ CREATE TABLE synonyms (
     constraint PK_CombinedSynonyms PRIMARY KEY (Id)
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'themes'; END $$;
+-- =============================
 CREATE TABLE themes (
     id                   UUID         NOT NULL,
     primary_hex_colour   TEXT         NULL,
@@ -140,6 +167,9 @@ CREATE TABLE themes (
     constraint PK_Themes PRIMARY KEY (Id)
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'search_insights_data'; END $$;
+-- =============================
 CREATE TABLE search_insights_data (
     id               UUID           NOT NULL,
     search_index_id    UUID           NOT NULL,
@@ -152,6 +182,9 @@ CREATE TABLE search_insights_data (
     constraint PK_SearchInsightsData PRIMARY KEY (Id)
 );
 
+-- =============================
+DO $$ BEGIN RAISE NOTICE 'search_index_request_log'; END $$;
+-- =============================
 CREATE TABLE search_index_request_log (
     id               UUID           NOT NULL,
     search_index_id    UUID           NOT NULL,
@@ -330,7 +363,7 @@ BEGIN
         si.customer_id,
         si.friendly_name,
         si.index_name
-    FROM dbo.search_index si
+    FROM search_index si
     WHERE si.customer_id = p_customer_id
       AND si.friendly_name = p_friendly_name;
 END;
@@ -375,8 +408,8 @@ BEGIN
         service.replicas,
         service.partitions,
         service.is_shared
-    FROM dbo.search_index search
-    LEFT OUTER JOIN dbo.search_instances service ON service.id = search.id
+    FROM search_index search
+    LEFT OUTER JOIN search_instances service ON service.id = search.id
     WHERE search.id = p_search_index_id
       AND search.customer_id = p_customer_id;
 END;
@@ -403,7 +436,7 @@ BEGIN
         keyword AS key,
         solr_format,
         created_date
-    FROM dbo.synonyms
+    FROM synonyms
     WHERE search_index_id = p_search_index_id
       AND id = p_synonym_id
       AND is_latest = 1;
@@ -431,7 +464,7 @@ BEGIN
         keyword AS key,
         solr_format,
         created_date
-    FROM dbo.synonyms
+    FROM synonyms
     WHERE search_index_id = p_search_index_id
       AND keyword = p_key_word
       AND is_latest = 1;
@@ -447,7 +480,7 @@ CREATE OR REPLACE FUNCTION supersede_latest_feed(
 DECLARE
     rows_updated int;
 BEGIN
-    UPDATE dbo.feeds
+    UPDATE feeds
     SET is_latest = 0,
         superseded_date = CURRENT_TIMESTAMP
     WHERE search_index_id = p_search_index_id
@@ -467,7 +500,7 @@ CREATE OR REPLACE FUNCTION supersede_synonym(
 DECLARE
     rows_updated int;
 BEGIN
-    UPDATE dbo.synonyms
+    UPDATE synonyms
     SET is_latest = 0,
         superseded_date = CURRENT_TIMESTAMP
     WHERE search_index_id = p_search_index_id
@@ -490,7 +523,7 @@ CREATE OR REPLACE FUNCTION update_synonym(
 DECLARE
     rows_updated int;
 BEGIN
-    UPDATE dbo.synonyms
+    UPDATE synonyms
     SET keyword = p_key_word,
         solr_format = p_solr_format
     WHERE search_index_id = p_search_index_id
@@ -511,7 +544,7 @@ CREATE OR REPLACE FUNCTION delete_feed_credentials(
 DECLARE
     rows_deleted int := 0;
 BEGIN
-    DELETE FROM dbo.feed_credentials
+    DELETE FROM feed_credentials
     WHERE search_index_id = p_search_index_id
       AND username = p_username;
     GET DIAGNOSTICS rows_deleted = ROW_COUNT;
@@ -536,7 +569,7 @@ BEGIN
         search_index_id,
         username,
         created_date
-    FROM dbo.feed_credentials
+    FROM feed_credentials
     WHERE search_index_id = p_search_index_id
       AND username = p_username;
 END;
@@ -553,7 +586,7 @@ CREATE OR REPLACE FUNCTION update_feed_credentials(
 DECLARE
     rows_updated int := 0;
 BEGIN
-    UPDATE dbo.feed_credentials
+    UPDATE feed_credentials
     SET password_hash = p_password_hash,
         modified_date = CURRENT_TIMESTAMP
     WHERE search_index_id = p_search_index_id
@@ -578,7 +611,7 @@ BEGIN
     PERFORM supersede_latest_feed(p_search_index_id);
 
     -- Insert new feed
-    INSERT INTO dbo.feeds (
+    INSERT INTO feeds (
         search_index_id,
         feed_type,
         feed_schedule_cron,
@@ -609,7 +642,7 @@ CREATE OR REPLACE FUNCTION add_search_index(
 )
 RETURNS VOID AS $$
 BEGIN
-    INSERT INTO dbo.search_index (
+    INSERT INTO search_index (
         id,
         search_instance_id,
         customer_id,
@@ -639,7 +672,7 @@ CREATE OR REPLACE FUNCTION add_synonym(
 )
 RETURNS UUID AS $$
 BEGIN
-    INSERT INTO dbo.synonyms (
+    INSERT INTO synonyms (
         id,
         search_index_id,
         key_word,
@@ -678,7 +711,7 @@ BEGIN
         d.data_point,
         d.date,
         d.count
-    FROM dbo.search_insights_data d
+    FROM search_insights_data d
     JOIN unnest(string_to_array(data_categories, ',')) AS category(value)
         ON category.value = d.data_category
     WHERE d.search_index_id = search_index_id
@@ -704,7 +737,7 @@ BEGIN
     SELECT 
         d.date,
         d.count
-    FROM dbo.search_index_request_log d
+    FROM search_index_request_log d
     WHERE d.search_index_id = search_index_id
       AND d.date BETWEEN date_from AND date_to;
 END;
@@ -731,7 +764,7 @@ BEGIN
         s.key_word AS key,
         s.solr_format,
         s.created_date
-    FROM dbo.synonyms s
+    FROM synonyms s
     WHERE s.search_index_id = p_search_index_id
       AND s.is_latest = TRUE;
 END;
@@ -768,7 +801,7 @@ BEGIN
         t.search_index_id,
         t.created_date,
         t.modified_date
-    FROM dbo.themes t
+    FROM themes t
     WHERE t.customer_id = p_customer_id;
 END;
 $$ LANGUAGE plpgsql;
@@ -777,7 +810,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '20. get_theme_by_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_id(
-    theme_id UUID
+    p_theme_id UUID
 )
 RETURNS TABLE (
     id UUID,
@@ -804,8 +837,8 @@ BEGIN
         t.search_index_id,
         t.created_date,
         t.modified_date
-    FROM dbo.themes t
-    WHERE t.id = theme_id;
+    FROM themes t
+    WHERE t.id = p_theme_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -840,7 +873,7 @@ BEGIN
         t.search_index_id,
         t.created_date,
         t.modified_date
-    FROM dbo.themes t
+    FROM themes t
     WHERE t.search_index_id = p_search_index_id;
 END;
 $$ LANGUAGE plpgsql;
@@ -858,7 +891,7 @@ CREATE OR REPLACE FUNCTION update_theme(
 )
 RETURNS VOID AS $$
 BEGIN
-    UPDATE dbo.themes
+    UPDATE themes
     SET
         primary_hex_colour = primary_hex_colour,
         secondary_hex_colour = secondary_hex_colour,
@@ -874,7 +907,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '23. get_theme_by_customer_endpoint'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_customer_endpoint(
-    customer_endpoint TEXT
+    p_customer_endpoint TEXT
 )
 RETURNS TABLE (
     id UUID,
@@ -893,9 +926,9 @@ BEGIN
         t.nav_bar_hex_colour,
         t.logo_url,
         t.missing_image_url
-    FROM dbo.themes t
-    INNER JOIN dbo.customers c ON t.customer_id = c.id
-    WHERE c.customer_endpoint = customer_endpoint;
+    FROM themes t
+    INNER JOIN customers c ON t.customer_id = c.id
+    WHERE c.customer_endpoint = p_customer_endpoint;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -903,7 +936,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '24. get_search_index_query_credentials_by_customer_endpoint'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_query_credentials_by_customer_endpoint(
-    customer_endpoint TEXT
+    p_customer_endpoint TEXT
 )
 RETURNS TABLE (
     id UUID,
@@ -920,14 +953,14 @@ BEGIN
         i.service_name AS search_instance_name,
         i.root_endpoint AS search_instance_endpoint,
         ik.api_key
-    FROM dbo.search_index si
-    INNER JOIN dbo.search_instances i ON i.id = si.search_instance_id
-    INNER JOIN dbo.customers c ON si.customer_id = c.id
-    INNER JOIN dbo.search_instance_keys ik ON ik.search_instance_id = i.id
+    FROM search_index si
+    INNER JOIN search_instances i ON i.id = si.search_instance_id
+    INNER JOIN customers c ON si.customer_id = c.id
+    INNER JOIN search_instance_keys ik ON ik.search_instance_id = i.id
         AND ik.key_type = 'Query'
         AND ik.name = 'Query key'
         AND ik.is_latest = TRUE
-    WHERE c.customer_endpoint = customer_endpoint;
+    WHERE c.customer_endpoint = p_customer_endpoint;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -950,7 +983,7 @@ BEGIN
         fc.username,
         fc.created_date,
         fc.modified_date
-    FROM dbo.feed_credentials fc
+    FROM feed_credentials fc
     WHERE fc.search_index_id = p_search_index_id
     ORDER BY fc.created_date
     LIMIT 1;
@@ -975,7 +1008,7 @@ BEGIN
         fc.search_index_id,
         fc.username,
         fc.created_date
-    FROM dbo.feed_credentials fc
+    FROM feed_credentials fc
     WHERE fc.search_index_id = p_search_index_id
       AND fc.username = p_username;
 END;

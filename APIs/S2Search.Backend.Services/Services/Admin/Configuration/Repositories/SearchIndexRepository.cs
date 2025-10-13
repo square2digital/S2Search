@@ -43,20 +43,6 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
             return result;
         }
 
-        public async Task<IEnumerable<GenericSynonyms>> GetGenericSynonymsByCategoryAsync(string category)
-        {
-            var parameters = new Dictionary<string, object>()
-            {
-                { "Category", category }
-            };
-
-            var result = await _dbContext.QueryAsync<GenericSynonyms>(_connectionString,
-                                                                                 StoredProcedures.GetGenericSynonymsByCategory,
-                                                                                 parameters);
-
-            return result;
-        }
-
         public void Create(SearchIndexRequest resourceRequest)
         {
             var message = _queueManager.CreateMessage(SearchIndexQueues.Create, resourceRequest);
@@ -166,21 +152,6 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
             {
                 return null;
             }
-        }
-
-        public async Task<IEnumerable<SearchIndexKeys>> GetKeysAsync(Guid customerId, Guid searchIndexId)
-        {
-            var parameters = new Dictionary<string, object>()
-            {
-                { "SearchIndexId", searchIndexId },
-                { "CustomerId", customerId }
-            };
-
-            var result = await _dbContext.QueryAsync<SearchIndexKeys>(_connectionString,
-                                                                      StoredProcedures.GetSearchIndexKeysForCustomer,
-                                                                      parameters);
-
-            return result;
         }
 
         public async Task DeleteKeysAsync(SearchIndexKeyDeletionRequest keyDeletionRequest)

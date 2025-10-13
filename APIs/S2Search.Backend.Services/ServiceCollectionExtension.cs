@@ -99,7 +99,7 @@ namespace S2Search.Backend.Services
                 .AddSingleton<ISearchIndexRepository, SearchIndexRepository>()
                 .AddSingleton<IFeedRepository, FeedRepository>()
 
-                .AddSingleton<ISearchInterfaceRepository, SearchInterfaceRepository>()
+                //.AddSingleton<ISearchInterfaceRepository, SearchInterfaceRepository>()
                 .AddSingleton<ISynonymRepository, SynonymRepository>()
                 .AddSingleton<ICustomerRepository, CustomerRepository>()
                 .AddSingleton<IThemeRepository, ThemeRepository>()
@@ -115,7 +115,7 @@ namespace S2Search.Backend.Services
                 .AddSingleton<IFeedUploadDestinationManager, FeedUploadDestinationManager>()
                 .AddSingleton<IFeedCredentialsManager, FeedCredentialsManager>()
 
-                .AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>()
+                //.AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>()
                 .AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>()
                 .AddSingleton<ISearchInsightsReportRepository, SearchInsightsReportRepository>()
                 .AddSingleton<IFeedRepository, FeedRepository>()
