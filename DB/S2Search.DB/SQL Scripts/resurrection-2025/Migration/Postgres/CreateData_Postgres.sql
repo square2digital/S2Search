@@ -89,7 +89,6 @@ DECLARE
     -- ********************************************
     -- to override endpoints - useful to setting a search instance to another URL or to localhost
     -- ********************************************
-    --S2DemoEndpoint := LocalDevEndpoint
     
     -- ************************
     -- S2 Demo  - customer 1
@@ -133,6 +132,9 @@ DECLARE
     ***************************************************************************************/
 
 BEGIN
+    -- override endpoint for demo
+    S2DemoEndpoint := LocalDevEndpoint;
+
     -- your logic here
     
     DELETE FROM customers;
@@ -157,7 +159,7 @@ BEGIN
     RAISE NOTICE '********************************';
     RAISE NOTICE 'Inserting Search Instances Entry';
     RAISE NOTICE '********************************';
-    
+
     INSERT INTO search_instances
     (
 		id,
@@ -271,6 +273,7 @@ BEGIN
     (
 		id,
 		business_name,
+        customer_endpoint,
 		created_date,
 		modified_date
     )
@@ -278,6 +281,7 @@ BEGIN
     (
 		CustomerId_JGilmartin_Motors,
 		BusinessName_1,
+        S2DemoEndpoint,
 		CURRENT_TIMESTAMP,
 		NULL
     );
