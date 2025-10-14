@@ -56,86 +56,103 @@ namespace S2Search.Backend.Services.Services
 
         private string BuildFunctionCall(string functionName, Dictionary<string, object> parameters)
         {
-            var query = string.Empty;
-
-            if (parameters == null)
+            if (parameters == null || parameters.Count == 0)
                 return $"SELECT * FROM {functionName}()";
 
-            var paramNames = parameters.Values.Select(p => $"{p},");
-            var paramList = string.Join(", ", paramNames).Trim(',');
-            query = $"SELECT * FROM {functionName}('{paramList}')";
-
-            return query;
+            // Use parameter names as placeholders (e.g. @param) instead of injecting values
+            var paramNames = parameters.Keys.Select(k => $"@{k}");
+            var paramList = string.Join(", ", paramNames);
+            return $"SELECT * FROM {functionName}({paramList})";
         }
 
         private int DapperExecute(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            return connection.Execute(sql, parameters, commandType: CommandType.Text);
+            using (var connection = _dbConnection.Create(connectionString))
+            {
+                var sql = BuildFunctionCall(functionName, parameters);
+                return connection.Execute(sql, parameters, commandType: CommandType.Text);
+            }
         }
 
         private async Task<int> DapperExecuteAsync(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            return await connection.ExecuteAsync(sql, parameters, commandType: CommandType.Text);
+            using (var connection = _dbConnection.Create(connectionString))
+            {
+                var sql = BuildFunctionCall(functionName, parameters);
+                return await connection.ExecuteAsync(sql, parameters, commandType: CommandType.Text);
+            }
         }
 
         private T DapperExecuteScalar<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            return connection.ExecuteScalar<T>(sql, parameters, commandType: CommandType.Text);
+            using (var connection = _dbConnection.Create(connectionString))
+            {
+                var sql = BuildFunctionCall(functionName, parameters);
+                return connection.ExecuteScalar<T>(sql, parameters, commandType: CommandType.Text);
+            }
         }
 
         private async Task<T> DapperExecuteScalarAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            return await connection.ExecuteScalarAsync<T>(sql, parameters, commandType: CommandType.Text);
+            using (var connection = _dbConnection.Create(connectionString))
+            {
+                var sql = BuildFunctionCall(functionName, parameters);
+                return await connection.ExecuteScalarAsync<T>(sql, parameters, commandType: CommandType.Text);
+            }
         }
 
         private IEnumerable<T> DapperQuery<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            return connection.Query<T>(sql, parameters, commandType: CommandType.Text);
+            using (var connection = _dbConnection.Create(connectionString))
+            {
+                var sql = BuildFunctionCall(functionName, parameters);
+                return connection.Query<T>(sql, parameters, commandType: CommandType.Text);
+            }
         }
 
         private async Task<IEnumerable<T>> DapperQueryAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            return await connection.QueryAsync<T>(sql, parameters, commandType: CommandType.Text);
+            using (var connection = _dbConnection.Create(connectionString))
+            {
+                var sql = BuildFunctionCall(functionName, parameters);
+                return await connection.QueryAsync<T>(sql, parameters, commandType: CommandType.Text);
+            }
         }
 
         private T DapperQueryFirstOrDefault<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            return connection.QueryFirstOrDefault<T>(sql, parameters, commandType: CommandType.Text);
+            using (var connection = _dbConnection.Create(connectionString))
+            {
+                var sql = BuildFunctionCall(functionName, parameters);
+                return connection.QueryFirstOrDefault<T>(sql, parameters, commandType: CommandType.Text);
+            }
         }
 
         private async Task<T> DapperQueryFirstOrDefaultAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            return await connection.QueryFirstOrDefaultAsync<T>(sql, parameters, commandType: CommandType.Text);
+            using (var connection = _dbConnection.Create(connectionString))
+            {
+                var sql = BuildFunctionCall(functionName, parameters);
+                return await connection.QueryFirstOrDefaultAsync<T>(sql, parameters, commandType: CommandType.Text);
+            }
         }
 
         private T DapperQuerySingleOrDefault<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            return connection.QuerySingleOrDefault<T>(sql, parameters, commandType: CommandType.Text);
+            using (var connection = _dbConnection.Create(connectionString))
+            {
+                var sql = BuildFunctionCall(functionName, parameters);
+                return connection.QuerySingleOrDefault<T>(sql, parameters, commandType: CommandType.Text);
+            }
         }
 
         private async Task<T> DapperQuerySingleOrDefaultAsync<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
         {
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            return await connection.QuerySingleOrDefaultAsync<T>(sql, parameters, commandType: CommandType.Text);
+            using (var connection = _dbConnection.Create(connectionString))
+            {
+                var sql = BuildFunctionCall(functionName, parameters);
+                return await connection.QuerySingleOrDefaultAsync<T>(sql, parameters, commandType: CommandType.Text);
+            }
         }
 
         private T DapperQueryMultiple<T>(string connectionString, string functionName, Dictionary<string, object> parameters)
@@ -143,11 +160,13 @@ namespace S2Search.Backend.Services.Services
             var data = new ExpandoObject();
             var customObjectMap = CustomObjectMapHelper.Create<T>();
 
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            using (var result = connection.QueryMultiple(sql, parameters, commandType: CommandType.Text))
+            using (var connection = _dbConnection.Create(connectionString))
             {
-                MapCustomObjects(customObjectMap, data, result);
+                var sql = BuildFunctionCall(functionName, parameters);
+                using (var result = connection.QueryMultiple(sql, parameters, commandType: CommandType.Text))
+                {
+                    MapCustomObjects(customObjectMap, data, result);
+                }
             }
 
             var returnObject = DynamicToComplexObjectHelper.Convert<T>(data);
@@ -160,11 +179,13 @@ namespace S2Search.Backend.Services.Services
             var data = new ExpandoObject();
             var customObjectMap = CustomObjectMapHelper.Create<T>();
 
-            var connection = _dbConnection.Create(connectionString);
-            var sql = BuildFunctionCall(functionName, parameters);
-            using (var result = await connection.QueryMultipleAsync(sql, parameters, commandType: CommandType.Text))
+            using (var connection = _dbConnection.Create(connectionString))
             {
-                await MapCustomObjectsAsync(customObjectMap, data, result);
+                var sql = BuildFunctionCall(functionName, parameters);
+                using (var result = await connection.QueryMultipleAsync(sql, parameters, commandType: CommandType.Text))
+                {
+                    await MapCustomObjectsAsync(customObjectMap, data, result);
+                }
             }
 
             var returnObject = DynamicToComplexObjectHelper.Convert<T>(data);
