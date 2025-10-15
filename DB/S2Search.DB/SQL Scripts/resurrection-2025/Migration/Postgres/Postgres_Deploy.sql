@@ -173,12 +173,12 @@ DO $$ BEGIN RAISE NOTICE 'search_insights_data'; END $$;
 CREATE TABLE search_insights_data (
     id               UUID           NOT NULL,
     search_index_id    UUID           NOT NULL,
-    data_catery       TEXT           NOT NULL,
+    data_category     TEXT           NOT NULL,
     data_point        TEXT           NOT NULL,
     count            INT            NOT NULL DEFAULT 0,
     date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP      NOT NULL,
+    modified_date     TIMESTAMP      NULL,
     constraint PK_SearchInsightsData PRIMARY KEY (Id)
 );
 
@@ -191,7 +191,7 @@ CREATE TABLE search_index_request_log (
     count            INT            NOT NULL DEFAULT 0,
     date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP      NOT NULL,
+    modified_date     TIMESTAMP      NULL,
     constraint PK_SearchIndexRequestLog PRIMARY KEY (Id)
 );
 
@@ -294,7 +294,7 @@ BEGIN
         f.is_latest
     FROM feeds f
     WHERE f.search_index_id = p_search_index_id
-      AND f.is_latest = 1
+      AND f.is_latest = TRUE
     LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
@@ -412,7 +412,7 @@ BEGIN
         service.partitions,
         service.is_shared
     FROM search_index search
-    LEFT OUTER JOIN search_instances service ON service.id = search.id
+    LEFT OUTER JOIN search_instances service ON service.id = search.search_instance_id
     WHERE search.id = p_search_index_id
       AND search.customer_id = p_customer_id;
 END;
@@ -436,13 +436,13 @@ BEGIN
     SELECT
         id,
         search_index_id,
-        keyword AS key,
+        key_word AS key,
         solr_format,
         created_date
     FROM synonyms
     WHERE search_index_id = p_search_index_id
       AND id = p_synonym_id
-      AND is_latest = 1;
+      AND is_latest = TRUE;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -464,13 +464,13 @@ BEGIN
     SELECT
         id,
         search_index_id,
-        keyword AS key,
+        key_word AS key,
         solr_format,
         created_date
     FROM synonyms
     WHERE search_index_id = p_search_index_id
-      AND keyword = p_key_word
-      AND is_latest = 1;
+      AND key_word = p_key_word
+      AND is_latest = TRUE;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -484,10 +484,10 @@ DECLARE
     rows_updated int;
 BEGIN
     UPDATE feeds
-    SET is_latest = 0,
+    SET is_latest = FALSE,
         superseded_date = CURRENT_TIMESTAMP
     WHERE search_index_id = p_search_index_id
-      AND is_latest = 1;
+      AND is_latest = TRUE;
     GET DIAGNOSTICS rows_updated = ROW_COUNT;
     RETURN rows_updated;
 END;
@@ -504,11 +504,11 @@ DECLARE
     rows_updated int;
 BEGIN
     UPDATE synonyms
-    SET is_latest = 0,
+    SET is_latest = FALSE,
         superseded_date = CURRENT_TIMESTAMP
     WHERE search_index_id = p_search_index_id
       AND id = p_synonym_id
-      AND is_latest = 1;
+      AND is_latest = TRUE;
     GET DIAGNOSTICS rows_updated = ROW_COUNT;
     RETURN rows_updated;
 END;
@@ -527,11 +527,11 @@ DECLARE
     rows_updated int;
 BEGIN
     UPDATE synonyms
-    SET keyword = p_key_word,
+    SET key_word = p_key_word,
         solr_format = p_solr_format
     WHERE search_index_id = p_search_index_id
       AND id = p_synonym_id
-      AND is_latest = 1;
+      AND is_latest = TRUE;
     GET DIAGNOSTICS rows_updated = ROW_COUNT;
     RETURN rows_updated;
 END;
@@ -626,7 +626,7 @@ BEGIN
         p_feed_type,
         p_feed_cron,
         CURRENT_TIMESTAMP,
-        1
+        TRUE
     );
     GET DIAGNOSTICS rows_inserted = ROW_COUNT;
     RETURN rows_inserted;
@@ -688,7 +688,7 @@ BEGIN
         p_solr_format
     );
 
-    RETURN synonym_id;
+    RETURN p_synonym_id;
 END;
 $$ LANGUAGE plpgsql;
 
