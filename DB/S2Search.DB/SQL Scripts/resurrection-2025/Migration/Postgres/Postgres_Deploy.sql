@@ -637,11 +637,11 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '14. add_search_index'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_search_index(
-    search_index_id UUID,
-    customer_id UUID,
-    index_name TEXT,
-    friendly_name TEXT,
-    search_instance_id UUID DEFAULT NULL
+    p_search_index_id UUID,
+    p_customer_id UUID,
+    p_index_name TEXT,
+    p_friendly_name TEXT,
+    p_search_instance_id UUID DEFAULT NULL
 )
 RETURNS VOID AS $$
 BEGIN
@@ -654,11 +654,11 @@ BEGIN
         created_date
     )
     VALUES (
-        search_index_id,
-        search_instance_id,
-        customer_id,
-        index_name,
-        friendly_name,
+        p_search_index_id,
+        p_search_instance_id,
+        p_customer_id,
+        p_index_name,
+        p_friendly_name,
         CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
     );
 END;
@@ -668,10 +668,10 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '15. dd_synonym'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_synonym(
-    synonym_id UUID,
-    search_index_id UUID,
-    key_word TEXT,
-    solr_format TEXT
+    p_synonym_id UUID,
+    p_search_index_id UUID,
+    p_key_word TEXT,
+    p_solr_format TEXT
 )
 RETURNS UUID AS $$
 BEGIN
@@ -682,10 +682,10 @@ BEGIN
         solr_format
     )
     VALUES (
-        synonym_id,
-        search_index_id,
-        key_word,
-        solr_format
+        p_synonym_id,
+        p_search_index_id,
+        p_key_word,
+        p_solr_format
     );
 
     RETURN synonym_id;
@@ -696,10 +696,10 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '16. get_search_insights_by_data_categories'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_insights_by_data_categories(
-    search_index_id UUID,
-    date_from TIMESTAMP,
-    date_to TIMESTAMP,
-    data_categories TEXT
+    p_search_index_id UUID,
+    p_date_from TIMESTAMP,
+    p_date_to TIMESTAMP,
+    p_data_categories TEXT
 )
 RETURNS TABLE (
     data_category TEXT,
@@ -715,11 +715,11 @@ BEGIN
         d.date,
         d.count
     FROM search_insights_data d
-    JOIN unnest(string_to_array(data_categories, ',')) AS category(value)
+    JOIN unnest(string_to_array(p_data_categories, ',')) AS category(value)
         ON category.value = d.data_category
-    WHERE d.search_index_id = search_index_id
-      AND d.date >= date_from
-      AND d.date <= date_to;
+    WHERE d.search_index_id = p_search_index_id
+      AND d.date >= p_date_from
+      AND d.date <= p_date_to;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -727,9 +727,9 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '17. get_search_insights_search_count_by_date_range'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_insights_search_count_by_date_range(
-    search_index_id UUID,
-    date_from TIMESTAMP,
-    date_to TIMESTAMP
+    p_search_index_id UUID,
+    p_date_from TIMESTAMP,
+    p_date_to TIMESTAMP
 )
 RETURNS TABLE (
     date DATE,
@@ -741,8 +741,8 @@ BEGIN
         d.date,
         d.count
     FROM search_index_request_log d
-    WHERE d.search_index_id = search_index_id
-      AND d.date BETWEEN date_from AND date_to;
+    WHERE d.search_index_id = p_search_index_id
+      AND d.date BETWEEN p_date_from AND p_date_to;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -885,24 +885,24 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '22. update_theme'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION update_theme(
-    theme_id UUID,
-    primary_hex_colour TEXT,
-    secondary_hex_colour TEXT,
-    nav_bar_hex_colour TEXT,
-    logo_url TEXT,
-    missing_image_url TEXT
+    p_theme_id UUID,
+    p_primary_hex_colour TEXT,
+    p_secondary_hex_colour TEXT,
+    p_nav_bar_hex_colour TEXT,
+    p_logo_url TEXT,
+    p_missing_image_url TEXT
 )
 RETURNS VOID AS $$
 BEGIN
     UPDATE themes
     SET
-        primary_hex_colour = primary_hex_colour,
-        secondary_hex_colour = secondary_hex_colour,
-        nav_bar_hex_colour = nav_bar_hex_colour,
-        logo_url = logo_url,
-        missing_image_url = missing_image_url,
+        primary_hex_colour = p_primary_hex_colour,
+        secondary_hex_colour = p_secondary_hex_colour,
+        nav_bar_hex_colour = p_nav_bar_hex_colour,
+        logo_url = p_logo_url,
+        missing_image_url = p_missing_image_url,
         modified_date = CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
-    WHERE id = theme_id;
+    WHERE id = p_theme_id;
 END;
 $$ LANGUAGE plpgsql;
 
