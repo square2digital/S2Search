@@ -5,7 +5,6 @@ using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Customer.SearchResources.Themes;
 using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Backend.Domain.Interfaces.Repositories;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
 
 namespace S2Search.Backend.Services.Admin.Configuration.Repositories
 {
@@ -26,7 +25,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "CustomerEndpoint", customerEndpoint }
+                { "customer_endpoint", customerEndpoint }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
@@ -41,7 +40,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "ThemeId", themeId }
+                { "theme_id", themeId }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
@@ -56,7 +55,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "CustomerId", customerId }
+                { "customer_id", customerId }
             };
 
             var result = await _dbContext.QueryMultipleAsync<ThemeCollection>(
@@ -71,7 +70,7 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", searchIndexId }
+                { "search_index_id", searchIndexId }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<Theme>(
@@ -86,12 +85,12 @@ namespace S2Search.Backend.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "ThemeId", theme.themeId },
-                { "PrimaryHexColour", theme.primaryHexColour },
-                { "SecondaryHexColour", theme.secondaryHexColour },
-                { "NavBarHexColour", theme.navBarHexColour },
-                { "LogoURL", theme.logoURL },
-                { "MissingImageURL", theme.MissingImageURL }
+                { "theme_id", theme.themeId },
+                { "primary_hex_colour", theme.primaryHexColour },
+                { "secondary_hex_colour", theme.secondaryHexColour },
+                { "nav_bar_hex_colour", theme.navBarHexColour },
+                { "logo_url", theme.logoURL },
+                { "missing_image_url", theme.MissingImageURL }
             };
 
             var result = await _dbContext.ExecuteAsync(

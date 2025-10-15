@@ -32,7 +32,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "CustomerEndpoint", customerEndpoint }
+                { "customer_endpoint", customerEndpoint }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexQueryCredentials>(
@@ -114,8 +114,8 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", searchIndexId },
-                { "CustomerId", customerId }
+                { "search_index_id", searchIndexId },
+                { "customer_id", customerId }
             };
 
             try
@@ -136,8 +136,8 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", searchIndexId },
-                { "CustomerId", customerId }
+                { "search_index_id", searchIndexId },
+                { "customer_id", customerId }
             };
 
             try
@@ -173,8 +173,8 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "CustomerId", customerId },
-                { "FriendlyName", friendlyName }
+                { "customer_id", customerId },
+                { "friendly_name", friendlyName }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndex>(_connectionString,
@@ -188,7 +188,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "CustomerEndpoint", customerEndpoint }
+                { "customer_endpoint", customerEndpoint }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexQueryCredentials>(_connectionString,
