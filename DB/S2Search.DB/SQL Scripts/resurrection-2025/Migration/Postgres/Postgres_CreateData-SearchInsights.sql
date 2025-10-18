@@ -1,8 +1,9 @@
 ﻿DO $$
 DECLARE
-    start_date date := '2020-02-01';
-    end_date date := '2025-12-31';
-    total_days int := (end_date - start_date);
+    start_ts timestamp := '2020-02-01 00:00:00';
+    end_ts   timestamp := '2025-12-31 23:00:00';
+    total_hours int := floor(EXTRACT(epoch FROM (end_ts - start_ts)) / 3600)::int;
+    instance_search_index_id uuid := '8c663063-4217-4f54-973f-8faec6131b5b';
 
     --random_value_start_number int := 1;
     --random_value_end_number int := 999;
@@ -20,18 +21,25 @@ DECLARE
     rv_start int;
     rv_end int;
 BEGIN
-    -- Clear down the tables
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Clear down the tables';
+    RAISE NOTICE '********************************';
     TRUNCATE TABLE search_insights_data;
     TRUNCATE TABLE search_index_request_log;
     
-    -- Temporary table for data categories
+    
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Temporary table for data categories';
+    RAISE NOTICE '********************************';
     CREATE TEMP TABLE tmp_data_categories (
         id serial PRIMARY KEY,
         data_category text,
         data_point text
     ) ON COMMIT DROP;
-
-    -- Insert fixed data categories
+    
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Insert fixed data categories';
+    RAISE NOTICE '********************************';
     INSERT INTO tmp_data_categories (data_category, data_point)
     VALUES
     ('Search Type','Text & Filter Searches'),
@@ -204,26 +212,32 @@ BEGIN
     ('Colour','Silver'),
     ('Colour','White');
 
-    -- Time of day hours
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Time of day hours';
+    RAISE NOTICE '********************************';
     FOR day_idx IN time_of_day_start_number..time_of_day_end_number LOOP
         INSERT INTO tmp_data_categories (data_category, data_point)
         VALUES ('Time of Day (Hour)', day_idx::text);
     END LOOP;
-
-    -- Temporary table for search index ids
+     
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Temporary table for search index ids';
+    RAISE NOTICE '********************************';
     CREATE TEMP TABLE tmp_search_index_ids (
         id serial PRIMARY KEY,
         search_index_id uuid
     ) ON COMMIT DROP;
 
     INSERT INTO tmp_search_index_ids (search_index_id)
-    VALUES ('8c663063-4217-4f54-973f-8faec6131b5b');
+    VALUES (instance_search_index_id);
 
-    -- Iterate search indexes
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'Iterate search indexes';
+    RAISE NOTICE '********************************';
     FOR search_index_row IN SELECT search_index_id FROM tmp_search_index_ids LOOP
         -- iterate days
-        FOR day_idx IN 1..total_days LOOP
-            date_for_data := start_date + day_idx;
+        FOR day_idx IN 0..total_hours LOOP
+            date_for_data := start_ts + (day_idx || ' hours')::interval;
             current_day_of_month := extract(day from date_for_data)::int;
 
             random_number := (floor(random()*10) + 1)::int; -- 1..10
