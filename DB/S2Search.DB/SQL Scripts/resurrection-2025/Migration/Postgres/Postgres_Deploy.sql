@@ -15,7 +15,6 @@ DROP TABLE IF EXISTS feed_current_documents;
 DROP TABLE IF EXISTS feeds;
 DROP TABLE IF EXISTS search_configuration;
 DROP TABLE IF EXISTS search_index;
-DROP TABLE IF EXISTS search_insights_data;
 DROP TABLE IF EXISTS search_instance_keys;
 DROP TABLE IF EXISTS search_instances;
 DROP TABLE IF EXISTS synonyms;
@@ -171,14 +170,14 @@ CREATE TABLE themes (
 DO $$ BEGIN RAISE NOTICE 'search_insights_data'; END $$;
 -- =============================
 CREATE TABLE search_insights_data (
-    id               UUID           NOT NULL,
-    search_index_id    UUID           NOT NULL,
-    data_category     TEXT           NOT NULL,
-    data_point        TEXT           NOT NULL,
+    id               UUID           NOT NULL DEFAULT gen_random_uuid(),
+    search_index_id    UUID         NOT NULL,
+    data_category     TEXT          NOT NULL,
+    data_point        TEXT          NOT NULL,
     count            INT            NOT NULL DEFAULT 0,
     date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP      NULL,
+    created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP     NULL,
     constraint PK_SearchInsightsData PRIMARY KEY (Id)
 );
 
@@ -186,12 +185,12 @@ CREATE TABLE search_insights_data (
 DO $$ BEGIN RAISE NOTICE 'search_index_request_log'; END $$;
 -- =============================
 CREATE TABLE search_index_request_log (
-    id               UUID           NOT NULL,
-    search_index_id    UUID           NOT NULL,
-    count            INT            NOT NULL DEFAULT 0,
-    date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP      NULL,
+    id               UUID         NOT NULL DEFAULT gen_random_uuid(),
+    search_index_id  UUID         NOT NULL,
+    count            INT          NOT NULL DEFAULT 0,
+    date             TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_date     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date    TIMESTAMP    NULL,
     constraint PK_SearchIndexRequestLog PRIMARY KEY (Id)
 );
 
