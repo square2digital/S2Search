@@ -4,8 +4,8 @@ DECLARE
     end_date date := '2025-12-31';
     total_days int := (end_date - start_date);
 
-    random_value_start_number int := 1;
-    random_value_end_number int := 999;
+    --random_value_start_number int := 1;
+    --random_value_end_number int := 999;
 
     time_of_day_start_number int := 0;
     time_of_day_end_number int := 23;
@@ -20,6 +20,10 @@ DECLARE
     rv_start int;
     rv_end int;
 BEGIN
+    -- Clear down the tables
+    TRUNCATE TABLE search_insights_data;
+    TRUNCATE TABLE search_index_request_log;
+    
     -- Temporary table for data categories
     CREATE TEMP TABLE tmp_data_categories (
         id serial PRIMARY KEY,
@@ -91,7 +95,6 @@ BEGIN
     ('Model','CR-V'),
     ('Model','DB9'),
     ('Model','Cube'),
-    ('Model','Civic'),
     ('Model','Fiesta'),
     ('Model','Escort'),
     ('Model','Focus'),
