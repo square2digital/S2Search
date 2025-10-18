@@ -1,19 +1,16 @@
 ﻿DO $$
 DECLARE
-    start_ts timestamp := '2020-02-01 00:00:00';
+    start_ts timestamp := '2025-10-31 23:00:00';
     end_ts   timestamp := '2025-12-31 23:00:00';
     total_hours int := floor(EXTRACT(epoch FROM (end_ts - start_ts)) / 3600)::int;
     instance_search_index_id uuid := '8c663063-4217-4f54-973f-8faec6131b5b';
-
-    --random_value_start_number int := 1;
-    --random_value_end_number int := 999;
 
     time_of_day_start_number int := 0;
     time_of_day_end_number int := 23;
 
     search_index_row record;
-    day_idx int;
-    date_for_data date;
+    hour_idx int;
+    ts_for_data timestamp;
     current_day_of_month int;
     random_number int;
     current_data record;
@@ -21,6 +18,11 @@ DECLARE
     rv_start int;
     rv_end int;
 BEGIN
+    RAISE NOTICE '********************************';
+    RAISE NOTICE 'total_hours = %', total_hours;
+    RAISE NOTICE 'instance_search_index_id = %', instance_search_index_id;
+    RAISE NOTICE '********************************';
+
     RAISE NOTICE '********************************';
     RAISE NOTICE 'Clear down the tables';
     RAISE NOTICE '********************************';
@@ -215,9 +217,9 @@ BEGIN
     RAISE NOTICE '********************************';
     RAISE NOTICE 'Time of day hours';
     RAISE NOTICE '********************************';
-    FOR day_idx IN time_of_day_start_number..time_of_day_end_number LOOP
+    FOR hour_idx IN time_of_day_start_number..time_of_day_end_number LOOP
         INSERT INTO tmp_data_categories (data_category, data_point)
-        VALUES ('Time of Day (Hour)', day_idx::text);
+        VALUES ('Time of Day (Hour)', hour_idx::text);
     END LOOP;
      
     RAISE NOTICE '********************************';
@@ -232,13 +234,13 @@ BEGIN
     VALUES (instance_search_index_id);
 
     RAISE NOTICE '********************************';
-    RAISE NOTICE 'Iterate search indexes';
+    RAISE NOTICE 'Iterate search indexes (hours)';
     RAISE NOTICE '********************************';
     FOR search_index_row IN SELECT search_index_id FROM tmp_search_index_ids LOOP
-        -- iterate days
-        FOR day_idx IN 0..total_hours LOOP
-            date_for_data := start_ts + (day_idx || ' hours')::interval;
-            current_day_of_month := extract(day from date_for_data)::int;
+        -- iterate hours
+        FOR hour_idx IN 0..total_hours LOOP
+            ts_for_data := start_ts + (hour_idx || ' hours')::interval;
+            current_day_of_month := extract(day from ts_for_data)::int;
 
             random_number := (floor(random()*10) + 1)::int; -- 1..10
 
@@ -264,7 +266,7 @@ BEGIN
                 INSERT INTO search_insights_data
                     (search_index_id, data_category, data_point, count, date)
                 VALUES
-                    (search_index_row.search_index_id, current_data.data_category, current_data.data_point, count_for_data, date_for_data);
+                    (search_index_row.search_index_id, current_data.data_category, current_data.data_point, count_for_data, ts_for_data::date);
             END LOOP;
         END LOOP;
     END LOOP;
