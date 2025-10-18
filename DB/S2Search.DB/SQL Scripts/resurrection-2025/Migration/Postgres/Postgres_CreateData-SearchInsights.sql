@@ -1,6 +1,6 @@
 ﻿DO $$
 DECLARE
-    start_ts timestamp := '2025-10-31 23:00:00';
+    start_ts timestamp := '2025-01-01 00:00:00';
     end_ts   timestamp := '2025-12-31 23:00:00';
     total_hours int := floor(EXTRACT(epoch FROM (end_ts - start_ts)) / 3600)::int;
     instance_search_index_id uuid := '8c663063-4217-4f54-973f-8faec6131b5b';
