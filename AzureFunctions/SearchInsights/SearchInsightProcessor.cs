@@ -5,16 +5,16 @@ using Microsoft.Extensions.Logging;
 
 namespace SearchInsights
 {
-    public class Function1
+    public class SearchInsightProcessor
     {
-        private readonly ILogger<Function1> _logger;
+        private readonly ILogger<SearchInsightProcessor> _logger;
 
-        public Function1(ILogger<Function1> logger)
+        public SearchInsightProcessor(ILogger<SearchInsightProcessor> logger)
         {
             _logger = logger;
         }
 
-        [Function(nameof(Function1))]
+        [Function(nameof(SearchInsightProcessor))]
         public void Run([QueueTrigger("searchinsights-process", Connection = "AzureWebJobsStorage1")] QueueMessage message)
         {
             _logger.LogInformation($"C# Queue trigger function processed: {message.MessageText}");
