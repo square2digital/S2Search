@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchInsights", "SearchInsights.csproj", "{99CFA239-301A-4EC2-B673-52AF3562E30E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99CFA239-301A-4EC2-B673-52AF3562E30E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99CFA239-301A-4EC2-B673-52AF3562E30E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99CFA239-301A-4EC2-B673-52AF3562E30E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99CFA239-301A-4EC2-B673-52AF3562E30E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {117DFD4C-EED5-45B8-82E2-BA861936C895}
+	EndGlobalSection
+EndGlobal
