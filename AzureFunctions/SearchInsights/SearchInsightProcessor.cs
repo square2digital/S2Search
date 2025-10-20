@@ -15,7 +15,7 @@ namespace SearchInsights
         }
 
         [Function(nameof(SearchInsightProcessor))]
-        public void Run([QueueTrigger("searchinsights-process", Connection = "AzureWebJobsStorage1")] QueueMessage message)
+        public void Run([QueueTrigger("searchinsights-process", Connection = "AzureWebJobsStorage")] QueueMessage message)
         {
             _logger.LogInformation($"C# Queue trigger function processed: {message.MessageText}");
         }
