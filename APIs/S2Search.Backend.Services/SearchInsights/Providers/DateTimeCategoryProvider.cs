@@ -1,8 +1,7 @@
-﻿using Domain.Constants;
-using Services.Interfaces.Providers;
-using System;
+﻿using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants;
+using S2Search.Backend.Domain.Interfaces.SearchInsights.Providers;
 
-namespace Services.Providers
+namespace S2Search.Backend.Services.SearchInsights.Providers
 {
     public class DateTimeCategoryProvider : IDateTimeCategoryProvider
     {

@@ -1,14 +1,11 @@
-﻿using Domain.Constants;
-using Domain.Models;
-using Microsoft.Extensions.Logging;
-using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
-using Services.Interfaces.Repositories;
-using Services.Mappers;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
+using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants;
+using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
+using S2Search.Backend.Domain.Interfaces.Providers;
+using S2Search.Backend.Domain.Interfaces.SearchInsights.Repositories;
+using S2Search.Backend.Services.SearchInsights.Mappers;
 
-namespace Services.Repositories
+namespace S2Search.Backend.Services.SearchInsights.Repositories
 {
     public class SearchInsightsRepository : ISearchInsightsRepository
     {

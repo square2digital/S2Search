@@ -2,7 +2,6 @@
 using Swashbuckle.AspNetCore.Annotations;
 using Newtonsoft.Json;
 using S2Search.Backend.Domain.Constants;
-using S2Search.Backend.Domain.Models.Insights;
 using S2Search.Backend.Domain.Models.Request;
 using S2Search.Backend.Domain.Models.Response;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
@@ -10,6 +9,7 @@ using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interface
 using S2Search.Backend.Domain.Interfaces;
 using Services.Interfaces;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
+using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
 
 namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
 {

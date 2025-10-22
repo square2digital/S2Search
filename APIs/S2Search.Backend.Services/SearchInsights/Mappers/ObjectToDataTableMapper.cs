@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 
-namespace Services.Mappers
+namespace S2Search.Backend.Services.SearchInsights.Mappers
 {
     public class ObjectToDataTableMapper
     {

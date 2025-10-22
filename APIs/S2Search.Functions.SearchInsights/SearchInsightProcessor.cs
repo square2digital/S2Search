@@ -1,22 +1,35 @@
-using System;
 using Azure.Storage.Queues.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants;
+using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
+using S2Search.Backend.Domain.Constants;
+using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
+using System;
 
 namespace S2Search.Functions.SearchInsights;
 
 public class SearchInsightProcessor
 {
-    private readonly ILogger<SearchInsightProcessor> _logger;
+    private readonly ISearchInsightsManager searchInsightsManager;
+    private readonly IDataPointsExtractionManager dataPointsExtractionManager;
 
-    public SearchInsightProcessor(ILogger<SearchInsightProcessor> logger)
+    public SearchInsightProcessor(ISearchInsightsManager searchInsightsManager,
+                                  IDataPointsExtractionManager dataPointsExtractionManager)
     {
-        _logger = logger;
+        this.searchInsightsManager = searchInsightsManager ?? throw new ArgumentNullException(nameof(searchInsightsManager));
+        this.dataPointsExtractionManager = dataPointsExtractionManager ?? throw new ArgumentNullException(nameof(dataPointsExtractionManager));
     }
 
     [Function(nameof(SearchInsightProcessor))]
-    public void Run([QueueTrigger("searchinsights-process", Connection = "AzureWebJobsStorage")] QueueMessage message)
+    public async Task Run([QueueTrigger(StorageQueues.SearchInsightsProcessing, Connection = ConnectionStrings.AzureStorageAccount)] SearchInsightMessage searchInsightMessage,
+                               ILogger log)
     {
-        _logger.LogInformation("C# Queue trigger function processed: {messageText}", message.MessageText);
+        log.LogInformation($"{nameof(SearchInsightProcessor)} | Processing Message - SearchIndexId: {searchInsightMessage.SearchIndexId}");
+        log.LogInformation($"{searchInsightMessage}");
+
+        var dataPoints = dataPointsExtractionManager.Extract(searchInsightMessage);
+
+        await searchInsightsManager.SaveInsightsAsync(searchInsightMessage.SearchIndexId, dataPoints, searchInsightMessage.DateGenerated);
     }
 }

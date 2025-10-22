@@ -1,11 +1,8 @@
-﻿using Domain.Models;
-using Services.Interfaces.Managers;
-using System;
-using System.Collections.Generic;
+﻿using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
+using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
 using System.Globalization;
-using System.Linq;
 
-namespace Services.Managers
+namespace S2Search.Backend.Services.SearchInsights.Managers
 {
     public class SearchFacetsFormatManager : ISearchFacetsFormatManager
     {
@@ -18,7 +15,7 @@ namespace Services.Managers
                 return listOfFacets;
             }
 
-            var facets = unformattedFacets.Split(',').ToList();
+            var facets = unformattedFacets.Split(',');
             var textInfo = CultureInfo.CurrentCulture.TextInfo;
 
             foreach (var facet in facets)

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Services.Interfaces.Providers
+namespace S2Search.Backend.Domain.Interfaces.SearchInsights.Providers
 {
     public interface IDateTimeCategoryProvider
     {

@@ -1,11 +1,8 @@
-﻿using Domain.Models;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
+using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
+using S2Search.Backend.Domain.Interfaces.SearchInsights.Repositories;
 
-namespace Services.Managers
+namespace S2Search.Backend.Services.SearchInsights.Managers
 {
     public class SearchInsightsManager : ISearchInsightsManager
     {

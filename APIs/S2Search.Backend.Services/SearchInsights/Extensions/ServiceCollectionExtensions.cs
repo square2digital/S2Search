@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using S2Search.Common.Database.Sql.Dapper.Utilities;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Providers;
-using Services.Interfaces.Repositories;
-using Services.Managers;
-using Services.Providers;
-using Services.Repositories;
+using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
+using S2Search.Backend.Domain.Interfaces.SearchInsights.Providers;
+using S2Search.Backend.Domain.Interfaces.SearchInsights.Repositories;
+using S2Search.Backend.Services.SearchInsights.Managers;
+using S2Search.Backend.Services.SearchInsights.Providers;
+using S2Search.Backend.Services.SearchInsights.Repositories;
+using S2Search.Backend.Services.Services.Admin.Dapper.Utilities;
 
-namespace Services.Extensions
+namespace S2Search.Backend.Services.SearchInsights.Extensions
 {
     public static class ServiceCollectionExtension
     {

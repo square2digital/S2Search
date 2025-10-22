@@ -1,7 +1,6 @@
-﻿using Domain.Models;
-using System.Collections.Generic;
+﻿using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
 
-namespace Services.Interfaces.Managers
+namespace S2Search.Backend.Domain.Interfaces.SearchInsights.Managers
 {
     public interface IDataPointsExtractionManager
     {
