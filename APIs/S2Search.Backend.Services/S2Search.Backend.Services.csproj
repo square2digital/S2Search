@@ -40,8 +40,4 @@
     <ProjectReference Include="..\S2Search.Backend.Domain\S2Search.Backend.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Functions\SearchInsights\" />
-  </ItemGroup>
-
 </Project>
