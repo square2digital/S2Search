@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "S2Search.Functions.SearchInsights": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7032"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "containerRunArguments": "--init",
+      "httpPort": 33008,
+      "useSSL": false
+    }
+  }
+}
