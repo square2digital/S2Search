@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.CacheManager", "S2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Functions.SearchInsights", "S2Search.Functions.SearchInsights\S2Search.Functions.SearchInsights.csproj", "{FA77FC4C-AD92-48E4-8B8A-9F4B0A6EFABA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.FeedServices.Function", "S2Search.FeedServices.Function\S2Search.FeedServices.Function.csproj", "{CD3510B6-55FE-49FF-BAD0-804F6613026E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{FA77FC4C-AD92-48E4-8B8A-9F4B0A6EFABA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA77FC4C-AD92-48E4-8B8A-9F4B0A6EFABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA77FC4C-AD92-48E4-8B8A-9F4B0A6EFABA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD3510B6-55FE-49FF-BAD0-804F6613026E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD3510B6-55FE-49FF-BAD0-804F6613026E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD3510B6-55FE-49FF-BAD0-804F6613026E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD3510B6-55FE-49FF-BAD0-804F6613026E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
