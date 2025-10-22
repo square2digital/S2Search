@@ -3,7 +3,7 @@ using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Providers;
 using S2Search.Backend.Domain.AzureFunctions.SearchInsights;
 
-namespace S2Search.Backend.Services.SearchInsights.Managers
+namespace S2Search.Backend.Services.Functions.SearchInsights.Managers
 {
     public class DataPointsExtractionManager : IDataPointsExtractionManager
     {
@@ -36,12 +36,12 @@ namespace S2Search.Backend.Services.SearchInsights.Managers
             var orderByDataPoint = hasOrderBy switch
             {
                 true => searchInsightMessage.OrderBy,
-                false => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.WithoutOrderBy,
+                false => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.WithoutOrderBy,
             };
 
             dataPoints.Add(new SearchInsightDataPoint()
             {
-                DataCategory = S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.OrderBy,
+                DataCategory = Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.OrderBy,
                 DataPoint = orderByDataPoint,
                 Date = searchInsightMessage.DateGenerated
             });
@@ -67,7 +67,7 @@ namespace S2Search.Backend.Services.SearchInsights.Managers
             //Examples: 1,2,3 .. 22, 23
             dataPoints.Add(new SearchInsightDataPoint()
             {
-                DataCategory = S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.TimeOfDayByHour,
+                DataCategory = Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.TimeOfDayByHour,
                 DataPoint = $"{dateGenerated.Hour}",
                 Date = dateGenerated
             });
@@ -75,7 +75,7 @@ namespace S2Search.Backend.Services.SearchInsights.Managers
             //Examples: Morning, Afternoon
             dataPoints.Add(new SearchInsightDataPoint()
             {
-                DataCategory = S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.TimeOfDayByPart,
+                DataCategory = Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.TimeOfDayByPart,
                 DataPoint = datetimeCategoryProvider.GetPartOfDay(dateGenerated.TimeOfDay),
                 Date = dateGenerated
             });
@@ -83,7 +83,7 @@ namespace S2Search.Backend.Services.SearchInsights.Managers
             //Examples: Monday, Tuesday
             dataPoints.Add(new SearchInsightDataPoint()
             {
-                DataCategory = S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.DayOfWeek,
+                DataCategory = Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.DayOfWeek,
                 DataPoint = $"{dateGenerated.DayOfWeek}",
                 Date = dateGenerated
             });
@@ -91,7 +91,7 @@ namespace S2Search.Backend.Services.SearchInsights.Managers
             //Examples: Weekday, Weekend
             dataPoints.Add(new SearchInsightDataPoint()
             {
-                DataCategory = S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.DayOfWeekPart,
+                DataCategory = Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.DayOfWeekPart,
                 DataPoint = datetimeCategoryProvider.GetPartOfWeek(dateGenerated),
                 Date = dateGenerated
             });
@@ -99,7 +99,7 @@ namespace S2Search.Backend.Services.SearchInsights.Managers
             //Examples: 1,2,3 .. 29,30,31
             dataPoints.Add(new SearchInsightDataPoint()
             {
-                DataCategory = S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.DayOfMonth,
+                DataCategory = Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.DayOfMonth,
                 DataPoint = $"{dateGenerated.Day}",
                 Date = dateGenerated
             });
@@ -107,7 +107,7 @@ namespace S2Search.Backend.Services.SearchInsights.Managers
             //Examples: January, February, March
             dataPoints.Add(new SearchInsightDataPoint()
             {
-                DataCategory = S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.MonthOfYear,
+                DataCategory = Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.MonthOfYear,
                 DataPoint = $"{dateGenerated.ToString("MMMM")}",
                 Date = dateGenerated
             });
@@ -115,7 +115,7 @@ namespace S2Search.Backend.Services.SearchInsights.Managers
             //Examples: Q1, Q2, Q3, Q4
             dataPoints.Add(new SearchInsightDataPoint()
             {
-                DataCategory = S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.QuarterOfYear,
+                DataCategory = Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.QuarterOfYear,
                 DataPoint = datetimeCategoryProvider.GetQuarterOfYear(dateGenerated),
                 Date = dateGenerated
             });
@@ -129,25 +129,25 @@ namespace S2Search.Backend.Services.SearchInsights.Managers
 
             var dataCategory = (isZeroResults, isTextSearch, isFilerSearch) switch
             {
-                (false, true, true) => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithTextAndFilters,
-                (false, true, false) => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithText,
-                (false, false, true) => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithFilters,
+                (false, true, true) => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithTextAndFilters,
+                (false, true, false) => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithText,
+                (false, false, true) => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithFilters,
                 (false, false, false) => "Results Without Text or Filters",
-                (true, true, true) => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithTextAndFilters,
-                (true, true, false) => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithText,
-                (true, false, true) => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithFilters,
+                (true, true, true) => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithTextAndFilters,
+                (true, true, false) => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithText,
+                (true, false, true) => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithFilters,
                 (true, false, false) => "Zero Results Without Text or Filters"
             };
 
             var dataPointText = dataCategory switch
             {
-                S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithText => searchInsightMessage.ActualSearchQuery,
-                S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithText => searchInsightMessage.ActualSearchQuery,
-                S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithFilters => searchInsightMessage.Filters,
-                S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithFilters => searchInsightMessage.Filters,
-                S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithTextAndFilters => $"{searchInsightMessage.ActualSearchQuery} && {searchInsightMessage.Filters}",
-                S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithTextAndFilters => $"{searchInsightMessage.ActualSearchQuery} && {searchInsightMessage.Filters}",
-                _ => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.WithoutTextOrFilters
+                Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithText => searchInsightMessage.ActualSearchQuery,
+                Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithText => searchInsightMessage.ActualSearchQuery,
+                Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithFilters => searchInsightMessage.Filters,
+                Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithFilters => searchInsightMessage.Filters,
+                Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchResultsWithTextAndFilters => $"{searchInsightMessage.ActualSearchQuery} && {searchInsightMessage.Filters}",
+                Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.ZeroResultWithTextAndFilters => $"{searchInsightMessage.ActualSearchQuery} && {searchInsightMessage.Filters}",
+                _ => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.WithoutTextOrFilters
             };
 
             dataPoints.Add(new SearchInsightDataPoint()
@@ -165,15 +165,15 @@ namespace S2Search.Backend.Services.SearchInsights.Managers
 
             var searchTypeDataPoint = (isTextSearch, isFilerSearch) switch
             {
-                (true, true) => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.TextAndFilterSearches,
-                (true, false) => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.TextSearches,
-                (false, true) => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.FilterSearches,
-                (false, false) => S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.WithoutTextOrFilters
+                (true, true) => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.TextAndFilterSearches,
+                (true, false) => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.TextSearches,
+                (false, true) => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.FilterSearches,
+                (false, false) => Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataPoints.WithoutTextOrFilters
             };
 
             dataPoints.Add(new SearchInsightDataPoint()
             {
-                DataCategory = S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchType,
+                DataCategory = Domain.AzureFunctions.SearchInsights.Constants.SearchInsights.DataCategories.SearchType,
                 DataPoint = searchTypeDataPoint,
                 Date = searchInsightMessage.DateGenerated
             });

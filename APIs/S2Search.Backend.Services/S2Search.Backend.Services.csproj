@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="SearchInsights\" />
+    <Folder Include="Functions\SearchInsights\" />
   </ItemGroup>
 
 </Project>

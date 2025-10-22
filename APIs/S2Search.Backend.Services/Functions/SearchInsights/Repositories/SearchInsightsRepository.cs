@@ -3,9 +3,9 @@ using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants;
 using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
 using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Repositories;
-using S2Search.Backend.Services.SearchInsights.Mappers;
+using S2Search.Backend.Services.Functions.SearchInsights.Mappers;
 
-namespace S2Search.Backend.Services.SearchInsights.Repositories
+namespace S2Search.Backend.Services.Functions.SearchInsights.Repositories
 {
     public class SearchInsightsRepository : ISearchInsightsRepository
     {

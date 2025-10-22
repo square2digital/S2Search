@@ -2,7 +2,7 @@
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Repositories;
 
-namespace S2Search.Backend.Services.SearchInsights.Managers
+namespace S2Search.Backend.Services.Functions.SearchInsights.Managers
 {
     public class SearchInsightsManager : ISearchInsightsManager
     {

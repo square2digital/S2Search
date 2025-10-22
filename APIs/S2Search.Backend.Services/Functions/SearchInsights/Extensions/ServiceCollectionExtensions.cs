@@ -2,12 +2,12 @@
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Providers;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Repositories;
-using S2Search.Backend.Services.SearchInsights.Managers;
-using S2Search.Backend.Services.SearchInsights.Providers;
-using S2Search.Backend.Services.SearchInsights.Repositories;
+using S2Search.Backend.Services.Functions.SearchInsights.Managers;
+using S2Search.Backend.Services.Functions.SearchInsights.Providers;
+using S2Search.Backend.Services.Functions.SearchInsights.Repositories;
 using S2Search.Backend.Services.Services.Admin.Dapper.Utilities;
 
-namespace S2Search.Backend.Services.SearchInsights.Extensions
+namespace S2Search.Backend.Services.Functions.SearchInsights.Extensions
 {
     public static class ServiceCollectionExtension
     {
