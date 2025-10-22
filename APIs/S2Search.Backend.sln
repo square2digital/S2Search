@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.CacheManager", "S2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Functions.SearchInsights", "S2Search.Functions.SearchInsights\S2Search.Functions.SearchInsights.csproj", "{FA77FC4C-AD92-48E4-8B8A-9F4B0A6EFABA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.FeedServices.Function", "S2Search.FeedServices.Function\S2Search.FeedServices.Function.csproj", "{CD3510B6-55FE-49FF-BAD0-804F6613026E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Function.FeedServices", "S2Search.Function.FeedServices\S2Search.Function.FeedServices.csproj", "{CD3510B6-55FE-49FF-BAD0-804F6613026E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
