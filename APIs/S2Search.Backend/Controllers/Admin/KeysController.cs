@@ -37,7 +37,7 @@ namespace S2Search.Backend.Controllers.Admin
                 await _searchIndexRepo.DeleteKeysAsync(keyDeletionRequest);
                 return Accepted();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(DeleteKeysAsync)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
                 throw;

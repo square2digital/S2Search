@@ -10,7 +10,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Providers
 
             //increase the difference by 1 to account for the current day as a chunk of data
             //e.g. 13/09/2021 to 14/09/2021 counts as 2 days worth of data but the TotalDays = 1
-            totalDaysDifference--; 
+            totalDaysDifference--;
 
             var previousDateFrom = currentDateFrom.AddDays(totalDaysDifference);
             var previousDateTo = currentDateTo.AddDays(totalDaysDifference);

@@ -53,7 +53,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
             }
 
             await blobClient.UploadAsync(file.OpenReadStream());
-            
+
             var feedUploadNotification = CreateFeedUploadNotification(searchIndexId);
 
             return (true, "");

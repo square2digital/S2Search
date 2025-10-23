@@ -52,7 +52,7 @@ namespace S2.Test.Importer.Services
                 SearchIndex indexDefinition = new SearchIndex(_AppSettings.IndexSettings.SearchIndexName);
                 indexDefinition.Fields = new FieldBuilder().Build(typeof(Vehicle));
                 _searchClientProvider.GetIndexClient().CreateIndex(indexDefinition);
-            }        
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());

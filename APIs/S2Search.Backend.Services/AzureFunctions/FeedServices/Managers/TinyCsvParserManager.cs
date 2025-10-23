@@ -49,9 +49,9 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Managers
             var totalResults = results.Count;
             var totalErrors = results.Where(x => !x.IsValid).Count();
 
-            if(totalErrors > 0)
+            if (totalErrors > 0)
             {
-                foreach(var error in results.Where(x => !x.IsValid))
+                foreach (var error in results.Where(x => !x.IsValid))
                 {
                     _logger.LogError($"Import Error: {error.Error.Value}");
                 }

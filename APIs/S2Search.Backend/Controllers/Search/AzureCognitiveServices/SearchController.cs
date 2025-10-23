@@ -125,7 +125,7 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
 
         private void LogSearchInsight(SearchInsightMessage searchInsightMessage)
         {
-            if(searchInsightMessage is null)
+            if (searchInsightMessage is null)
             {
                 return;
             }
@@ -212,7 +212,7 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
                     var queryCredentials = await _queryCredentialsProvider.GetAsync(callingHost);
                     var suggestions = await _azureSearchService.AutocompleteWithSuggestions(searchTerm, queryCredentials);
                     return Ok(suggestions);
-                }            
+                }
             }
             catch (Exception ex)
             {

@@ -130,16 +130,16 @@ namespace S2Search.Backend.Services
                 .AddSingleton<ISynonymValidationManager, SynonymValidationManager>()
                 .AddSingleton<IQueryKeyNameValidationManager, QueryKeyNameValidationManager>();
 
-                //services.AddSingleton<ICacheManager, RedisCacheManager>();
-                //.AddSingleton<INotificationRuleRepository, NotificationRuleRepository>()
-                //services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
-                //.AddSingleton<INotificationRepository, NotificationRepository>()
-                //.AddSingleton<IDashboardRepository, DashboardRepository>()
-                //services.AddSingleton<IDashboardManager, DashboardManager>();
-                //services.AddSingleton<IDateTimeCategoryProvider, DateTimeCategoryProvider>();
-                //services.AddSingleton<ISearchInsightsManager, SearchInsightsManager>()
-                //services.AddSingleton<ISearchFacetsFormatManager, SearchFacetsFormatManager>()
-                //services.AddSingleton<IDataPointsExtractionManager, DataPointsExtractionManager>();
+            //services.AddSingleton<ICacheManager, RedisCacheManager>();
+            //.AddSingleton<INotificationRuleRepository, NotificationRuleRepository>()
+            //services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
+            //.AddSingleton<INotificationRepository, NotificationRepository>()
+            //.AddSingleton<IDashboardRepository, DashboardRepository>()
+            //services.AddSingleton<IDashboardManager, DashboardManager>();
+            //services.AddSingleton<IDateTimeCategoryProvider, DateTimeCategoryProvider>();
+            //services.AddSingleton<ISearchInsightsManager, SearchInsightsManager>()
+            //services.AddSingleton<ISearchFacetsFormatManager, SearchFacetsFormatManager>()
+            //services.AddSingleton<IDataPointsExtractionManager, DataPointsExtractionManager>();
 
             return services;
         }
@@ -161,13 +161,13 @@ namespace S2Search.Backend.Services
             {
                 throw new InvalidOperationException("Configuration must be set before calling AddAPIServices.");
             }
-                
+
             var appSettings = Configuration.Get<AppSettings>();
 
             if (appSettings == null)
             {
                 throw new InvalidOperationException("AppSettings section is missing or invalid in configuration.");
-            }                
+            }
 
             services.AddSingleton(appSettings);
 

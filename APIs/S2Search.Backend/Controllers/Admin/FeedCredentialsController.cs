@@ -56,12 +56,12 @@ namespace S2Search.Backend.Controllers.Admin
                                         ControllerContext.ActionDescriptor.ControllerName,
                                         new { customerId, searchIndexId });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(CreateUser)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
                 throw;
             }
-            
+
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace S2Search.Backend.Controllers.Admin
                 Username = username
             };
 
-            try 
+            try
             {
                 bool userExists = await CheckUserExists(searchIndexId, username);
 
@@ -102,7 +102,7 @@ namespace S2Search.Backend.Controllers.Admin
 
                 return Accepted();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(DeleteUser)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
                 throw;
@@ -138,7 +138,7 @@ namespace S2Search.Backend.Controllers.Admin
 
                 return Accepted();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(UpdateUserStatus)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
                 throw;
@@ -173,7 +173,7 @@ namespace S2Search.Backend.Controllers.Admin
 
                 return Accepted();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(UpdateUserPassword)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
                 throw;
@@ -207,7 +207,7 @@ namespace S2Search.Backend.Controllers.Admin
 
                 return Ok(credentials);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(GetCredentials)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
                 throw;

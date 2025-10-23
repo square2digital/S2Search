@@ -45,7 +45,7 @@ namespace S2Search.Backend.Services.Functions.SearchInsights.Providers
 
         public string GetPartOfWeek(DateTime date)
         {
-            if(date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+            if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
             {
                 return TimeOfWeek.Weekend;
             }

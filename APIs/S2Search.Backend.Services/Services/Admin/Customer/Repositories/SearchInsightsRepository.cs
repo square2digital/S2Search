@@ -12,7 +12,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 {
     public class SearchInsightsRepository : ISearchInsightsRepository
     {
-        private readonly IConfiguration _configuration;        
+        private readonly IConfiguration _configuration;
         private readonly IDbContextProvider _dbContext;
         private readonly ILogger<SearchInsightsRepository> _logger;
         private readonly string _connectionString;

@@ -16,7 +16,7 @@ namespace S2Search.Backend.Services.Services.Admin.Dapper.Helpers
         {
             ValidateParameters(parameters);
 
-           var dynamicParameters = ConvertToDynamicParameters(procedureName, parameters);
+            var dynamicParameters = ConvertToDynamicParameters(procedureName, parameters);
 
             return dynamicParameters;
         }

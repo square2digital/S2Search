@@ -16,7 +16,7 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Providers
         {
             var feedMapper = feedMappers.FirstOrDefault(x => x.FeedDataFormat == feedDataFormat);
 
-            if(feedMapper is null)
+            if (feedMapper is null)
             {
                 throw new NotImplementedException();
             }

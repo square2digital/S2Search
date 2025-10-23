@@ -149,7 +149,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
         public async Task<SearchInsightSummary> GetSummaryAsync(Guid searchIndexId)
         {
             var summary = new SearchInsightSummary();
-            
+
             var today = DateTime.Today;
             var dateFrom = today.AddDays(-6);
 

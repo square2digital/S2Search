@@ -13,11 +13,11 @@ public static class StringExtensions
         {
             return input;
         }
-        else if(string.IsNullOrEmpty(input))
+        else if (string.IsNullOrEmpty(input))
         {
             return input;
         }
-        else if(input.All(char.IsDigit))
+        else if (input.All(char.IsDigit))
         {
             return input;
         }
@@ -25,5 +25,5 @@ public static class StringExtensions
         {
             return input.ToLower().First().ToString().ToUpper() + input.Substring(1);
         }
-    }                       
+    }
 }

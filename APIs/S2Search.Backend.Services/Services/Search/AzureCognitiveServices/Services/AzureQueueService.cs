@@ -33,7 +33,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                 var client = await _azureQueueClient.GetAsync(_connectionString, message.TargetQueue);
                 await client.SendMessageAsync(encodedMessage);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //log the error and dont throw as to not impact search queries
                 _logger.LogError($"Exception on {nameof(EnqueueMessageAsync)} | Timestamp: {DateTime.Now.ToString("MM/dd/yyyy h:mm tt")} | Message: {ex.Message}");

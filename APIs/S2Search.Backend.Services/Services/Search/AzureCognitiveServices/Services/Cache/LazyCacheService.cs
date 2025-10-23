@@ -42,7 +42,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
         {
             var result = await _cache.GetOrAddAsync(cacheKey, addItemFactory, slidingExpiry);
 
-            if(result == null)
+            if (result == null)
             {
                 _cache.Remove(cacheKey);
             }

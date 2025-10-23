@@ -41,7 +41,7 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(GetLatestGenericSynonymsAsync)} | Message: {ex.Message}");
-                throw ex;
+                throw;
             }
         }
     }

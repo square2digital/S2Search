@@ -38,7 +38,7 @@ namespace S2Search.Backend.Controllers.Admin
 
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(GetCustomer)} | CustomerId: {customerId} | Message: {ex.Message}");
                 throw;
@@ -65,7 +65,7 @@ namespace S2Search.Backend.Controllers.Admin
 
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(GetCustomerFull)} | CustomerId: {customerId} | Message: {ex.Message}");
                 throw;

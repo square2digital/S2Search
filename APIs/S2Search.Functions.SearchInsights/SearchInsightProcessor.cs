@@ -1,12 +1,9 @@
-using Azure.Storage.Queues.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using S2Search.Backend.Domain.AzureFunctions.FeedServices.Constants;
-using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants;
 using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
-using System;
 
 namespace S2Search.Functions.SearchInsights;
 

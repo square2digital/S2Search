@@ -27,7 +27,7 @@
 
             public const string OrderBy = "Order By";
         }
-        
+
         public static class DataPoints
         {
             public const string TextSearches = "Text Searches";

@@ -14,7 +14,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             {
                 decimal rounded = RoundUpToNearestHundred(item.Value);
                 decimal decimalRepresentation = rounded / 1000.0M;
-                string displayText = $"{decimalRepresentation.ToString("0.##")} L"; 
+                string displayText = $"{decimalRepresentation.ToString("0.##")} L";
 
                 item.Value = rounded.ToString();
                 item.FacetDisplayText = displayText;

@@ -38,7 +38,7 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(GetCredentials)} | Message: {ex.Message}");
-                throw ex;
+                throw;
             }
         }
     }

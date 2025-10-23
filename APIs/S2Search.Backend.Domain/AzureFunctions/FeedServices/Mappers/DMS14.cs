@@ -60,7 +60,7 @@ namespace S2Search.Backend.Domain.AzureFunctions.FeedServices.AzureSearch.Index
                 VehicleIndex.Location = this.Site;
                 VehicleIndex.Mileage = this.Mileage;
                 VehicleIndex.Make = this.Make;
-                VehicleIndex.Model = this.Model;                
+                VehicleIndex.Model = this.Model;
                 VehicleIndex.Price = this.Price;
                 VehicleIndex.MonthlyPrice = this.MonthlyPrice;
                 VehicleIndex.Transmission = this.Transmission;
@@ -71,7 +71,7 @@ namespace S2Search.Backend.Domain.AzureFunctions.FeedServices.AzureSearch.Index
                 VehicleIndex.ModelYear = this.Year.ToString();
                 VehicleIndex.PageUrl = this.PageUrl;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Exception trying to convert DMS14 => VehicleIndex - {ex.Message}");
             }

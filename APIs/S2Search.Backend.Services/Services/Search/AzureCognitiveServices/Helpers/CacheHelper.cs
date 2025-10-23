@@ -13,7 +13,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
         /// <returns></returns>
         public static TimeSpan GetExpiry(int? seconds)
         {
-            if(!seconds.HasValue || seconds == 0)
+            if (!seconds.HasValue || seconds == 0)
             {
                 return TimeSpan.FromSeconds(_fallbackValue);
             }

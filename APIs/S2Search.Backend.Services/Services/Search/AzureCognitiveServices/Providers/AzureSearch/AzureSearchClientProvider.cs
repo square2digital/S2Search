@@ -12,7 +12,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Provi
 
         public AzureSearchClientProvider(IAppCache clientCache)
         {
-            _clientCache = clientCache; 
+            _clientCache = clientCache;
         }
 
         public SearchClient GetSearchClient(string searchServiceName, string indexName, string apiKey)

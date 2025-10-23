@@ -5,7 +5,7 @@ public class SearchConfigurationOption
     public Guid SeachConfigurationOptionId { get; set; }
     public Guid SearchConfigurationMappingId { get; set; }
     public string key { get; set; }
-    public string value{ get; set; }
+    public string value { get; set; }
     public string friendly_name { get; set; }
     public string description { get; set; }
     public string data_type { get; set; }

@@ -16,7 +16,7 @@ namespace Services.Providers
         {
             var facetOverride = _facetOverrides.FirstOrDefault(x => x.FacetName == facetName);
 
-            if(facetOverride == null)
+            if (facetOverride == null)
             {
                 throw new NotImplementedException();
             }

@@ -45,7 +45,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
             var credentials = await _dbContext.QuerySingleOrDefaultAsync<FeedCredentials>(_connectionString,
                                                                                     StoredProcedures.GetFeedCredentialsUsername,
                                                                                     parameters);
-            
+
             return credentials;
         }
     }

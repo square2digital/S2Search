@@ -15,7 +15,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
                 return false;
             }
 
-            if(feedRequest.ScheduleMinutes <= 0 || feedRequest.ScheduleMinutes % 5 != 0)
+            if (feedRequest.ScheduleMinutes <= 0 || feedRequest.ScheduleMinutes % 5 != 0)
             {
                 errorMessage = $"Invalid {nameof(feedRequest.ScheduleMinutes)}";
                 return false;

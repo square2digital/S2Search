@@ -24,7 +24,7 @@ public class SearchSettings
 {
     public bool UseRequestedCallingHost { get; set; }
     public string DefaultFacetsURL { get; set; }
-    public string DefaultSearchOrderBy { get; set; }        
+    public string DefaultSearchOrderBy { get; set; }
     public string FacetOrder { get; set; }
     public string FacetNamesToMatch { get; set; }
     public string FacetEdgeCases { get; set; }
@@ -37,7 +37,7 @@ public class SearchSettings
     {
         get
         {
-            if(!string.IsNullOrEmpty(FacetNamesToMatch))
+            if (!string.IsNullOrEmpty(FacetNamesToMatch))
             {
                 var options = new JsonSerializerOptions
                 {
@@ -83,7 +83,7 @@ public class SearchSettings
     {
         get
         {
-            if(FacetToOverrideDisplay.Contains(","))
+            if (FacetToOverrideDisplay.Contains(","))
             {
                 return FacetToOverrideDisplay.Split(',');
             }
@@ -139,5 +139,5 @@ public class RedisCacheSettings
 {
     public bool EnableRedisCache { get; set; }
     public string RedisConnectionString { get; set; }
-    public int DefaultCacheExpiryInSeconds { get; set; }        
+    public int DefaultCacheExpiryInSeconds { get; set; }
 }
