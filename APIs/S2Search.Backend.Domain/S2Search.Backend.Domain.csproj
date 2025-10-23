@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="AzureFunctions\FeedServices\" />
+    <Folder Include="AzureFunctions\FeedServices\AzureSearch\Index\" />
     <Folder Include="AzureFunctions\SearchInsights\" />
     <Folder Include="Interfaces\SearchInsights\" />
     <Folder Include="Models\Insights\" />

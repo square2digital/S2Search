@@ -1,4 +1,5 @@
 ﻿using S2Search.Backend.Domain.AzureFunctions.FeedServices.AzureSearch.Index;
+using S2Search.Backend.Domain.AzureSearch.Indexes;
 using System;
 
 namespace S2Search.Backend.Domain.AzureFunctions.FeedServices.AzureSearch.Index

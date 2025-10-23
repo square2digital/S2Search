@@ -11,6 +11,7 @@ using S2Search.Backend.Domain.Models;
 using S2Search.Backend.Services.Admin.Configuration.Repositories;
 using S2Search.Backend.Services.Admin.Customer.Interfaces.Managers;
 using S2Search.Backend.Services.Admin.Customer.Managers;
+using S2Search.Backend.Services.AzureFunctions.FeedServices.Providers;
 using S2Search.Backend.Services.Services;
 using S2Search.Backend.Services.Services.Admin.Configuration.Repositories;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;

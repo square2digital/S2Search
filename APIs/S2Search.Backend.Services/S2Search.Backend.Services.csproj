@@ -34,10 +34,16 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql" Version="9.0.4" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
+    <PackageReference Include="TinyCsvParser" Version="2.7.1" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\S2Search.Backend.Domain\S2Search.Backend.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AzureFunctions\SearchInsights\Mappers\" />
   </ItemGroup>
 
 </Project>

@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 
-namespace S2Search.Backend.Services.Functions.SearchInsights.Mappers
+namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Mappers.TinyCsvParser
 {
     public class ObjectToDataTableMapper
     {
@@ -23,7 +23,7 @@ namespace S2Search.Backend.Services.Functions.SearchInsights.Mappers
                 var properties = typeOfObject.GetProperties();
                 var dataTable = CreateDataTableForType(properties);
 
-                foreach(var itemAsObject in objectToConvert as IEnumerable)
+                foreach (var itemAsObject in objectToConvert as IEnumerable)
                 {
                     AddPropertyValuesToDataTable(dataTable, itemAsObject, properties);
                 }

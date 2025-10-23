@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using S2Search.Backend.Domain.AzureFunctions.FeedServices.Constants;
 using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Constants;
 using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
+using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Repositories;
-using S2Search.Backend.Services.Functions.SearchInsights.Mappers;
+using S2Search.Backend.Services.AzureFunctions.FeedServices.Mappers.TinyCsvParser;
 
 namespace S2Search.Backend.Services.Functions.SearchInsights.Repositories
 {

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace S2Search.Backend.Domain.AzureSearch.Indexes;
 
-public class VehicleIndex
+public partial class VehicleIndex
 {
     [SimpleField(IsKey = true)]
     [JsonPropertyName("vehicleID")]
@@ -26,7 +26,7 @@ public class VehicleIndex
     [JsonPropertyName("model")]
     public string Model { get; set; }
 
-    [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+    [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     [JsonPropertyName("variant")]
     public string Variant { get; set; }
 
@@ -77,4 +77,18 @@ public class VehicleIndex
     [SimpleField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     [JsonPropertyName("year")]
     public int Year { get; set; }
+
+    [SearchableField(IsFilterable = false, IsSortable = false, IsFacetable = false)]
+    [JsonPropertyName("modelYear")]
+    public string ModelYear { get; set; }
+
+    [SearchableField(IsHidden = true)]
+    [JsonPropertyName("autocompleteSuggestion")]
+    public string AutocompleteSuggestion
+    {
+        get
+        {
+            return $"{Make} {Model}";
+        }
+    }
 }
