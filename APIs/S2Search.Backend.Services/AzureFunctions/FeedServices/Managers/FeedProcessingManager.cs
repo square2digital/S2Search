@@ -14,11 +14,11 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Managers
     public class FeedProcessingManager : IFeedProcessingManager
     {
         private readonly IAzureSearchManager azureSearchManager;
-        private readonly IFeedRepository feedRepo;
+        private readonly IFeedServicesRepository feedRepo;
         private readonly IGenericSynonymRepository genericSynonymsRepo;
 
         public FeedProcessingManager(IAzureSearchManager azureSearchManager,
-                                     IFeedRepository feedRepo,
+                                     IFeedServicesRepository feedRepo,
                                      IGenericSynonymRepository genericSynonymsRepo)
         {
             this.azureSearchManager = azureSearchManager ?? throw new ArgumentNullException(nameof(azureSearchManager));

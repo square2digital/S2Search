@@ -15,13 +15,13 @@ public class FeedProcessor
 {
     private readonly IFeedMapperProvider feedMapperProvider;
     private readonly ISearchIndexCredentialsRepository searchIndexCredentialsRepo;
-    private readonly IFeedRepository feedRepo;
+    private readonly IFeedServicesRepository feedRepo;
     private readonly IFeedProcessingManager feedProcessingManager;
     private readonly ILogger<FeedProcessor> _logger;
 
     public FeedProcessor(IFeedMapperProvider feedMapperProvider,
                              ISearchIndexCredentialsRepository searchIndexCredentialsRepo,
-                             IFeedRepository feedRepo,
+                             IFeedServicesRepository feedRepo,
                              IFeedProcessingManager feedProcessingManager,
                              ILogger<FeedProcessor> logger)
     {

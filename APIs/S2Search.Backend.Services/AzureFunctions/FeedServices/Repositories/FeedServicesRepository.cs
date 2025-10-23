@@ -8,13 +8,13 @@ using Services.Interfaces.Repositories;
 
 namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
 {
-    public class FeedRepository : IFeedRepository
+    public class FeedServicesRepository : IFeedServicesRepository
     {
         private readonly IDbContextProvider _dbContext;
         private readonly ILogger _logger;
 
-        public FeedRepository(IDbContextProvider dbContext,
-                              ILogger<FeedRepository> logger)
+        public FeedServicesRepository(IDbContextProvider dbContext,
+                              ILogger<FeedServicesRepository> logger)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

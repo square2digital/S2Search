@@ -2,7 +2,7 @@
 
 namespace Services.Interfaces.Repositories
 {
-    public interface IFeedRepository
+    public interface IFeedServicesRepository
     {
         Task<string> GetDataFormatAsync(Guid customerId, string searchIndexName);
         Task<IEnumerable<string>> GetCurrentDocumentIdsAsync(Guid searchIndexId, int pageNumber, int pageSize);
