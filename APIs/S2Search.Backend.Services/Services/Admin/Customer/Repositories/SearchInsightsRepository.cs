@@ -15,13 +15,11 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         private readonly IConfiguration _configuration;
         private readonly IDbContextProvider _dbContext;
         private readonly ILogger<SearchInsightsRepository> _logger;
-        private readonly string _connectionString;
 
         public SearchInsightsRepository(IConfiguration configuration, IDbContextProvider dbContext, ILogger<SearchInsightsRepository> logger)
         {
             _configuration = configuration;
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _connectionString = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase);
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -38,7 +36,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "DataCategories", dataCategories }
             };
 
-            var result = await _dbContext.QueryAsync<SearchInsight>(_connectionString,
+            var result = await _dbContext.QueryAsync<SearchInsight>(ConnectionStrings.SqlDatabase,
                                                                     StoredProcedures.GetSearchInsightsByDataCategories,
                                                                     parameters);
 
@@ -54,7 +52,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 { "DateTo", dateTo },
             };
 
-            var result = await _dbContext.QueryAsync<SearchInsight>(_connectionString,
+            var result = await _dbContext.QueryAsync<SearchInsight>(ConnectionStrings.SqlDatabase,
                                                                     StoredProcedures.GetSearchInsightsSearchCountByDateRange,
                                                                     parameters);
 
@@ -72,7 +70,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                     { "SearchInsightsData", dataTableParameter }
                 };
 
-                var result = await _dbContext.ExecuteAsync(_connectionString,
+                var result = await _dbContext.ExecuteAsync(ConnectionStrings.SqlDatabase,
                                                            StoredProcedures.AddDataPoints,
                                                            parameters);
             }
@@ -93,7 +91,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                     { "Date", date }
                 };
 
-                var result = await _dbContext.ExecuteAsync(_connectionString,
+                var result = await _dbContext.ExecuteAsync(ConnectionStrings.SqlDatabase,
                                                            StoredProcedures.AddSearchRequest,
                                                            parameters);
 

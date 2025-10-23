@@ -2,7 +2,7 @@
 {
     public static class ConnectionStrings
     {
-        public const string SqlDatabase = "ConnectionStrings:SqlDatabase";
+        public const string SqlDatabase = "SqlDatabase";
         public const string AzureStorageAccount = "AzureWebJobsStorage";
     }
 }
