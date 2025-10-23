@@ -1015,3 +1015,354 @@ BEGIN
       AND fc.username = p_username;
 END;
 $$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '*********'; END $$;
+DO $$ BEGIN RAISE NOTICE 'Functions'; END $$;
+DO $$ BEGIN RAISE NOTICE '*********'; END $$;
+-- =============================
+
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '27. get_feed_data_format'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION get_feed_data_format(
+    p_customer_id UUID,
+    p_search_index_name VARCHAR
+)
+RETURNS VARCHAR AS $$
+DECLARE
+    data_format VARCHAR;
+BEGIN
+    SELECT f.data_format
+    INTO data_format
+    FROM dbo.searchindex si
+    INNER JOIN dbo.feeds f ON f.searchindexid = si.id AND f.islatest = true
+    WHERE si.customerid = p_customer_id
+      AND si.indexname = p_search_index_name
+    LIMIT 1;
+
+    RETURN data_format;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '28. get_latest_generic_synonyms_by_category'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION get_latest_generic_synonyms_by_category(
+    p_category VARCHAR
+)
+RETURNS TABLE (
+    id UUID,
+    category VARCHAR,
+    solr_format TEXT,
+    created_date TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        id,
+        category,
+        solr_format,
+        created_date
+    FROM dbo.synonyms
+    WHERE category = p_category
+      AND islatest = true;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '29. get_search_index_credentials'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION get_search_index_credentials(
+    p_customer_id UUID,
+    p_search_index_name VARCHAR
+)
+RETURNS TABLE (
+    search_index_id UUID,
+    search_index_name_lower VARCHAR,
+    search_instance_id UUID,
+    search_instance_name VARCHAR,
+    root_endpoint TEXT,
+    api_key TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        si.id,
+        LOWER(si.indexname),
+        i.id,
+        i.servicename,
+        i.rootendpoint,
+        ik.apikey
+    FROM dbo.searchindex si
+    INNER JOIN dbo.searchinstances i ON i.id = si.id
+    INNER JOIN dbo.searchinstancekeys ik ON ik.id = i.id
+        AND ik.keytype = 'Admin'
+        AND ik.name = 'Primary Admin key'
+        AND ik.islatest = true
+    WHERE si.customerid = p_customer_id
+      AND si.indexname = p_search_index_name;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '30. get_search_index_feed_processing_data'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION get_search_index_feed_processing_data(
+    p_customer_id UUID,
+    p_search_index_name VARCHAR
+)
+RETURNS TABLE (
+    search_index_id UUID,
+    search_index_name_lower VARCHAR,
+    search_instance_id UUID,
+    search_instance_name VARCHAR,
+    root_endpoint TEXT,
+    api_key TEXT,
+    feed_data_format TEXT,
+    customer_endpoint TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        si.id,
+        LOWER(si.indexname),
+        i.id,
+        i.servicename,
+        i.rootendpoint,
+        ik.apikey,
+        f.dataformat,
+        c.customerendpoint
+    FROM dbo.searchindex si
+    INNER JOIN dbo.searchinstances i ON i.id = si.id
+    INNER JOIN dbo.searchinstancekeys ik ON ik.id = i.id
+        AND ik.keytype = 'Admin'
+        AND ik.name = 'Primary Admin key'
+        AND ik.islatest = true
+    LEFT JOIN dbo.feeds f ON f.searchindexid = si.id
+    LEFT JOIN dbo.customers c ON si.customerid = c.id
+    WHERE si.customerid = p_customer_id
+      AND si.indexname = p_search_index_name
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '31. merge_feed_documents'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION merge_feed_documents(
+    p_search_index_id UUID,
+    p_new_feed_documents UUID[]
+)
+RETURNS VOID AS $$
+DECLARE
+    utc_now TIMESTAMP := NOW();
+BEGIN
+    -- Update existing documents
+    UPDATE dbo.feedcurrentdocuments AS target
+    SET createddate = utc_now
+    WHERE target.searchindexid = search_index_id
+      AND target.id = ANY(new_feed_documents);
+
+    -- Insert new documents
+    INSERT INTO feedcurrentdocuments (id, searchindexid, createddate)
+    SELECT doc_id, search_index_id, utc_now
+    FROM UNNEST(new_feed_documents) AS doc_id
+    WHERE doc_id NOT IN (
+        SELECT id
+        FROM dbo.feedcurrentdocuments
+        WHERE searchindexid = p_search_index_id
+    );
+
+    -- Delete documents not in the new list
+    DELETE FROM dbo.feedcurrentdocuments
+    WHERE searchindexid = p_search_index_id
+      AND id NOT IN (SELECT * FROM UNNEST(new_feed_documents));
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '32. add_data_points'; END $$;
+-- =============================
+CREATE TYPE search_insights_data_type AS (
+    data_category TEXT,
+    data_point TEXT,
+    date DATE
+);
+
+CREATE OR REPLACE FUNCTION add_data_points(
+    search_index_id UUID,
+    search_insights_data search_insights_data_type[]
+)
+RETURNS VOID AS $$
+DECLARE
+    utc_now TIMESTAMP := NOW();
+    record_item search_insights_data_type;
+BEGIN
+    FOREACH record_item IN ARRAY search_insights_data
+    LOOP
+        INSERT INTO searchinsightsdata (
+            searchindexid,
+            datacategory,
+            datapoint,
+            count,
+            date,
+            modifieddate
+        )
+        VALUES (
+            search_index_id,
+            record_item.data_category,
+            record_item.data_point,
+            1,
+            record_item.date,
+            utc_now
+        )
+        ON CONFLICT (searchindexid, datacategory, datapoint, date)
+        DO UPDATE SET
+            count = searchinsightsdata.count + 1,
+            modifieddate = utc_now;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '33. add_search_request'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION add_search_request(
+    p_search_index_id UUID,
+    p_request_date DATE
+)
+RETURNS VOID AS $$
+DECLARE
+    utc_now TIMESTAMP := NOW();
+BEGIN
+    INSERT INTO searchindexrequestlog (
+        searchindexid,
+        count,
+        date,
+        modifieddate
+    )
+    VALUES (
+        p_search_index_id,
+        1,
+        p_request_date,
+        utc_now
+    )
+    ON CONFLICT (searchindexid, date)
+    DO UPDATE SET
+        count = searchindexrequestlog.count + 1,
+        modifieddate = utc_now;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '34. add_feed_credentials'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION add_feed_credentials(
+    p_search_index_id UUID,
+    p_username VARCHAR,
+    p_password_hash VARCHAR
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO feedcredentials (
+        id,
+        searchindexid,
+        username,
+        passwordhash,
+        createddate
+    )
+    VALUES (
+        gen_random_uuid(),
+        p_search_index_id,
+        p_username,
+        p_password_hash,
+        NOW()
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '35. delete_feed_credentials'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION delete_feed_credentials(
+    p_search_index_id UUID,
+    p_username VARCHAR
+)
+RETURNS VOID AS $$
+BEGIN
+    DELETE FROM dbo.feedcredentials
+    WHERE searchindexid = p_search_index_id
+      AND username = p_username;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '36. get_feed_credentials'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION get_feed_credentials(
+    p_search_index_id UUID,
+    p_username VARCHAR
+)
+RETURNS TABLE (
+    searchindexid UUID,
+    username VARCHAR,
+    createddate TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        searchindexid,
+        username,
+        createddate
+    FROM dbo.feedcredentials
+    WHERE searchindexid = p_search_index_id
+      AND username = p_username;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '37. update_feed_credentials'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION update_feed_credentials(
+    p_search_index_id UUID,
+    p_username VARCHAR,
+    p_password_hash VARCHAR
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE dbo.feedcredentials
+    SET passwordhash = p_password_hash,
+        modifieddate = NOW()
+    WHERE searchindexid = p_search_index_id
+      AND username = p_username;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '38. add_feed'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION add_feed(
+    p_search_index_id UUID,
+    p_feed_type VARCHAR,
+    p_feed_cron VARCHAR
+)
+RETURNS VOID AS $$
+BEGIN
+    -- Call the supersede function first
+    PERFORM supersede_latest_feed(p_search_index_id);
+
+    -- Insert the new feed
+    INSERT INTO feeds (
+        searchindexid,
+        feedtype,
+        feedschedulecron
+    )
+    VALUES (
+        p_search_index_id,
+        p_feed_type,
+        p_feed_cron
+    );
+END;
+$$ LANGUAGE plpgsql;
