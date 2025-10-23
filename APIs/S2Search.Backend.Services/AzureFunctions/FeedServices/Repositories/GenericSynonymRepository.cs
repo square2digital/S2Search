@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using S2Search.Backend.Domain.AzureFunctions.FeedServices.Constants;
 using S2Search.Backend.Domain.AzureFunctions.FeedServices.Models;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Common.Database.Sql.Dapper.Interfaces.Providers;
@@ -32,7 +32,7 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
                     { "Category", category }
                 };
 
-                var result = await _dbContext.QueryAsync<GenericSynonym>(ConnectionStrings.CustomerResourceStore,
+                var result = await _dbContext.QueryAsync<GenericSynonym>(ConnectionStrings.SqlDatabase,
                                                                                 StoredProcedures.GetLatestGenericSynonyms,
                                                                                 parameters);
 

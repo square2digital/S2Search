@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using S2Search.Backend.Domain.AzureFunctions.FeedServices.Constants;
 using S2Search.Backend.Domain.AzureFunctions.FeedServices.Models;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Interfaces.Providers;
 using Services.Interfaces.Repositories;
@@ -29,7 +29,7 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
                     { "SearchIndexName", searchIndexName}
                 };
 
-                var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexCredentials>(ConnectionStrings.CustomerResourceStore,
+                var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexCredentials>(ConnectionStrings.SqlDatabase,
                                                                                 StoredProcedures.GetSearchIndexCredentials,
                                                                                 parameters);
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using S2Search.Backend.Domain.AzureFunctions.FeedServices.Constants;
 using S2Search.Backend.Domain.AzureFunctions.FeedServices.Models;
+using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Backend.Services.AzureFunctions.FeedServices.Mappers.TinyCsvParser;
@@ -31,7 +31,7 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
                     { "NewFeedDocuments", dataTableParameter }
                 };
 
-                await _dbContext.ExecuteAsync(ConnectionStrings.CustomerResourceStore,
+                await _dbContext.ExecuteAsync(ConnectionStrings.SqlDatabase,
                                                StoredProcedures.MergeFeedDocuments,
                                                parameters);
             }
@@ -53,7 +53,7 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
                     { "PageSize", pageSize }
                 };
 
-                var result = await _dbContext.QueryAsync<string>(ConnectionStrings.CustomerResourceStore,
+                var result = await _dbContext.QueryAsync<string>(ConnectionStrings.SqlDatabase,
                                                                  StoredProcedures.GetCurrentFeedDocuments,
                                                                  parameters);
 
@@ -75,7 +75,7 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
                     { "SearchIndexId", searchIndexId }
                 };
 
-                var result = await _dbContext.QueryFirstOrDefaultAsync<int>(ConnectionStrings.CustomerResourceStore,
+                var result = await _dbContext.QueryFirstOrDefaultAsync<int>(ConnectionStrings.SqlDatabase,
                                                                             StoredProcedures.GetCurrentFeedDocumentsTotal,
                                                                             parameters);
 
@@ -98,7 +98,7 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
                     { "SearchIndexName", searchIndexName }
                 };
 
-                var result = await _dbContext.QuerySingleOrDefaultAsync<string>(ConnectionStrings.CustomerResourceStore,
+                var result = await _dbContext.QuerySingleOrDefaultAsync<string>(ConnectionStrings.SqlDatabase,
                                                                                 StoredProcedures.GetFeedDataFormat,
                                                                                 parameters);
 
@@ -121,7 +121,7 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
                     { "SearchIndexName", searchIndexName }
                 };
 
-                var result = await _dbContext.QueryMultipleAsync<SearchIndexFeedProcessingData>(ConnectionStrings.CustomerResourceStore,
+                var result = await _dbContext.QueryMultipleAsync<SearchIndexFeedProcessingData>(ConnectionStrings.SqlDatabase,
                                                                                             StoredProcedures.GetSearchIndexFeedProcessingData,
                                                                                             parameters);
                 return result;
