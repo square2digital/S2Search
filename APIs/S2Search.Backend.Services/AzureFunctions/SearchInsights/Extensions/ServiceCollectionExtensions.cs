@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Providers;
-using S2Search.Backend.Domain.Interfaces.SearchInsights.Repositories;
 using S2Search.Backend.Services.Functions.SearchInsights.Managers;
 using S2Search.Backend.Services.Functions.SearchInsights.Providers;
-using S2Search.Backend.Services.Functions.SearchInsights.Repositories;
+using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
+using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
+using S2Search.Backend.Services.Services.Admin.Customer.Providers;
+using S2Search.Backend.Services.Services.Admin.Customer.Repositories;
 using S2Search.Backend.Services.Services.Admin.Dapper.Utilities;
 
 namespace S2Search.Backend.Services.Functions.SearchInsights.Extensions

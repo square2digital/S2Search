@@ -1,6 +1,6 @@
 ﻿using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
-using S2Search.Backend.Domain.Interfaces.SearchInsights.Repositories;
+using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
 
 namespace S2Search.Backend.Services.Functions.SearchInsights.Managers
 {

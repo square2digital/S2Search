@@ -27,6 +27,7 @@
     <Folder Include="AzureFunctions\FeedServices\AzureSearch\Index\" />
     <Folder Include="AzureFunctions\SearchInsights\" />
     <Folder Include="Interfaces\SearchInsights\" />
+    <Folder Include="Interfaces\SearchInsights\Repositories\" />
     <Folder Include="Models\Insights\" />
     <Folder Include="Models\Interfaces\" />
   </ItemGroup>

@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <Folder Include="AzureFunctions\SearchInsights\Mappers\" />
+    <Folder Include="AzureFunctions\SearchInsights\Repositories\" />
   </ItemGroup>
 
 </Project>
