@@ -203,6 +203,23 @@ CREATE TABLE search_index_request_log (
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE '============================='; END $$;
+DO $$ BEGIN RAISE NOTICE 'Create Types'; END $$;
+DO $$ BEGIN RAISE NOTICE '============================='; END $$;
+-- =============================
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '1. search_insights_data_type'; END $$;
+-- =============================
+DROP TYPE IF EXISTS search_insights_data_type CASCADE;
+CREATE TYPE search_insights_data_type AS (
+  data_category TEXT,
+  data_point    TEXT,
+  date          DATE
+);
+
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '============================='; END $$;
 DO $$ BEGIN RAISE NOTICE 'Create Functions'; END $$;
 DO $$ BEGIN RAISE NOTICE '============================='; END $$;
 -- =============================
@@ -1052,12 +1069,6 @@ $$ LANGUAGE plpgsql;
 -- =============================
 DO $$ BEGIN RAISE NOTICE '30. add_data_points'; END $$;
 -- =============================
-CREATE TYPE search_insights_data_type AS (
-    data_category TEXT,
-    data_point TEXT,
-    date DATE
-);
-
 CREATE OR REPLACE FUNCTION add_data_points(
     search_index_id UUID,
     search_insights_data search_insights_data_type[]
