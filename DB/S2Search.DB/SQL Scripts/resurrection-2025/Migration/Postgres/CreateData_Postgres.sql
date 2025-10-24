@@ -1,8 +1,8 @@
 ﻿DO $$
 DECLARE
     --SearchIndex variables
-    CustomerId uuid := 'afeb217b-813a-4b9c-82ec-e0221d5e95b1';
-    SearchInstanceId uuid := '97032266-c1c0-4278-8816-053bbc3a1036';
+    CustomerId UUID := 'afeb217b-813a-4b9c-82ec-e0221d5e95b1';
+    SearchInstanceId UUID := '97032266-c1c0-4278-8816-053bbc3a1036';
     ResourceGroup   TEXT := 'S2Search';
     SearchInstanceEndpoint   TEXT := 'https://s2-search-dev.search.windows.net';
     StorageURI   TEXT := 'https://s2storagedev.blob.core.windows.net';
@@ -12,7 +12,7 @@ DECLARE
     Replicas INT := 1;
     Partitions INT := 1;
     IsShared BOOLEAN := TRUE;
-    SearchIndexName TEXT := 'vehicles-' || LEFT(gen_random_uuid()::text, 8);
+    SearchIndexName TEXT := 'vehicles-' || LEFT(gen_random_UUID()::text, 8);
     --Feeds
     FeedType TEXT := 'FTPS';
     FeedCron TEXT := '5 * * * *';
@@ -24,31 +24,31 @@ DECLARE
     InterfaceBannerStyle TEXT := NULL;
     
     --Synonyms
-    SynonymId_1 uuid := '36baeafb-a843-4eb1-a2a9-4457d2eabe0d';
+    SynonymId_1 UUID := '36baeafb-a843-4eb1-a2a9-4457d2eabe0d';
     KeyWord_1 TEXT := 'BMW';
     SolrFormat_1 TEXT := 'beema, bimma => BMW';
     
-    SynonymId_2 uuid := '08719d6f-4e7f-4c3b-9b9b-b83100441012';
+    SynonymId_2 UUID := '08719d6f-4e7f-4c3b-9b9b-b83100441012';
     KeyWord_2 TEXT := 'volkswagen';
     SolrFormat_2 TEXT := 'VW => Volkswagen';
     
     --SearchInstance Keys
-    SearchInstanceKeyId_AdminKey uuid := '317e8b8a-c274-499c-a4fb-bacdf8d25e81';
-    SearchInstanceKeyId_SecondaryAdminKey uuid := '3e0217e5-38be-4616-a81d-c1693c83aa5c';
-    SearchInstanceKeyId_QueryKey uuid := 'fea6648a-f781-4ec0-b8f6-ecf26eb820ac';
+    SearchInstanceKeyId_AdminKey UUID := '317e8b8a-c274-499c-a4fb-bacdf8d25e81';
+    SearchInstanceKeyId_SecondaryAdminKey UUID := '3e0217e5-38be-4616-a81d-c1693c83aa5c';
+    SearchInstanceKeyId_QueryKey UUID := 'fea6648a-f781-4ec0-b8f6-ecf26eb820ac';
     
     -- **************
     -- Configuration
     -- **************
     
     -- Configurations Option 1 - Enable Auto Complete
-    SearchConfiguration_EnableAutoComplete_Id uuid := '4d833bb7-c52b-49ed-b42d-84a9814b9274';
+    SearchConfiguration_EnableAutoComplete_Id UUID := '4d833bb7-c52b-49ed-b42d-84a9814b9274';
     SearchConfiguration_EnableAutoComplete_Key TEXT := 'EnableAutoComplete';
     SearchConfiguration_EnableAutoComplete_FriendlyName TEXT := 'Enable Auto Complete';
     SearchConfiguration_EnableAutoComplete_Description TEXT := 'if true, this will configure the search bar to include auto complete suggestions based on the users text inputs';
     
     -- Configurations Option 2 - Hide Icon Vehicle Counts
-    SearchConfiguration_HideIconVehicleCounts_Id uuid := 'd4d0978e-980c-4237-be79-f2e0ffc0ae06';
+    SearchConfiguration_HideIconVehicleCounts_Id UUID := 'd4d0978e-980c-4237-be79-f2e0ffc0ae06';
     SearchConfiguration_HideIconVehicleCounts_Key TEXT := 'HideIconVehicleCounts';
     SearchConfiguration_HideIconVehicleCounts_FriendlyName TEXT := 'Hide Icon Vehicle Counts';
     SearchConfiguration_HideIconVehicleCounts_Description TEXT := 'if true, this will hide the icon vehicle counts on the top nav bar';
@@ -73,8 +73,8 @@ DECLARE
     -- Azure B2C Test User ID Guid -> 37a0eb6c-fd38-4b11-9486-e61ed6745953
     
     -- Test User -> Jonathan Gilmartin - user of S2 Demo
-    Azure_B2C_User_Jonathan_Gilmartin uuid := 'a870f617-c469-4fdc-b76d-98a990577583';
-    CustomerId_JGilmartin_Motors uuid := Azure_B2C_User_Jonathan_Gilmartin;
+    Azure_B2C_User_Jonathan_Gilmartin UUID := 'a870f617-c469-4fdc-b76d-98a990577583';
+    CustomerId_JGilmartin_Motors UUID := Azure_B2C_User_Jonathan_Gilmartin;
     
     -- ********************************************
     -- ** S2-Demo Endpoints
@@ -95,8 +95,8 @@ DECLARE
     -- ************************
     BusinessName_1 TEXT := 'S2 Demo';
     CustomerIndexName_1 TEXT := 's2-demo-vehicles';
-    SearchIndexId_1 uuid := '8c663063-4217-4f54-973f-8faec6131b5b';
-    ThemeId_1 uuid := 'f3a9c2e7-4b6e-4d9a-8f3e-9c1d2a7b5e6f';
+    SearchIndexId_1 UUID := '8c663063-4217-4f54-973f-8faec6131b5b';
+    ThemeId_1 UUID := 'f3a9c2e7-4b6e-4d9a-8f3e-9c1d2a7b5e6f';
     ThemeLogoURL_1 TEXT := StorageURI || '/assets/logos/Square_2_Logo_Colour_Blue_White_BG.svg';
     ThemeMissingImageURL_1 TEXT := StorageURI || '/assets/image-coming-soon.jpg';
     ThemePrimaryThemeColour_1 TEXT := '#006bd1';
@@ -112,8 +112,8 @@ DECLARE
     Feed Credentials
     ***************************************************************************************/
     -- SearchIndexId is set as S2 Demo
-    FeedSearchIndexId_1 uuid := SearchIndexId_1;
-    FeedId_1 uuid := '7bcc246b-c8e0-4d91-bb8a-ec5f8c7b3230';
+    FeedSearchIndexId_1 UUID := SearchIndexId_1;
+    FeedId_1 UUID := '7bcc246b-c8e0-4d91-bb8a-ec5f8c7b3230';
     FeedUsername_1 TEXT := 's2demo_FTP_1';
     FeedPasswordHash_1 TEXT := 'xh6NPbvqmDhH6E2vK3mJ';
     
@@ -121,7 +121,7 @@ DECLARE
     Search Instance
     ***************************************************************************************/
     SearchInstanceName TEXT := 's2-search-dev';
-    SubscriptionId uuid := 'f8cff945-b5e5-462a-9786-d69bd7a0eb34';
+    SubscriptionId UUID := 'f8cff945-b5e5-462a-9786-d69bd7a0eb34';
     ServiceLocation TEXT := 'West Europe';
     AzurePricingTier TEXT := 'Standard';
     
@@ -328,7 +328,7 @@ BEGIN
     )
     VALUES
     (
-        gen_random_uuid(),
+        gen_random_UUID(),
 		FeedType,
 		FeedCron,
 		SearchIndexId_1,
@@ -456,7 +456,7 @@ BEGIN
     (
 		SearchConfiguration_EnableAutoComplete_Id,
 		'true',
-		gen_random_uuid(), -- Replace with actual SearchIndexId if needed
+		gen_random_UUID(), -- Replace with actual SearchIndexId if needed
 		SearchConfiguration_EnableAutoComplete_Key,
 		SearchConfiguration_EnableAutoComplete_FriendlyName,
 		SearchConfiguration_EnableAutoComplete_Description,
@@ -484,7 +484,7 @@ BEGIN
     (
 		SearchConfiguration_HideIconVehicleCounts_Id,
 		'true',
-		gen_random_uuid(), -- Replace with actual SearchIndexId if needed
+		gen_random_UUID(), -- Replace with actual SearchIndexId if needed
 		SearchConfiguration_HideIconVehicleCounts_Key,
 		SearchConfiguration_HideIconVehicleCounts_FriendlyName,
 		SearchConfiguration_HideIconVehicleCounts_Description,
@@ -509,11 +509,11 @@ BEGIN
 		modified_date
     )
     VALUES
-    (gen_random_uuid(), SearchConfiguration_PlaceholderText_Value_1, gen_random_uuid(), SearchConfiguration_PlaceholderText_Key_1, 'Placeholder Text 1', 'Placeholder for search bar', 'String', 1, CURRENT_TIMESTAMP, NULL),
-    (gen_random_uuid(), SearchConfiguration_PlaceholderText_Value_2, gen_random_uuid(), SearchConfiguration_PlaceholderText_Key_2, 'Placeholder Text 2', 'Placeholder for search bar', 'String', 2, CURRENT_TIMESTAMP, NULL),
-    (gen_random_uuid(), SearchConfiguration_PlaceholderText_Value_3, gen_random_uuid(), SearchConfiguration_PlaceholderText_Key_3, 'Placeholder Text 3', 'Placeholder for search bar', 'String', 3, CURRENT_TIMESTAMP, NULL),
-    (gen_random_uuid(), SearchConfiguration_PlaceholderText_Value_4, gen_random_uuid(), SearchConfiguration_PlaceholderText_Key_4, 'Placeholder Text 4', 'Placeholder for search bar', 'String', 4, CURRENT_TIMESTAMP, NULL),
-    (gen_random_uuid(), SearchConfiguration_PlaceholderText_Value_5, gen_random_uuid(), SearchConfiguration_PlaceholderText_Key_5, 'Placeholder Text 5', 'Placeholder for search bar', 'String', 5, CURRENT_TIMESTAMP, NULL);
+    (gen_random_UUID(), SearchConfiguration_PlaceholderText_Value_1, gen_random_UUID(), SearchConfiguration_PlaceholderText_Key_1, 'Placeholder Text 1', 'Placeholder for search bar', 'String', 1, CURRENT_TIMESTAMP, NULL),
+    (gen_random_UUID(), SearchConfiguration_PlaceholderText_Value_2, gen_random_UUID(), SearchConfiguration_PlaceholderText_Key_2, 'Placeholder Text 2', 'Placeholder for search bar', 'String', 2, CURRENT_TIMESTAMP, NULL),
+    (gen_random_UUID(), SearchConfiguration_PlaceholderText_Value_3, gen_random_UUID(), SearchConfiguration_PlaceholderText_Key_3, 'Placeholder Text 3', 'Placeholder for search bar', 'String', 3, CURRENT_TIMESTAMP, NULL),
+    (gen_random_UUID(), SearchConfiguration_PlaceholderText_Value_4, gen_random_UUID(), SearchConfiguration_PlaceholderText_Key_4, 'Placeholder Text 4', 'Placeholder for search bar', 'String', 4, CURRENT_TIMESTAMP, NULL),
+    (gen_random_UUID(), SearchConfiguration_PlaceholderText_Value_5, gen_random_UUID(), SearchConfiguration_PlaceholderText_Key_5, 'Placeholder Text 5', 'Placeholder for search bar', 'String', 5, CURRENT_TIMESTAMP, NULL);
         
     RAISE NOTICE '********************************';
     RAISE NOTICE 'Script - Complete';
