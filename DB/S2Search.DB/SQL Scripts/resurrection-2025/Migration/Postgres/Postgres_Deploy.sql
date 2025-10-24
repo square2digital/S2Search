@@ -19,7 +19,6 @@ DROP TABLE IF EXISTS search_instance_keys CASCADE;
 DROP TABLE IF EXISTS search_instances CASCADE;
 DROP TABLE IF EXISTS synonyms CASCADE;
 DROP TABLE IF EXISTS themes CASCADE;
-
 DROP TABLE IF EXISTS search_insights_data CASCADE;
 DROP TABLE IF EXISTS search_index_request_log CASCADE;
 
