@@ -60,9 +60,15 @@ namespace S2Search.Backend.Services.Services
                 return $"SELECT * FROM {functionName}()";
 
             // Use parameter names as placeholders (e.g. @param) instead of injecting values
-            var paramNames = parameters.Keys.Select(k => $"@{k}");
+            var paramNames = parameters.Keys.Select(k =>
+            {
+                // If the parameter name contains 'date' assume it should be cast to date in SQL
+                return k.ToLowerInvariant().Contains("date") ? $"@{k}::date" : $"@{k}";
+            });
             var paramList = string.Join(", ", paramNames);
-            return $"SELECT * FROM {functionName}({paramList})";
+            var query = $"SELECT * FROM {functionName}({paramList})";
+
+            return query;
         }
 
         private int DapperExecute(string connectionString, string functionName, Dictionary<string, object> parameters)
