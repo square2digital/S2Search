@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using S2Search.Backend.Domain.AzureFunctions.FeedServices.Models;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Customer.Constants;
 using S2Search.Backend.Domain.Interfaces.Providers;
+using S2Search.Backend.Domain.Models;
 using S2Search.Backend.Services.AzureFunctions.FeedServices.Mappers.TinyCsvParser;
 using Services.Interfaces.Repositories;
 
@@ -12,12 +14,13 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
     {
         private readonly IDbContextProvider _dbContext;
         private readonly ILogger _logger;
+        private readonly string _connectionstring;
 
-        public FeedServicesRepository(IDbContextProvider dbContext,
-                              ILogger<FeedServicesRepository> logger)
+        public FeedServicesRepository(IConfiguration configuration, IDbContextProvider dbContext, ILogger<FeedServicesRepository> logger)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _connectionstring = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase) ?? throw new InvalidOperationException($"{ConnectionStringKeys.SqlDatabase} connection string not found.");
         }
 
         public async Task MergeFeedDocumentsAsync(Guid searchIndexId, IEnumerable<NewFeedDocument> newFeedDocuments)
@@ -27,11 +30,11 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
                 var dataTableParameter = ObjectToDataTableMapper.CreateDataTable(newFeedDocuments);
                 var parameters = new Dictionary<string, object>()
                 {
-                    { "SearchIndexId", searchIndexId },
-                    { "NewFeedDocuments", dataTableParameter }
+                    { "search_index_id", searchIndexId },
+                    { "new_feed_documents", dataTableParameter }
                 };
 
-                await _dbContext.ExecuteAsync(ConnectionStrings.SqlDatabase,
+                await _dbContext.ExecuteAsync(_connectionstring,
                                                StoredProcedures.MergeFeedDocuments,
                                                parameters);
             }
@@ -48,12 +51,12 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
             {
                 var parameters = new Dictionary<string, object>()
                 {
-                    { "SearchIndexId", searchIndexId },
-                    { "PageNumber", pageNumber },
-                    { "PageSize", pageSize }
+                    { "search_index_id", searchIndexId },
+                    { "page_number", pageNumber },
+                    { "page_size", pageSize }
                 };
 
-                var result = await _dbContext.QueryAsync<string>(ConnectionStrings.SqlDatabase,
+                var result = await _dbContext.QueryAsync<string>(_connectionstring,
                                                                  StoredProcedures.GetCurrentFeedDocuments,
                                                                  parameters);
 
@@ -72,10 +75,10 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
             {
                 var parameters = new Dictionary<string, object>()
                 {
-                    { "SearchIndexId", searchIndexId }
+                    { "search_index_id", searchIndexId }
                 };
 
-                var result = await _dbContext.QueryFirstOrDefaultAsync<int>(ConnectionStrings.SqlDatabase,
+                var result = await _dbContext.QueryFirstOrDefaultAsync<int>(_connectionstring,
                                                                             StoredProcedures.GetCurrentFeedDocumentsTotal,
                                                                             parameters);
 
@@ -94,11 +97,11 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
             {
                 var parameters = new Dictionary<string, object>()
                 {
-                    { "CustomerId", customerId },
-                    { "SearchIndexName", searchIndexName }
+                    { "customer_id", customerId },
+                    { "search_index_name", searchIndexName }
                 };
 
-                var result = await _dbContext.QuerySingleOrDefaultAsync<string>(ConnectionStrings.SqlDatabase,
+                var result = await _dbContext.QuerySingleOrDefaultAsync<string>(_connectionstring,
                                                                                 StoredProcedures.GetFeedDataFormat,
                                                                                 parameters);
 
@@ -117,11 +120,11 @@ namespace S2Search.Backend.Services.AzureFunctions.FeedServices.Repositories
             {
                 var parameters = new Dictionary<string, object>()
                 {
-                    { "CustomerId", customerId },
-                    { "SearchIndexName", searchIndexName }
+                    { "customer_id", customerId },
+                    { "search_index_name", searchIndexName }
                 };
 
-                var result = await _dbContext.QueryMultipleAsync<SearchIndexFeedProcessingData>(ConnectionStrings.SqlDatabase,
+                var result = await _dbContext.QueryMultipleAsync<SearchIndexFeedProcessingData>(_connectionstring,
                                                                                             StoredProcedures.GetSearchIndexFeedProcessingData,
                                                                                             parameters);
                 return result;

@@ -32,7 +32,7 @@ CREATE TABLE customers (
     customer_endpoint   TEXT           NULL,
     created_date        TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date       TIMESTAMP      NULL,
-    constraint PK_Users PRIMARY KEY (Id)
+    constraint PK_customers PRIMARY KEY (id)
 );
 
 -- =============================
@@ -51,24 +51,25 @@ CREATE TABLE feed_credentials (
 DO $$ BEGIN RAISE NOTICE 'feed_current_documents'; END $$;
 -- =============================
 CREATE TABLE feed_current_documents (
-    id               TEXT           NOT NULL,
+    id                 TEXT           NOT NULL,
     search_index_id    UUID           NOT NULL,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_date       TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint PK_feed_current_documents PRIMARY KEY (id)
 );
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'feeds'; END $$;
 -- =============================
 CREATE TABLE feeds (
-    id               UUID           NOT NULL,
-    feed_type         TEXT          NOT NULL,
-    feed_schedule_cron TEXT         NOT NULL,
-    search_index_id    UUID         NOT NULL,
-    data_format       TEXT          NOT NULL,
-    created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    superseded_date   TIMESTAMP     NULL,
-    is_latest         BOOLEAN       NOT NULL DEFAULT TRUE,
-    constraint PK_Feeds PRIMARY KEY (Id)
+    id                 UUID          NOT NULL,
+    feed_type          TEXT          NOT NULL,
+    feed_schedule_cron TEXT          NOT NULL,
+    search_index_id    UUID          NOT NULL,
+    data_format        TEXT          NOT NULL,
+    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    superseded_date    TIMESTAMP     NULL,
+    is_latest          BOOLEAN       NOT NULL DEFAULT TRUE,
+    constraint PK_feeds PRIMARY KEY (id)
 );
 
 -- =============================
@@ -77,44 +78,44 @@ DO $$ BEGIN RAISE NOTICE 'search_configuration'; END $$;
 CREATE TABLE search_configuration (
     id               UUID           NOT NULL,
     value            TEXT           NOT NULL,
-    search_index_id    UUID         NOT NULL,
+    search_index_id  UUID           NOT NULL,
     key              TEXT           NOT NULL,
-    friendly_name     TEXT          NOT NULL,
+    friendly_name    TEXT           NOT NULL,
     description      TEXT           NOT NULL,
-    data_type         TEXT          NOT NULL,
-    order_index       INT           NULL,
-    created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP     NULL,
-    constraint PK_SearchConfigurationMappingsCombined PRIMARY KEY (Id)
+    data_type        TEXT           NOT NULL,
+    order_index      INT            NULL,
+    created_date     TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date    TIMESTAMP      NULL,
+    constraint PK_search_configuration PRIMARY KEY (id)
 );
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'search_index'; END $$;
 -- =============================
 CREATE TABLE search_index (
-    id               UUID           NOT NULL,
-    customer_id       UUID          NOT NULL,
+    id                 UUID         NOT NULL,
+    customer_id        UUID         NOT NULL,
     search_instance_id UUID         NULL,
-    index_name        TEXT          NOT NULL,
-    friendly_name     TEXT          NOT NULL,
+    index_name         TEXT         NOT NULL,
+    friendly_name      TEXT         NOT NULL,
     pricing_sku_id     TEXT         NOT NULL,
-    created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    constraint PK_SearchIndex PRIMARY KEY (Id)
+    created_date       TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint PK_search_index PRIMARY KEY (id)
 );
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'search_instance_keys'; END $$;
 -- =============================
 CREATE TABLE search_instance_keys (
-    id               UUID           NOT NULL,
-    search_instance_id UUID           NOT NULL,
-    key_type          TEXT           NOT NULL,
-    name             TEXT           NOT NULL,
-    api_key           TEXT           NOT NULL,
-    created_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP      NULL,
-    is_latest         BOOLEAN        NOT NULL DEFAULT TRUE,
-    constraint PK_SearchInstanceKeys PRIMARY KEY (Id)
+    id                 UUID          NOT NULL,
+    search_instance_id UUID          NOT NULL,
+    key_type           TEXT          NOT NULL,
+    name               TEXT          NOT NULL,
+    api_key            TEXT          NOT NULL,
+    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date      TIMESTAMP     NULL,
+    is_latest          BOOLEAN       NOT NULL DEFAULT TRUE,
+    constraint PK_search_instance_keys PRIMARY KEY (id)
 );
 
 -- =============================
@@ -131,7 +132,7 @@ CREATE TABLE search_instances (
     is_shared         BOOLEAN        NOT NULL,
     type              TEXT           NOT NULL,
     root_endpoint     TEXT           NULL,
-    constraint PK_SearchInstances PRIMARY KEY (Id)
+    constraint PK_search_instances PRIMARY KEY (id)
 );
 
 -- =============================
@@ -146,7 +147,7 @@ CREATE TABLE synonyms (
     created_date       TIMESTAMP      NOT NULL,
     superseded_date    TIMESTAMP      NULL,
     is_latest          BOOLEAN        NOT NULL,
-    constraint PK_CombinedSynonyms PRIMARY KEY (Id)
+    constraint PK_synonyms PRIMARY KEY (id)
 );
 
 -- =============================
@@ -163,7 +164,7 @@ CREATE TABLE themes (
     search_index_id      UUID         NULL,
     created_date         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date        TIMESTAMP    NULL,
-    constraint PK_Themes PRIMARY KEY (Id)
+    constraint PK_themes PRIMARY KEY (id)
 );
 
 -- =============================
@@ -178,7 +179,7 @@ CREATE TABLE search_insights_data (
     date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date     TIMESTAMP     NULL,
-    constraint PK_SearchInsightsData PRIMARY KEY (Id)
+    constraint PK_search_insights_data PRIMARY KEY (id)
 );
 
 -- =============================
@@ -191,7 +192,7 @@ CREATE TABLE search_index_request_log (
     date             TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_date     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date    TIMESTAMP    NULL,
-    constraint PK_SearchIndexRequestLog PRIMARY KEY (Id)
+    constraint PK_search_index_request_log PRIMARY KEY (id)
 );
 
 -- =============================
@@ -236,6 +237,7 @@ DROP FUNCTION IF EXISTS update_feed_credentials(uuid, TEXT, TEXT);
 DROP FUNCTION IF EXISTS add_feed(uuid, TEXT, TEXT);
 DROP FUNCTION IF EXISTS get_theme_by_customer_endpoint(TEXT);
 DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, TEXT, TEXT, UUID);
+DROP FUNCTION IF EXISTS get_latest_generic_synonyms_by_category(VARCHAR);
 
 
 -- =============================
@@ -551,84 +553,6 @@ BEGIN
       AND username = p_username;
     GET DIAGNOSTICS rows_deleted = ROW_COUNT;
     RETURN rows_deleted;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '11. GetFeedCredentials'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION get_feed_credentials(
-    p_search_index_id uuid,
-    p_username TEXT
-) RETURNS TABLE (
-    search_index_id uuid,
-    username text,
-    created_date timestamp
-) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        search_index_id,
-        username,
-        created_date
-    FROM feed_credentials
-    WHERE search_index_id = p_search_index_id
-      AND username = p_username;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '12. UpdateFeedCredentials'; END $$;
---==============================
-CREATE OR REPLACE FUNCTION update_feed_credentials(
-    p_search_index_id uuid,
-    p_username TEXT,
-    p_password_hash TEXT
-) RETURNS int AS $$
-DECLARE
-    rows_updated int := 0;
-BEGIN
-    UPDATE feed_credentials
-    SET password_hash = p_password_hash,
-        modified_date = CURRENT_TIMESTAMP
-    WHERE search_index_id = p_search_index_id
-      AND username = p_username;
-    GET DIAGNOSTICS rows_updated = ROW_COUNT;
-    RETURN rows_updated;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '13. AddFeed'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION add_feed(
-    p_search_index_id uuid,
-    p_feed_type TEXT,
-    p_feed_cron TEXT
-) RETURNS int AS $$
-DECLARE
-    rows_inserted int := 0;
-BEGIN
-    -- Supersede previous latest feed
-    PERFORM supersede_latest_feed(p_search_index_id);
-
-    -- Insert new feed
-    INSERT INTO feeds (
-        search_index_id,
-        feed_type,
-        feed_schedule_cron,
-        created_date,
-        is_latest
-    )
-    VALUES (
-        p_search_index_id,
-        p_feed_type,
-        p_feed_cron,
-        CURRENT_TIMESTAMP,
-        TRUE
-    );
-    GET DIAGNOSTICS rows_inserted = ROW_COUNT;
-    RETURN rows_inserted;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -993,30 +917,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '26. get_feed_credentials'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION get_feed_credentials(
-    p_search_index_id UUID,
-    p_username TEXT
-)
-RETURNS TABLE (
-    search_index_id UUID,
-    username TEXT,
-    created_date TIMESTAMP
-) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        fc.search_index_id,
-        fc.username,
-        fc.created_date
-    FROM feed_credentials fc
-    WHERE fc.search_index_id = p_search_index_id
-      AND fc.username = p_username;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
 DO $$ BEGIN RAISE NOTICE '*********'; END $$;
 DO $$ BEGIN RAISE NOTICE 'Functions'; END $$;
 DO $$ BEGIN RAISE NOTICE '*********'; END $$;
@@ -1231,12 +1131,14 @@ DO $$ BEGIN RAISE NOTICE '33. add_search_request'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_search_request(
     p_search_index_id UUID,
-    p_request_date DATE
+    p_request_date TIMESTAMP WITHOUT TIME ZONE -- NOW ACCEPTS THE C# DEFAULT TYPE
 )
 RETURNS VOID AS $$
 DECLARE
     utc_now TIMESTAMP := NOW();
 BEGIN
+    -- We use p_request_date::DATE here to ensure we only store the date component
+    -- regardless of what time component Npgsql sent.
     INSERT INTO searchindexrequestlog (
         searchindexid,
         count,
@@ -1246,7 +1148,7 @@ BEGIN
     VALUES (
         p_search_index_id,
         1,
-        p_request_date,
+        p_request_date::DATE, -- Cast the input TIMESTAMP to DATE for the table column
         utc_now
     )
     ON CONFLICT (searchindexid, date)
@@ -1303,21 +1205,20 @@ DO $$ BEGIN RAISE NOTICE '36. get_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_feed_credentials(
     p_search_index_id UUID,
-    p_username VARCHAR
-)
-RETURNS TABLE (
-    searchindexid UUID,
-    username VARCHAR,
-    createddate TIMESTAMP
+    p_username TEXT
+) RETURNS TABLE (
+    search_index_id UUID,
+    username TEXT,
+    created_date TIMESTAMP
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        searchindexid,
+        search_index_id,
         username,
-        createddate
-    FROM dbo.feedcredentials
-    WHERE searchindexid = p_search_index_id
+        created_date
+    FROM feed_credentials
+    WHERE search_index_id = p_search_index_id
       AND username = p_username;
 END;
 $$ LANGUAGE plpgsql;
@@ -1326,17 +1227,20 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '37. update_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION update_feed_credentials(
-    p_search_index_id UUID,
-    p_username VARCHAR,
-    p_password_hash VARCHAR
-)
-RETURNS VOID AS $$
+    p_search_index_id uuid,
+    p_username TEXT,
+    p_password_hash TEXT
+) RETURNS int AS $$
+DECLARE
+    rows_updated int := 0;
 BEGIN
-    UPDATE dbo.feedcredentials
-    SET passwordhash = p_password_hash,
-        modifieddate = NOW()
-    WHERE searchindexid = p_search_index_id
+    UPDATE feed_credentials
+    SET password_hash = p_password_hash,
+        modified_date = CURRENT_TIMESTAMP
+    WHERE search_index_id = p_search_index_id
       AND username = p_username;
+    GET DIAGNOSTICS rows_updated = ROW_COUNT;
+    RETURN rows_updated;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -1345,24 +1249,31 @@ DO $$ BEGIN RAISE NOTICE '38. add_feed'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_feed(
     p_search_index_id UUID,
-    p_feed_type VARCHAR,
-    p_feed_cron VARCHAR
-)
-RETURNS VOID AS $$
+    p_feed_type TEXT,
+    p_feed_cron TEXT
+) RETURNS int AS $$
+DECLARE
+    rows_inserted int := 0;
 BEGIN
-    -- Call the supersede function first
+    -- Supersede previous latest feed
     PERFORM supersede_latest_feed(p_search_index_id);
 
-    -- Insert the new feed
+    -- Insert new feed
     INSERT INTO feeds (
-        searchindexid,
-        feedtype,
-        feedschedulecron
+        search_index_id,
+        feed_type,
+        feed_schedule_cron,
+        created_date,
+        is_latest
     )
     VALUES (
         p_search_index_id,
         p_feed_type,
-        p_feed_cron
+        p_feed_cron,
+        CURRENT_TIMESTAMP,
+        TRUE
     );
+    GET DIAGNOSTICS rows_inserted = ROW_COUNT;
+    RETURN rows_inserted;
 END;
 $$ LANGUAGE plpgsql;

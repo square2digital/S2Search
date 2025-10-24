@@ -22,7 +22,7 @@ public class FeedMonitor
     }
 
     [Function(nameof(FeedMonitor))]
-    public async Task Run([BlobTrigger(FeedAreas.BlobMonitorDirectory, Source = BlobTriggerSource.EventGrid, Connection = ConnectionStrings.AzureStorageAccount)] 
+    public async Task Run([BlobTrigger(FeedAreas.BlobMonitorDirectory, Source = BlobTriggerSource.EventGrid, Connection = ConnectionStringKeys.AzureStorage)] 
         BlobClient blobClient,
         string name,
         ILogger log)
@@ -67,10 +67,10 @@ public class FeedMonitor
             string targetQueue = _feedQueueManager.GetTargetQueue(feedArea);
 
             // Get storage connection string from environment (the constant holds the env var name)
-            var storageConnectionString = Environment.GetEnvironmentVariable(ConnectionStrings.AzureStorageAccount);
+            var storageConnectionString = Environment.GetEnvironmentVariable(ConnectionStringKeys.AzureStorage);
             if (string.IsNullOrEmpty(storageConnectionString))
             {
-                throw new InvalidOperationException($"Storage connection string '{ConnectionStrings.AzureStorageAccount}' is not configured.");
+                throw new InvalidOperationException($"Storage connection string '{ConnectionStringKeys.AzureStorage}' is not configured.");
             }
 
             var queueClient = new QueueClient(storageConnectionString, targetQueue);

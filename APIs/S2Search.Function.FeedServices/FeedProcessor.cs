@@ -33,7 +33,7 @@ public class FeedProcessor
     }
 
     [Function(nameof(FeedProcessor))]
-    public async Task Run([QueueTrigger(StorageQueues.Process, Connection = ConnectionStrings.AzureStorageAccount)]
+    public async Task Run([QueueTrigger(StorageQueues.Process, Connection = ConnectionStringKeys.AzureStorage)]
         FeedBlob feedBlob,
         ILogger logger)
     {
@@ -61,10 +61,10 @@ public class FeedProcessor
             var purgeCacheMessage = CreatePurgeCacheMessage(searchIndexProcessingData);
 
             // Enqueue purge cache message using Azure.Storage.Queues.QueueClient
-            var storageConnectionString = Environment.GetEnvironmentVariable(ConnectionStrings.AzureStorageAccount);
+            var storageConnectionString = Environment.GetEnvironmentVariable(ConnectionStringKeys.AzureStorage);
             if (string.IsNullOrWhiteSpace(storageConnectionString))
             {
-                throw new InvalidOperationException($"Storage connection string '{ConnectionStrings.AzureStorageAccount}' is not configured.");
+                throw new InvalidOperationException($"Storage connection string '{ConnectionStringKeys.AzureStorage}' is not configured.");
             }
 
             var queueClient = new QueueClient(storageConnectionString, StorageQueues.PurgeCache);

@@ -17,7 +17,7 @@ namespace S2Search.Backend.Services.Functions.SearchInsights.Managers
         {
             var repoTasks = new List<Task>
             {
-                searchInsightsRepository.SaveSearchRequestAsync(searchIndexId, dateGenerated),
+                searchInsightsRepository.SaveSearchRequestAsync(searchIndexId, dateGenerated.Date),
                 searchInsightsRepository.SaveInsightsAsync(searchIndexId, dataPoints)
             };
 

@@ -63,16 +63,16 @@ public static class StoredProcedures
     // ***********
     // Functions
     // ***********
-    public const string GetFeedDataFormat = "[FeedServicesFunc].[GetFeedDataFormat]";
-    public const string GetCurrentFeedDocuments = "[FeedServicesFunc].[GetCurrentFeedDocuments]";
-    public const string GetCurrentFeedDocumentsTotal = "[FeedServicesFunc].[GetCurrentFeedDocumentsTotal]";
-    public const string MergeFeedDocuments = "[FeedServicesFunc].[MergeFeedDocuments]";
+    public const string GetFeedDataFormat = "get_feed_data_format";
+    public const string GetCurrentFeedDocuments = "get_current_feed_documents";
+    public const string GetCurrentFeedDocumentsTotal = "get_current_feed_documents_total";
+    public const string MergeFeedDocuments = "merge_feed_documents";
 
-    public const string GetSearchIndexCredentials = "[FeedServicesFunc].[GetSearchIndexCredentials]";
-    public const string GetSearchIndexFeedProcessingData = "[FeedServicesFunc].[GetSearchIndexFeedProcessingData]";
+    public const string GetSearchIndexCredentials = "get_search_index_credentials";
+    public const string GetSearchIndexFeedProcessingData = "get_search_index_feed_processing_data";
 
-    public const string GetLatestGenericSynonyms = "[FeedServicesFunc].[GetLatestGenericSynonymsByCategory]";
+    public const string GetLatestGenericSynonyms = "get_latest_generic_synonyms_by_category";
 
-    public const string AddDataPoints = "[SearchInsightsFunc].[AddDataPoints]";
-    public const string AddSearchRequest = "[SearchInsightsFunc].[AddSearchRequest]";
+    public const string AddDataPoints = "add_data_points";
+    public const string AddSearchRequest = "add_search_request";
 }

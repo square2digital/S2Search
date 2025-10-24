@@ -22,7 +22,7 @@ public class SearchInsightProcessor
     }
 
     [Function(nameof(SearchInsightProcessor))]
-    public async Task Run([QueueTrigger(StorageQueues.SearchInsightsProcessing, Connection = ConnectionStrings.AzureStorageAccount)] SearchInsightMessage searchInsightMessage)
+    public async Task Run([QueueTrigger(StorageQueues.SearchInsightsProcessing, Connection = ConnectionStringFunctionKeys.AzureStorage)] SearchInsightMessage searchInsightMessage)
     {
         _logger.LogInformation($"{nameof(SearchInsightProcessor)} | Processing Message - SearchIndexId: {searchInsightMessage.SearchIndexId}");
         _logger.LogInformation($"{searchInsightMessage}");

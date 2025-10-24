@@ -24,8 +24,8 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", searchIndexId },
-                { "Username", username }
+                { "search_index_id", searchIndexId },
+                { "username", username }
             };
 
             var credentials = await _dbContext.QuerySingleOrDefaultAsync<FeedCredentials>(_connectionString,
@@ -39,7 +39,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", searchIndexId }
+                { "search_index_id", searchIndexId }
             };
 
             var credentials = await _dbContext.QuerySingleOrDefaultAsync<FeedCredentials>(_connectionString,

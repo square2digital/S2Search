@@ -31,7 +31,7 @@ public class FeedValidator
     }
 
     [Function(nameof(FeedValidator))]
-    public async Task Run([QueueTrigger(StorageQueues.Validate, Connection = ConnectionStrings.AzureStorageAccount)]
+    public async Task Run([QueueTrigger(StorageQueues.Validate, Connection = ConnectionStringKeys.AzureStorage)]
         FeedBlob feedBlob,
         IBinder binder,
         ILogger logger)

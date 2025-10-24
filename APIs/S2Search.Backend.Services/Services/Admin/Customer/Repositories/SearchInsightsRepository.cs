@@ -12,15 +12,15 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 {
     public class SearchInsightsRepository : ISearchInsightsRepository
     {
-        private readonly IConfiguration _configuration;
         private readonly IDbContextProvider _dbContext;
         private readonly ILogger<SearchInsightsRepository> _logger;
+        private readonly string _connectionstring;
 
         public SearchInsightsRepository(IConfiguration configuration, IDbContextProvider dbContext, ILogger<SearchInsightsRepository> logger)
         {
-            _configuration = configuration;
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _connectionstring = configuration.GetConnectionString(ConnectionStringKeys.SqlDatabase) ?? throw new InvalidOperationException($"{ConnectionStringKeys.SqlDatabase} connection string not found.");
         }
 
         public async Task<IEnumerable<SearchInsight>> GetByCategoriesAsync(Guid searchIndexId,
@@ -30,13 +30,13 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", searchIndexId },
-                { "DateFrom", dateFrom },
-                { "DateTo", dateTo },
-                { "DataCategories", dataCategories }
+                { "search_index_id", searchIndexId },
+                { "date_from", dateFrom },
+                { "date_to", dateTo },
+                { "data_categories", dataCategories }
             };
 
-            var result = await _dbContext.QueryAsync<SearchInsight>(ConnectionStrings.SqlDatabase,
+            var result = await _dbContext.QueryAsync<SearchInsight>(_connectionstring,
                                                                     StoredProcedures.GetSearchInsightsByDataCategories,
                                                                     parameters);
 
@@ -47,12 +47,12 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", searchIndexId },
-                { "DateFrom", dateFrom },
-                { "DateTo", dateTo },
+                { "search_index_id", searchIndexId },
+                { "date_from", dateFrom },
+                { "date_to", dateTo },
             };
 
-            var result = await _dbContext.QueryAsync<SearchInsight>(ConnectionStrings.SqlDatabase,
+            var result = await _dbContext.QueryAsync<SearchInsight>(_connectionstring,
                                                                     StoredProcedures.GetSearchInsightsSearchCountByDateRange,
                                                                     parameters);
 
@@ -66,11 +66,11 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
                 var dataTableParameter = ObjectToDataTableMapper.CreateDataTable(dataPoints);
                 var parameters = new Dictionary<string, object>()
                 {
-                    { "SearchIndexId", searchIndexId },
-                    { "SearchInsightsData", dataTableParameter }
+                    { "search_index_id", searchIndexId },
+                    { "search_insights_data", dataTableParameter }
                 };
 
-                var result = await _dbContext.ExecuteAsync(ConnectionStrings.SqlDatabase,
+                var result = await _dbContext.ExecuteAsync(_connectionstring,
                                                            StoredProcedures.AddDataPoints,
                                                            parameters);
             }
@@ -87,11 +87,11 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
             {
                 var parameters = new Dictionary<string, object>()
                 {
-                    { "SearchIndexId", searchIndexId },
-                    { "Date", date }
+                    { "search_index_id", searchIndexId },
+                    { "date", date }
                 };
 
-                var result = await _dbContext.ExecuteAsync(ConnectionStrings.SqlDatabase,
+                var result = await _dbContext.ExecuteAsync(_connectionstring,
                                                            StoredProcedures.AddSearchRequest,
                                                            parameters);
 

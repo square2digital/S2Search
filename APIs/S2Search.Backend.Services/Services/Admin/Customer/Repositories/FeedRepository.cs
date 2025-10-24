@@ -37,7 +37,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", searchIndexId }
+                { "search_index_id", searchIndexId }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<Feed>(_connectionString, StoredProcedures.GetLatestFeed, parameters);
@@ -61,9 +61,9 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", feed.SearchIndexId },
-                { "FeedType", feed.FeedType },
-                { "FeedCron", cronExpression }
+                { "search_index_id", feed.SearchIndexId },
+                { "feed_type", feed.FeedType },
+                { "feed_cron", cronExpression }
             };
 
             await _dbContext.ExecuteAsync(_connectionString, StoredProcedures.AddFeed, parameters);
