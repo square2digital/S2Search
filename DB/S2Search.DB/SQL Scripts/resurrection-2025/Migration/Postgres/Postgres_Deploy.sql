@@ -223,14 +223,10 @@ DROP FUNCTION IF EXISTS update_synonym(UUID, UUID, TEXT, TEXT);
 DROP FUNCTION IF EXISTS update_theme(UUID, TEXT, TEXT, TEXT, TEXT, TEXT);
 DROP FUNCTION IF EXISTS get_feed_credentials_username(UUID);
 DROP FUNCTION IF EXISTS get_feed_data_format(UUID, TEXT);
--- NOTE: Corrected typo 'catery' to 'category'
 DROP FUNCTION IF EXISTS get_search_index_credentials(UUID, TEXT);
 DROP FUNCTION IF EXISTS get_search_index_feed_processing_data(UUID, TEXT);
--- CORRECTED: Added array notation []
 DROP FUNCTION IF EXISTS merge_feed_documents(UUID, new_feed_documents[]); 
--- CORRECTED: Assuming the type is 'search_insights_data_type' and is an array
 DROP FUNCTION IF EXISTS add_data_points(UUID, search_insights_data_type[]); 
--- NOTE: The corrected function uses TIMESTAMP, dropping the older DATE signature
 DROP FUNCTION IF EXISTS add_search_request(UUID, DATE); 
 DROP FUNCTION IF EXISTS add_feed_credentials(UUID, TEXT, TEXT);
 DROP FUNCTION IF EXISTS delete_feed_credentials(UUID, TEXT);
@@ -238,7 +234,6 @@ DROP FUNCTION IF EXISTS get_feed_credentials(UUID, TEXT);
 DROP FUNCTION IF EXISTS update_feed_credentials(UUID, TEXT, TEXT);
 DROP FUNCTION IF EXISTS add_feed(UUID, TEXT, TEXT);
 DROP FUNCTION IF EXISTS get_theme_by_customer_endpoint(TEXT);
--- Dropping both overloads of add_search_index for safety
 DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, UUID, TEXT, TEXT); 
 DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, TEXT, TEXT, UUID);
 DROP FUNCTION IF EXISTS get_latest_generic_synonyms_by_category(TEXT);
