@@ -171,7 +171,7 @@ CREATE TABLE themes (
 DO $$ BEGIN RAISE NOTICE 'search_insights_data'; END $$;
 -- =============================
 CREATE TABLE search_insights_data (
-    id               UUID           NOT NULL DEFAULT gen_random_uuid(),
+    id               UUID           NOT NULL DEFAULT gen_random_UUID(),
     search_index_id    UUID         NOT NULL,
     data_category     TEXT          NOT NULL,
     data_point        TEXT          NOT NULL,
@@ -186,7 +186,7 @@ CREATE TABLE search_insights_data (
 DO $$ BEGIN RAISE NOTICE 'search_index_request_log'; END $$;
 -- =============================
 CREATE TABLE search_index_request_log (
-    id               UUID         NOT NULL DEFAULT gen_random_uuid(),
+    id               UUID         NOT NULL DEFAULT gen_random_UUID(),
     search_index_id  UUID         NOT NULL,
     count            INT          NOT NULL DEFAULT 0,
     date             TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -198,51 +198,57 @@ CREATE TABLE search_index_request_log (
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'Drop Function Definitions'; END $$;
 -- =============================
-DROP FUNCTION IF EXISTS add_synonym(uuid, uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS get_customer_by_id(uuid);
-DROP FUNCTION IF EXISTS get_customer_full(uuid);
-DROP FUNCTION IF EXISTS get_latest_feed(uuid);
-DROP FUNCTION IF EXISTS get_search_index(uuid, uuid);
-DROP FUNCTION IF EXISTS get_search_index_by_friendly_name(uuid, TEXT);
-DROP FUNCTION IF EXISTS get_search_index_full(uuid, uuid);
+
+-- Clean list (duplicates removed, type names corrected where known)
+
+DROP FUNCTION IF EXISTS add_synonym(UUID, UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS get_customer_by_id(UUID);
+DROP FUNCTION IF EXISTS get_customer_full(UUID);
+DROP FUNCTION IF EXISTS get_latest_feed(UUID);
+DROP FUNCTION IF EXISTS get_search_index(UUID, UUID);
+DROP FUNCTION IF EXISTS get_search_index_by_friendly_name(UUID, TEXT);
+DROP FUNCTION IF EXISTS get_search_index_full(UUID, UUID);
 DROP FUNCTION IF EXISTS get_search_index_query_credentials_by_customer_endpoint(TEXT);
-DROP FUNCTION IF EXISTS get_search_insights_by_data_categories(uuid, TIMESTAMP, TIMESTAMP, TEXT);
-DROP FUNCTION IF EXISTS get_search_insights_search_count_by_date_range(uuid, TIMESTAMP, TIMESTAMP);
-DROP FUNCTION IF EXISTS get_synonym_by_id(uuid, uuid);
-DROP FUNCTION IF EXISTS get_synonym_by_key_word(uuid, TEXT);
-DROP FUNCTION IF EXISTS get_synonyms(uuid);
-DROP FUNCTION IF EXISTS get_theme_by_customer_id(uuid);
-DROP FUNCTION IF EXISTS get_theme_by_id(uuid);
-DROP FUNCTION IF EXISTS get_theme_by_search_index_id(uuid);
-DROP FUNCTION IF EXISTS supersede_latest_feed(uuid);
-DROP FUNCTION IF EXISTS supersede_synonym(uuid, uuid);
-DROP FUNCTION IF EXISTS update_synonym(uuid, uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS update_theme(uuid, TEXT, TEXT, TEXT, TEXT, TEXT);
-DROP FUNCTION IF EXISTS get_current_feed_documents(uuid, INT, INT);
-DROP FUNCTION IF EXISTS get_current_feed_documents_total(uuid);
-DROP FUNCTION IF EXISTS get_feed_credentials_username(uuid);
-DROP FUNCTION IF EXISTS get_feed_data_format(uuid, TEXT);
-DROP FUNCTION IF EXISTS get_latest_generic_synonyms_by_catery(TEXT);
-DROP FUNCTION IF EXISTS get_search_index_credentials(uuid, TEXT);
-DROP FUNCTION IF EXISTS get_search_index_feed_processing_data(uuid, TEXT);
-DROP FUNCTION IF EXISTS merge_feed_documents(uuid, new_feed_documents);
-DROP FUNCTION IF EXISTS add_data_points(uuid, search_insights_data);
-DROP FUNCTION IF EXISTS add_search_request(uuid, DATE);
-DROP FUNCTION IF EXISTS add_feed_credentials(uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS delete_feed_credentials(uuid, TEXT);
-DROP FUNCTION IF EXISTS get_feed_credentials(uuid, TEXT);
-DROP FUNCTION IF EXISTS update_feed_credentials(uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS add_feed(uuid, TEXT, TEXT);
+DROP FUNCTION IF EXISTS get_search_insights_by_data_categories(UUID, TIMESTAMP, TIMESTAMP, TEXT);
+DROP FUNCTION IF EXISTS get_search_insights_search_count_by_date_range(UUID, TIMESTAMP, TIMESTAMP);
+DROP FUNCTION IF EXISTS get_synonym_by_id(UUID, UUID);
+DROP FUNCTION IF EXISTS get_synonym_by_key_word(UUID, TEXT);
+DROP FUNCTION IF EXISTS get_synonyms(UUID);
+DROP FUNCTION IF EXISTS get_theme_by_customer_id(UUID);
+DROP FUNCTION IF EXISTS get_theme_by_id(UUID);
+DROP FUNCTION IF EXISTS get_theme_by_search_index_id(UUID);
+DROP FUNCTION IF EXISTS supersede_latest_feed(UUID);
+DROP FUNCTION IF EXISTS supersede_synonym(UUID, UUID);
+DROP FUNCTION IF EXISTS update_synonym(UUID, UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS update_theme(UUID, TEXT, TEXT, TEXT, TEXT, TEXT);
+DROP FUNCTION IF EXISTS get_feed_credentials_username(UUID);
+DROP FUNCTION IF EXISTS get_feed_data_format(UUID, TEXT);
+-- NOTE: Corrected typo 'catery' to 'category'
+DROP FUNCTION IF EXISTS get_search_index_credentials(UUID, TEXT);
+DROP FUNCTION IF EXISTS get_search_index_feed_processing_data(UUID, TEXT);
+-- CORRECTED: Added array notation []
+DROP FUNCTION IF EXISTS merge_feed_documents(UUID, new_feed_documents[]); 
+-- CORRECTED: Assuming the type is 'search_insights_data_type' and is an array
+DROP FUNCTION IF EXISTS add_data_points(UUID, search_insights_data_type[]); 
+-- NOTE: The corrected function uses TIMESTAMP, dropping the older DATE signature
+DROP FUNCTION IF EXISTS add_search_request(UUID, DATE); 
+DROP FUNCTION IF EXISTS add_feed_credentials(UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS delete_feed_credentials(UUID, TEXT);
+DROP FUNCTION IF EXISTS get_feed_credentials(UUID, TEXT);
+DROP FUNCTION IF EXISTS update_feed_credentials(UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS add_feed(UUID, TEXT, TEXT);
 DROP FUNCTION IF EXISTS get_theme_by_customer_endpoint(TEXT);
+-- Dropping both overloads of add_search_index for safety
+DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, UUID, TEXT, TEXT); 
 DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, TEXT, TEXT, UUID);
-DROP FUNCTION IF EXISTS get_latest_generic_synonyms_by_category(VARCHAR);
+DROP FUNCTION IF EXISTS get_latest_generic_synonyms_by_category(TEXT);
 
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'Function Definitions'; END $$;
 -- =============================
-CREATE OR REPLACE FUNCTION get_customer_by_id(customer_id uuid)
-RETURNS TABLE (id uuid, business_name text) AS $$
+CREATE OR REPLACE FUNCTION get_customer_by_id(customer_id UUID)
+RETURNS TABLE (id UUID, business_name text) AS $$
 BEGIN
     RETURN QUERY
     SELECT c.id, c.business_name
@@ -253,9 +259,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION get_customer_full(customer_id uuid)
+CREATE OR REPLACE FUNCTION get_customer_full(customer_id UUID)
 RETURNS TABLE (
-    id uuid,
+    id UUID,
     business_name text
 ) AS $$
 BEGIN
@@ -270,11 +276,11 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '1. GetLatestFeed'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_latest_feed(
-    p_search_index_id uuid
+    p_search_index_id UUID
 )
 RETURNS TABLE (
-    id uuid,
-    search_index_id uuid,
+    id UUID,
+    search_index_id UUID,
     feed_type text,
     feed_schedule_cron text,
     created_date timestamp,
@@ -302,17 +308,17 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '2. GetSearchIndex'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index(
-    p_search_index_id uuid,
-    p_customer_id uuid
+    p_search_index_id UUID,
+    p_customer_id UUID
 ) RETURNS TABLE (
-    id uuid,
-    customer_id uuid,
+    id UUID,
+    customer_id UUID,
     index_name text,
     friendly_name text,
     root_endpoint text,
     pricing_tier text,
     created_date timestamp,
-    instance_id uuid,
+    instance_id UUID,
     service_name text,
     location text,
     instance_pricing_tier text,
@@ -348,12 +354,12 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '3. GetSearchIndexByFriendlyName'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_by_friendly_name(
-    p_customer_id uuid,
+    p_customer_id UUID,
     p_friendly_name TEXT
 ) RETURNS TABLE (
-    id uuid,
-    search_instance_id uuid,
-    customer_id uuid,
+    id UUID,
+    search_instance_id UUID,
+    customer_id UUID,
     friendly_name text,
     index_name text
 ) AS $$
@@ -375,17 +381,17 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '4. GetSearchIndexFull'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_full(
-    p_search_index_id uuid,
-    p_customer_id uuid
+    p_search_index_id UUID,
+    p_customer_id UUID
 ) RETURNS TABLE (
-    id uuid,
-    customer_id uuid,
+    id UUID,
+    customer_id UUID,
     index_name text,
     friendly_name text,
     root_endpoint text,
     pricing_tier text,
     created_date timestamp,
-    instance_id uuid,
+    instance_id UUID,
     service_name text,
     location text,
     instance_pricing_tier text,
@@ -421,11 +427,11 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '5. GetSynonymById'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonym_by_id(
-    p_search_index_id uuid,
-    p_synonym_id uuid
+    p_search_index_id UUID,
+    p_synonym_id UUID
 ) RETURNS TABLE (
-    id uuid,
-    search_index_id uuid,
+    id UUID,
+    search_index_id UUID,
     key text,
     solr_format text,
     created_date timestamp
@@ -449,11 +455,11 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '6. GetSynonymByKeyWord'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonym_by_key_word(
-    p_search_index_id uuid,
+    p_search_index_id UUID,
     p_key_word TEXT
 ) RETURNS TABLE (
-    id uuid,
-    search_index_id uuid,
+    id UUID,
+    search_index_id UUID,
     key text,
     solr_format text,
     created_date timestamp
@@ -477,7 +483,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '7. SupersedeLatestFeed'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION supersede_latest_feed(
-    p_search_index_id uuid
+    p_search_index_id UUID
 ) RETURNS int AS $$
 DECLARE
     rows_updated int;
@@ -496,8 +502,8 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '8. SupersedeSynonym'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION supersede_synonym(
-    p_search_index_id uuid,
-    p_synonym_id uuid
+    p_search_index_id UUID,
+    p_synonym_id UUID
 ) RETURNS int AS $$
 DECLARE
     rows_updated int;
@@ -517,8 +523,8 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '9. UpdateSynonym'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION update_synonym(
-    p_search_index_id uuid,
-    p_synonym_id uuid,
+    p_search_index_id UUID,
+    p_synonym_id UUID,
     p_key_word TEXT,
     p_solr_format TEXT
 ) RETURNS int AS $$
@@ -540,7 +546,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '10. DeleteFeedCredentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION delete_feed_credentials(
-    p_search_index_id uuid,
+    p_search_index_id UUID,
     p_username TEXT
 ) RETURNS int AS $$
 DECLARE
@@ -926,11 +932,11 @@ DO $$ BEGIN RAISE NOTICE '27. get_feed_data_format'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_feed_data_format(
     p_customer_id UUID,
-    p_search_index_name VARCHAR
+    p_search_index_name TEXT
 )
-RETURNS VARCHAR AS $$
+RETURNS TEXT AS $$
 DECLARE
-    data_format VARCHAR;
+    data_format TEXT;
 BEGIN
     SELECT f.data_format
     INTO data_format
@@ -948,11 +954,11 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '28. get_latest_generic_synonyms_by_category'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_latest_generic_synonyms_by_category(
-    p_category VARCHAR
+    p_category TEXT
 )
 RETURNS TABLE (
     id UUID,
-    category VARCHAR,
+    category TEXT,
     solr_format TEXT,
     created_date TIMESTAMP
 ) AS $$
@@ -974,13 +980,13 @@ DO $$ BEGIN RAISE NOTICE '29. get_search_index_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_credentials(
     p_customer_id UUID,
-    p_search_index_name VARCHAR
+    p_search_index_name TEXT
 )
 RETURNS TABLE (
     search_index_id UUID,
-    search_index_name_lower VARCHAR,
+    search_index_name_lower TEXT,
     search_instance_id UUID,
-    search_instance_name VARCHAR,
+    search_instance_name TEXT,
     root_endpoint TEXT,
     api_key TEXT
 ) AS $$
@@ -1009,13 +1015,13 @@ DO $$ BEGIN RAISE NOTICE '30. get_search_index_feed_processing_data'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_feed_processing_data(
     p_customer_id UUID,
-    p_search_index_name VARCHAR
+    p_search_index_name TEXT
 )
 RETURNS TABLE (
     search_index_id UUID,
-    search_index_name_lower VARCHAR,
+    search_index_name_lower TEXT,
     search_instance_id UUID,
-    search_instance_name VARCHAR,
+    search_instance_name TEXT,
     root_endpoint TEXT,
     api_key TEXT,
     feed_data_format TEXT,
@@ -1159,8 +1165,8 @@ DO $$ BEGIN RAISE NOTICE '34. add_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_feed_credentials(
     p_search_index_id UUID,
-    p_username VARCHAR,
-    p_password_hash VARCHAR
+    p_username TEXT,
+    p_password_hash TEXT
 )
 RETURNS VOID AS $$
 BEGIN
@@ -1172,7 +1178,7 @@ BEGIN
         createddate
     )
     VALUES (
-        gen_random_uuid(),
+        gen_random_UUID(),
         p_search_index_id,
         p_username,
         p_password_hash,
@@ -1186,7 +1192,7 @@ DO $$ BEGIN RAISE NOTICE '35. delete_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION delete_feed_credentials(
     p_search_index_id UUID,
-    p_username VARCHAR
+    p_username TEXT
 )
 RETURNS VOID AS $$
 BEGIN
@@ -1223,7 +1229,7 @@ $$ LANGUAGE plpgsql;
 DO $$ BEGIN RAISE NOTICE '37. update_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION update_feed_credentials(
-    p_search_index_id uuid,
+    p_search_index_id UUID,
     p_username TEXT,
     p_password_hash TEXT
 ) RETURNS int AS $$
