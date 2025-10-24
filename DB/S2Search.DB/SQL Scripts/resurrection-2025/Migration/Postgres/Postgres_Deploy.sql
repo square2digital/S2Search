@@ -9,77 +9,19 @@ the code is regenerated.
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'Drop Table Definitions Start...'; END $$;
 -- =============================
-DROP TABLE IF EXISTS customers CASCADE;
-DROP TABLE IF EXISTS feed_credentials CASCADE;
-DROP TABLE IF EXISTS feed_current_documents CASCADE;
-DROP TABLE IF EXISTS feeds CASCADE;
-DROP TABLE IF EXISTS search_configuration CASCADE;
-DROP TABLE IF EXISTS search_index CASCADE;
-DROP TABLE IF EXISTS search_instance_keys CASCADE;
-DROP TABLE IF EXISTS search_instances CASCADE;
-DROP TABLE IF EXISTS synonyms CASCADE;
-DROP TABLE IF EXISTS themes CASCADE;
-DROP TABLE IF EXISTS search_insights_data CASCADE;
-DROP TABLE IF EXISTS search_index_request_log CASCADE;
+DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS feed_credentials;
+DROP TABLE IF EXISTS feed_current_documents;
+DROP TABLE IF EXISTS feeds;
+DROP TABLE IF EXISTS search_configuration;
+DROP TABLE IF EXISTS search_index;
+DROP TABLE IF EXISTS search_instance_keys;
+DROP TABLE IF EXISTS search_instances;
+DROP TABLE IF EXISTS synonyms;
+DROP TABLE IF EXISTS themes;
 
--- =============================
-DO $$ BEGIN RAISE NOTICE 'Drop Type Definitions Start...'; END $$;
--- =============================
-DROP TYPE IF EXISTS search_insights_data_type CASCADE;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE 'Drop Function Definitions'; END $$;
--- =============================
--- Cleaned up list with correct signatures for array types
-DROP FUNCTION IF EXISTS add_synonym(uuid, uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS get_customer_by_id(uuid);
-DROP FUNCTION IF EXISTS get_latest_feed(uuid);
-DROP FUNCTION IF EXISTS get_search_index(uuid, uuid);
-DROP FUNCTION IF EXISTS get_search_index_by_friendly_name(uuid, TEXT);
-DROP FUNCTION IF EXISTS get_search_index_query_credentials_by_customer_endpoint(TEXT);
-DROP FUNCTION IF EXISTS get_search_insights_by_data_categories(uuid, TIMESTAMP, TIMESTAMP, TEXT);
-DROP FUNCTION IF EXISTS get_search_insights_search_count_by_date_range(uuid, TIMESTAMP, TIMESTAMP);
-DROP FUNCTION IF EXISTS get_synonym_by_id(uuid, uuid);
-DROP FUNCTION IF EXISTS get_synonym_by_key_word(uuid, TEXT);
-DROP FUNCTION IF EXISTS get_synonyms(uuid);
-DROP FUNCTION IF EXISTS get_theme_by_customer_id(uuid);
-DROP FUNCTION IF EXISTS get_theme_by_id(uuid);
-DROP FUNCTION IF EXISTS get_theme_by_search_index_id(uuid);
-DROP FUNCTION IF EXISTS supersede_latest_feed(uuid);
-DROP FUNCTION IF EXISTS supersede_synonym(uuid, uuid);
-DROP FUNCTION IF EXISTS update_synonym(uuid, uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS update_theme(uuid, TEXT, TEXT, TEXT, TEXT, TEXT);
-DROP FUNCTION IF EXISTS get_current_feed_documents(uuid, INT, INT);
-DROP FUNCTION IF EXISTS get_current_feed_documents_total(uuid);
-DROP FUNCTION IF EXISTS get_feed_credentials_username(uuid);
-DROP FUNCTION IF EXISTS get_feed_data_format(uuid, TEXT);
-DROP FUNCTION IF EXISTS get_latest_generic_synonyms_by_category(TEXT);
-DROP FUNCTION IF EXISTS get_search_index_credentials(uuid, TEXT);
-DROP FUNCTION IF EXISTS get_search_index_feed_processing_data(uuid, TEXT);
-DROP FUNCTION IF EXISTS merge_feed_documents(uuid, TEXT[]); -- FIXED TYPE
-DROP FUNCTION IF EXISTS add_data_points(uuid, search_insights_data_type[]); -- FIXED TYPE
-DROP FUNCTION IF EXISTS add_search_request(uuid, DATE);
-DROP FUNCTION IF EXISTS add_feed_credentials(uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS delete_feed_credentials(uuid, TEXT);
-DROP FUNCTION IF EXISTS get_feed_credentials(uuid, TEXT);
-DROP FUNCTION IF EXISTS update_feed_credentials(uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS add_feed(uuid, TEXT, TEXT);
-DROP FUNCTION IF EXISTS get_theme_by_customer_endpoint(TEXT);
-DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, TEXT, TEXT, UUID);
-
--- =============================
-DO $$ BEGIN RAISE NOTICE 'Extension Definitions'; END $$;
--- =============================
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
--- =============================
-DO $$ BEGIN RAISE NOTICE 'Type Definitions'; END $$;
--- =============================
-CREATE TYPE search_insights_data_type AS (
-    data_category TEXT,
-    data_point TEXT,
-    date DATE
-);
+DROP TABLE IF EXISTS search_insights_data;
+DROP TABLE IF EXISTS search_index_request_log;
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'Table Definitions'; END $$;
@@ -90,294 +32,243 @@ CREATE TABLE customers (
     customer_endpoint   TEXT           NULL,
     created_date        TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date       TIMESTAMP      NULL,
-    CONSTRAINT PK_customers PRIMARY KEY (id)
+    constraint PK_customers PRIMARY KEY (id)
 );
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'feed_credentials'; END $$;
 -- =============================
 CREATE TABLE feed_credentials (
-    id                 UUID          NOT NULL DEFAULT gen_random_uuid(),
+    id                 UUID          NOT NULL,
     search_index_id    UUID          NOT NULL,
     username           TEXT          NOT NULL,
     password_hash      TEXT          NOT NULL,
     created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date      TIMESTAMP     NULL,
-    CONSTRAINT PK_feed_credentials PRIMARY KEY (id)
+    modified_date      TIMESTAMP     NULL
 );
-CREATE UNIQUE INDEX UIX_feed_credentials ON feed_credentials (search_index_id, username);
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'feed_current_documents'; END $$;
 -- =============================
 CREATE TABLE feed_current_documents (
-    id                 TEXT          NOT NULL,
-    search_index_id    UUID          NOT NULL,
-    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT PK_feed_current_documents PRIMARY KEY (id, search_index_id)
+    id                 TEXT           NOT NULL,
+    search_index_id    UUID           NOT NULL,
+    created_date       TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint PK_feed_current_documents PRIMARY KEY (id)
 );
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'feeds'; END $$;
 -- =============================
 CREATE TABLE feeds (
-    id                 UUID          NOT NULL DEFAULT gen_random_uuid(),
+    id                 UUID          NOT NULL,
+    feed_type          TEXT          NOT NULL,
+    feed_schedule_cron TEXT          NOT NULL,
     search_index_id    UUID          NOT NULL,
-    is_latest          BOOLEAN       NOT NULL,
-    feed_type          TEXT          NULL,
-    data_format        TEXT          NULL,
-    feed_schedule      TEXT          NULL,
-    feed_cron          TEXT          NULL,
+    data_format        TEXT          NOT NULL,
     created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date      TIMESTAMP     NULL,
-    CONSTRAINT PK_feeds PRIMARY KEY (id)
+    superseded_date    TIMESTAMP     NULL,
+    is_latest          BOOLEAN       NOT NULL DEFAULT TRUE,
+    constraint PK_feeds PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX UIX_feeds_latest ON feeds (search_index_id) WHERE is_latest;
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'search_configuration'; END $$;
 -- =============================
 CREATE TABLE search_configuration (
-    id                 UUID          NOT NULL DEFAULT gen_random_uuid(),
-    search_index_id    UUID          NOT NULL,
-    config_json        TEXT          NOT NULL,
-    is_latest          BOOLEAN       NOT NULL,
-    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date      TIMESTAMP     NULL,
-    CONSTRAINT PK_search_configuration PRIMARY KEY (id)
+    id               UUID           NOT NULL,
+    value            TEXT           NOT NULL,
+    search_index_id  UUID           NOT NULL,
+    key              TEXT           NOT NULL,
+    friendly_name    TEXT           NOT NULL,
+    description      TEXT           NOT NULL,
+    data_type        TEXT           NOT NULL,
+    order_index      INT            NULL,
+    created_date     TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date    TIMESTAMP      NULL,
+    constraint PK_search_configuration PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX UIX_search_configuration_latest ON search_configuration (search_index_id) WHERE is_latest;
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'search_index'; END $$;
 -- =============================
 CREATE TABLE search_index (
-    id                 UUID          NOT NULL DEFAULT gen_random_uuid(),
-    customer_id        UUID          NOT NULL,
-    search_instance_id UUID          NOT NULL,
-    index_name         TEXT          NOT NULL,
-    data_format        TEXT          NULL,
-    created_by_user_id UUID          NULL,
-    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date      TIMESTAMP     NULL,
-    CONSTRAINT PK_search_index PRIMARY KEY (id)
+    id                 UUID         NOT NULL,
+    customer_id        UUID         NOT NULL,
+    search_instance_id UUID         NULL,
+    index_name         TEXT         NOT NULL,
+    friendly_name      TEXT         NOT NULL,
+    pricing_sku_id     TEXT         NOT NULL,
+    created_date       TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    constraint PK_search_index PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX UIX_search_index_name ON search_index (customer_id, index_name);
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'search_instance_keys'; END $$;
 -- =============================
 CREATE TABLE search_instance_keys (
-    id                 UUID          NOT NULL DEFAULT gen_random_uuid(),
+    id                 UUID          NOT NULL,
     search_instance_id UUID          NOT NULL,
+    key_type           TEXT          NOT NULL,
     name               TEXT          NOT NULL,
     api_key            TEXT          NOT NULL,
-    key_type           TEXT          NOT NULL,
-    is_latest          BOOLEAN       NOT NULL,
     created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date      TIMESTAMP     NULL,
-    CONSTRAINT PK_search_instance_keys PRIMARY KEY (id)
+    is_latest          BOOLEAN       NOT NULL DEFAULT TRUE,
+    constraint PK_search_instance_keys PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX UIX_search_instance_keys_latest ON search_instance_keys (search_instance_id, name) WHERE is_latest;
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'search_instances'; END $$;
 -- =============================
 CREATE TABLE search_instances (
-    id                 UUID          NOT NULL DEFAULT gen_random_uuid(),
-    service_name       TEXT          NOT NULL,
-    root_endpoint      TEXT          NOT NULL,
-    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date      TIMESTAMP     NULL,
-    CONSTRAINT PK_search_instances PRIMARY KEY (id)
+    id                UUID           NOT NULL,
+    customer_id       UUID           NOT NULL,
+    service_name      TEXT           NOT NULL,
+    location          TEXT           NOT NULL,
+    pricing_tier      TEXT           NOT NULL,
+    replicas          INT            NULL,
+    partitions        INT            NULL,
+    is_shared         BOOLEAN        NOT NULL,
+    type              TEXT           NOT NULL,
+    root_endpoint     TEXT           NULL,
+    constraint PK_search_instances PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX UIX_search_instances_endpoint ON search_instances (root_endpoint);
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'synonyms'; END $$;
 -- =============================
 CREATE TABLE synonyms (
-    id                 UUID          NOT NULL DEFAULT gen_random_uuid(),
-    search_index_id    UUID          NULL,
-    category           TEXT          NOT NULL,
-    key_word           TEXT          NULL,
-    solr_format        TEXT          NOT NULL,
-    is_latest          BOOLEAN       NOT NULL,
-    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date      TIMESTAMP     NULL,
-    CONSTRAINT PK_synonyms PRIMARY KEY (id)
+    id                 UUID           NOT NULL,
+    category           TEXT           NULL,
+    search_index_id    UUID           NULL,
+    key_word           TEXT           NULL,
+    solr_format        TEXT           NOT NULL,
+    created_date       TIMESTAMP      NOT NULL,
+    superseded_date    TIMESTAMP      NULL,
+    is_latest          BOOLEAN        NOT NULL,
+    constraint PK_synonyms PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX UIX_synonyms_latest ON synonyms (search_index_id, category) WHERE is_latest;
-CREATE UNIQUE INDEX UIX_synonyms_keyword ON synonyms (search_index_id, category, key_word) WHERE is_latest AND key_word IS NOT NULL;
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'themes'; END $$;
 -- =============================
 CREATE TABLE themes (
-    id                 UUID          NOT NULL DEFAULT gen_random_uuid(),
-    customer_id        UUID          NULL,
-    search_index_id    UUID          NULL,
-    css_json           TEXT          NOT NULL,
-    is_latest          BOOLEAN       NOT NULL,
-    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date      TIMESTAMP     NULL,
-    CONSTRAINT PK_themes PRIMARY KEY (id)
+    id                   UUID         NOT NULL,
+    primary_hex_colour   TEXT         NULL,
+    secondary_hex_colour TEXT         NULL,
+    nav_bar_hex_colour   TEXT         NULL,
+    logo_url             TEXT         NULL,
+    missing_image_url    TEXT         NULL,
+    customer_id          UUID         NULL,
+    search_index_id      UUID         NULL,
+    created_date         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date        TIMESTAMP    NULL,
+    constraint PK_themes PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX UIX_themes_customer_latest ON themes (customer_id) WHERE is_latest AND customer_id IS NOT NULL;
-CREATE UNIQUE INDEX UIX_themes_index_latest ON themes (search_index_id) WHERE is_latest AND search_index_id IS NOT NULL;
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'search_insights_data'; END $$;
 -- =============================
 CREATE TABLE search_insights_data (
-    id                 UUID          NOT NULL DEFAULT gen_random_uuid(),
-    search_index_id    UUID          NOT NULL,
-    data_category      TEXT          NOT NULL,
-    data_point         TEXT          NOT NULL,
-    count              INT           NOT NULL,
-    date               DATE          NOT NULL,
-    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date      TIMESTAMP     NULL,
-    CONSTRAINT PK_search_insights_data PRIMARY KEY (id)
+    id               UUID           NOT NULL DEFAULT gen_random_UUID(),
+    search_index_id    UUID         NOT NULL,
+    data_category     TEXT          NOT NULL,
+    data_point        TEXT          NOT NULL,
+    count            INT            NOT NULL DEFAULT 0,
+    date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date     TIMESTAMP     NULL,
+    constraint PK_search_insights_data PRIMARY KEY (id)
 );
--- REQUIRED for ON CONFLICT in add_data_points
-CREATE UNIQUE INDEX UIX_search_insights_data_upsert
-ON search_insights_data (search_index_id, data_category, data_point, date);
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'search_index_request_log'; END $$;
 -- =============================
 CREATE TABLE search_index_request_log (
-    id                 UUID          NOT NULL DEFAULT gen_random_uuid(),
-    search_index_id    UUID          NOT NULL,
-    count              INT           NOT NULL,
-    date               DATE          NOT NULL,
-    created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date      TIMESTAMP     NULL,
-    CONSTRAINT PK_search_index_request_log PRIMARY KEY (id)
+    id               UUID         NOT NULL DEFAULT gen_random_UUID(),
+    search_index_id  UUID         NOT NULL,
+    count            INT          NOT NULL DEFAULT 0,
+    date             TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_date     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_date    TIMESTAMP    NULL,
+    constraint PK_search_index_request_log PRIMARY KEY (id)
 );
--- REQUIRED for ON CONFLICT in add_search_request
-CREATE UNIQUE INDEX UIX_search_index_request_log_upsert
-ON search_index_request_log (search_index_id, date);
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'Foreign Key Definitions'; END $$;
+DO $$ BEGIN RAISE NOTICE 'Drop Function Definitions'; END $$;
 -- =============================
-ALTER TABLE feed_credentials ADD CONSTRAINT FK_feed_credentials_search_index FOREIGN KEY (search_index_id) REFERENCES search_index (id);
-ALTER TABLE feed_current_documents ADD CONSTRAINT FK_feed_current_documents_search_index FOREIGN KEY (search_index_id) REFERENCES search_index (id);
-ALTER TABLE feeds ADD CONSTRAINT FK_feeds_search_index FOREIGN KEY (search_index_id) REFERENCES search_index (id);
-ALTER TABLE search_configuration ADD CONSTRAINT FK_search_configuration_search_index FOREIGN KEY (search_index_id) REFERENCES search_index (id);
-ALTER TABLE search_index ADD CONSTRAINT FK_search_index_customers FOREIGN KEY (customer_id) REFERENCES customers (id);
-ALTER TABLE search_index ADD CONSTRAINT FK_search_index_search_instances FOREIGN KEY (search_instance_id) REFERENCES search_instances (id);
-ALTER TABLE search_instance_keys ADD CONSTRAINT FK_search_instance_keys_search_instances FOREIGN KEY (search_instance_id) REFERENCES search_instances (id);
-ALTER TABLE synonyms ADD CONSTRAINT FK_synonyms_search_index FOREIGN KEY (search_index_id) REFERENCES search_index (id);
-ALTER TABLE themes ADD CONSTRAINT FK_themes_customers FOREIGN KEY (customer_id) REFERENCES customers (id);
-ALTER TABLE themes ADD CONSTRAINT FK_themes_search_index FOREIGN KEY (search_index_id) REFERENCES search_index (id);
-ALTER TABLE search_insights_data ADD CONSTRAINT FK_search_insights_data_search_index FOREIGN KEY (search_index_id) REFERENCES search_index (id);
-ALTER TABLE search_index_request_log ADD CONSTRAINT FK_search_index_request_log_search_index FOREIGN KEY (search_index_id) REFERENCES search_index (id);
+
+-- Clean list (duplicates removed, type names corrected where known)
+
+DROP FUNCTION IF EXISTS add_synonym(UUID, UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS get_customer_by_id(UUID);
+DROP FUNCTION IF EXISTS get_customer_full(UUID);
+DROP FUNCTION IF EXISTS get_latest_feed(UUID);
+DROP FUNCTION IF EXISTS get_search_index(UUID, UUID);
+DROP FUNCTION IF EXISTS get_search_index_by_friendly_name(UUID, TEXT);
+DROP FUNCTION IF EXISTS get_search_index_full(UUID, UUID);
+DROP FUNCTION IF EXISTS get_search_index_query_credentials_by_customer_endpoint(TEXT);
+DROP FUNCTION IF EXISTS get_search_insights_by_data_categories(UUID, TIMESTAMP, TIMESTAMP, TEXT);
+DROP FUNCTION IF EXISTS get_search_insights_search_count_by_date_range(UUID, TIMESTAMP, TIMESTAMP);
+DROP FUNCTION IF EXISTS get_synonym_by_id(UUID, UUID);
+DROP FUNCTION IF EXISTS get_synonym_by_key_word(UUID, TEXT);
+DROP FUNCTION IF EXISTS get_synonyms(UUID);
+DROP FUNCTION IF EXISTS get_theme_by_customer_id(UUID);
+DROP FUNCTION IF EXISTS get_theme_by_id(UUID);
+DROP FUNCTION IF EXISTS get_theme_by_search_index_id(UUID);
+DROP FUNCTION IF EXISTS supersede_latest_feed(UUID);
+DROP FUNCTION IF EXISTS supersede_synonym(UUID, UUID);
+DROP FUNCTION IF EXISTS update_synonym(UUID, UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS update_theme(UUID, TEXT, TEXT, TEXT, TEXT, TEXT);
+DROP FUNCTION IF EXISTS get_feed_credentials_username(UUID);
+DROP FUNCTION IF EXISTS get_feed_data_format(UUID, TEXT);
+DROP FUNCTION IF EXISTS get_search_index_credentials(UUID, TEXT);
+DROP FUNCTION IF EXISTS get_search_index_feed_processing_data(UUID, TEXT);
+DROP FUNCTION IF EXISTS merge_feed_documents(uuid, TEXT[]);
+DROP FUNCTION IF EXISTS add_data_points(uuid, search_insights_data_type[]);
+DROP FUNCTION IF EXISTS add_search_request(UUID, DATE); 
+DROP FUNCTION IF EXISTS add_feed_credentials(UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS delete_feed_credentials(UUID, TEXT);
+DROP FUNCTION IF EXISTS get_feed_credentials(UUID, TEXT);
+DROP FUNCTION IF EXISTS update_feed_credentials(UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS add_feed(UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS get_theme_by_customer_endpoint(TEXT);
+DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, UUID, TEXT, TEXT); 
+DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, TEXT, TEXT, UUID);
+DROP FUNCTION IF EXISTS get_latest_generic_synonyms_by_category(TEXT);
+
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'Function Definitions'; END $$;
 -- =============================
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '1. add_search_index'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION add_search_index(
-    p_customer_id UUID,
-    p_search_instance_id UUID,
-    p_index_name TEXT,
-    p_data_format TEXT,
-    p_created_by_user_id UUID
-)
-RETURNS UUID AS $$
-DECLARE
-    new_id UUID;
+CREATE OR REPLACE FUNCTION get_customer_by_id(customer_id UUID)
+RETURNS TABLE (id UUID, business_name text) AS $$
 BEGIN
-    INSERT INTO search_index (
-        customer_id,
-        search_instance_id,
-        index_name,
-        data_format,
-        created_by_user_id
-    )
-    VALUES (
-        p_customer_id,
-        p_search_instance_id,
-        p_index_name,
-        p_data_format,
-        p_created_by_user_id
-    )
-    RETURNING id INTO new_id;
-
-    RETURN new_id;
+    RETURN QUERY
+    SELECT c.id, c.business_name
+    FROM customers c
+    WHERE c.id = customer_id;
 END;
+
 $$ LANGUAGE plpgsql;
 
--- =============================
-DO $$ BEGIN RAISE NOTICE '2. add_synonym'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION add_synonym(
-    p_search_index_id UUID,
-    p_category TEXT,
-    p_key_word TEXT,
-    p_solr_format TEXT
-)
-RETURNS UUID AS $$
-DECLARE
-    new_id UUID;
-BEGIN
-    -- Supersede existing synonyms in this category/keyword group
-    PERFORM supersede_synonym(p_search_index_id, p_category, p_key_word);
 
-    INSERT INTO synonyms (
-        search_index_id,
-        category,
-        key_word,
-        solr_format,
-        is_latest
-    )
-    VALUES (
-        p_search_index_id,
-        p_category,
-        p_key_word,
-        p_solr_format,
-        TRUE
-    )
-    RETURNING id INTO new_id;
-
-    RETURN new_id;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '3. get_customer_by_id'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION get_customer_by_id(
-    p_id UUID
-)
+CREATE OR REPLACE FUNCTION get_customer_full(customer_id UUID)
 RETURNS TABLE (
     id UUID,
-    business_name TEXT,
-    customer_endpoint TEXT,
-    created_date TIMESTAMP,
-    modified_date TIMESTAMP
+    business_name text
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT
-        c.id,
-        c.business_name,
-        c.customer_endpoint,
-        c.created_date,
-        c.modified_date
+    SELECT c.id, c.business_name
     FROM customers c
-    WHERE c.id = p_id;
+    WHERE c.id = customer_id;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '4. get_latest_feed'; END $$;
+DO $$ BEGIN RAISE NOTICE '1. get_latest_feed'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_latest_feed(
     p_search_index_id UUID
@@ -385,266 +276,400 @@ CREATE OR REPLACE FUNCTION get_latest_feed(
 RETURNS TABLE (
     id UUID,
     search_index_id UUID,
-    is_latest BOOLEAN,
-    feed_type TEXT,
-    data_format TEXT,
-    feed_schedule TEXT,
-    feed_cron TEXT,
-    created_date TIMESTAMP,
-    modified_date TIMESTAMP
+    feed_type text,
+    feed_schedule_cron text,
+    created_date timestamp,
+    superseded_date timestamp,
+    is_latest boolean
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
         f.id,
         f.search_index_id,
-        f.is_latest,
         f.feed_type,
-        f.data_format,
-        f.feed_schedule,
-        f.feed_cron,
+        f.feed_schedule_cron,
         f.created_date,
-        f.modified_date
+        f.superseded_date,
+        f.is_latest
     FROM feeds f
     WHERE f.search_index_id = p_search_index_id
-      AND f.is_latest = TRUE;
+      AND f.is_latest = TRUE
+    LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '5. get_search_index'; END $$;
+DO $$ BEGIN RAISE NOTICE '2. get_search_index'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index(
-    p_customer_id UUID,
-    p_search_index_id UUID
-)
-RETURNS TABLE (
+    p_search_index_id UUID,
+    p_customer_id UUID
+) RETURNS TABLE (
     id UUID,
     customer_id UUID,
-    search_instance_id UUID,
-    index_name TEXT,
-    data_format TEXT,
-    created_by_user_id UUID,
-    created_date TIMESTAMP,
-    modified_date TIMESTAMP
+    index_name text,
+    friendly_name text,
+    root_endpoint text,
+    pricing_tier text,
+    created_date timestamp,
+    instance_id UUID,
+    service_name text,
+    location text,
+    instance_pricing_tier text,
+    replicas int,
+    partitions int,
+    is_shared boolean
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        si.id,
-        si.customer_id,
-        si.search_instance_id,
-        si.index_name,
-        si.data_format,
-        si.created_by_user_id,
-        si.created_date,
-        si.modified_date
-    FROM search_index si
-    WHERE si.customer_id = p_customer_id
-      AND si.id = p_search_index_id;
+        search.id,
+        search.customer_id,
+        search.index_name,
+        search.friendly_name,
+        service.root_endpoint,
+        service.pricing_tier,
+        search.created_date,
+        service.id,
+        service.service_name,
+        service.location,
+        service.pricing_tier,
+        service.replicas,
+        service.partitions,
+        service.is_shared
+    FROM search_index search
+    LEFT OUTER JOIN search_instances service ON service.id = search.search_instance_id
+    WHERE search.id = p_search_index_id
+      AND search.customer_id = p_customer_id;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '6. get_search_index_by_friendly_name'; END $$;
+DO $$ BEGIN RAISE NOTICE '3. get_search_index_by_friendly_name'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_by_friendly_name(
     p_customer_id UUID,
-    p_index_name TEXT
-)
-RETURNS TABLE (
+    p_friendly_name TEXT
+) RETURNS TABLE (
     id UUID,
-    customer_id UUID,
     search_instance_id UUID,
-    index_name TEXT,
-    data_format TEXT,
-    created_by_user_id UUID,
-    created_date TIMESTAMP,
-    modified_date TIMESTAMP
+    customer_id UUID,
+    friendly_name text,
+    index_name text
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
         si.id,
-        si.customer_id,
         si.search_instance_id,
-        si.index_name,
-        si.data_format,
-        si.created_by_user_id,
-        si.created_date,
-        si.modified_date
+        si.customer_id,
+        si.friendly_name,
+        si.index_name
     FROM search_index si
     WHERE si.customer_id = p_customer_id
-      AND si.index_name = p_index_name;
+      AND si.friendly_name = p_friendly_name;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '7. get_search_index_query_credentials_by_customer_endpoint'; END $$;
+DO $$ BEGIN RAISE NOTICE '4. get_search_index_full'; END $$;
 -- =============================
-CREATE OR REPLACE FUNCTION get_search_index_query_credentials_by_customer_endpoint(
-    p_customer_endpoint TEXT
-)
-RETURNS TABLE (
-    search_index_id UUID,
-    search_instance_id UUID,
-    search_instance_name TEXT,
-    root_endpoint TEXT,
-    api_key TEXT,
-    data_format TEXT
-) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        si.id,
-        i.id,
-        i.service_name,
-        i.root_endpoint,
-        ik.api_key,
-        si.data_format
-    FROM customers c
-    INNER JOIN search_index si ON si.customer_id = c.id
-    INNER JOIN search_instances i ON i.id = si.search_instance_id
-    INNER JOIN search_instance_keys ik ON ik.search_instance_id = i.id
-        AND ik.key_type = 'Query'
-        AND ik.name = 'Primary Query key'
-        AND ik.is_latest = TRUE
-    WHERE c.customer_endpoint = p_customer_endpoint;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '8. get_search_insights_by_data_categories'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION get_search_insights_by_data_categories(
+CREATE OR REPLACE FUNCTION get_search_index_full(
     p_search_index_id UUID,
-    p_start_date TIMESTAMP,
-    p_end_date TIMESTAMP,
-    p_data_category TEXT
-)
-RETURNS TABLE (
-    data_category TEXT,
-    data_point TEXT,
-    sum_count BIGINT
+    p_customer_id UUID
+) RETURNS TABLE (
+    id UUID,
+    customer_id UUID,
+    index_name text,
+    friendly_name text,
+    root_endpoint text,
+    pricing_tier text,
+    created_date timestamp,
+    instance_id UUID,
+    service_name text,
+    location text,
+    instance_pricing_tier text,
+    replicas int,
+    partitions int,
+    is_shared boolean
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        sid.data_category,
-        sid.data_point,
-        CAST(SUM(sid.count) AS BIGINT)
-    FROM search_insights_data sid
-    WHERE sid.search_index_id = p_search_index_id
-      AND sid.date >= p_start_date::DATE
-      AND sid.date <= p_end_date::DATE
-      AND sid.data_category = p_data_category
-    GROUP BY
-        sid.data_category,
-        sid.data_point
-    ORDER BY
-        sum_count DESC;
+        search.id,
+        search.customer_id,
+        search.index_name,
+        search.friendly_name,
+        service.root_endpoint,
+        service.pricing_tier,
+        search.created_date,
+        service.id,
+        service.service_name,
+        service.location,
+        service.pricing_tier,
+        service.replicas,
+        service.partitions,
+        service.is_shared
+    FROM search_index search
+    LEFT OUTER JOIN search_instances service ON service.id = search.search_instance_id
+    WHERE search.id = p_search_index_id
+      AND search.customer_id = p_customer_id;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '9. get_search_insights_search_count_by_date_range'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION get_search_insights_search_count_by_date_range(
-    p_search_index_id UUID,
-    p_start_date TIMESTAMP,
-    p_end_date TIMESTAMP
-)
-RETURNS TABLE (
-    log_date DATE,
-    sum_count BIGINT
-) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        sirl.date,
-        CAST(SUM(sirl.count) AS BIGINT)
-    FROM search_index_request_log sirl
-    WHERE sirl.search_index_id = p_search_index_id
-      AND sirl.date >= p_start_date::DATE
-      AND sirl.date <= p_end_date::DATE
-    GROUP BY
-        sirl.date
-    ORDER BY
-        sirl.date ASC;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '10. get_synonym_by_id'; END $$;
+DO $$ BEGIN RAISE NOTICE '5. GetSynonymById'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonym_by_id(
     p_search_index_id UUID,
-    p_id UUID
-)
-RETURNS TABLE (
+    p_synonym_id UUID
+) RETURNS TABLE (
     id UUID,
     search_index_id UUID,
-    category TEXT,
-    key_word TEXT,
-    solr_format TEXT,
-    is_latest BOOLEAN,
-    created_date TIMESTAMP,
-    modified_date TIMESTAMP
+    key text,
+    solr_format text,
+    created_date timestamp
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        s.id,
-        s.search_index_id,
-        s.category,
-        s.key_word,
-        s.solr_format,
-        s.is_latest,
-        s.created_date,
-        s.modified_date
-    FROM synonyms s
-    WHERE s.search_index_id = p_search_index_id
-      AND s.id = p_id;
+        id,
+        search_index_id,
+        key_word AS key,
+        solr_format,
+        created_date
+    FROM synonyms
+    WHERE search_index_id = p_search_index_id
+      AND id = p_synonym_id
+      AND is_latest = TRUE;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '11. get_synonym_by_key_word'; END $$;
+DO $$ BEGIN RAISE NOTICE '6. GetSynonymByKeyWord'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonym_by_key_word(
     p_search_index_id UUID,
     p_key_word TEXT
-)
-RETURNS TABLE (
+) RETURNS TABLE (
     id UUID,
     search_index_id UUID,
-    category TEXT,
-    key_word TEXT,
-    solr_format TEXT,
-    is_latest BOOLEAN,
-    created_date TIMESTAMP,
-    modified_date TIMESTAMP
+    key text,
+    solr_format text,
+    created_date timestamp
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        s.id,
-        s.search_index_id,
-        s.category,
-        s.key_word,
-        s.solr_format,
-        s.is_latest,
-        s.created_date,
-        s.modified_date
-    FROM synonyms s
-    WHERE s.search_index_id = p_search_index_id
-      AND s.key_word = p_key_word
-      AND s.is_latest = TRUE;
+        id,
+        search_index_id,
+        key_word AS key,
+        solr_format,
+        created_date
+    FROM synonyms
+    WHERE search_index_id = p_search_index_id
+      AND key_word = p_key_word
+      AND is_latest = TRUE;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '12. get_synonyms'; END $$;
+DO $$ BEGIN RAISE NOTICE '7. SupersedeLatestFeed'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION supersede_latest_feed(
+    p_search_index_id UUID
+) RETURNS int AS $$
+DECLARE
+    rows_updated int;
+BEGIN
+    UPDATE feeds
+    SET is_latest = FALSE,
+        superseded_date = CURRENT_TIMESTAMP
+    WHERE search_index_id = p_search_index_id
+      AND is_latest = TRUE;
+    GET DIAGNOSTICS rows_updated = ROW_COUNT;
+    RETURN rows_updated;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '8. SupersedeSynonym'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION supersede_synonym(
+    p_search_index_id UUID,
+    p_synonym_id UUID
+) RETURNS int AS $$
+DECLARE
+    rows_updated int;
+BEGIN
+    UPDATE synonyms
+    SET is_latest = FALSE,
+        superseded_date = CURRENT_TIMESTAMP
+    WHERE search_index_id = p_search_index_id
+      AND id = p_synonym_id
+      AND is_latest = TRUE;
+    GET DIAGNOSTICS rows_updated = ROW_COUNT;
+    RETURN rows_updated;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '9. UpdateSynonym'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION update_synonym(
+    p_search_index_id UUID,
+    p_synonym_id UUID,
+    p_key_word TEXT,
+    p_solr_format TEXT
+) RETURNS int AS $$
+DECLARE
+    rows_updated int;
+BEGIN
+    UPDATE synonyms
+    SET key_word = p_key_word,
+        solr_format = p_solr_format
+    WHERE search_index_id = p_search_index_id
+      AND id = p_synonym_id
+      AND is_latest = TRUE;
+    GET DIAGNOSTICS rows_updated = ROW_COUNT;
+    RETURN rows_updated;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '10. delete_feed_credentials'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION delete_feed_credentials(
+    p_search_index_id UUID,
+    p_username TEXT
+) RETURNS int AS $$
+DECLARE
+    rows_deleted int := 0;
+BEGIN
+    DELETE FROM feed_credentials
+    WHERE search_index_id = p_search_index_id
+      AND username = p_username;
+    GET DIAGNOSTICS rows_deleted = ROW_COUNT;
+    RETURN rows_deleted;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '14. add_search_index'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION add_search_index(
+    p_search_index_id UUID,
+    p_customer_id UUID,
+    p_index_name TEXT,
+    p_friendly_name TEXT,
+    p_search_instance_id UUID DEFAULT NULL
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO search_index (
+        id,
+        search_instance_id,
+        customer_id,
+        index_name,
+        friendly_name,
+        created_date
+    )
+    VALUES (
+        p_search_index_id,
+        p_search_instance_id,
+        p_customer_id,
+        p_index_name,
+        p_friendly_name,
+        CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '15. dd_synonym'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION add_synonym(
+    p_synonym_id UUID,
+    p_search_index_id UUID,
+    p_key_word TEXT,
+    p_solr_format TEXT
+)
+RETURNS UUID AS $$
+BEGIN
+    INSERT INTO synonyms (
+        id,
+        search_index_id,
+        key_word,
+        solr_format
+    )
+    VALUES (
+        p_synonym_id,
+        p_search_index_id,
+        p_key_word,
+        p_solr_format
+    );
+
+    RETURN p_synonym_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '16. get_search_insights_by_data_categories'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION get_search_insights_by_data_categories(
+    p_search_index_id UUID,
+    p_date_from TIMESTAMP,
+    p_date_to TIMESTAMP,
+    p_data_categories TEXT
+)
+RETURNS TABLE (
+    data_category TEXT,
+    data_point TEXT,
+    date DATE,
+    count INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        d.data_category,
+        d.data_point,
+        d.date,
+        d.count
+    FROM search_insights_data d
+    JOIN unnest(string_to_array(p_data_categories, ',')) AS category(value)
+        ON category.value = d.data_category
+    WHERE d.search_index_id = p_search_index_id
+      AND d.date >= p_date_from
+      AND d.date <= p_date_to;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '17. get_search_insights_search_count_by_date_range'; END $$;
+-- =============================
+CREATE OR REPLACE FUNCTION get_search_insights_search_count_by_date_range(
+    p_search_index_id UUID,
+    p_date_from TIMESTAMP,
+    p_date_to TIMESTAMP
+)
+RETURNS TABLE (
+    date DATE,
+    count INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        d.date,
+        d.count
+    FROM search_index_request_log d
+    WHERE d.search_index_id = p_search_index_id
+      AND d.date BETWEEN p_date_from AND p_date_to;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '18. get_synonyms'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonyms(
     p_search_index_id UUID
@@ -652,24 +677,18 @@ CREATE OR REPLACE FUNCTION get_synonyms(
 RETURNS TABLE (
     id UUID,
     search_index_id UUID,
-    category TEXT,
-    key_word TEXT,
+    key TEXT,
     solr_format TEXT,
-    is_latest BOOLEAN,
-    created_date TIMESTAMP,
-    modified_date TIMESTAMP
+    created_date TIMESTAMP
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
         s.id,
         s.search_index_id,
-        s.category,
-        s.key_word,
+        s.key_word AS key,
         s.solr_format,
-        s.is_latest,
-        s.created_date,
-        s.modified_date
+        s.created_date
     FROM synonyms s
     WHERE s.search_index_id = p_search_index_id
       AND s.is_latest = TRUE;
@@ -677,17 +696,20 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '13. get_theme_by_customer_id'; END $$;
+DO $$ BEGIN RAISE NOTICE '19. get_theme_by_customer_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_customer_id(
     p_customer_id UUID
 )
 RETURNS TABLE (
     id UUID,
+    primary_hex_colour TEXT,
+    secondary_hex_colour TEXT,
+    nav_bar_hex_colour TEXT,
+    logo_url TEXT,
+    missing_image_url TEXT,
     customer_id UUID,
     search_index_id UUID,
-    css_json TEXT,
-    is_latest BOOLEAN,
     created_date TIMESTAMP,
     modified_date TIMESTAMP
 ) AS $$
@@ -695,30 +717,35 @@ BEGIN
     RETURN QUERY
     SELECT
         t.id,
+        t.primary_hex_colour,
+        t.secondary_hex_colour,
+        t.nav_bar_hex_colour,
+        t.logo_url,
+        t.missing_image_url,
         t.customer_id,
         t.search_index_id,
-        t.css_json,
-        t.is_latest,
         t.created_date,
         t.modified_date
     FROM themes t
-    WHERE t.customer_id = p_customer_id
-      AND t.is_latest = TRUE;
+    WHERE t.customer_id = p_customer_id;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '14. get_theme_by_id'; END $$;
+DO $$ BEGIN RAISE NOTICE '20. get_theme_by_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_id(
-    p_id UUID
+    p_theme_id UUID
 )
 RETURNS TABLE (
     id UUID,
+    primary_hex_colour TEXT,
+    secondary_hex_colour TEXT,
+    nav_bar_hex_colour TEXT,
+    logo_url TEXT,
+    missing_image_url TEXT,
     customer_id UUID,
     search_index_id UUID,
-    css_json TEXT,
-    is_latest BOOLEAN,
     created_date TIMESTAMP,
     modified_date TIMESTAMP
 ) AS $$
@@ -726,29 +753,35 @@ BEGIN
     RETURN QUERY
     SELECT
         t.id,
+        t.primary_hex_colour,
+        t.secondary_hex_colour,
+        t.nav_bar_hex_colour,
+        t.logo_url,
+        t.missing_image_url,
         t.customer_id,
         t.search_index_id,
-        t.css_json,
-        t.is_latest,
         t.created_date,
         t.modified_date
     FROM themes t
-    WHERE t.id = p_id;
+    WHERE t.id = p_theme_id;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '15. get_theme_by_search_index_id'; END $$;
+DO $$ BEGIN RAISE NOTICE '21. get_theme_by_search_index_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_search_index_id(
     p_search_index_id UUID
 )
 RETURNS TABLE (
     id UUID,
+    primary_hex_colour TEXT,
+    secondary_hex_colour TEXT,
+    nav_bar_hex_colour TEXT,
+    logo_url TEXT,
+    missing_image_url TEXT,
     customer_id UUID,
     search_index_id UUID,
-    css_json TEXT,
-    is_latest BOOLEAN,
     created_date TIMESTAMP,
     modified_date TIMESTAMP
 ) AS $$
@@ -756,185 +789,141 @@ BEGIN
     RETURN QUERY
     SELECT
         t.id,
+        t.primary_hex_colour,
+        t.secondary_hex_colour,
+        t.nav_bar_hex_colour,
+        t.logo_url,
+        t.missing_image_url,
         t.customer_id,
         t.search_index_id,
-        t.css_json,
-        t.is_latest,
         t.created_date,
         t.modified_date
     FROM themes t
-    WHERE t.search_index_id = p_search_index_id
-      AND t.is_latest = TRUE;
+    WHERE t.search_index_id = p_search_index_id;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '16. supersede_latest_feed'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION supersede_latest_feed(
-    p_search_index_id UUID
-)
-RETURNS VOID AS $$
-BEGIN
-    UPDATE feeds
-    SET is_latest = FALSE,
-        modified_date = CURRENT_TIMESTAMP
-    WHERE search_index_id = p_search_index_id
-      AND is_latest = TRUE;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '17. supersede_synonym'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION supersede_synonym(
-    p_search_index_id UUID,
-    p_category TEXT,
-    p_key_word TEXT
-)
-RETURNS VOID AS $$
-BEGIN
-    UPDATE synonyms
-    SET is_latest = FALSE,
-        modified_date = CURRENT_TIMESTAMP
-    WHERE search_index_id = p_search_index_id
-      AND category = p_category
-      AND key_word = p_key_word
-      AND is_latest = TRUE;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '18. update_synonym'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION update_synonym(
-    p_id UUID,
-    p_search_index_id UUID,
-    p_key_word TEXT,
-    p_solr_format TEXT
-)
-RETURNS INT AS $$
-DECLARE
-    rows_updated INT := 0;
-BEGIN
-    UPDATE synonyms
-    SET key_word = p_key_word,
-        solr_format = p_solr_format,
-        modified_date = CURRENT_TIMESTAMP
-    WHERE id = p_id
-      AND search_index_id = p_search_index_id
-      AND is_latest = TRUE;
-
-    GET DIAGNOSTICS rows_updated = ROW_COUNT;
-    RETURN rows_updated;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '19. update_theme'; END $$;
+DO $$ BEGIN RAISE NOTICE '22. update_theme'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION update_theme(
-    p_id UUID,
-    p_customer_id UUID,
-    p_search_index_id UUID,
-    p_css_json TEXT,
-    p_created_by_user_id UUID,
-    p_is_latest BOOLEAN
+    p_theme_id UUID,
+    p_primary_hex_colour TEXT,
+    p_secondary_hex_colour TEXT,
+    p_nav_bar_hex_colour TEXT,
+    p_logo_url TEXT,
+    p_missing_image_url TEXT
 )
-RETURNS INT AS $$
-DECLARE
-    rows_updated INT := 0;
+RETURNS VOID AS $$
 BEGIN
-    -- If setting to latest, supersede existing latest themes for this customer/index
-    IF p_is_latest = TRUE THEN
-        IF p_customer_id IS NOT NULL THEN
-            UPDATE themes
-            SET is_latest = FALSE, modified_date = CURRENT_TIMESTAMP
-            WHERE customer_id = p_customer_id AND is_latest = TRUE;
-        ELSIF p_search_index_id IS NOT NULL THEN
-            UPDATE themes
-            SET is_latest = FALSE, modified_date = CURRENT_TIMESTAMP
-            WHERE search_index_id = p_search_index_id AND is_latest = TRUE;
-        END IF;
-    END IF;
-
     UPDATE themes
-    SET css_json = p_css_json,
-        is_latest = p_is_latest,
-        modified_date = CURRENT_TIMESTAMP
-    WHERE id = p_id;
-
-    GET DIAGNOSTICS rows_updated = ROW_COUNT;
-    RETURN rows_updated;
+    SET
+        primary_hex_colour = p_primary_hex_colour,
+        secondary_hex_colour = p_secondary_hex_colour,
+        nav_bar_hex_colour = p_nav_bar_hex_colour,
+        logo_url = p_logo_url,
+        missing_image_url = p_missing_image_url,
+        modified_date = CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
+    WHERE id = p_theme_id;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '20. get_current_feed_documents'; END $$;
+DO $$ BEGIN RAISE NOTICE '23. get_theme_by_customer_endpoint'; END $$;
 -- =============================
-CREATE OR REPLACE FUNCTION get_current_feed_documents(
-    p_search_index_id UUID,
-    p_offset INT,
-    p_limit INT
+CREATE OR REPLACE FUNCTION get_theme_by_customer_endpoint(
+    p_customer_endpoint TEXT
 )
 RETURNS TABLE (
-    id TEXT,
-    search_index_id UUID,
-    created_date TIMESTAMP
+    id UUID,
+    primary_hex_colour TEXT,
+    secondary_hex_colour TEXT,
+    nav_bar_hex_colour TEXT,
+    logo_url TEXT,
+    missing_image_url TEXT
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        fcd.id,
-        fcd.search_index_id,
-        fcd.created_date
-    FROM feed_current_documents fcd
-    WHERE fcd.search_index_id = p_search_index_id
-    ORDER BY fcd.created_date DESC
-    OFFSET p_offset
-    LIMIT p_limit;
+        t.id,
+        t.primary_hex_colour,
+        t.secondary_hex_colour,
+        t.nav_bar_hex_colour,
+        t.logo_url,
+        t.missing_image_url
+    FROM themes t
+    INNER JOIN customers c ON t.customer_id = c.id
+    WHERE c.customer_endpoint = p_customer_endpoint;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '21. get_current_feed_documents_total'; END $$;
+DO $$ BEGIN RAISE NOTICE '24. get_search_index_query_credentials_by_customer_endpoint'; END $$;
 -- =============================
-CREATE OR REPLACE FUNCTION get_current_feed_documents_total(
-    p_search_index_id UUID
+CREATE OR REPLACE FUNCTION get_search_index_query_credentials_by_customer_endpoint(
+    p_customer_endpoint TEXT
 )
-RETURNS BIGINT AS $$
-DECLARE
-    total_count BIGINT;
+RETURNS TABLE (
+    id UUID,
+    search_index_name TEXT,
+    search_instance_name TEXT,
+    search_instance_endpoint TEXT,
+    api_key TEXT
+) AS $$
 BEGIN
-    SELECT COUNT(*) INTO total_count
-    FROM feed_current_documents
-    WHERE search_index_id = p_search_index_id;
-
-    RETURN total_count;
+    RETURN QUERY
+    SELECT
+        si.id,
+        LOWER(si.index_name) AS search_index_name,
+        i.service_name AS search_instance_name,
+        i.root_endpoint AS search_instance_endpoint,
+        ik.api_key
+    FROM search_index si
+    INNER JOIN search_instances i ON i.id = si.search_instance_id
+    INNER JOIN customers c ON si.customer_id = c.id
+    INNER JOIN search_instance_keys ik ON ik.search_instance_id = i.id
+        AND ik.key_type = 'Query'
+        AND ik.name = 'Query key'
+        AND ik.is_latest = TRUE
+    WHERE c.customer_endpoint = p_customer_endpoint;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '22. get_feed_credentials_username'; END $$;
+DO $$ BEGIN RAISE NOTICE '25. get_feed_credentials_username'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_feed_credentials_username(
     p_search_index_id UUID
 )
-RETURNS TEXT AS $$
-DECLARE
-    username_val TEXT;
+RETURNS TABLE (
+    search_index_id UUID,
+    username TEXT,
+    created_date TIMESTAMP,
+    modified_date TIMESTAMP
+) AS $$
 BEGIN
-    SELECT username INTO username_val
-    FROM feed_credentials
-    WHERE search_index_id = p_search_index_id
+    RETURN QUERY
+    SELECT
+        fc.search_index_id,
+        fc.username,
+        fc.created_date,
+        fc.modified_date
+    FROM feed_credentials fc
+    WHERE fc.search_index_id = p_search_index_id
+    ORDER BY fc.created_date
     LIMIT 1;
-
-    RETURN username_val;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '23. get_feed_data_format'; END $$;
+DO $$ BEGIN RAISE NOTICE '*********'; END $$;
+DO $$ BEGIN RAISE NOTICE 'Functions'; END $$;
+DO $$ BEGIN RAISE NOTICE '*********'; END $$;
+-- =============================
+
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '27. get_feed_data_format'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_feed_data_format(
     p_customer_id UUID,
@@ -947,7 +936,7 @@ BEGIN
     SELECT f.data_format
     INTO data_format
     FROM search_index si
-    INNER JOIN feeds f ON f.search_index_id = si.id AND f.is_latest = TRUE
+    INNER JOIN feeds f ON f.search_index_id = si.id AND f.is_latest = true
     WHERE si.customer_id = p_customer_id
       AND si.index_name = p_search_index_name
     LIMIT 1;
@@ -957,7 +946,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '24. get_latest_generic_synonyms_by_category'; END $$;
+DO $$ BEGIN RAISE NOTICE '28. get_latest_generic_synonyms_by_category'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_latest_generic_synonyms_by_category(
     p_category TEXT
@@ -971,19 +960,18 @@ RETURNS TABLE (
 BEGIN
     RETURN QUERY
     SELECT
-        s.id,
-        s.category,
-        s.solr_format,
-        s.created_date
-    FROM synonyms s
-    WHERE s.category = p_category
-      AND s.is_latest = TRUE
-      AND s.search_index_id IS NULL; -- Ensures it is 'generic' (not linked to a specific index)
+        id,
+        category,
+        solr_format,
+        created_date
+    FROM synonyms
+    WHERE category = p_category
+      AND is_latest = true;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '25. get_search_index_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '29. get_search_index_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_credentials(
     p_customer_id UUID,
@@ -1001,24 +989,26 @@ BEGIN
     RETURN QUERY
     SELECT
         si.id,
-        LOWER(si.index_name),
+        LOWER(si.index_name), -- FIXED: Column name to snake_case
         i.id,
         i.service_name,
         i.root_endpoint,
         ik.api_key
     FROM search_index si
-    INNER JOIN search_instances i ON i.id = si.search_instance_id -- CORRECTED JOIN
-    INNER JOIN search_instance_keys ik ON ik.search_instance_id = i.id -- CORRECTED JOIN
+    -- FIXED: Join search_index to search_instances using the FK search_instance_id
+    INNER JOIN search_instances i ON i.id = si.search_instance_id
+    -- FIXED: Join search_instances to search_instance_keys using the FK search_instance_id
+    INNER JOIN search_instance_keys ik ON ik.search_instance_id = i.id
         AND ik.key_type = 'Admin'
         AND ik.name = 'Primary Admin key'
-        AND ik.is_latest = TRUE
+        AND ik.is_latest = true
     WHERE si.customer_id = p_customer_id
-      AND si.index_name = p_search_index_name;
+      AND si.index_name = p_search_index_name; -- FIXED: Column name to snake_case
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '26. get_search_index_feed_processing_data'; END $$;
+DO $$ BEGIN RAISE NOTICE '30. get_search_index_feed_processing_data'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_feed_processing_data(
     p_customer_id UUID,
@@ -1038,7 +1028,7 @@ BEGIN
     RETURN QUERY
     SELECT
         si.id,
-        LOWER(si.index_name),
+        LOWER(si.index_name), -- FIXED: Column name to snake_case
         i.id,
         i.service_name,
         i.root_endpoint,
@@ -1046,25 +1036,27 @@ BEGIN
         f.data_format,
         c.customer_endpoint
     FROM search_index si
-    INNER JOIN search_instances i ON i.id = si.search_instance_id -- CORRECTED JOIN
-    INNER JOIN search_instance_keys ik ON ik.search_instance_id = i.id -- CORRECTED JOIN
+    -- FIXED: Join search_index to search_instances using the FK search_instance_id
+    INNER JOIN search_instances i ON i.id = si.search_instance_id
+    -- FIXED: Join search_instances to search_instance_keys using the FK search_instance_id
+    INNER JOIN search_instance_keys ik ON ik.search_instance_id = i.id
         AND ik.key_type = 'Admin'
         AND ik.name = 'Primary Admin key'
-        AND ik.is_latest = TRUE
+        AND ik.is_latest = true
     LEFT JOIN feeds f ON f.search_index_id = si.id
     LEFT JOIN customers c ON si.customer_id = c.id
     WHERE si.customer_id = p_customer_id
-      AND si.index_name = p_search_index_name
+      AND si.index_name = p_search_index_name -- FIXED: Column name to snake_case
     LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '27. merge_feed_documents'; END $$;
+DO $$ BEGIN RAISE NOTICE '31. merge_feed_documents'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION merge_feed_documents(
     p_search_index_id UUID,
-    p_new_feed_documents TEXT[] -- CRITICAL FIX: Changed from UUID[] to TEXT[]
+    p_new_feed_documents UUID[]
 )
 RETURNS VOID AS $$
 DECLARE
@@ -1073,13 +1065,13 @@ BEGIN
     -- Update existing documents
     UPDATE feed_current_documents AS target
     SET created_date = utc_now
-    WHERE target.search_index_id = p_search_index_id
-      AND target.id = ANY(p_new_feed_documents);
+    WHERE target.search_index_id = search_index_id
+      AND target.id = ANY(new_feed_documents);
 
     -- Insert new documents
     INSERT INTO feed_current_documents (id, search_index_id, created_date)
-    SELECT doc_id, p_search_index_id, utc_now
-    FROM UNNEST(p_new_feed_documents) AS doc_id
+    SELECT doc_id, search_index_id, utc_now
+    FROM UNNEST(new_feed_documents) AS doc_id
     WHERE doc_id NOT IN (
         SELECT id
         FROM feed_current_documents
@@ -1089,25 +1081,30 @@ BEGIN
     -- Delete documents not in the new list
     DELETE FROM feed_current_documents
     WHERE search_index_id = p_search_index_id
-      AND id NOT IN (SELECT * FROM UNNEST(p_new_feed_documents));
+      AND id NOT IN (SELECT * FROM UNNEST(new_feed_documents));
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '28. add_data_points'; END $$;
+DO $$ BEGIN RAISE NOTICE '32. add_data_points'; END $$;
 -- =============================
+CREATE TYPE search_insights_data_type AS (
+    data_category TEXT,
+    data_point TEXT,
+    date DATE
+);
+
 CREATE OR REPLACE FUNCTION add_data_points(
-    p_search_index_id UUID,
-    p_search_insights_data search_insights_data_type[]
+    search_index_id UUID,
+    search_insights_data search_insights_data_type[]
 )
 RETURNS VOID AS $$
 DECLARE
-    utc_now TIMESTAMP := NOW();
-    record_item search_insights_data_type;
+    -- Removed 'utc_now TIMESTAMP := NOW();' to use NOW() directly where possible, 
+    -- and removed 'record_item search_insights_data_type;' to declare it in the loop.
 BEGIN
-    -- Use a loop for the composite type array
-    FOR record_item IN
-        SELECT * FROM UNNEST(p_search_insights_data)
+    -- Declaring the loop variable here simplifies the DECLARE block above.
+    FOR record_item IN SELECT * FROM UNNEST(search_insights_data)
     LOOP
         INSERT INTO search_insights_data (
             search_index_id,
@@ -1118,53 +1115,53 @@ BEGIN
             modified_date
         )
         VALUES (
-            p_search_index_id,
+            search_index_id,
             record_item.data_category,
             record_item.data_point,
             1,
             record_item.date,
-            utc_now
+            NOW() -- Using NOW() directly
         )
-        ON CONFLICT (search_index_id, data_category, data_point, date) -- Uses unique index
+        ON CONFLICT (search_index_id, data_category, data_point, date)
         DO UPDATE SET
             count = search_insights_data.count + 1,
-            modified_date = utc_now;
+            modified_date = NOW(); -- Using NOW() directly
     END LOOP;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '29. add_search_request'; END $$;
+DO $$ BEGIN RAISE NOTICE '33. add_search_request'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_search_request(
     p_search_index_id UUID,
-    p_date DATE
+    p_date DATE -- We use DATE since the index is grouped by day
 )
 RETURNS VOID AS $$
-DECLARE
-    utc_now TIMESTAMP := NOW();
 BEGIN
     INSERT INTO search_index_request_log (
         search_index_id,
-        count,
         date,
+        count,
+        created_date,
         modified_date
     )
     VALUES (
         p_search_index_id,
-        1,
         p_date,
-        utc_now
+        1, -- Initial count of 1
+        NOW(),
+        NOW()
     )
-    ON CONFLICT (search_index_id, date) -- Uses unique index
+    ON CONFLICT (search_index_id, date) -- Conflict based on the UNIQUE INDEX
     DO UPDATE SET
         count = search_index_request_log.count + 1,
-        modified_date = utc_now;
+        modified_date = NOW();
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '30. add_feed_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '34. add_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_feed_credentials(
     p_search_index_id UUID,
@@ -1174,81 +1171,70 @@ CREATE OR REPLACE FUNCTION add_feed_credentials(
 RETURNS VOID AS $$
 BEGIN
     INSERT INTO feed_credentials (
+        id,
         search_index_id,
         username,
         password_hash,
         created_date
     )
     VALUES (
+        gen_random_UUID(),
         p_search_index_id,
         p_username,
         p_password_hash,
         NOW()
-    )
-    ON CONFLICT (search_index_id, username) DO NOTHING; -- Assuming you want to prevent duplicates or use a separate update func
+    );
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '31. delete_feed_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '35. delete_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION delete_feed_credentials(
     p_search_index_id UUID,
     p_username TEXT
 )
-RETURNS INT AS $$
-DECLARE
-    rows_deleted INT := 0;
+RETURNS VOID AS $$
 BEGIN
     DELETE FROM feed_credentials
     WHERE search_index_id = p_search_index_id
       AND username = p_username;
-
-    GET DIAGNOSTICS rows_deleted = ROW_COUNT;
-    RETURN rows_deleted;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '32. get_feed_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '36. get_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_feed_credentials(
     p_search_index_id UUID,
     p_username TEXT
-)
-RETURNS TABLE (
-    id UUID,
+) RETURNS TABLE (
     search_index_id UUID,
     username TEXT,
-    password_hash TEXT,
-    created_date TIMESTAMP,
-    modified_date TIMESTAMP
+    created_date TIMESTAMP
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT
-        fc.id,
-        fc.search_index_id,
-        fc.username,
-        fc.password_hash,
-        fc.created_date,
-        fc.modified_date
-    FROM feed_credentials fc
-    WHERE fc.search_index_id = p_search_index_id
-      AND fc.username = p_username;
+        search_index_id,
+        username,
+        created_date
+    FROM feed_credentials
+    WHERE search_index_id = p_search_index_id
+      AND username = p_username;
 END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '33. update_feed_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '37. update_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION update_feed_credentials(
     p_search_index_id UUID,
     p_username TEXT,
     p_password_hash TEXT
-) RETURNS INT AS $$
+) RETURNS int AS $$
 DECLARE
-    rows_updated INT := 0;
+    rows_updated int := 0;
 BEGIN
     UPDATE feed_credentials
     SET password_hash = p_password_hash,
@@ -1261,15 +1247,15 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '34. add_feed'; END $$;
+DO $$ BEGIN RAISE NOTICE '38. add_feed'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_feed(
     p_search_index_id UUID,
     p_feed_type TEXT,
     p_feed_cron TEXT
-) RETURNS INT AS $$
+) RETURNS int AS $$
 DECLARE
-    rows_inserted INT := 0;
+    rows_inserted int := 0;
 BEGIN
     -- Supersede previous latest feed
     PERFORM supersede_latest_feed(p_search_index_id);
@@ -1278,52 +1264,18 @@ BEGIN
     INSERT INTO feeds (
         search_index_id,
         feed_type,
-        feed_schedule,
-        feed_cron,
+        feed_schedule_cron,
+        created_date,
         is_latest
     )
     VALUES (
         p_search_index_id,
         p_feed_type,
-        NULL, -- You might want to update this to pass a schedule if needed
         p_feed_cron,
+        CURRENT_TIMESTAMP,
         TRUE
     );
-
     GET DIAGNOSTICS rows_inserted = ROW_COUNT;
     RETURN rows_inserted;
-END;
-$$ LANGUAGE plpgsql;
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '35. get_theme_by_customer_endpoint'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION get_theme_by_customer_endpoint(
-    p_customer_endpoint TEXT
-)
-RETURNS TABLE (
-    id UUID,
-    customer_id UUID,
-    search_index_id UUID,
-    css_json TEXT,
-    is_latest BOOLEAN,
-    created_date TIMESTAMP,
-    modified_date TIMESTAMP
-) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        t.id,
-        t.customer_id,
-        t.search_index_id,
-        t.css_json,
-        t.is_latest,
-        t.created_date,
-        t.modified_date
-    FROM themes t
-    INNER JOIN customers c ON t.customer_id = c.id
-    WHERE c.customer_endpoint = p_customer_endpoint
-      AND t.is_latest = TRUE
-    LIMIT 1; -- Should only be one latest theme per customer
 END;
 $$ LANGUAGE plpgsql;
