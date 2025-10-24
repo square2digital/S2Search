@@ -1060,38 +1060,39 @@ CREATE TYPE search_insights_data_type AS (
 DO $$ BEGIN RAISE NOTICE '30. add_data_points'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_data_points(
-  p_search_index_id uuid,
-  p_json jsonb
+    p_search_index_id UUID,
+    p_search_insights_data JSONB
 )
-RETURNS void AS
-$$
+RETURNS VOID AS $$
+DECLARE
+    v_utc_now TIMESTAMP := NOW() AT TIME ZONE 'UTC';
+    data_point search_insights_data_type;
 BEGIN
-  INSERT INTO search_insights_data (
-    search_index_id,
-    data_category,
-    data_point,
-    count,
-    date,
-    modified_date
-  )
-  SELECT
-    p_search_index_id,
-    rec.data_category,
-    rec.data_point,
-    1,
-    rec.date::date,
-    now()
-  FROM jsonb_to_recordset(p_json) AS rec(
-    data_category text,
-    data_point text,
-    date text
-  )
-  ON CONFLICT (search_index_id, data_category, data_point, date)
-  DO UPDATE
-    SET count = search_insights_data.count + 1,
-        modified_date = NOW();
+    FOR data_point IN
+        SELECT * FROM jsonb_to_recordset(p_search_insights_data)
+        AS x(search_insights_data_type)
+    LOOP
+        -- Attempt to update existing record
+        UPDATE search_insights_data
+        SET count = count + 1,
+            modified_date = v_utc_now
+        WHERE search_index_id = p_search_index_id
+          AND data_category = data_point.data_category
+          AND data_point = data_point.data_point
+          AND date = data_point.date;
+
+        -- If no match, insert new record
+        IF NOT FOUND THEN
+            INSERT INTO search_insights_data (
+                search_index_id, data_category, data_point, count, date, created_date, modified_date
+            ) VALUES (
+                p_search_index_id, data_point.data_category, data_point.data_point, 1, data_point.date, v_utc_now, v_utc_now
+            );
+        END IF;
+    END LOOP;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE '31. add_search_request'; END $$;

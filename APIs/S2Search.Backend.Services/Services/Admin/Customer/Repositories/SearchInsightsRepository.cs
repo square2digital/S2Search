@@ -7,6 +7,7 @@ using S2Search.Backend.Domain.Customer.Models;
 using S2Search.Backend.Domain.Interfaces.Providers;
 using S2Search.Backend.Services.AzureFunctions.FeedServices.Mappers.TinyCsvParser;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
+using System.Text.Json;
 
 namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 {
@@ -63,11 +64,12 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             try
             {
-                var dataTableParameter = ObjectToDataTableMapper.CreateDataTable(dataPoints);
+                var jsonData = JsonSerializer.Serialize(dataPoints);
+
                 var parameters = new Dictionary<string, object>()
                 {
                     { "search_index_id", searchIndexId },
-                    { "search_insights_data", dataTableParameter }
+                    { "search_insights_data", jsonData }
                 };
 
                 var result = await _dbContext.ExecuteAsync(_connectionstring,
