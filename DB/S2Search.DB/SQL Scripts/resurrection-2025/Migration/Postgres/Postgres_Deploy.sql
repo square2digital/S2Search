@@ -9,22 +9,28 @@ the code is regenerated.
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'Drop Table Definitions Start...'; END $$;
 -- =============================
-DROP TABLE IF EXISTS customers;
-DROP TABLE IF EXISTS feed_credentials;
-DROP TABLE IF EXISTS feed_current_documents;
-DROP TABLE IF EXISTS feeds;
-DROP TABLE IF EXISTS search_configuration;
-DROP TABLE IF EXISTS search_index;
-DROP TABLE IF EXISTS search_instance_keys;
-DROP TABLE IF EXISTS search_instances;
-DROP TABLE IF EXISTS synonyms;
-DROP TABLE IF EXISTS themes;
+DROP TABLE IF EXISTS customers CASCADE;
+DROP TABLE IF EXISTS feed_credentials CASCADE;
+DROP TABLE IF EXISTS feed_current_documents CASCADE;
+DROP TABLE IF EXISTS feeds CASCADE;
+DROP TABLE IF EXISTS search_configuration CASCADE;
+DROP TABLE IF EXISTS search_index CASCADE;
+DROP TABLE IF EXISTS search_instance_keys CASCADE;
+DROP TABLE IF EXISTS search_instances CASCADE;
+DROP TABLE IF EXISTS synonyms CASCADE;
+DROP TABLE IF EXISTS themes CASCADE;
 
-DROP TABLE IF EXISTS search_insights_data;
-DROP TABLE IF EXISTS search_index_request_log;
+DROP TABLE IF EXISTS search_insights_data CASCADE;
+DROP TABLE IF EXISTS search_index_request_log CASCADE;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'Table Definitions'; END $$;
+DO $$ BEGIN RAISE NOTICE '============================='; END $$;
+DO $$ BEGIN RAISE NOTICE 'Create Tables'; END $$;
+DO $$ BEGIN RAISE NOTICE '============================='; END $$;
+-- =============================
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '1. customers'; END $$;
 -- =============================
 CREATE TABLE customers (
     id                  UUID           NOT NULL,
@@ -32,11 +38,11 @@ CREATE TABLE customers (
     customer_endpoint   TEXT           NULL,
     created_date        TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date       TIMESTAMP      NULL,
-    constraint PK_customers PRIMARY KEY (id)
+    CONSTRAINT PK_customers PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'feed_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '2. feed_credentials'; END $$;
 -- =============================
 CREATE TABLE feed_credentials (
     id                 UUID          NOT NULL,
@@ -44,21 +50,22 @@ CREATE TABLE feed_credentials (
     username           TEXT          NOT NULL,
     password_hash      TEXT          NOT NULL,
     created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date      TIMESTAMP     NULL
+    modified_date      TIMESTAMP     NULL,
+    CONSTRAINT PK_feed_credentials PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'feed_current_documents'; END $$;
+DO $$ BEGIN RAISE NOTICE '3. feed_current_documents'; END $$;
 -- =============================
 CREATE TABLE feed_current_documents (
     id                 TEXT           NOT NULL,
     search_index_id    UUID           NOT NULL,
     created_date       TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    constraint PK_feed_current_documents PRIMARY KEY (id)
+    CONSTRAINT PK_feed_current_documents PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'feeds'; END $$;
+DO $$ BEGIN RAISE NOTICE '4. feeds'; END $$;
 -- =============================
 CREATE TABLE feeds (
     id                 UUID          NOT NULL,
@@ -69,11 +76,11 @@ CREATE TABLE feeds (
     created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     superseded_date    TIMESTAMP     NULL,
     is_latest          BOOLEAN       NOT NULL DEFAULT TRUE,
-    constraint PK_feeds PRIMARY KEY (id)
+    CONSTRAINT PK_feeds PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'search_configuration'; END $$;
+DO $$ BEGIN RAISE NOTICE '5. search_configuration'; END $$;
 -- =============================
 CREATE TABLE search_configuration (
     id               UUID           NOT NULL,
@@ -86,11 +93,11 @@ CREATE TABLE search_configuration (
     order_index      INT            NULL,
     created_date     TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date    TIMESTAMP      NULL,
-    constraint PK_search_configuration PRIMARY KEY (id)
+    CONSTRAINT PK_search_configuration PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'search_index'; END $$;
+DO $$ BEGIN RAISE NOTICE '6. search_index'; END $$;
 -- =============================
 CREATE TABLE search_index (
     id                 UUID         NOT NULL,
@@ -100,11 +107,11 @@ CREATE TABLE search_index (
     friendly_name      TEXT         NOT NULL,
     pricing_sku_id     TEXT         NOT NULL,
     created_date       TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    constraint PK_search_index PRIMARY KEY (id)
+    CONSTRAINT PK_search_index PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'search_instance_keys'; END $$;
+DO $$ BEGIN RAISE NOTICE '7. search_instance_keys'; END $$;
 -- =============================
 CREATE TABLE search_instance_keys (
     id                 UUID          NOT NULL,
@@ -115,11 +122,11 @@ CREATE TABLE search_instance_keys (
     created_date       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date      TIMESTAMP     NULL,
     is_latest          BOOLEAN       NOT NULL DEFAULT TRUE,
-    constraint PK_search_instance_keys PRIMARY KEY (id)
+    CONSTRAINT PK_search_instance_keys PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'search_instances'; END $$;
+DO $$ BEGIN RAISE NOTICE '8. search_instances'; END $$;
 -- =============================
 CREATE TABLE search_instances (
     id                UUID           NOT NULL,
@@ -132,11 +139,11 @@ CREATE TABLE search_instances (
     is_shared         BOOLEAN        NOT NULL,
     type              TEXT           NOT NULL,
     root_endpoint     TEXT           NULL,
-    constraint PK_search_instances PRIMARY KEY (id)
+    CONSTRAINT PK_search_instances PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'synonyms'; END $$;
+DO $$ BEGIN RAISE NOTICE '9. synonyms'; END $$;
 -- =============================
 CREATE TABLE synonyms (
     id                 UUID           NOT NULL,
@@ -147,11 +154,11 @@ CREATE TABLE synonyms (
     created_date       TIMESTAMP      NOT NULL,
     superseded_date    TIMESTAMP      NULL,
     is_latest          BOOLEAN        NOT NULL,
-    constraint PK_synonyms PRIMARY KEY (id)
+    CONSTRAINT PK_synonyms PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'themes'; END $$;
+DO $$ BEGIN RAISE NOTICE '10. themes'; END $$;
 -- =============================
 CREATE TABLE themes (
     id                   UUID         NOT NULL,
@@ -164,11 +171,11 @@ CREATE TABLE themes (
     search_index_id      UUID         NULL,
     created_date         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date        TIMESTAMP    NULL,
-    constraint PK_themes PRIMARY KEY (id)
+    CONSTRAINT PK_themes PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'search_insights_data'; END $$;
+DO $$ BEGIN RAISE NOTICE '11. search_insights_data'; END $$;
 -- =============================
 CREATE TABLE search_insights_data (
     id               UUID           NOT NULL DEFAULT gen_random_UUID(),
@@ -179,11 +186,11 @@ CREATE TABLE search_insights_data (
     date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date     TIMESTAMP     NULL,
-    constraint PK_search_insights_data PRIMARY KEY (id)
+    CONSTRAINT PK_search_insights_data PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'search_index_request_log'; END $$;
+DO $$ BEGIN RAISE NOTICE '12. search_index_request_log'; END $$;
 -- =============================
 CREATE TABLE search_index_request_log (
     id               UUID         NOT NULL DEFAULT gen_random_UUID(),
@@ -192,55 +199,17 @@ CREATE TABLE search_index_request_log (
     date             TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_date     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date    TIMESTAMP    NULL,
-    constraint PK_search_index_request_log PRIMARY KEY (id)
+    CONSTRAINT PK_search_index_request_log PRIMARY KEY (id)
 );
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'Drop Function Definitions'; END $$;
+DO $$ BEGIN RAISE NOTICE '============================='; END $$;
+DO $$ BEGIN RAISE NOTICE 'Create Functions'; END $$;
+DO $$ BEGIN RAISE NOTICE '============================='; END $$;
 -- =============================
 
--- Clean list (duplicates removed, type names corrected where known)
-
-DROP FUNCTION IF EXISTS add_synonym(UUID, UUID, TEXT, TEXT);
-DROP FUNCTION IF EXISTS get_customer_by_id(UUID);
-DROP FUNCTION IF EXISTS get_customer_full(UUID);
-DROP FUNCTION IF EXISTS get_latest_feed(UUID);
-DROP FUNCTION IF EXISTS get_search_index(UUID, UUID);
-DROP FUNCTION IF EXISTS get_search_index_by_friendly_name(UUID, TEXT);
-DROP FUNCTION IF EXISTS get_search_index_full(UUID, UUID);
-DROP FUNCTION IF EXISTS get_search_index_query_credentials_by_customer_endpoint(TEXT);
-DROP FUNCTION IF EXISTS get_search_insights_by_data_categories(UUID, TIMESTAMP, TIMESTAMP, TEXT);
-DROP FUNCTION IF EXISTS get_search_insights_search_count_by_date_range(UUID, TIMESTAMP, TIMESTAMP);
-DROP FUNCTION IF EXISTS get_synonym_by_id(UUID, UUID);
-DROP FUNCTION IF EXISTS get_synonym_by_key_word(UUID, TEXT);
-DROP FUNCTION IF EXISTS get_synonyms(UUID);
-DROP FUNCTION IF EXISTS get_theme_by_customer_id(UUID);
-DROP FUNCTION IF EXISTS get_theme_by_id(UUID);
-DROP FUNCTION IF EXISTS get_theme_by_search_index_id(UUID);
-DROP FUNCTION IF EXISTS supersede_latest_feed(UUID);
-DROP FUNCTION IF EXISTS supersede_synonym(UUID, UUID);
-DROP FUNCTION IF EXISTS update_synonym(UUID, UUID, TEXT, TEXT);
-DROP FUNCTION IF EXISTS update_theme(UUID, TEXT, TEXT, TEXT, TEXT, TEXT);
-DROP FUNCTION IF EXISTS get_feed_credentials_username(UUID);
-DROP FUNCTION IF EXISTS get_feed_data_format(UUID, TEXT);
-DROP FUNCTION IF EXISTS get_search_index_credentials(UUID, TEXT);
-DROP FUNCTION IF EXISTS get_search_index_feed_processing_data(UUID, TEXT);
-DROP FUNCTION IF EXISTS merge_feed_documents(uuid, TEXT[]);
-DROP FUNCTION IF EXISTS add_data_points(uuid, search_insights_data_type[]);
-DROP FUNCTION IF EXISTS add_search_request(UUID, DATE); 
-DROP FUNCTION IF EXISTS add_feed_credentials(UUID, TEXT, TEXT);
-DROP FUNCTION IF EXISTS delete_feed_credentials(UUID, TEXT);
-DROP FUNCTION IF EXISTS get_feed_credentials(UUID, TEXT);
-DROP FUNCTION IF EXISTS update_feed_credentials(UUID, TEXT, TEXT);
-DROP FUNCTION IF EXISTS add_feed(UUID, TEXT, TEXT);
-DROP FUNCTION IF EXISTS get_theme_by_customer_endpoint(TEXT);
-DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, UUID, TEXT, TEXT); 
-DROP FUNCTION IF EXISTS add_search_index(UUID, UUID, TEXT, TEXT, UUID);
-DROP FUNCTION IF EXISTS get_latest_generic_synonyms_by_category(TEXT);
-
-
 -- =============================
-DO $$ BEGIN RAISE NOTICE 'Function Definitions'; END $$;
+DO $$ BEGIN RAISE NOTICE '1. get_customer_by_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_customer_by_id(customer_id UUID)
 RETURNS TABLE (id UUID, business_name text) AS $$
@@ -253,7 +222,9 @@ END;
 
 $$ LANGUAGE plpgsql;
 
-
+-- =============================
+DO $$ BEGIN RAISE NOTICE '2. get_customer_full'; END $$;
+-- =============================
 CREATE OR REPLACE FUNCTION get_customer_full(customer_id UUID)
 RETURNS TABLE (
     id UUID,
@@ -268,7 +239,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '1. get_latest_feed'; END $$;
+DO $$ BEGIN RAISE NOTICE '3. get_latest_feed'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_latest_feed(
     p_search_index_id UUID
@@ -300,7 +271,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '2. get_search_index'; END $$;
+DO $$ BEGIN RAISE NOTICE '4. get_search_index'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index(
     p_search_index_id UUID,
@@ -346,7 +317,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '3. get_search_index_by_friendly_name'; END $$;
+DO $$ BEGIN RAISE NOTICE '5. get_search_index_by_friendly_name'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_by_friendly_name(
     p_customer_id UUID,
@@ -373,7 +344,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '4. get_search_index_full'; END $$;
+DO $$ BEGIN RAISE NOTICE '6. get_search_index_full'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_full(
     p_search_index_id UUID,
@@ -419,7 +390,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '5. GetSynonymById'; END $$;
+DO $$ BEGIN RAISE NOTICE '7. GetSynonymById'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonym_by_id(
     p_search_index_id UUID,
@@ -447,7 +418,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '6. GetSynonymByKeyWord'; END $$;
+DO $$ BEGIN RAISE NOTICE '8. GetSynonymByKeyWord'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonym_by_key_word(
     p_search_index_id UUID,
@@ -475,7 +446,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '7. SupersedeLatestFeed'; END $$;
+DO $$ BEGIN RAISE NOTICE '9. SupersedeLatestFeed'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION supersede_latest_feed(
     p_search_index_id UUID
@@ -494,7 +465,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '8. SupersedeSynonym'; END $$;
+DO $$ BEGIN RAISE NOTICE '10. SupersedeSynonym'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION supersede_synonym(
     p_search_index_id UUID,
@@ -515,7 +486,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '9. UpdateSynonym'; END $$;
+DO $$ BEGIN RAISE NOTICE '11. UpdateSynonym'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION update_synonym(
     p_search_index_id UUID,
@@ -538,7 +509,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '10. delete_feed_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '12. delete_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION delete_feed_credentials(
     p_search_index_id UUID,
@@ -556,7 +527,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '14. add_search_index'; END $$;
+DO $$ BEGIN RAISE NOTICE '13. add_search_index'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_search_index(
     p_search_index_id UUID,
@@ -587,7 +558,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '15. dd_synonym'; END $$;
+DO $$ BEGIN RAISE NOTICE '14. dd_synonym'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_synonym(
     p_synonym_id UUID,
@@ -615,7 +586,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '16. get_search_insights_by_data_categories'; END $$;
+DO $$ BEGIN RAISE NOTICE '15. get_search_insights_by_data_categories'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_insights_by_data_categories(
     p_search_index_id UUID,
@@ -646,7 +617,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '17. get_search_insights_search_count_by_date_range'; END $$;
+DO $$ BEGIN RAISE NOTICE '16. get_search_insights_search_count_by_date_range'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_insights_search_count_by_date_range(
     p_search_index_id UUID,
@@ -669,7 +640,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '18. get_synonyms'; END $$;
+DO $$ BEGIN RAISE NOTICE '17. get_synonyms'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonyms(
     p_search_index_id UUID
@@ -696,7 +667,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '19. get_theme_by_customer_id'; END $$;
+DO $$ BEGIN RAISE NOTICE '18. get_theme_by_customer_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_customer_id(
     p_customer_id UUID
@@ -732,7 +703,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '20. get_theme_by_id'; END $$;
+DO $$ BEGIN RAISE NOTICE '19. get_theme_by_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_id(
     p_theme_id UUID
@@ -768,7 +739,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '21. get_theme_by_search_index_id'; END $$;
+DO $$ BEGIN RAISE NOTICE '20. get_theme_by_search_index_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_search_index_id(
     p_search_index_id UUID
@@ -804,7 +775,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '22. update_theme'; END $$;
+DO $$ BEGIN RAISE NOTICE '21. update_theme'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION update_theme(
     p_theme_id UUID,
@@ -829,7 +800,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '23. get_theme_by_customer_endpoint'; END $$;
+DO $$ BEGIN RAISE NOTICE '22. get_theme_by_customer_endpoint'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_theme_by_customer_endpoint(
     p_customer_endpoint TEXT
@@ -858,7 +829,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '24. get_search_index_query_credentials_by_customer_endpoint'; END $$;
+DO $$ BEGIN RAISE NOTICE '23. get_search_index_query_credentials_by_customer_endpoint'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_query_credentials_by_customer_endpoint(
     p_customer_endpoint TEXT
@@ -890,7 +861,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '25. get_feed_credentials_username'; END $$;
+DO $$ BEGIN RAISE NOTICE '24. get_feed_credentials_username'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_feed_credentials_username(
     p_search_index_id UUID
@@ -915,15 +886,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- =============================
-DO $$ BEGIN RAISE NOTICE '*********'; END $$;
-DO $$ BEGIN RAISE NOTICE 'Functions'; END $$;
-DO $$ BEGIN RAISE NOTICE '*********'; END $$;
--- =============================
-
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '27. get_feed_data_format'; END $$;
+DO $$ BEGIN RAISE NOTICE '25. get_feed_data_format'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_feed_data_format(
     p_customer_id UUID,
@@ -946,7 +911,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '28. get_latest_generic_synonyms_by_category'; END $$;
+DO $$ BEGIN RAISE NOTICE '26. get_latest_generic_synonyms_by_category'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_latest_generic_synonyms_by_category(
     p_category TEXT
@@ -971,7 +936,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '29. get_search_index_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '27. get_search_index_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_credentials(
     p_customer_id UUID,
@@ -1008,7 +973,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '30. get_search_index_feed_processing_data'; END $$;
+DO $$ BEGIN RAISE NOTICE '28. get_search_index_feed_processing_data'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_feed_processing_data(
     p_customer_id UUID,
@@ -1052,7 +1017,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '31. merge_feed_documents'; END $$;
+DO $$ BEGIN RAISE NOTICE '29. merge_feed_documents'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION merge_feed_documents(
     p_search_index_id UUID,
@@ -1086,7 +1051,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '32. add_data_points'; END $$;
+DO $$ BEGIN RAISE NOTICE '30. add_data_points'; END $$;
 -- =============================
 CREATE TYPE search_insights_data_type AS (
     data_category TEXT,
@@ -1131,7 +1096,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '33. add_search_request'; END $$;
+DO $$ BEGIN RAISE NOTICE '31. add_search_request'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_search_request(
     p_search_index_id UUID,
@@ -1161,7 +1126,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '34. add_feed_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '32. add_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_feed_credentials(
     p_search_index_id UUID,
@@ -1188,7 +1153,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '35. delete_feed_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '33. delete_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION delete_feed_credentials(
     p_search_index_id UUID,
@@ -1203,7 +1168,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '36. get_feed_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '34. get_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_feed_credentials(
     p_search_index_id UUID,
@@ -1226,7 +1191,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '37. update_feed_credentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '35. update_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION update_feed_credentials(
     p_search_index_id UUID,
@@ -1247,7 +1212,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '38. add_feed'; END $$;
+DO $$ BEGIN RAISE NOTICE '36. add_feed'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_feed(
     p_search_index_id UUID,
