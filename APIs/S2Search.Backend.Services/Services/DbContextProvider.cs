@@ -56,16 +56,39 @@ namespace S2Search.Backend.Services.Services
 
         private string BuildFunctionCall(string functionName, Dictionary<string, object> parameters)
         {
+            if (string.IsNullOrWhiteSpace(functionName))
+                throw new ArgumentException("Function name must be provided.", nameof(functionName));
+
+            // Ensure functionName contains only safe identifier characters (alphanumeric, underscore, dot)
+            if (!System.Text.RegularExpressions.Regex.IsMatch(functionName, @"^[A-Za-z0-9_\.]+$"))
+                throw new ArgumentException("Function name contains invalid characters.", nameof(functionName));
+
             if (parameters == null || parameters.Count == 0)
                 return $"SELECT * FROM {functionName}()";
 
-            // Use parameter names as placeholders (e.g. @param) instead of injecting values
-            var paramNames = parameters.Keys.Select(k =>
+            var paramPlaceholders = parameters.Keys.Select(k =>
             {
-                // If the parameter name contains 'date' assume it should be cast to date in SQL
-                return k.ToLowerInvariant().Contains("date") ? $"@{k}::date" : $"@{k}";
+                if (string.IsNullOrWhiteSpace(k))
+                    throw new ArgumentException("Parameter names must be non-empty.", nameof(parameters));
+
+                // Normalize parameter name: trim and remove leading '@' if present
+                var raw = k.Trim();
+                var name = raw.StartsWith("@") ? raw.Substring(1) : raw;
+
+                var placeholder = $"@{name}";
+                var lower = name.ToLowerInvariant();
+
+                // Apply casts based on parameter name hints
+                // Note: it's uncommon for a name to indicate multiple conflicting casts.
+                if (lower.Contains("json"))
+                    placeholder += "::jsonb";
+                if (lower.Contains("date"))
+                    placeholder += "::date";
+
+                return placeholder;
             });
-            var paramList = string.Join(", ", paramNames);
+
+            var paramList = string.Join(", ", paramPlaceholders);
             var query = $"SELECT * FROM {functionName}({paramList})";
 
             return query;

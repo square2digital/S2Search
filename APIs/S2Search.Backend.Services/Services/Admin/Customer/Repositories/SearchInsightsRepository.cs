@@ -66,10 +66,10 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
             {
                 var jsonData = JsonSerializer.Serialize(dataPoints);
 
-                var parameters = new Dictionary<string, object>()
+                 var parameters = new Dictionary<string, object>()
                 {
                     { "search_index_id", searchIndexId },
-                    { "search_insights_data", jsonData }
+                    { "json", jsonData }                    
                 };
 
                 var result = await _dbContext.ExecuteAsync(_connectionstring,
@@ -100,7 +100,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error on {nameof(SaveInsightsAsync)} | Message: {ex.Message}");
+                _logger.LogError(ex, $"Error on {nameof(SaveSearchRequestAsync)} | Message: {ex.Message}");
                 throw;
             }
         }
