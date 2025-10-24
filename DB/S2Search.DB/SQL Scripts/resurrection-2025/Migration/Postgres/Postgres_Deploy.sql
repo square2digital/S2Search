@@ -1037,23 +1037,23 @@ BEGIN
     -- Update existing documents
     UPDATE feed_current_documents AS target
     SET created_date = utc_now
-    WHERE target.search_index_id = search_index_id
-      AND target.id = ANY(new_feed_documents);
+    WHERE target.search_index_id = p_search_index_id
+        AND target.id = ANY(p_new_feed_documents);
 
-    -- Insert new documents
-    INSERT INTO feed_current_documents (id, search_index_id, created_date)
-    SELECT doc_id, search_index_id, utc_now
-    FROM UNNEST(new_feed_documents) AS doc_id
-    WHERE doc_id NOT IN (
-        SELECT id
-        FROM feed_current_documents
-        WHERE search_index_id = p_search_index_id
-    );
+ -- Insert new documents
+ INSERT INTO feed_current_documents (id, search_index_id, created_date)
+ SELECT doc_id, p_search_index_id, utc_now
+ FROM UNNEST(p_new_feed_documents) AS doc_id
+ WHERE doc_id NOT IN (
+     SELECT id
+     FROM feed_current_documents
+     WHERE search_index_id = p_search_index_id
+ );
 
-    -- Delete documents not in the new list
-    DELETE FROM feed_current_documents
-    WHERE search_index_id = p_search_index_id
-      AND id NOT IN (SELECT * FROM UNNEST(new_feed_documents));
+ -- Delete documents not in the new list
+ DELETE FROM feed_current_documents
+ WHERE search_index_id = p_search_index_id
+    AND id NOT IN (SELECT * FROM UNNEST(p_new_feed_documents));
 END;
 $$ LANGUAGE plpgsql;
 
