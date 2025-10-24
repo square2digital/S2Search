@@ -346,7 +346,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '3. GetSearchIndexByFriendlyName'; END $$;
+DO $$ BEGIN RAISE NOTICE '3. get_search_index_by_friendly_name'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_by_friendly_name(
     p_customer_id UUID,
@@ -373,7 +373,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '4. GetSearchIndexFull'; END $$;
+DO $$ BEGIN RAISE NOTICE '4. get_search_index_full'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index_full(
     p_search_index_id UUID,
@@ -935,10 +935,10 @@ DECLARE
 BEGIN
     SELECT f.data_format
     INTO data_format
-    FROM dbo.searchindex si
-    INNER JOIN dbo.feeds f ON f.searchindexid = si.id AND f.islatest = true
-    WHERE si.customerid = p_customer_id
-      AND si.indexname = p_search_index_name
+    FROM search_index si
+    INNER JOIN feeds f ON f.search_index_id = si.id AND f.is_latest = true
+    WHERE si.customer_id = p_customer_id
+      AND si.index_name = p_search_index_name
     LIMIT 1;
 
     RETURN data_format;
@@ -964,7 +964,7 @@ BEGIN
         category,
         solr_format,
         created_date
-    FROM dbo.synonyms
+    FROM synonyms
     WHERE category = p_category
       AND islatest = true;
 END;
@@ -994,9 +994,9 @@ BEGIN
         i.servicename,
         i.rootendpoint,
         ik.apikey
-    FROM dbo.searchindex si
-    INNER JOIN dbo.searchinstances i ON i.id = si.id
-    INNER JOIN dbo.searchinstancekeys ik ON ik.id = i.id
+    FROM search_index si
+    INNER JOIN search_instances i ON i.id = si.id
+    INNER JOIN search_instance_keys ik ON ik.id = i.id
         AND ik.keytype = 'Admin'
         AND ik.name = 'Primary Admin key'
         AND ik.islatest = true
@@ -1033,14 +1033,14 @@ BEGIN
         ik.apikey,
         f.dataformat,
         c.customerendpoint
-    FROM dbo.searchindex si
-    INNER JOIN dbo.searchinstances i ON i.id = si.id
-    INNER JOIN dbo.searchinstancekeys ik ON ik.id = i.id
+    FROM search_index si
+    INNER JOIN search_instances i ON i.id = si.id
+    INNER JOIN search_instance_keys ik ON ik.id = i.id
         AND ik.keytype = 'Admin'
         AND ik.name = 'Primary Admin key'
         AND ik.islatest = true
-    LEFT JOIN dbo.feeds f ON f.searchindexid = si.id
-    LEFT JOIN dbo.customers c ON si.customerid = c.id
+    LEFT JOIN feeds f ON f.searchindexid = si.id
+    LEFT JOIN customers c ON si.customerid = c.id
     WHERE si.customerid = p_customer_id
       AND si.indexname = p_search_index_name
     LIMIT 1;
@@ -1059,24 +1059,24 @@ DECLARE
     utc_now TIMESTAMP := NOW();
 BEGIN
     -- Update existing documents
-    UPDATE dbo.feedcurrentdocuments AS target
-    SET createddate = utc_now
-    WHERE target.searchindexid = search_index_id
+    UPDATE feed_current_documents AS target
+    SET created_date = utc_now
+    WHERE target.search_index_id = search_index_id
       AND target.id = ANY(new_feed_documents);
 
     -- Insert new documents
-    INSERT INTO feedcurrentdocuments (id, searchindexid, createddate)
+    INSERT INTO feed_current_documents (id, search_index_id, created_date)
     SELECT doc_id, search_index_id, utc_now
     FROM UNNEST(new_feed_documents) AS doc_id
     WHERE doc_id NOT IN (
         SELECT id
-        FROM dbo.feedcurrentdocuments
-        WHERE searchindexid = p_search_index_id
+        FROM feed_current_documents
+        WHERE search_index_id = p_search_index_id
     );
 
     -- Delete documents not in the new list
-    DELETE FROM dbo.feedcurrentdocuments
-    WHERE searchindexid = p_search_index_id
+    DELETE FROM feed_current_documents
+    WHERE search_index_id = p_search_index_id
       AND id NOT IN (SELECT * FROM UNNEST(new_feed_documents));
 END;
 $$ LANGUAGE plpgsql;
@@ -1191,8 +1191,8 @@ CREATE OR REPLACE FUNCTION delete_feed_credentials(
 )
 RETURNS VOID AS $$
 BEGIN
-    DELETE FROM dbo.feedcredentials
-    WHERE searchindexid = p_search_index_id
+    DELETE FROM feed_credentials
+    WHERE search_index_id = p_search_index_id
       AND username = p_username;
 END;
 $$ LANGUAGE plpgsql;
