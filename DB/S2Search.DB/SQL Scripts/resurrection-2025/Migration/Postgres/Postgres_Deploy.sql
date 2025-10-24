@@ -211,23 +211,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_search_index_request_log_unique
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE '============================='; END $$;
-DO $$ BEGIN RAISE NOTICE 'Create Types'; END $$;
-DO $$ BEGIN RAISE NOTICE '============================='; END $$;
--- =============================
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '1. search_insights_data_type'; END $$;
--- =============================
-DROP TYPE IF EXISTS search_insights_data_type CASCADE;
-CREATE TYPE search_insights_data_type AS (
-  data_category TEXT,
-  data_point    TEXT,
-  date          DATE
-);
-
-
--- =============================
-DO $$ BEGIN RAISE NOTICE '============================='; END $$;
 DO $$ BEGIN RAISE NOTICE 'Create Functions'; END $$;
 DO $$ BEGIN RAISE NOTICE '============================='; END $$;
 -- =============================
@@ -1058,41 +1041,55 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
+DO $$ BEGIN RAISE NOTICE '============================='; END $$;
+DO $$ BEGIN RAISE NOTICE 'Create Types'; END $$;
+DO $$ BEGIN RAISE NOTICE '============================='; END $$;
+-- =============================
+
+-- =============================
+DO $$ BEGIN RAISE NOTICE '1. search_insights_data_type'; END $$;
+-- =============================
+DROP TYPE IF EXISTS search_insights_data_type CASCADE;
+CREATE TYPE search_insights_data_type AS (
+  data_category TEXT,
+  data_point    TEXT,
+  date          DATE
+);
+
+-- =============================
 DO $$ BEGIN RAISE NOTICE '30. add_data_points'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_data_points(
-    search_index_id UUID,
-    search_insights_data search_insights_data_type[]
+  p_search_index_id uuid,
+  p_json jsonb
 )
-RETURNS VOID AS $$
-DECLARE
-    -- loop variable: composite type matching the array element type
-    record_item search_insights_data_type;
+RETURNS void AS
+$$
 BEGIN
-    -- Declaring the loop variable here simplifies the DECLARE block above.
-    FOR record_item IN SELECT * FROM UNNEST(search_insights_data)
-    LOOP
-        INSERT INTO search_insights_data (
-            search_index_id,
-            data_category,
-            data_point,
-            count,
-            date,
-            modified_date
-        )
-        VALUES (
-            search_index_id,
-            record_item.data_category,
-            record_item.data_point,
-            1,
-            record_item.date,
-            NOW() -- Using NOW() directly
-        )
-        ON CONFLICT (search_index_id, data_category, data_point, date)
-        DO UPDATE SET
-            count = search_insights_data.count +1,
-            modified_date = NOW(); -- Using NOW() directly
-    END LOOP;
+  INSERT INTO search_insights_data (
+    search_index_id,
+    data_category,
+    data_point,
+    count,
+    date,
+    modified_date
+  )
+  SELECT
+    p_search_index_id,
+    rec.data_category,
+    rec.data_point,
+    1,
+    rec.date::date,
+    now()
+  FROM jsonb_to_recordset(p_json) AS rec(
+    data_category text,
+    data_point text,
+    date text
+  )
+  ON CONFLICT (search_index_id, data_category, data_point, date)
+  DO UPDATE
+    SET count = search_insights_data.count + 1,
+        modified_date = NOW();
 END;
 $$ LANGUAGE plpgsql;
 
