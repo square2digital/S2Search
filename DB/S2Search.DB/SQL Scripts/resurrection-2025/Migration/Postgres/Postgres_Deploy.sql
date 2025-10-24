@@ -268,7 +268,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '1. GetLatestFeed'; END $$;
+DO $$ BEGIN RAISE NOTICE '1. get_latest_feed'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_latest_feed(
     p_search_index_id UUID
@@ -300,7 +300,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '2. GetSearchIndex'; END $$;
+DO $$ BEGIN RAISE NOTICE '2. get_search_index'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_search_index(
     p_search_index_id UUID,
@@ -538,7 +538,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '10. DeleteFeedCredentials'; END $$;
+DO $$ BEGIN RAISE NOTICE '10. delete_feed_credentials'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION delete_feed_credentials(
     p_search_index_id UUID,
@@ -966,7 +966,7 @@ BEGIN
         created_date
     FROM synonyms
     WHERE category = p_category
-      AND islatest = true;
+      AND is_latest = true;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -991,17 +991,17 @@ BEGIN
         si.id,
         LOWER(si.indexname),
         i.id,
-        i.servicename,
-        i.rootendpoint,
-        ik.apikey
+        i.service_name,
+        i.root_endpoint,
+        ik.api_key
     FROM search_index si
     INNER JOIN search_instances i ON i.id = si.id
     INNER JOIN search_instance_keys ik ON ik.id = i.id
-        AND ik.keytype = 'Admin'
+        AND ik.key_type = 'Admin'
         AND ik.name = 'Primary Admin key'
-        AND ik.islatest = true
-    WHERE si.customerid = p_customer_id
-      AND si.indexname = p_search_index_name;
+        AND ik.is_latest = true
+    WHERE si.customer_id = p_customer_id
+      AND si.index_name = p_search_index_name;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -1026,23 +1026,23 @@ BEGIN
     RETURN QUERY
     SELECT
         si.id,
-        LOWER(si.indexname),
+        LOWER(si.index_name),
         i.id,
-        i.servicename,
-        i.rootendpoint,
-        ik.apikey,
-        f.dataformat,
-        c.customerendpoint
+        i.service_name,
+        i.root_endpoint,
+        ik.api_key,
+        f.data_format,
+        c.customer_endpoint
     FROM search_index si
     INNER JOIN search_instances i ON i.id = si.id
     INNER JOIN search_instance_keys ik ON ik.id = i.id
-        AND ik.keytype = 'Admin'
+        AND ik.key_type = 'Admin'
         AND ik.name = 'Primary Admin key'
-        AND ik.islatest = true
-    LEFT JOIN feeds f ON f.searchindexid = si.id
-    LEFT JOIN customers c ON si.customerid = c.id
-    WHERE si.customerid = p_customer_id
-      AND si.indexname = p_search_index_name
+        AND ik.is_latest = true
+    LEFT JOIN feeds f ON f.search_index_id = si.id
+    LEFT JOIN customers c ON si.customer_id = c.id
+    WHERE si.customer_id = p_customer_id
+      AND si.index_name = p_search_index_name
     LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
@@ -1165,12 +1165,12 @@ CREATE OR REPLACE FUNCTION add_feed_credentials(
 )
 RETURNS VOID AS $$
 BEGIN
-    INSERT INTO feedcredentials (
+    INSERT INTO feed_credentials (
         id,
-        searchindexid,
+        search_index_id,
         username,
-        passwordhash,
-        createddate
+        password_hash,
+        created_date
     )
     VALUES (
         gen_random_UUID(),
