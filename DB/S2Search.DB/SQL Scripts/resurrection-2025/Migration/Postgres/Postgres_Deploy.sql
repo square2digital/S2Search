@@ -989,19 +989,21 @@ BEGIN
     RETURN QUERY
     SELECT
         si.id,
-        LOWER(si.indexname),
+        LOWER(si.index_name), -- FIXED: Column name to snake_case
         i.id,
         i.service_name,
         i.root_endpoint,
         ik.api_key
     FROM search_index si
-    INNER JOIN search_instances i ON i.id = si.id
-    INNER JOIN search_instance_keys ik ON ik.id = i.id
+    -- FIXED: Join search_index to search_instances using the FK search_instance_id
+    INNER JOIN search_instances i ON i.id = si.search_instance_id
+    -- FIXED: Join search_instances to search_instance_keys using the FK search_instance_id
+    INNER JOIN search_instance_keys ik ON ik.search_instance_id = i.id
         AND ik.key_type = 'Admin'
         AND ik.name = 'Primary Admin key'
         AND ik.is_latest = true
     WHERE si.customer_id = p_customer_id
-      AND si.index_name = p_search_index_name;
+      AND si.index_name = p_search_index_name; -- FIXED: Column name to snake_case
 END;
 $$ LANGUAGE plpgsql;
 
@@ -1026,7 +1028,7 @@ BEGIN
     RETURN QUERY
     SELECT
         si.id,
-        LOWER(si.index_name),
+        LOWER(si.index_name), -- FIXED: Column name to snake_case
         i.id,
         i.service_name,
         i.root_endpoint,
@@ -1034,15 +1036,17 @@ BEGIN
         f.data_format,
         c.customer_endpoint
     FROM search_index si
-    INNER JOIN search_instances i ON i.id = si.id
-    INNER JOIN search_instance_keys ik ON ik.id = i.id
+    -- FIXED: Join search_index to search_instances using the FK search_instance_id
+    INNER JOIN search_instances i ON i.id = si.search_instance_id
+    -- FIXED: Join search_instances to search_instance_keys using the FK search_instance_id
+    INNER JOIN search_instance_keys ik ON ik.search_instance_id = i.id
         AND ik.key_type = 'Admin'
         AND ik.name = 'Primary Admin key'
         AND ik.is_latest = true
     LEFT JOIN feeds f ON f.search_index_id = si.id
     LEFT JOIN customers c ON si.customer_id = c.id
     WHERE si.customer_id = p_customer_id
-      AND si.index_name = p_search_index_name
+      AND si.index_name = p_search_index_name -- FIXED: Column name to snake_case
     LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
@@ -1096,18 +1100,19 @@ CREATE OR REPLACE FUNCTION add_data_points(
 )
 RETURNS VOID AS $$
 DECLARE
-    utc_now TIMESTAMP := NOW();
-    record_item search_insights_data_type;
+    -- Removed 'utc_now TIMESTAMP := NOW();' to use NOW() directly where possible, 
+    -- and removed 'record_item search_insights_data_type;' to declare it in the loop.
 BEGIN
-    FOREACH record_item IN ARRAY search_insights_data
+    -- Declaring the loop variable here simplifies the DECLARE block above.
+    FOR record_item IN SELECT * FROM UNNEST(search_insights_data)
     LOOP
-        INSERT INTO search_insights_data ( -- CORRECTED TABLE NAME
-            search_index_id, -- CORRECTED COLUMN NAME
-            data_category, -- CORRECTED COLUMN NAME
-            data_point, -- CORRECTED COLUMN NAME
+        INSERT INTO search_insights_data (
+            search_index_id,
+            data_category,
+            data_point,
             count,
             date,
-            modified_date -- CORRECTED COLUMN NAME
+            modified_date
         )
         VALUES (
             search_index_id,
@@ -1115,12 +1120,12 @@ BEGIN
             record_item.data_point,
             1,
             record_item.date,
-            utc_now
+            NOW() -- Using NOW() directly
         )
-        ON CONFLICT (search_index_id, data_category, data_point, date) -- CORRECTED COLUMN NAMES
+        ON CONFLICT (search_index_id, data_category, data_point, date)
         DO UPDATE SET
             count = search_insights_data.count + 1,
-            modified_date = utc_now; -- CORRECTED COLUMN NAME
+            modified_date = NOW(); -- Using NOW() directly
     END LOOP;
 END;
 $$ LANGUAGE plpgsql;
@@ -1130,28 +1135,28 @@ DO $$ BEGIN RAISE NOTICE '33. add_search_request'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_search_request(
     p_search_index_id UUID,
-    p_request_date TIMESTAMP WITHOUT TIME ZONE
+    p_date DATE -- We use DATE since the index is grouped by day
 )
 RETURNS VOID AS $$
-DECLARE
-    utc_now TIMESTAMP := NOW();
 BEGIN
-    INSERT INTO search_index_request_log ( -- CORRECTED TABLE NAME
-        search_index_id, -- CORRECTED COLUMN NAME
-        count,
+    INSERT INTO search_index_request_log (
+        search_index_id,
         date,
-        modified_date -- CORRECTED COLUMN NAME
+        count,
+        created_date,
+        modified_date
     )
     VALUES (
         p_search_index_id,
-        1,
-        p_request_date::DATE,
-        utc_now
+        p_date,
+        1, -- Initial count of 1
+        NOW(),
+        NOW()
     )
-    ON CONFLICT (search_index_id, date) -- CORRECTED COLUMN NAME
+    ON CONFLICT (search_index_id, date) -- Conflict based on the UNIQUE INDEX
     DO UPDATE SET
         count = search_index_request_log.count + 1,
-        modified_date = utc_now; -- CORRECTED COLUMN NAME
+        modified_date = NOW();
 END;
 $$ LANGUAGE plpgsql;
 
