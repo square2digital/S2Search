@@ -1075,8 +1075,8 @@ CREATE OR REPLACE FUNCTION add_data_points(
 )
 RETURNS VOID AS $$
 DECLARE
-    -- Removed 'utc_now TIMESTAMP := NOW();' to use NOW() directly where possible, 
-    -- and removed 'record_item search_insights_data_type;' to declare it in the loop.
+    -- loop variable: composite type matching the array element type
+    record_item search_insights_data_type;
 BEGIN
     -- Declaring the loop variable here simplifies the DECLARE block above.
     FOR record_item IN SELECT * FROM UNNEST(search_insights_data)
@@ -1099,7 +1099,7 @@ BEGIN
         )
         ON CONFLICT (search_index_id, data_category, data_point, date)
         DO UPDATE SET
-            count = search_insights_data.count + 1,
+            count = search_insights_data.count +1,
             modified_date = NOW(); -- Using NOW() directly
     END LOOP;
 END;
