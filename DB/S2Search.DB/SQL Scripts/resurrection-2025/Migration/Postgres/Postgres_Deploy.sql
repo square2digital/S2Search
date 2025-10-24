@@ -177,16 +177,20 @@ CREATE TABLE themes (
 DO $$ BEGIN RAISE NOTICE '11. search_insights_data'; END $$;
 -- =============================
 CREATE TABLE search_insights_data (
-    id               UUID           NOT NULL DEFAULT gen_random_UUID(),
-    search_index_id    UUID         NOT NULL,
-    data_category     TEXT          NOT NULL,
-    data_point        TEXT          NOT NULL,
-    count            INT            NOT NULL DEFAULT 0,
-    date             TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_date      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_date     TIMESTAMP     NULL,
-    CONSTRAINT PK_search_insights_data PRIMARY KEY (id)
+ id                  UUID            NOT NULL DEFAULT gen_random_UUID(),
+ search_index_id     UUID            NOT NULL,
+ data_category       TEXT            NOT NULL,
+ data_point          TEXT            NOT NULL,
+ count               INT             NOT NULL DEFAULT 0,
+ date                DATE            NOT NULL DEFAULT CURRENT_DATE,
+ created_date        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ modified_date       TIMESTAMP       NULL,
+ CONSTRAINT PK_search_insights_data PRIMARY KEY (id)
 );
+
+-- Add unique index to support ON CONFLICT in add_data_points
+CREATE UNIQUE INDEX IF NOT EXISTS ux_search_insights_data_unique
+ ON search_insights_data (search_index_id, data_category, data_point, date);
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE '12. search_index_request_log'; END $$;
@@ -195,11 +199,15 @@ CREATE TABLE search_index_request_log (
     id               UUID         NOT NULL DEFAULT gen_random_UUID(),
     search_index_id  UUID         NOT NULL,
     count            INT          NOT NULL DEFAULT 0,
-    date             TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date             DATE         NOT NULL DEFAULT CURRENT_DATE,
     created_date     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_date    TIMESTAMP    NULL,
-    CONSTRAINT PK_search_index_request_log PRIMARY KEY (id)
+ CONSTRAINT PK_search_index_request_log PRIMARY KEY (id)
 );
+
+-- Add unique index to support ON CONFLICT in add_search_request
+CREATE UNIQUE INDEX IF NOT EXISTS ux_search_index_request_log_unique
+ ON search_index_request_log (search_index_id, date);
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE '============================='; END $$;
