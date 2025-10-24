@@ -524,23 +524,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- =============================
-DO $$ BEGIN RAISE NOTICE '12. delete_feed_credentials'; END $$;
--- =============================
-CREATE OR REPLACE FUNCTION delete_feed_credentials(
-    p_search_index_id UUID,
-    p_username TEXT
-) RETURNS int AS $$
-DECLARE
-    rows_deleted int := 0;
-BEGIN
-    DELETE FROM feed_credentials
-    WHERE search_index_id = p_search_index_id
-      AND username = p_username;
-    GET DIAGNOSTICS rows_deleted = ROW_COUNT;
-    RETURN rows_deleted;
-END;
-$$ LANGUAGE plpgsql;
 
 -- =============================
 DO $$ BEGIN RAISE NOTICE '13. add_search_index'; END $$;
