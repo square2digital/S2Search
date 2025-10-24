@@ -198,7 +198,6 @@ CREATE TABLE search_index_request_log (
 -- =============================
 DO $$ BEGIN RAISE NOTICE 'Drop Function Definitions'; END $$;
 -- =============================
-DROP FUNCTION IF EXISTS add_search_index(uuid, uuid, uuid, TEXT, TEXT);
 DROP FUNCTION IF EXISTS add_synonym(uuid, uuid, TEXT, TEXT);
 DROP FUNCTION IF EXISTS get_customer_by_id(uuid);
 DROP FUNCTION IF EXISTS get_customer_full(uuid);
@@ -219,7 +218,6 @@ DROP FUNCTION IF EXISTS supersede_latest_feed(uuid);
 DROP FUNCTION IF EXISTS supersede_synonym(uuid, uuid);
 DROP FUNCTION IF EXISTS update_synonym(uuid, uuid, TEXT, TEXT);
 DROP FUNCTION IF EXISTS update_theme(uuid, TEXT, TEXT, TEXT, TEXT, TEXT);
-DROP FUNCTION IF EXISTS get_search_index_query_credentials_by_customer_endpoint(TEXT);
 DROP FUNCTION IF EXISTS get_current_feed_documents(uuid, INT, INT);
 DROP FUNCTION IF EXISTS get_current_feed_documents_total(uuid);
 DROP FUNCTION IF EXISTS get_feed_credentials_username(uuid);
@@ -1102,13 +1100,13 @@ DECLARE
 BEGIN
     FOREACH record_item IN ARRAY search_insights_data
     LOOP
-        INSERT INTO searchinsightsdata (
-            searchindexid,
-            datacategory,
-            datapoint,
+        INSERT INTO search_insights_data ( -- CORRECTED TABLE NAME
+            search_index_id, -- CORRECTED COLUMN NAME
+            data_category, -- CORRECTED COLUMN NAME
+            data_point, -- CORRECTED COLUMN NAME
             count,
             date,
-            modifieddate
+            modified_date -- CORRECTED COLUMN NAME
         )
         VALUES (
             search_index_id,
@@ -1118,10 +1116,10 @@ BEGIN
             record_item.date,
             utc_now
         )
-        ON CONFLICT (searchindexid, datacategory, datapoint, date)
+        ON CONFLICT (search_index_id, data_category, data_point, date) -- CORRECTED COLUMN NAMES
         DO UPDATE SET
-            count = searchinsightsdata.count + 1,
-            modifieddate = utc_now;
+            count = search_insights_data.count + 1,
+            modified_date = utc_now; -- CORRECTED COLUMN NAME
     END LOOP;
 END;
 $$ LANGUAGE plpgsql;
@@ -1131,30 +1129,28 @@ DO $$ BEGIN RAISE NOTICE '33. add_search_request'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_search_request(
     p_search_index_id UUID,
-    p_request_date TIMESTAMP WITHOUT TIME ZONE -- NOW ACCEPTS THE C# DEFAULT TYPE
+    p_request_date TIMESTAMP WITHOUT TIME ZONE
 )
 RETURNS VOID AS $$
 DECLARE
     utc_now TIMESTAMP := NOW();
 BEGIN
-    -- We use p_request_date::DATE here to ensure we only store the date component
-    -- regardless of what time component Npgsql sent.
-    INSERT INTO searchindexrequestlog (
-        searchindexid,
+    INSERT INTO search_index_request_log ( -- CORRECTED TABLE NAME
+        search_index_id, -- CORRECTED COLUMN NAME
         count,
         date,
-        modifieddate
+        modified_date -- CORRECTED COLUMN NAME
     )
     VALUES (
         p_search_index_id,
         1,
-        p_request_date::DATE, -- Cast the input TIMESTAMP to DATE for the table column
+        p_request_date::DATE,
         utc_now
     )
-    ON CONFLICT (searchindexid, date)
+    ON CONFLICT (search_index_id, date) -- CORRECTED COLUMN NAME
     DO UPDATE SET
-        count = searchindexrequestlog.count + 1,
-        modifieddate = utc_now;
+        count = search_index_request_log.count + 1,
+        modified_date = utc_now; -- CORRECTED COLUMN NAME
 END;
 $$ LANGUAGE plpgsql;
 
