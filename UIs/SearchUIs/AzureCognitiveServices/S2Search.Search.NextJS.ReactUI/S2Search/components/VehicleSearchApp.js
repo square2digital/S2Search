@@ -7,6 +7,7 @@ import FacetChips from './material-ui/searchPage/FacetChips';
 import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import { connect } from 'react-redux';
 import { createSearchRequest } from '../types/SearchRequest';
+import { insertQueryStringParam } from '../common/functions/QueryStringFunctions';
 
 // New RTK action imports
 import {
@@ -424,6 +425,17 @@ const VehicleSearchApp = props => {
       }
     };
   }, []);
+
+  // Update URL when facets change to maintain shareable state
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const facetSelectorsJSON = JSON.stringify(props.reduxFacetSelectors);
+      insertQueryStringParam(
+        'facetselectors',
+        encodeURIComponent(facetSelectorsJSON)
+      );
+    }
+  }, [props.reduxFacetSelectors]);
 
   const getThemeFromAPI = () => {
     if (!themeConfigured) {
