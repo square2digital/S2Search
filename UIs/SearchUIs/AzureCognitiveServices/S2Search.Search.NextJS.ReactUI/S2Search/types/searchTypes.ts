@@ -17,3 +17,10 @@ export interface SearchRequestParams {
   numberOfExistingResults?: number;
   callingHost?: string;
 }
+
+export interface SelectedFacetData {
+  facetKey: string;
+  facetDisplayText: string;
+  luceneExpression: string;
+  checked: boolean;
+}

@@ -1,9 +1,4 @@
-export interface SelectedFacetData {
-  facetKey: string;
-  facetDisplayText: string;
-  luceneExpression: string;
-  checked: boolean;
-}
+import { SelectedFacetData } from '../../types/searchTypes';
 
 export class SelectedFacetDataClass implements SelectedFacetData {
   facetKey: string;
