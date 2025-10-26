@@ -7,10 +7,8 @@ const invokeAPI = async (
   cancellation
 ) => {
   const {
-    ClientConfigurationAPIURL,
-    AutoCompleteURL,
     SearchAPIDomain,
-    SearchAndFacetsAPIURL,
+    AutoCompleteURL,
     DocumentCountURL,
     SearchAPIEndpoint,
     FacetsAPIEndpoint,
@@ -44,7 +42,7 @@ const invokeAPI = async (
       // *****************
 
       case 'search':
-        url = `${SearchAndFacetsAPIURL}${SearchAPIEndpoint}`;
+        url = `${SearchAPIDomain}${SearchAPIEndpoint}`;
         axiosResponse = await axiosAPICall.AxiosGetWithQueryString(
           req,
           url,
@@ -54,7 +52,7 @@ const invokeAPI = async (
         break;
 
       case 'facets':
-        url = `${SearchAndFacetsAPIURL}${FacetsAPIEndpoint}`;
+        url = `${SearchAPIDomain}${FacetsAPIEndpoint}`;
         axiosResponse = await axiosAPICall.AxiosGetWithQueryString(
           req,
           url,
@@ -80,12 +78,12 @@ const invokeAPI = async (
       // configuration Endpoints
       // *****************
       case 'configuration':
-        url = `${ClientConfigurationAPIURL}/api/configuration/${configType}/${callingHost}`;
+        url = `${SearchAPIDomain}/api/configuration/${configType}/${callingHost}`;
         axiosResponse = await axiosAPICall.AxiosGet(url, addApiKeyHeader);
         break;
 
       case 'theme':
-        url = `${ClientConfigurationAPIURL}/api/configuration/${configType}/${callingHost}`;
+        url = `${SearchAPIDomain}/api/configuration/${configType}/${callingHost}`;
         axiosResponse = await axiosAPICall.AxiosGet(url, addApiKeyHeader);
         break;
     }
