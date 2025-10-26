@@ -171,6 +171,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [lastExecutedSearch, setLastExecutedSearch] = useState<string | null>(null);
   const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] = useState<boolean>(false);
+  const initialSearchDone = useRef<boolean>(false);
 
   // ******************************************************************************************
   // ** this useEffect hook will setup configurations and theme settings - it is run once only
@@ -354,23 +355,25 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
       props.saveLoading(true);
       props.saveNetworkError(false);
 
-      const url = `/api/search?searchTerm=${encodeURIComponent(
-        searchRequest.searchTerm
-      )}&filters=${encodeURIComponent(
-        searchRequest.facets
-      )}&orderBy=${encodeURIComponent(
-        searchRequest.orderBy
-      )}&pageNumber=${encodeURIComponent(
-        searchRequest.pageNumber.toString()
-      )}&pageSize=${encodeURIComponent(
-        searchRequest.pageSize.toString()
-      )}&numberOfExistingResults=${encodeURIComponent(
-        searchRequest.numberOfExistingResults.toString()
-      )}&callingHost=${encodeURIComponent(searchRequest.callingHost)}`;
+      const searchRequestBody = {
+        searchTerm: searchRequest.searchTerm,
+        facets: searchRequest.facets,
+        orderBy: searchRequest.orderBy,
+        pageNumber: searchRequest.pageNumber,
+        pageSize: searchRequest.pageSize,
+        numberOfExistingResults: searchRequest.numberOfExistingResults,
+        callingHost: searchRequest.callingHost
+      };
 
-      LogDetails({ searchURL: url });
+      LogDetails({ searchRequestBody });
 
-      fetch(url)
+      fetch('/api/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(searchRequestBody)
+      })
         .then(response => response.json())
         .then(function (responseObject: any) {
           props.saveLoading(false);
@@ -535,10 +538,21 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
   );
 
   // *********************************************************************************************************************
+  // ** UseEffect for initial search on component mount
+  // *********************************************************************************************************************
+  useEffect(() => {
+    // Trigger initial search when component mounts and no search has been done yet
+    if (!initialSearchDone.current && props.reduxVehicleData.length === 0) {
+      initialSearchDone.current = true;
+      search(0, DefaultPageSize, 0);
+    }
+  }, [props.reduxVehicleData.length, search]);
+
+  // *********************************************************************************************************************
   // ** UseEffect hook that triggers search when dependencies change
   // *********************************************************************************************************************
   useEffect(() => {
-    // Only search if we have either a search term or selected facets
+    // Trigger search when search term or facets change
     if (
       props.reduxSearchTerm.length > 0 ||
       props.reduxFacetSelectors.some((facet: any) => facet.checked)
