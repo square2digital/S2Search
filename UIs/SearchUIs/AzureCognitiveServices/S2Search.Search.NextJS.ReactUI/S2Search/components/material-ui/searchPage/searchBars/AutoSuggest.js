@@ -1,15 +1,17 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { AutoSuggestAPI } from '../../../../pages/api/helper/SearchAPI';
 import {
   setSearchTerm,
   setVehicleData,
   setPageNumber,
+  setOrderBy,
+  setSearchCount,
 } from '../../../../store/slices/searchSlice';
 import {
   resetFacets,
   setFacetSelectors,
+  setFacetSelectedKeys,
 } from '../../../../store/slices/facetSlice';
 import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -42,21 +44,22 @@ export const AutoSuggest = props => {
   useEffect(() => {
     if (props.reduxSearchTerm) {
       if (props.reduxSearchTerm.length >= 2) {
-        AutoSuggestAPI(
-          props.reduxSearchTerm,
-          window.location.host,
-          props.reduxCancellationToken
-        ).then(function (axiosSuggestionsResponse) {
-          if (axiosSuggestionsResponse) {
-            if (axiosSuggestionsResponse.status === 200) {
-              let suggestions = axiosSuggestionsResponse.data;
+        fetch(
+          `/api/autoSuggest?searchTerm=${encodeURIComponent(props.reduxSearchTerm)}`
+        )
+          .then(response => response.json())
+          .then(function (suggestions) {
+            if (suggestions && Array.isArray(suggestions)) {
               suggestions.shift();
               setOptions(suggestions);
             } else {
               setOptions([]);
             }
-          }
-        });
+          })
+          .catch(error => {
+            console.error('AutoSuggest error:', error);
+            setOptions([]);
+          });
       } else {
         setOptions([]);
       }
@@ -194,10 +197,15 @@ const mapStateToProps = reduxState => {
 const mapDispatchToProps = dispatch => {
   return {
     saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
-    saveResetFacets: resetFacetsFlag => dispatch(resetFacets()),
-    saveVehicleData: () => dispatch(setVehicleData([])),
-    savePageNumber: () => dispatch(setPageNumber(0)),
-    saveFacetSelectors: () => dispatch(setFacetSelectors([])),
+    saveResetFacets: () => dispatch(resetFacets()),
+    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
+    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
+    saveFacetSelectors: facetSelectors =>
+      dispatch(setFacetSelectors(facetSelectors)),
+    saveFacetSelectedKeys: facetSelectedKeys =>
+      dispatch(setFacetSelectedKeys(facetSelectedKeys)),
+    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
+    saveSearchCount: searchCount => dispatch(setSearchCount(searchCount)),
     // Note: saveCancellationToken might need to be implemented in uiSlice if still needed
     // saveCancellationToken: enable => dispatch(setCancellationToken(enable)),
   };

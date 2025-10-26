@@ -7,8 +7,8 @@ import { DefaultTheme } from '../common/Constants';
 import ThemeColours from '../common/ThemeColours';
 import { createAppTheme } from '../common/theme';
 
-export async function getServerSideProps() {
-  const data = await ThemeColours();
+export async function getServerSideProps({ req }) {
+  const data = await ThemeColours(req);
 
   if (!data) {
     return {

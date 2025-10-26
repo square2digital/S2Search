@@ -5,10 +5,13 @@ import {
   setSearchTerm,
   setVehicleData,
   setPageNumber,
+  setOrderBy,
+  setSearchCount,
 } from '../../../../store/slices/searchSlice';
 import {
   resetFacets,
   setFacetSelectors,
+  setFacetSelectedKeys,
 } from '../../../../store/slices/facetSlice';
 import { DefaultLoadSpeed } from '../../../../common/Constants';
 import Paper from '@mui/material/Paper';
@@ -105,10 +108,15 @@ const mapStateToProps = reduxState => {
 const mapDispatchToProps = dispatch => {
   return {
     saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
-    saveResetFacets: resetFacetsFlag => dispatch(resetFacets()),
-    saveVehicleData: () => dispatch(setVehicleData([])),
-    savePageNumber: () => dispatch(setPageNumber(0)),
-    saveFacetSelectors: () => dispatch(setFacetSelectors([])),
+    saveResetFacets: () => dispatch(resetFacets()),
+    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
+    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
+    saveFacetSelectors: facetSelectors =>
+      dispatch(setFacetSelectors(facetSelectors)),
+    saveFacetSelectedKeys: facetSelectedKeys =>
+      dispatch(setFacetSelectedKeys(facetSelectedKeys)),
+    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
+    saveSearchCount: searchCount => dispatch(setSearchCount(searchCount)),
   };
 };
 
@@ -120,6 +128,9 @@ SearchBar.propTypes = {
   saveVehicleData: PropTypes.func,
   savePageNumber: PropTypes.func,
   saveFacetSelectors: PropTypes.func,
+  saveFacetSelectedKeys: PropTypes.func,
+  saveOrderby: PropTypes.func,
+  saveSearchCount: PropTypes.func,
   placeholderText: PropTypes.string,
   reduxConfigPlaceholders: PropTypes.array,
 };

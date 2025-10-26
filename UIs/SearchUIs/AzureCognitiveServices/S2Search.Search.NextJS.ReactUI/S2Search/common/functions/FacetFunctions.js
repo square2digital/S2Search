@@ -44,7 +44,7 @@ export const getSelectedFacets = reduxFacetSelectors => {
   const requestFilters = [];
 
   if (reduxFacetSelectors !== undefined) {
-    for (let item of reduxFacetSelectors) {
+    for (const item of reduxFacetSelectors) {
       if (item.checked) {
         requestFilters.push(item.luceneExpression);
       }

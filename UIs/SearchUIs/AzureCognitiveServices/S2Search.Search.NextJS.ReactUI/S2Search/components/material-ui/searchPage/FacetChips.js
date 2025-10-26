@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
@@ -6,9 +6,8 @@ import { connect } from 'react-redux';
 import {
   setFacetSelectors,
   setFacetChipDeleted,
+  setFacetSelectedKeys,
 } from '../../../store/slices/facetSlice';
-import { DefaultTheme } from '../../../common/Constants';
-import { useTheme } from '@mui/material/styles';
 
 // Modern styles object
 const styles = {
@@ -27,26 +26,23 @@ const styles = {
 };
 
 const FacetChips = props => {
-  useEffect(() => {
-    reduxFacetSelectors(props);
-  }, [props.reduxFacetSelectors]);
-
-  const reduxFacetSelectors = props => {
-    if (props.reduxFacetSelectors.length > 0) {
-      props.saveFacetSelectors(props.reduxFacetSelectors);
-    }
-  };
+  // Removed problematic useEffect that was causing infinite loops
+  // The facet selectors are already managed by the parent component
 
   const handleDelete = facetChipToDelete => () => {
-    let updatedArray = props.reduxFacetSelectors.filter(
+    const updatedArray = props.reduxFacetSelectors.filter(
       facet => facet.facetDisplayText !== facetChipToDelete.facetDisplayText
     );
 
+    // Also update facetSelectedKeys by removing the facetKey of the deleted facet
+    const updatedSelectedKeys = props.reduxFacetSelectedKeys.filter(
+      facetKey => facetKey !== facetChipToDelete.facetKey
+    );
+
     props.saveFacetSelectors(updatedArray);
+    props.saveFacetSelectedKeys(updatedSelectedKeys);
     props.saveFacetChipDeleted(props.reduxFacetChipDeleted + 1);
   };
-
-  const theme = useTheme();
 
   return (
     <Paper elevation={0} component="ul" sx={styles.root}>
@@ -70,6 +66,7 @@ const FacetChips = props => {
 const mapStateToProps = reduxState => {
   return {
     reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxFacetSelectedKeys: reduxState.facet.facetSelectedKeys,
     reduxFacetChipDeleted: reduxState.facet.facetChipDeleted,
     reduxPrimaryColour: reduxState.theme.primaryColour,
     reduxSecondaryColour: reduxState.theme.secondaryColour,
@@ -80,6 +77,8 @@ const mapDispatchToProps = dispatch => {
   return {
     saveFacetSelectors: facetSelectorArray =>
       dispatch(setFacetSelectors(facetSelectorArray)),
+    saveFacetSelectedKeys: facetSelectedKeys =>
+      dispatch(setFacetSelectedKeys(facetSelectedKeys)),
     saveFacetChipDeleted: facetChipDeleted =>
       dispatch(setFacetChipDeleted(facetChipDeleted)),
   };
@@ -87,7 +86,9 @@ const mapDispatchToProps = dispatch => {
 
 FacetChips.propTypes = {
   reduxFacetSelectors: PropTypes.array,
+  reduxFacetSelectedKeys: PropTypes.array,
   saveFacetSelectors: PropTypes.func,
+  saveFacetSelectedKeys: PropTypes.func,
   saveFacetChipDeleted: PropTypes.func,
   reduxFacetChipDeleted: PropTypes.number,
 };

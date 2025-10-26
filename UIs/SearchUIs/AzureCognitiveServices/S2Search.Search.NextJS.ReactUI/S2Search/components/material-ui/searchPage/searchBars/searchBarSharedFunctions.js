@@ -16,6 +16,16 @@ export const updateSearchTerm = (searchTerm, props) => {
 };
 
 export const resetFilters = props => {
+  // Immediately clear all state to prevent timing issues
+  props.saveVehicleData([]);
+  props.saveSearchTerm('');
+  props.saveFacetSelectors([]);
+  props.saveFacetSelectedKeys([]);
+  props.savePageNumber(0);
+  props.saveOrderby('');
+  props.saveSearchCount(0);
+
+  // Trigger async reset for dialog closing and other cleanup
   props.saveResetFacets(true);
   removeFullQueryString();
 };
