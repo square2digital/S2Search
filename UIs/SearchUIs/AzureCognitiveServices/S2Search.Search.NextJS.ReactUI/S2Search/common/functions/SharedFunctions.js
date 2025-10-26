@@ -66,13 +66,16 @@ export const IsPreviousRequestDataTheSame = (newRequest, reduxRequest) => {
     return false;
   }
 
-  if (
-    JSON.stringify(newRequest.facets) != JSON.stringify(reduxRequest.facets)
-  ) {
+  // Check both facets and filters properties for backward compatibility
+  // Some requests use 'facets' (newer frontend) and some use 'filters' (Redux state/legacy)
+  const newRequestFacets = newRequest.facets || newRequest.filters || '';
+  const reduxRequestFacets = reduxRequest.facets || reduxRequest.filters || '';
+
+  if (JSON.stringify(newRequestFacets) != JSON.stringify(reduxRequestFacets)) {
     LogRequests(
       newRequest,
       reduxRequest,
-      `compareRequestData is false - facets are different`
+      `compareRequestData is false - facets/filters are different`
     );
     return false;
   }
@@ -131,10 +134,13 @@ export const IsRequestReOrderBy = (newRequest, reduxRequest) => {
     return false;
   }
 
+  // Check both facets and filters properties for backward compatibility
+  const newRequestFacets = newRequest.facets || newRequest.filters || '';
+  const reduxRequestFacets = reduxRequest.facets || reduxRequest.filters || '';
+
   if (
     newRequest.orderBy !== reduxRequest.orderBy &&
-    JSON.stringify(newRequest.filters) ===
-      JSON.stringify(reduxRequest.filters) &&
+    JSON.stringify(newRequestFacets) === JSON.stringify(reduxRequestFacets) &&
     newRequest.pageNumber === reduxRequest.pageNumber &&
     newRequest.searchTerm.trim() === reduxRequest.searchTerm.trim()
   ) {

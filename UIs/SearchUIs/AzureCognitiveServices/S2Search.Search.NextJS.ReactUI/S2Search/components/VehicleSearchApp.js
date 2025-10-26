@@ -345,7 +345,8 @@ const VehicleSearchApp = props => {
       props.reduxSearchTerm.length > 0 ||
       props.reduxFacetSelectedKeys.length > 0 ||
       props.reduxFacetSelectors.length > 0 ||
-      props.reduxPageNumber > 0;
+      props.reduxPageNumber > 0 ||
+      props.reduxOrderBy.length > 0;
 
     // Special case: if all criteria are empty, we still want to search to show default results
     // but only if this is not the initial load (when everything is at default values)
@@ -354,6 +355,7 @@ const VehicleSearchApp = props => {
       props.reduxFacetSelectedKeys.length === 0 &&
       props.reduxFacetSelectors.length === 0 &&
       props.reduxPageNumber === 0 &&
+      props.reduxOrderBy.length === 0 &&
       searchCount === 0;
 
     if (!hasSearchCriteria && !isInitialLoad) {
