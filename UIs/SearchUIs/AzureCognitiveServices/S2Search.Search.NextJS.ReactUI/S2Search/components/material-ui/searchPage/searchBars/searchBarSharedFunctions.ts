@@ -43,7 +43,7 @@ export const resetFilters = (props: SearchBarProps): void => {
   props.saveSearchCount(0);
 
   // Trigger async reset for dialog closing and other cleanup
-  props.saveResetFacets(true);
+  props.saveResetFacets();
   removeFullQueryString();
 };
 
