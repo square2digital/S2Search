@@ -390,6 +390,7 @@ const VehicleSearchApp = props => {
     props.reduxOrderBy,
     props.reduxFacetChipDeleted,
     props.reduxFacetSelectedKeys,
+    props.reduxFacetSelectors,
     props.reduxPageNumber,
   ]);
 
