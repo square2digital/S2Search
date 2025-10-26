@@ -33,12 +33,12 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
 
                     using (var zipFile = new ZipArchive(zipBlobFileStream))
                     {
-                        if(zipFile.Entries.Count == 0)
+                        if (zipFile.Entries.Count == 0)
                         {
                             return (false, "No files detected");
                         }
 
-                        if(zipFile.Entries.Count > 1)
+                        if (zipFile.Entries.Count > 1)
                         {
                             return (false, $"Multiple files detected, zip must only contain a single {AcceptedFileTypes.CsvFile} file");
                         }
@@ -50,7 +50,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
                             return (false, $"Zip file must be a {AcceptedFileTypes.CsvFile} file");
                         }
 
-                        if(zipEntry.Length == 0)
+                        if (zipEntry.Length == 0)
                         {
                             return (false, $"File has no content");
                         }

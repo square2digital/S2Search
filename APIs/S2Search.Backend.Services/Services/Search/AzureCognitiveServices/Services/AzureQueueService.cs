@@ -27,16 +27,32 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
 
         public async Task EnqueueMessageAsync(QueuedMessage message)
         {
-            try
+            const int maxRetries = 5;
+            int attempt = 0;
+
+            string encodedMessage = ConvertObjectToBase64String(message.Data);
+
+            while (true)
             {
-                string encodedMessage = ConvertObjectToBase64String(message.Data);
-                var client = await _azureQueueClient.GetAsync(_connectionString, message.TargetQueue);
-                await client.SendMessageAsync(encodedMessage);
-            }
-            catch(Exception ex)
-            {
-                //log the error and dont throw as to not impact search queries
-                _logger.LogError($"Exception on {nameof(EnqueueMessageAsync)} | Timestamp: {DateTime.Now.ToString("MM/dd/yyyy h:mm tt")} | Message: {ex.Message}");
+                try
+                {
+                    attempt++;
+                    var client = await _azureQueueClient.GetAsync(_connectionString, message.TargetQueue);
+                    await client.SendMessageAsync(encodedMessage);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Attempt {Attempt} failed to enqueue message to {Queue}", attempt, message.TargetQueue);
+                    if (attempt >= maxRetries)
+                    {
+                        _logger.LogError(ex, "Exception on {Method} after {Attempts} attempts | UTC: {UtcNow} | Message: {Message}", nameof(EnqueueMessageAsync), attempt, DateTime.UtcNow.ToString("o"), ex.Message);
+                        return;
+                    }
+
+                    var delay = TimeSpan.FromSeconds(Math.Pow(2, attempt));
+                    await Task.Delay(delay);
+                }
             }
         }
 

@@ -23,7 +23,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "CustomerId", customerId }
+                { "customer_id", customerId }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<CustomerIds>(_connectionString, StoredProcedures.GetCustomerById, parameters);
@@ -35,7 +35,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "CustomerId", customerId }
+                { "customer_id", customerId }
             };
 
             var result = await _dbContext.QueryMultipleAsync<CustomerFull>(_connectionString, StoredProcedures.GetCustomerFull, parameters);

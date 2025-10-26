@@ -38,10 +38,10 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 
             var parameters = new Dictionary<string, object>()
             {
-                { "SynonymId", synonymRequest.SynonymId },
-                { "SearchIndexId", synonymRequest.SearchIndexId },
-                { "KeyWord", synonymRequest.KeyWord },
-                { "SolrFormat", solrFormat }
+                { "synonym_id", synonymRequest.SynonymId },
+                { "search_index_id", synonymRequest.SearchIndexId },
+                { "key_word", synonymRequest.KeyWord },
+                { "solr_format", solrFormat }
             };
 
             var synonymId = await _dbContext.ExecuteScalarAsync<Guid>(_connectionString,
@@ -56,8 +56,8 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", SearchIndexId },
-                { "SynonymId", synonymId }
+                { "search_index_id", SearchIndexId },
+                { "synonym_id", synonymId }
             };
 
             await _dbContext.ExecuteAsync(_connectionString, StoredProcedures.SupersedeSynonym, parameters);
@@ -67,7 +67,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", SearchIndexId }
+                { "search_index_id", SearchIndexId }
             };
 
             var results = await _dbContext.QueryAsync<Synonym>(_connectionString, StoredProcedures.GetSynonyms, parameters);
@@ -79,8 +79,8 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", SearchIndexId },
-                { "SynonymId", synonymId }
+                { "search_index_id", SearchIndexId },
+                { "synonym_id", synonymId }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<Synonym>(_connectionString, StoredProcedures.GetSynonymById, parameters);
@@ -92,8 +92,8 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", SearchIndexId },
-                { "KeyWord", keyWord }
+                { "search_index_id", SearchIndexId },
+                { "key_word", keyWord }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<Synonym>(_connectionString, StoredProcedures.GetSynonymByKeyWord, parameters);
@@ -117,10 +117,10 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Repositories
 
             var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", synonymRequest.SearchIndexId },
-                { "SynonymId", synonymRequest.SynonymId },
-                { "KeyWord", synonymRequest.KeyWord },
-                { "SolrFormat", solrFormat }
+                { "search_index_id", synonymRequest.SearchIndexId },
+                { "synonym_id", synonymRequest.SynonymId },
+                { "key_word", synonymRequest.KeyWord },
+                { "solr_format", solrFormat }
             };
 
             await _dbContext.ExecuteAsync(_connectionString, StoredProcedures.UpdateSynonym, parameters);

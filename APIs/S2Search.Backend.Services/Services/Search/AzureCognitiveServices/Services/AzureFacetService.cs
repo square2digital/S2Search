@@ -117,7 +117,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
 
         private SearchClient GetSearchClient(SearchIndexQueryCredentials targetSearchResource)
         {
-            return _searchClientProvider.GetSearchClient(targetSearchResource.SearchInstanceEndpoint, targetSearchResource.SearchIndexName, targetSearchResource.QueryApiKey);
+            return _searchClientProvider.GetSearchClient(targetSearchResource.search_instance_endpoint, targetSearchResource.search_index_name, targetSearchResource.QueryApiKey);
         }
     }
 }

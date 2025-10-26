@@ -32,27 +32,13 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "CustomerEndpoint", customerEndpoint }
+                { "customer_endpoint", customerEndpoint }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexQueryCredentials>(
                 _connectionString,
                 StoredProcedures.GetSearchIndexQueryCredentials,
                 parameters);
-
-            return result;
-        }
-
-        public async Task<IEnumerable<GenericSynonyms>> GetGenericSynonymsByCategoryAsync(string category)
-        {
-            var parameters = new Dictionary<string, object>()
-            {
-                { "Category", category }
-            };
-
-            var result = await _dbContext.QueryAsync<GenericSynonyms>(_connectionString,
-                                                                                 StoredProcedures.GetGenericSynonymsByCategory,
-                                                                                 parameters);
 
             return result;
         }
@@ -73,9 +59,9 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var searchIndex = await GetAsync(keyGenerationRequest.CustomerId, keyGenerationRequest.SearchIndexId);
 
-            if (!searchIndex.SearchInstanceId.HasValue)
+            if (!searchIndex.search_instance_id.HasValue)
             {
-                throw new Exception($"{nameof(searchIndex.SearchInstanceId)} is null");
+                throw new Exception($"{nameof(searchIndex.search_instance_id)} is null");
             }
 
             var SearchInstanceKeyGenerationRequest = ConvertToSearchInstanceKeyGenerationRequest(keyGenerationRequest, searchIndex);
@@ -88,8 +74,8 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             return new SearchInstanceKeyGenerationRequest()
             {
-                SearchIndexId = searchIndex.SearchIndexId,
-                SearchInstanceId = searchIndex.SearchInstanceId.Value,
+                SearchIndexId = searchIndex.id,
+                SearchInstanceId = searchIndex.search_instance_id.Value,
                 KeysToGenerate = keyGenerationRequest.KeysToGenerate.Select(keyName => new SearchInstanceKeyRequest()
                 {
                     Name = keyName,
@@ -103,7 +89,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
             return new SearchInstanceQueryKeyDeletionRequest()
             {
                 SearchIndexId = keyGenerationRequest.SearchIndexId,
-                SearchInstanceId = searchIndex.SearchInstanceId.Value,
+                SearchInstanceId = searchIndex.search_instance_id.Value,
                 KeysToDelete = keyGenerationRequest.KeysToDelete.Select(keyToDelete => new QueryKey()
                 {
                     Name = keyToDelete.Name,
@@ -126,10 +112,10 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
 
         public async Task<SearchIndex> GetAsync(Guid customerId, Guid searchIndexId)
         {
-            object parameters = new Dictionary<string, object>()
+            var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", searchIndexId },
-                { "CustomerId", customerId }
+                { "search_index_id", searchIndexId },
+                { "customer_id", customerId }
             };
 
             try
@@ -148,10 +134,10 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
 
         public async Task<SearchIndexFull> GetFullAsync(Guid customerId, Guid searchIndexId)
         {
-            object parameters = new Dictionary<string, object>()
+            var parameters = new Dictionary<string, object>()
             {
-                { "SearchIndexId", searchIndexId },
-                { "CustomerId", customerId }
+                { "search_index_id", searchIndexId },
+                { "customer_id", customerId }
             };
 
             try
@@ -168,28 +154,13 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
             }
         }
 
-        public async Task<IEnumerable<SearchIndexKeys>> GetKeysAsync(Guid customerId, Guid searchIndexId)
-        {
-            var parameters = new Dictionary<string, object>()
-            {
-                { "SearchIndexId", searchIndexId },
-                { "CustomerId", customerId }
-            };
-
-            var result = await _dbContext.QueryAsync<SearchIndexKeys>(_connectionString,
-                                                                      StoredProcedures.GetSearchIndexKeysForCustomer,
-                                                                      parameters);
-
-            return result;
-        }
-
         public async Task DeleteKeysAsync(SearchIndexKeyDeletionRequest keyDeletionRequest)
         {
             var searchIndex = await GetAsync(keyDeletionRequest.CustomerId, keyDeletionRequest.SearchIndexId);
 
-            if (!searchIndex.SearchInstanceId.HasValue)
+            if (!searchIndex.search_instance_id.HasValue)
             {
-                throw new Exception($"{nameof(searchIndex.SearchInstanceId)} is null");
+                throw new Exception($"{nameof(searchIndex.search_instance_id)} is null");
             }
 
             var SearchInstanceKeyGenerationRequest = ConvertToSearchInstanceQueryKeyDeletionRequest(keyDeletionRequest, searchIndex);
@@ -202,8 +173,8 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "CustomerId", customerId },
-                { "FriendlyName", friendlyName }
+                { "customer_id", customerId },
+                { "friendly_name", friendlyName }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndex>(_connectionString,
@@ -217,7 +188,7 @@ namespace S2Search.Backend.Services.Services.Admin.Configuration.Repositories
         {
             var parameters = new Dictionary<string, object>()
             {
-                { "CustomerEndpoint", customerEndpoint }
+                { "customer_endpoint", customerEndpoint }
             };
 
             var result = await _dbContext.QuerySingleOrDefaultAsync<SearchIndexQueryCredentials>(_connectionString,

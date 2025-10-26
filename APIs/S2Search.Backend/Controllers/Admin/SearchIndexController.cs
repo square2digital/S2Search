@@ -58,7 +58,7 @@ namespace S2Search.Backend.Controllers.Admin
             {
                 var searchIndex = await _searchIndexRepo.GetByFriendlyNameAsync(customerId, friendlyName);
 
-                if (searchIndex == null || searchIndex.SearchIndexId == Guid.Empty)
+                if (searchIndex == null || searchIndex.id == Guid.Empty)
                 {
                     return NotFound();
                 }
@@ -81,7 +81,7 @@ namespace S2Search.Backend.Controllers.Admin
             {
                 var existingSearchIndex = await _searchIndexRepo.GetByFriendlyNameAsync(customerId, indexRequest.IndexName);
 
-                if (existingSearchIndex != null && existingSearchIndex.SearchIndexId != Guid.Empty)
+                if (existingSearchIndex != null && existingSearchIndex.id != Guid.Empty)
                 {
                     return Conflict($"IndexName '{indexRequest.IndexName}' is already in use.");
                 }

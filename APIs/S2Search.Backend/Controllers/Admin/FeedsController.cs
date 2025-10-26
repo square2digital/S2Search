@@ -42,7 +42,7 @@ namespace S2Search.Backend.Controllers.Admin
 
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(Get)} | CustomerId: {customerId} | Message: {ex.Message}");
                 throw;
@@ -99,7 +99,7 @@ namespace S2Search.Backend.Controllers.Admin
 
                 return Accepted();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(Upload)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
                 throw;

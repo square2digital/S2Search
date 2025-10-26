@@ -41,7 +41,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
 
             var isZip = file.FileName.EndsWith(AcceptedFileTypes.ZipFile, StringComparison.OrdinalIgnoreCase);
 
-            var uploadDestination = _feedUploadDestination.GetDestination(customerId, searchIndex.IndexName, isZip, true);
+            var uploadDestination = _feedUploadDestination.GetDestination(customerId, searchIndex.index_name, isZip, true);
             var blobName = $"{uploadDestination}/{file.FileName}";
 
             var blobClient = _blobClientProvider.Get(ConnectionStringKeys.AzureStorage, FeedUploadDestinations.FeedContainer, blobName);
@@ -53,7 +53,7 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Managers
             }
 
             await blobClient.UploadAsync(file.OpenReadStream());
-            
+
             var feedUploadNotification = CreateFeedUploadNotification(searchIndexId);
 
             return (true, "");

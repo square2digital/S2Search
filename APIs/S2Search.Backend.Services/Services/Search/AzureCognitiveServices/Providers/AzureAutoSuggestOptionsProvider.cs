@@ -46,15 +46,15 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Provi
 
         private static void AddSuggestOptions(IEnumerable<string> selectFields, IEnumerable<string> searchFields, SuggestOptions suggestOptions)
         {
-            if(selectFields != null)
+            if (selectFields != null)
             {
                 foreach (var selectField in selectFields)
                 {
                     suggestOptions.Select.Add(selectField);
                 }
             }
-            
-            if(searchFields != null)
+
+            if (searchFields != null)
             {
                 foreach (var searchField in searchFields)
                 {
@@ -65,7 +65,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Provi
 
         private static void AddAutocompleteOptions(IEnumerable<string> searchFields, AutocompleteOptions autocompleteOptions)
         {
-            if(searchFields != null)
+            if (searchFields != null)
             {
                 foreach (var searchField in searchFields)
                 {

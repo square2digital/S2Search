@@ -1,8 +1,5 @@
 ﻿using Dapper;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
 namespace S2Search.Backend.Services.Services.Admin.Dapper.Helpers
 {
@@ -19,7 +16,7 @@ namespace S2Search.Backend.Services.Services.Admin.Dapper.Helpers
         {
             ValidateParameters(parameters);
 
-           var dynamicParameters = ConvertToDynamicParameters(procedureName, parameters);
+            var dynamicParameters = ConvertToDynamicParameters(procedureName, parameters);
 
             return dynamicParameters;
         }
@@ -98,6 +95,5 @@ namespace S2Search.Backend.Services.Services.Admin.Dapper.Helpers
                 throw new Exception("Parameter object is not of type Dictionary<string, object>");
             }
         }
-
     }
 }

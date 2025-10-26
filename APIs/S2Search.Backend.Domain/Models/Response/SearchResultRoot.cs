@@ -1,4 +1,4 @@
-﻿using S2Search.Backend.Domain.Models.Insights;
+﻿using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
 
 namespace S2Search.Backend.Domain.Models.Response;
 

@@ -11,7 +11,7 @@ namespace S2Search.Backend.Services.Services.Admin.Dapper.Helpers
             var properties = typeof(T).GetProperties();
             var customObjectMapList = new List<CustomObjectMap>();
 
-            foreach(PropertyInfo info in properties)
+            foreach (PropertyInfo info in properties)
             {
                 var type = info.PropertyType;
                 var isList = typeof(IEnumerable).IsAssignableFrom(type);
@@ -20,7 +20,7 @@ namespace S2Search.Backend.Services.Services.Admin.Dapper.Helpers
                 {
                     var underlyingType = type.GetGenericArguments().FirstOrDefault();
 
-                    if(underlyingType != null)
+                    if (underlyingType != null)
                     {
                         type = underlyingType;
                     }

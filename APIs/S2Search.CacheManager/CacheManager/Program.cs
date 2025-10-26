@@ -25,5 +25,5 @@ using (host)
         await host.WaitForShutdownAsync(cancelTokenSource.Token);
     }
 }
-    
+
 Console.WriteLine("Cache Manager Shutting Down...");

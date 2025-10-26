@@ -11,6 +11,7 @@ using S2Search.Backend.Domain.Models;
 using S2Search.Backend.Services.Admin.Configuration.Repositories;
 using S2Search.Backend.Services.Admin.Customer.Interfaces.Managers;
 using S2Search.Backend.Services.Admin.Customer.Managers;
+using S2Search.Backend.Services.AzureFunctions.FeedServices.Providers;
 using S2Search.Backend.Services.Services;
 using S2Search.Backend.Services.Services.Admin.Configuration.Repositories;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
@@ -99,7 +100,7 @@ namespace S2Search.Backend.Services
                 .AddSingleton<ISearchIndexRepository, SearchIndexRepository>()
                 .AddSingleton<IFeedRepository, FeedRepository>()
 
-                .AddSingleton<ISearchInterfaceRepository, SearchInterfaceRepository>()
+                //.AddSingleton<ISearchInterfaceRepository, SearchInterfaceRepository>()
                 .AddSingleton<ISynonymRepository, SynonymRepository>()
                 .AddSingleton<ICustomerRepository, CustomerRepository>()
                 .AddSingleton<IThemeRepository, ThemeRepository>()
@@ -115,7 +116,7 @@ namespace S2Search.Backend.Services
                 .AddSingleton<IFeedUploadDestinationManager, FeedUploadDestinationManager>()
                 .AddSingleton<IFeedCredentialsManager, FeedCredentialsManager>()
 
-                .AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>()
+                //.AddSingleton<ISearchConfigurationRepository, SearchConfigurationRepository>()
                 .AddSingleton<ISearchInsightsRepository, SearchInsightsRepository>()
                 .AddSingleton<ISearchInsightsReportRepository, SearchInsightsReportRepository>()
                 .AddSingleton<IFeedRepository, FeedRepository>()
@@ -129,16 +130,16 @@ namespace S2Search.Backend.Services
                 .AddSingleton<ISynonymValidationManager, SynonymValidationManager>()
                 .AddSingleton<IQueryKeyNameValidationManager, QueryKeyNameValidationManager>();
 
-                //services.AddSingleton<ICacheManager, RedisCacheManager>();
-                //.AddSingleton<INotificationRuleRepository, NotificationRuleRepository>()
-                //services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
-                //.AddSingleton<INotificationRepository, NotificationRepository>()
-                //.AddSingleton<IDashboardRepository, DashboardRepository>()
-                //services.AddSingleton<IDashboardManager, DashboardManager>();
-                //services.AddSingleton<IDateTimeCategoryProvider, DateTimeCategoryProvider>();
-                //services.AddSingleton<ISearchInsightsManager, SearchInsightsManager>()
-                //services.AddSingleton<ISearchFacetsFormatManager, SearchFacetsFormatManager>()
-                //services.AddSingleton<IDataPointsExtractionManager, DataPointsExtractionManager>();
+            //services.AddSingleton<ICacheManager, RedisCacheManager>();
+            //.AddSingleton<INotificationRuleRepository, NotificationRuleRepository>()
+            //services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
+            //.AddSingleton<INotificationRepository, NotificationRepository>()
+            //.AddSingleton<IDashboardRepository, DashboardRepository>()
+            //services.AddSingleton<IDashboardManager, DashboardManager>();
+            //services.AddSingleton<IDateTimeCategoryProvider, DateTimeCategoryProvider>();
+            //services.AddSingleton<ISearchInsightsManager, SearchInsightsManager>()
+            //services.AddSingleton<ISearchFacetsFormatManager, SearchFacetsFormatManager>()
+            //services.AddSingleton<IDataPointsExtractionManager, DataPointsExtractionManager>();
 
             return services;
         }
@@ -160,13 +161,13 @@ namespace S2Search.Backend.Services
             {
                 throw new InvalidOperationException("Configuration must be set before calling AddAPIServices.");
             }
-                
+
             var appSettings = Configuration.Get<AppSettings>();
 
             if (appSettings == null)
             {
                 throw new InvalidOperationException("AppSettings section is missing or invalid in configuration.");
-            }                
+            }
 
             services.AddSingleton(appSettings);
 

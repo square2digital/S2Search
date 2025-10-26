@@ -18,7 +18,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             get
             {
                 return _connection.GetDatabase();
-            }        
+            }
         }
 
         public string CreateRedisKey(string firstKey, string secondKey, string requestHash)

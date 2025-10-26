@@ -22,64 +22,6 @@ namespace S2Search.Backend.Controllers.Admin
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        [HttpGet("all", Name = "GetKeys")]
-        [ProducesResponseType(typeof(IEnumerable<SearchIndexKeys>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<SearchIndexKeys>>> GetKeys(Guid customerId, Guid searchIndexId)
-        {
-            try 
-            {
-                var result = await _searchIndexRepo.GetKeysAsync(customerId, searchIndexId);
-
-                return Ok(result);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, $"Error on {nameof(GetKeys)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
-                throw;
-            }
-        }
-
-        [HttpPost("create", Name = "CreateKeys")]
-        [ProducesResponseType(typeof(IEnumerable<SearchIndexKeys>), StatusCodes.Status202Accepted)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create(Guid customerId,
-                                                Guid searchIndexId,
-                                                [FromBody] SearchIndexKeyGenerationRequest keyGenerationRequest)
-        {
-            try
-            {
-                string nameErrorMessage = string.Empty;
-                var namesInvalid = keyGenerationRequest.KeysToGenerate.Any(x => !_queryKeyNameManager.IsValid(x, out nameErrorMessage));
-
-                if (namesInvalid && !string.IsNullOrEmpty(nameErrorMessage))
-                {
-                    return BadRequest($"One or more query key names are invalid. {nameErrorMessage}");
-                }
-
-                var existingKeys = await _searchIndexRepo.GetKeysAsync(customerId, searchIndexId);
-
-                if (existingKeys.Any(x => keyGenerationRequest.KeysToGenerate.Select(y => y.ToLowerInvariant())
-                                                                             .Contains(x.Name.ToLowerInvariant())))
-                {
-                    return BadRequest("Existing key name found");
-                }
-
-                keyGenerationRequest.CustomerId = customerId;
-                keyGenerationRequest.SearchIndexId = searchIndexId;
-
-                await _searchIndexRepo.CreateKeysAsync(keyGenerationRequest);
-
-                return AcceptedAtAction(nameof(GetKeys), ControllerContext.ActionDescriptor.ControllerName, new { customerId, searchIndexId });
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, $"Error on {nameof(Create)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
-                throw;
-            }
-        }
-
         [HttpPost(Name = "DeleteKeys")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -95,7 +37,7 @@ namespace S2Search.Backend.Controllers.Admin
                 await _searchIndexRepo.DeleteKeysAsync(keyDeletionRequest);
                 return Accepted();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error on {nameof(DeleteKeysAsync)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
                 throw;

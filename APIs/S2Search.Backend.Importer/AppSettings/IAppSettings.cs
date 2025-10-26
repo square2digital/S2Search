@@ -4,6 +4,6 @@
     {
         SearchSettings SearchSettings { get; set; }
         IndexSettings IndexSettings { get; set; }
-        APIKeys APIKeys { get; set; }       
+        APIKeys APIKeys { get; set; }
     }
 }
