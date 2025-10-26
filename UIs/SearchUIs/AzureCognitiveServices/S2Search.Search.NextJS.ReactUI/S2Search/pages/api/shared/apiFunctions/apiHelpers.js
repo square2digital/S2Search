@@ -27,14 +27,28 @@ const FormatCallingHost = callingHost => {
 };
 
 const GenerateAPIError = data => {
-  let errorMessage = '';
-  let statusCode = data.status;
+  let errorMessage = 'An unknown API error occurred.';
+  let statusCode = 500; // Default to a generic server error code
 
-  if (data) {
-    errorMessage = `statusText - ${data.statusText}`;
-    statusCode = data.status;
-  } else {
+  // 1. Check for a standard HTTP error response (server responded with a 4xx/5xx code)
+  if (data && data.response) {
+    statusCode = data.response.status;
+    errorMessage = `HTTP Status Error: ${data.response.status} - ${data.response.statusText || 'No Status Text'}`;
+  }
+  // 2. Check for a network or request error (like ECONNREFUSED)
+  else if (data && data.code) {
+    // Axios network errors (ECONNREFUSED, ENOTFOUND, etc.)
+    statusCode = 503; // Use 503 Service Unavailable for connectivity issues
+    errorMessage = `Network Error: ${data.code} - Cannot connect to backend service.`;
+  }
+  // 3. Fallback for generic errors (e.g., if data is not an Axios error, but a simple Error object)
+  else if (data && data.message) {
+    errorMessage = data.message;
+  }
+  // 4. Fallback for null/undefined 'data' (this handles your original 'else' case)
+  else {
     errorMessage = 'GenerateAPIError - data is null or undefined';
+    statusCode = 500;
   }
 
   console.log(`errorMessage - ${errorMessage}`);
