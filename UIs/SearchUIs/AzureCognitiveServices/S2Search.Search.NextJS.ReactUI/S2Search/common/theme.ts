@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
-import { ThemeColors } from '../types/theme/colours';
+import { ThemeColors } from '../types/colourTypes';
 
 // Create a modern theme with improved defaults
 export const createAppTheme = (colors: ThemeColors) => {

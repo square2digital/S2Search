@@ -1,22 +1,4 @@
-export interface SearchRequest {
-  searchTerm: string;
-  facets: string;
-  orderBy: string;
-  pageNumber: number;
-  pageSize: number;
-  numberOfExistingResults: number;
-  callingHost: string;
-}
-
-export interface SearchRequestParams {
-  searchTerm?: string;
-  facets?: string;
-  orderBy?: string;
-  pageNumber?: number;
-  pageSize?: number;
-  numberOfExistingResults?: number;
-  callingHost?: string;
-}
+import { SearchRequest } from '../types/searchTypes';
 
 /**
  * Factory function to create a SearchRequest object
@@ -46,5 +28,3 @@ export function createSearchRequest(
  * @deprecated Use createSearchRequest instead
  */
 export const SearchRequestConstructor = createSearchRequest;
-
-export default SearchRequest;

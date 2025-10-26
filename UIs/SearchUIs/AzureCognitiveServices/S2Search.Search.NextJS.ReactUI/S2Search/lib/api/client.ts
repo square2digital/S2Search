@@ -1,29 +1,6 @@
+import { ApiConfig, SearchQueryParams, ApiResponse } from '@/types/apiTypes';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import https from 'https';
-
-// Types
-export interface ApiConfig {
-  headers: Record<string, string>;
-  httpsAgent?: https.Agent;
-  timeout?: number;
-}
-
-export interface ApiResponse<T = any> {
-  data: T;
-  status: number;
-  success: boolean;
-  error?: string;
-}
-
-export interface SearchQueryParams {
-  searchTerm?: string;
-  filters?: string;
-  orderBy?: string;
-  pageNumber?: number;
-  pageSize?: number;
-  numberOfExistingResults?: number;
-  callingHost?: string;
-}
 
 // Constants
 const HTTPS_AGENT = new https.Agent({

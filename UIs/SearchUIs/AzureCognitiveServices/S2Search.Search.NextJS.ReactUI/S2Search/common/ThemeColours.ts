@@ -1,5 +1,5 @@
 import { DefaultTheme } from './Constants';
-import { ThemeColors } from '../types/theme/colours';
+import { ThemeColors } from '../types/colourTypes';
 
 export const ThemeColours = async (req?: any) => {
   try {
