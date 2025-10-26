@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+﻿import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -13,7 +13,6 @@ import {
   setFacetSelectors,
   setFacetSelectedKeys,
 } from '../../../../store/slices/facetSlice';
-import { DefaultLoadSpeed } from '../../../../common/Constants';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';

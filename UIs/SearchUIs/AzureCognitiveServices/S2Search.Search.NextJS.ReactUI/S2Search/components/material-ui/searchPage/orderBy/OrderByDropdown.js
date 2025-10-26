@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -18,7 +17,6 @@ const styles = {
 };
 
 const OrderByDropdown = props => {
-  const theme = useTheme();
   const [orderBy, setOrderBy] = React.useState('');
   const [open, setOpen] = React.useState(false);
 
@@ -26,7 +24,7 @@ const OrderByDropdown = props => {
     const dropdownArray = [];
 
     if (GetOrderByData) {
-      for (let order of GetOrderByData) {
+      for (const order of GetOrderByData) {
         dropdownArray.push(
           <MenuItem value={order.value}>{`${order.display}`}</MenuItem>
         );

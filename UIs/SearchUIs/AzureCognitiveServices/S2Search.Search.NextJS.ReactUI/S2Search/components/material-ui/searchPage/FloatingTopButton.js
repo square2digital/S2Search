@@ -5,9 +5,7 @@ import Fab from '@mui/material/Fab';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import Tooltip from '@mui/material/Tooltip';
 import UseWindowSize from '../../../common/hooks/UseWindowSize';
-import { DefaultTheme } from '../../../common/Constants';
 import Zoom from '@mui/material/Zoom';
-import { useTheme } from '@mui/material/styles';
 
 const setSize = width => {
   if (width < 600) {
@@ -26,10 +24,9 @@ const handleClick = () => {
 
 const buttonPositionTrigger = 650;
 
-const FloatingTopButton = props => {
-  const [width, height] = UseWindowSize();
+const FloatingTopButton = () => {
+  const [width] = UseWindowSize();
   const [scrollPosition, setScrollPosition] = useState(0);
-  const theme = useTheme();
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });

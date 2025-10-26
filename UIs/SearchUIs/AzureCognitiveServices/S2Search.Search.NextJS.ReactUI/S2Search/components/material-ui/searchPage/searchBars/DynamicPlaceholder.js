@@ -46,13 +46,11 @@ const useDynamicPlaceholder = apiPlaceholders => {
     }
 
     const timer = setInterval(() => {
-      for (const char of quote.split('')) {
-        setPlaceholder(`${startString} ${quote.slice(0, placeholderIndex)}`);
-        if (placeholderIndex + 1 > quote.length) {
-          setPlaceholderIndex(0);
-        } else {
-          setPlaceholderIndex(placeholderIndex + 1);
-        }
+      setPlaceholder(`${startString} ${quote.slice(0, placeholderIndex)}`);
+      if (placeholderIndex + 1 > quote.length) {
+        setPlaceholderIndex(0);
+      } else {
+        setPlaceholderIndex(placeholderIndex + 1);
       }
     }, 100);
 

@@ -11,7 +11,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Badge from '@mui/material/Badge';
-import { setSelectedFacetButton } from '../../../common/functions/FacetFunctions';
 import Typography from '@mui/material/Typography';
 import { GenerateUniqueID } from '../../../common/functions/SharedFunctions';
 import {
@@ -38,7 +37,7 @@ const FacetSelectionMenu = props => {
   const facetMenuClick = facetKey => {
     props.saveSelectedFacet(facetKey);
 
-    let arr = [...props.reduxFacetSelectedKeys];
+    const arr = [...props.reduxFacetSelectedKeys];
     arr.push(facetKey);
     props.saveFacetSelectedKeys(arr);
   };

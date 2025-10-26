@@ -56,7 +56,7 @@ const FacetSelectionList = props => {
       let theFacet = {};
       let currentFacet = {};
       let facetData = [];
-      let selectedFacetData = [];
+      const selectedFacetData = [];
 
       // ****************
       // facets To Load - default or from Search Results?
@@ -105,7 +105,7 @@ const FacetSelectionList = props => {
       }
 
       if (props.reduxFacetSelectors.length > 0) {
-        let theFacetUpdated = handleChecked(theFacet);
+        const theFacetUpdated = handleChecked(theFacet);
         setfacetState(theFacetUpdated);
       } else {
         setfacetState(theFacet);

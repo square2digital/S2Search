@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Box, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import dynamic from 'next/dynamic';
 import { useAppSelector } from '../../../store/hooks';
 import {
@@ -16,28 +16,6 @@ const VehicleCard = dynamic(() => import('../../VehicleCard'), {
   ),
   ssr: true,
 });
-
-interface VehicleData {
-  vehicleID: string;
-  make: string;
-  model: string;
-  variant: string;
-  location: string;
-  price: number;
-  monthlyPrice: number;
-  mileage: number;
-  fuelType: string;
-  transmission: string;
-  doors: number;
-  engineSize: number;
-  bodyStyle: string;
-  colour: string;
-  year: number;
-  description: string;
-  manufactureColour: string;
-  vrm: string;
-  imageURL: string;
-}
 
 const VehicleCardList: React.FC = () => {
   const vehicleData = useAppSelector(selectVehicleData);

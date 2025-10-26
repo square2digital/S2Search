@@ -7,27 +7,18 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import {
-  FormatStringOrNumeric,
-  FormatLongStrings,
-} from '../../../common/functions/SharedFunctions';
-import { FacetToParseAsNumeric, DefaultTheme } from '../../../common/Constants';
-import { useTheme } from '@mui/material/styles';
+import { FormatStringOrNumeric } from '../../../common/functions/SharedFunctions';
+import { FacetToParseAsNumeric } from '../../../common/Constants';
 import { setSearchTerm } from '../../../store/slices/searchSlice';
 import { setFacetSelectors } from '../../../store/slices/facetSlice';
 
 const FacetSelector = props => {
-  const theme = useTheme();
   const [checked, setChecked] = useState(props.isChecked);
 
   const checkboxFacetNameAsString = `${props.facet.facetDisplayText}`;
-  const formattedFacetName = FormatLongStrings(
-    `${props.facet.facetDisplayText}`,
-    20
-  );
 
   const FacetOnClick = () => {
-    let checkedValue = !checked;
+    const checkedValue = !checked;
     setChecked(checkedValue);
     if (checkedValue === false) {
       handleDelete(props.facet);
@@ -37,7 +28,7 @@ const FacetSelector = props => {
 
   const handleDelete = facetToDelete => {
     let facetSelectorArray = [...props.reduxFacetSelectors];
-    let forDeletion = [facetToDelete.value];
+    const forDeletion = [facetToDelete.value];
 
     if (facetSelectorArray.length > 0) {
       facetSelectorArray = facetSelectorArray.filter(
@@ -51,7 +42,7 @@ const FacetSelector = props => {
   };
 
   const buildFacetSelectors = isChecked => {
-    let selectedFacetData = {
+    const selectedFacetData = {
       facetKey: props.selectedFacet,
       facetDisplayText: props.facet.facetDisplayText,
       luceneExpression: '',
@@ -95,17 +86,17 @@ const FacetSelector = props => {
         )
       ) {
         // facet is in redux - update it
-        let index = props.reduxFacetSelectors.findIndex(
+        const index = props.reduxFacetSelectors.findIndex(
           x => x.luceneExpression === selectedFacetData.luceneExpression
         );
 
-        let facetSelectorArray = [...props.reduxFacetSelectors];
+        const facetSelectorArray = [...props.reduxFacetSelectors];
         facetSelectorArray[index] = selectedFacetData;
 
         props.saveFacetSelectors(facetSelectorArray);
       } else {
         // facet not in redux - add it
-        let reduxFacetSelectorsArray = [...props.reduxFacetSelectors];
+        const reduxFacetSelectorsArray = [...props.reduxFacetSelectors];
         reduxFacetSelectorsArray.push(selectedFacetData);
         props.saveFacetSelectors(reduxFacetSelectorsArray);
       }

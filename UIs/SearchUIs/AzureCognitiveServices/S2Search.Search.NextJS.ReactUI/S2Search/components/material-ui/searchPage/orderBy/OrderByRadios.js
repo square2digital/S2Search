@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -18,7 +17,6 @@ const styles = {
 };
 
 const OrderByRadios = props => {
-  const theme = useTheme();
   const [orderBy, setOrderBy] = React.useState('');
 
   const GenerateRadios = () => {
@@ -26,7 +24,7 @@ const OrderByRadios = props => {
 
     if (GetOrderByData) {
       let index = 0;
-      for (let order of GetOrderByData) {
+      for (const order of GetOrderByData) {
         dropdownArray.push(
           <FormControlLabel
             key={index}

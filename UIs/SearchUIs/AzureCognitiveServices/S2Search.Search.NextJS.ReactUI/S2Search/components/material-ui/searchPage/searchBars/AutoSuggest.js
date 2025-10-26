@@ -66,7 +66,7 @@ export const AutoSuggest = props => {
     }
 
     setShowDropdown(options.length > 0);
-  }, [props.reduxSearchTerm]);
+  }, [props.reduxSearchTerm, options.length]);
 
   const updateSearch = (event, value) => {
     updateSearchTerm(value, props);

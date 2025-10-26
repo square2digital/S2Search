@@ -119,7 +119,7 @@ const mapStateToProps = reduxState => {
 const mapDispatchToProps = dispatch => {
   return {
     saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
-    saveResetFacets: resetFacetsFlag => dispatch(resetFacets()),
+    saveResetFacets: () => dispatch(resetFacets()),
   };
 };
 

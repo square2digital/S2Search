@@ -3,7 +3,6 @@ import {
   Grid,
   Typography,
   Card,
-  CardMedia,
   CardContent,
   CardActions,
   Box,
@@ -22,7 +21,6 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SpeedIcon from '@mui/icons-material/Speed';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ElectricCarIcon from '@mui/icons-material/ElectricCar';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -186,7 +184,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
     </Stack>
   );
 
-  const renderMobileCard = (vehicle: VehicleData, index: number) => {
+  const renderMobileCard = (vehicle: VehicleData) => {
     const title = `${vehicle.make} ${vehicle.model}`;
 
     return (
@@ -302,7 +300,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
     );
   };
 
-  const renderDesktopCard = (vehicle: VehicleData, index: number) => {
+  const renderDesktopCard = (vehicle: VehicleData) => {
     const title = `${vehicle.make} ${vehicle.model}`;
 
     return (
@@ -448,14 +446,14 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
   if (isMobile) {
     return (
       <Box sx={{ width: '100%' }}>
-        {vehicleData.map((vehicle, index) => renderMobileCard(vehicle, index))}
+        {vehicleData.map((vehicle) => renderMobileCard(vehicle))}
       </Box>
     );
   }
 
   return (
     <Grid container spacing={{ xs: 2, sm: 2, md: 2, lg: 1.5 }} sx={{ width: '100%', m: 0 }}>
-      {vehicleData.map((vehicle, index) => renderDesktopCard(vehicle, index))}
+      {vehicleData.map((vehicle) => renderDesktopCard(vehicle))}
     </Grid>
   );
 };
