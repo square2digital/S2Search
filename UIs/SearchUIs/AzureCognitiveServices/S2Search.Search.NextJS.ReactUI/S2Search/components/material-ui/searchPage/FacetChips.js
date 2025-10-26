@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
@@ -7,8 +7,6 @@ import {
   setFacetSelectors,
   setFacetChipDeleted,
 } from '../../../store/slices/facetSlice';
-import { DefaultTheme } from '../../../common/Constants';
-import { useTheme } from '@mui/material/styles';
 
 // Modern styles object
 const styles = {
@@ -27,26 +25,17 @@ const styles = {
 };
 
 const FacetChips = props => {
-  useEffect(() => {
-    reduxFacetSelectors(props);
-  }, [props.reduxFacetSelectors]);
-
-  const reduxFacetSelectors = props => {
-    if (props.reduxFacetSelectors.length > 0) {
-      props.saveFacetSelectors(props.reduxFacetSelectors);
-    }
-  };
+  // Removed problematic useEffect that was causing infinite loops
+  // The facet selectors are already managed by the parent component
 
   const handleDelete = facetChipToDelete => () => {
-    let updatedArray = props.reduxFacetSelectors.filter(
+    const updatedArray = props.reduxFacetSelectors.filter(
       facet => facet.facetDisplayText !== facetChipToDelete.facetDisplayText
     );
 
     props.saveFacetSelectors(updatedArray);
     props.saveFacetChipDeleted(props.reduxFacetChipDeleted + 1);
   };
-
-  const theme = useTheme();
 
   return (
     <Paper elevation={0} component="ul" sx={styles.root}>

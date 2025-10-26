@@ -331,14 +331,34 @@ const VehicleSearchApp = props => {
     }
 
     // Create search request
+    const selectedFacets = getSelectedFacets(props.reduxFacetSelectors);
+    const facetsString = Array.isArray(selectedFacets)
+      ? selectedFacets.join(',')
+      : selectedFacets;
+
     const currentSearchRequest = createSearchRequest(
       props.reduxSearchTerm,
-      getSelectedFacets(props.reduxFacetSelectors),
+      facetsString,
       props.reduxOrderBy,
       props.reduxPageNumber,
       DefaultPageSize,
       props.reduxVehicleData.length,
       typeof window !== 'undefined' ? window.location.host : 'localhost:2997'
+    );
+
+    // DEBUG: Add logging to understand what's happening with facets
+    LogString(
+      `FACET DEBUG: reduxFacetSelectors count: ${props.reduxFacetSelectors.length}`
+    );
+    LogString(
+      `FACET DEBUG: reduxFacetSelectors content: ${JSON.stringify(props.reduxFacetSelectors)}`
+    );
+    LogString(
+      `FACET DEBUG: getSelectedFacets result (array): ${JSON.stringify(selectedFacets)}`
+    );
+    LogString(`FACET DEBUG: facetsString (joined): ${facetsString}`);
+    LogString(
+      `FACET DEBUG: Search request facets: ${JSON.stringify(currentSearchRequest.facets)}`
     );
 
     // Handle cancellation token logic
