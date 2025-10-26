@@ -2,33 +2,60 @@ import React from 'react';
 import CheckIcon from '@mui/icons-material/Check';
 import { RemoveSpacesAndSetToLower } from './SharedFunctions';
 
-export const setSelectedFacetButton = (facetName, reduxFacetSelectors) => {
+// Interface definitions
+interface FacetSelector {
+  facetKey: string;
+  facetDisplayText: string;
+  luceneExpression: string;
+  checked: boolean;
+  enabled?: boolean;
+}
+
+interface FacetItem {
+  facetDisplayText: string;
+  checked?: boolean;
+  value?: string | number;
+}
+
+interface DefaultFacet {
+  facetKey: string;
+  facetItems: FacetItem[];
+}
+
+export const setSelectedFacetButton = (
+  facetName: string, 
+  reduxFacetSelectors: FacetSelector[]
+): React.ReactElement | undefined => {
   if (isFacetKeyButtonSelected(facetName, reduxFacetSelectors)) {
     return <CheckIcon style={{ color: 'green' }} />;
   }
+  return undefined;
 };
 
-export const isFacetKeyButtonSelected = (facetName, reduxFacetSelectors) => {
+export const isFacetKeyButtonSelected = (
+  facetName: string, 
+  reduxFacetSelectors: FacetSelector[]
+): boolean => {
   if (reduxFacetSelectors && reduxFacetSelectors.length > 0) {
     return isFacetSelected(facetName, reduxFacetSelectors);
   }
+  return false;
 };
 
-const isFacetSelected = (facetName, reduxFacetSelectors) => {
+const isFacetSelected = (
+  facetName: string, 
+  reduxFacetSelectors: FacetSelector[]
+): boolean => {
   const facetSelector = reduxFacetSelectors.filter(
     facet =>
       RemoveSpacesAndSetToLower(facet.facetKey) ===
         RemoveSpacesAndSetToLower(facetName) && facet.checked === true
   );
 
-  if (facetSelector.length > 0) {
-    return true;
-  } else {
-    return false;
-  }
+  return facetSelector.length > 0;
 };
 
-export const isAnyFacetSelected = reduxFacetSelectors => {
+export const isAnyFacetSelected = (reduxFacetSelectors: FacetSelector[]): boolean => {
   let facetSelected = false;
 
   reduxFacetSelectors.filter(facet => {
@@ -40,8 +67,8 @@ export const isAnyFacetSelected = reduxFacetSelectors => {
   return facetSelected;
 };
 
-export const getSelectedFacets = reduxFacetSelectors => {
-  const requestFilters = [];
+export const getSelectedFacets = (reduxFacetSelectors: FacetSelector[]): string[] => {
+  const requestFilters: string[] = [];
 
   if (reduxFacetSelectors !== undefined) {
     for (const item of reduxFacetSelectors) {
@@ -55,18 +82,18 @@ export const getSelectedFacets = reduxFacetSelectors => {
 };
 
 export const getDefaultFacetsWithSelections = (
-  facetKeyName,
-  reduxDefaultFacets,
-  reduxFacetSelectors
-) => {
+  facetKeyName: string,
+  reduxDefaultFacets: DefaultFacet[],
+  reduxFacetSelectors: FacetSelector[]
+): DefaultFacet[] => {
   const defaultFacetsCopy = [...reduxDefaultFacets];
   const defaultFacetByKey = defaultFacetsCopy.filter(
     x => x.facetKey === facetKeyName
   );
 
   for (const selectedFacetData of reduxFacetSelectors) {
-    if (selectedFacetData.facetKey === defaultFacetByKey.facetKey) {
-      for (const facets of defaultFacetByKey.facetItems) {
+    if (selectedFacetData.facetKey === defaultFacetByKey[0]?.facetKey) {
+      for (const facets of defaultFacetByKey[0].facetItems) {
         if (facets.facetDisplayText === selectedFacetData.facetDisplayText) {
           facets.checked = true;
           break;
@@ -79,14 +106,10 @@ export const getDefaultFacetsWithSelections = (
 };
 
 export const isSelectFacetMenuAlreadySelected = (
-  reduxFacetSelectors,
-  facetKeyName
-) => {
+  reduxFacetSelectors: FacetSelector[],
+  facetKeyName: string
+): boolean => {
   const filter = reduxFacetSelectors.filter(x => x.facetKey === facetKeyName);
 
-  if (filter.length === 0) {
-    return false;
-  }
-
-  return true;
+  return filter.length > 0;
 };

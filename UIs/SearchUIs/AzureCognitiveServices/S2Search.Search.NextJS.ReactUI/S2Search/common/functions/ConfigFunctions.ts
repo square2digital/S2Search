@@ -1,14 +1,21 @@
 import { DefaultPlaceholderText } from '../Constants';
 
-export const getConfigValueByKey = (config, key) => {
+// Interface for configuration items
+interface ConfigItem {
+  key: string;
+  value: string | undefined;
+}
+
+export const getConfigValueByKey = (config: ConfigItem[], key: string): ConfigItem | undefined => {
   for (const item of config) {
     if (item.key === key) {
       return item;
     }
   }
+  return undefined;
 };
 
-export const getPlaceholdersArray = configData => {
+export const getPlaceholdersArray = (configData: ConfigItem[]): ConfigItem[] => {
   if (!Array.isArray(configData)) {
     console.warn(
       'getPlaceholdersArray: configData is not an array, returning default'
@@ -16,7 +23,7 @@ export const getPlaceholdersArray = configData => {
     return DefaultPlaceholderText;
   }
 
-  const arr = [];
+  const arr: ConfigItem[] = [];
 
   configData.forEach(element => {
     if (element && element.key && element.key.includes('PlaceholderText')) {
@@ -33,7 +40,7 @@ export const getPlaceholdersArray = configData => {
   return arr;
 };
 
-export const getValuesFromConfigArray = configData => {
+export const getValuesFromConfigArray = (configData: ConfigItem[]): string[] => {
   if (!Array.isArray(configData)) {
     console.warn(
       'getValuesFromConfigArray: configData is not an array, returning empty array'
@@ -41,10 +48,10 @@ export const getValuesFromConfigArray = configData => {
     return [];
   }
 
-  const arr = [];
+  const arr: string[] = [];
 
   configData.forEach(element => {
-    if (element && element.value !== undefined) {
+    if (element && element.value !== undefined && element.value !== null) {
       arr.push(element.value);
     }
   });
@@ -52,7 +59,7 @@ export const getValuesFromConfigArray = configData => {
   return arr;
 };
 
-export const getKeysFromConfigArray = configData => {
+export const getKeysFromConfigArray = (configData: ConfigItem[]): string[] => {
   if (!Array.isArray(configData)) {
     console.warn(
       'getKeysFromConfigArray: configData is not an array, returning empty array'
@@ -60,7 +67,7 @@ export const getKeysFromConfigArray = configData => {
     return [];
   }
 
-  const arr = [];
+  const arr: string[] = [];
 
   configData.forEach(element => {
     if (element && element.key !== undefined) {
