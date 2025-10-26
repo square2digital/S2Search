@@ -3,9 +3,9 @@ import { Box } from '@mui/material';
 import Image from 'next/image';
 
 interface VehicleImageProps {
-  imageURL: string;
+  imageURL: string | null | undefined;
   vrm: string;
-  missingImageURL: string;
+  missingImageURL?: string;
   alt?: string;
   style?: React.CSSProperties;
   mobile?: boolean;
@@ -19,11 +19,14 @@ const VehicleImage: React.FC<VehicleImageProps> = memo(({
   style = {},
   mobile = false,
 }) => {
-  const [imgSrc, setImgSrc] = useState<string>(imageURL);
+  // Use missingImageURL as fallback if imageURL is null/undefined/empty
+  // Provide a default placeholder if both are null/undefined
+  const validImageURL = imageURL || missingImageURL || '/images/no-image-available.png';
+  const [imgSrc, setImgSrc] = useState<string>(validImageURL);
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleImageError = useCallback(() => {
-    setImgSrc(missingImageURL);
+    setImgSrc(missingImageURL || '/images/no-image-available.png');
     setLoading(false);
   }, [missingImageURL]);
 
@@ -44,7 +47,7 @@ const VehicleImage: React.FC<VehicleImageProps> = memo(({
       };
 
   // For external images or when Next.js Image optimization isn't suitable
-  if (imageURL.startsWith('http') && !imageURL.includes('localhost')) {
+  if (validImageURL && typeof validImageURL === 'string' && validImageURL.startsWith('http') && !validImageURL.includes('localhost')) {
     return (
       <Box
         component="img"

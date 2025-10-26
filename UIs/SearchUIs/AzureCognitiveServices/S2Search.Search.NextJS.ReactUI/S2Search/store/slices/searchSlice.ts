@@ -19,7 +19,7 @@ interface VehicleData {
   description: string;
   manufactureColour: string;
   vrm: string;
-  imageURL: string;
+  imageURL: string | null | undefined;
 }
 
 interface SearchRequest {
