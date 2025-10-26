@@ -170,7 +170,7 @@ const VehicleSearchApp = props => {
     updateQueryStringURL();
 
     triggerSearch(
-      new SearchRequest(
+      SearchRequest(
         props.reduxSearchTerm,
         getSelectedFacets(props.reduxFacetSelectors),
         props.reduxOrderBy,
@@ -232,7 +232,7 @@ const VehicleSearchApp = props => {
   };
 
   const triggerSearch = request => {
-    const requestPlain = request.toPlainObject();
+    const requestPlain = request; // request is already a plain object
 
     if (IsRequestReOrderBy(requestPlain, props.reduxPreviousRequest)) {
       request.numberOfExistingResults = props.reduxVehicleData.length;
