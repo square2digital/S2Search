@@ -1,49 +1,27 @@
 import React from 'react';
-// Use useSelector and useDispatch instead of connect for modern Redux
-import { useSelector, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import { useTheme, Theme } from '@mui/material/styles';
-
-// ACTION IMPORTS (Keep)
 import { setDialogOpen } from '../../../store/slices/uiSlice';
+import Button from '@mui/material/Button';
 import { resetFacets } from '../../../store/slices/facetSlice';
 import { DefaultTheme } from '../../../common/Constants';
+import { useTheme } from '@mui/material/styles';
 
-// 1. DEFINE PROP TYPES USING AN INTERFACE
-// The props used here are the ones passed down from connect (if you kept it)
-// or the ones you would normally access from the store/dispatch.
-interface FacetAppBarProps {
-  // These props come from the Redux store via mapStateToProps
-  reduxNavBarColour: string;
-  reduxPrimaryColour: string;
-  reduxSecondaryColour: string;
-  searchCount: number; // Added based on mapStateToProps
-}
-
-// 2. USE 'useSelector' and 'useDispatch' (Recommended Modern Redux)
-const FacetAppBar: React.FC = () => {
-  const dispatch = useDispatch();
-  const theme: Theme = useTheme();
-
-  // Access Redux state directly with useSelector
-  const reduxNavBarColour = useSelector((state: any) => state.theme.navBarColour);
-  // Add other needed state properties here if necessary
-  // const searchCount = useSelector((state: any) => state.search.searchCount);
+const FacetAppBar = props => {
+  const theme = useTheme();
 
   const handleClose = () => {
-    // Dispatch actions directly
-    dispatch(setDialogOpen(false));
+    props.saveDialogOpen(false);
   };
 
   const handleReset = () => {
-    // Dispatch actions directly
-    dispatch(resetFacets());
+    props.saveResetFacets();
   };
 
   return (
@@ -51,8 +29,7 @@ const FacetAppBar: React.FC = () => {
       position="fixed"
       elevation={0}
       sx={{
-        // Use the selected state
-        background: reduxNavBarColour || DefaultTheme.navBarHexColour,
+        background: props.reduxNavBarColour || DefaultTheme.navBarHexColour,
         borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
         zIndex: theme.zIndex.drawer + 1,
       }}
@@ -130,6 +107,31 @@ const FacetAppBar: React.FC = () => {
   );
 };
 
-// 3. REMOVE Redux connect, mapStateToProps, mapDispatchToProps, and PropTypes
+const mapStateToProps = reduxState => {
+  return {
+    searchCount: reduxState.search.searchCount,
+    reduxNavBarColour: reduxState.theme.navBarColour,
+    reduxPrimaryColour: reduxState.theme.primaryColour,
+    reduxSecondaryColour: reduxState.theme.secondaryColour,
+  };
+};
 
-export default FacetAppBar;
+const mapDispatchToProps = dispatch => {
+  return {
+    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
+    saveResetFacets: resetFacetsFlag => dispatch(resetFacets()),
+  };
+};
+
+FacetAppBar.propTypes = {
+  searchCount: PropTypes.number,
+  vehicleData: PropTypes.array,
+  saveVehicleData: PropTypes.func,
+  saveDialogOpen: PropTypes.func,
+  saveResetFacets: PropTypes.func,
+  reduxNavBarColour: PropTypes.string,
+  reduxPrimaryColour: PropTypes.string,
+  reduxSecondaryColour: PropTypes.string,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(FacetAppBar);
