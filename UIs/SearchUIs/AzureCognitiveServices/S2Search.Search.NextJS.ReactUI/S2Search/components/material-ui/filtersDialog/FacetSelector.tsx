@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import Checkbox from '@mui/material/Checkbox';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -11,13 +10,30 @@ import { FormatStringOrNumeric } from '../../../common/functions/SharedFunctions
 import { FacetToParseAsNumeric } from '../../../common/Constants';
 import { setSearchTerm } from '../../../store/slices/searchSlice';
 import { setFacetSelectors } from '../../../store/slices/facetSlice';
+import { RootState } from '../../../store';
 
-const FacetSelector = props => {
-  const [checked, setChecked] = useState(props.isChecked);
+interface FacetSelectorOwnProps {
+  facet: {
+    facetDisplayText: string;
+    value?: string | number;
+    count?: number;
+    type?: string;
+    from?: number;
+    to?: number;
+    [key: string]: any;
+  };
+  selectedFacet?: string;
+  isChecked?: boolean;
+}
+
+type FacetSelectorProps = ConnectedProps<typeof connector> & FacetSelectorOwnProps;
+
+const FacetSelector: React.FC<FacetSelectorProps> = (props) => {
+  const [checked, setChecked] = useState<boolean>(props.isChecked || false);
 
   const checkboxFacetNameAsString = `${props.facet.facetDisplayText}`;
 
-  const FacetOnClick = () => {
+  const FacetOnClick = (): void => {
     const checkedValue = !checked;
     setChecked(checkedValue);
     if (checkedValue === false) {
@@ -26,7 +42,7 @@ const FacetSelector = props => {
     buildFacetSelectors(checkedValue);
   };
 
-  const handleDelete = facetToDelete => {
+  const handleDelete = (facetToDelete: any): void => {
     let facetSelectorArray = [...props.reduxFacetSelectors];
     const forDeletion = [facetToDelete.value];
 
@@ -41,9 +57,9 @@ const FacetSelector = props => {
     }
   };
 
-  const buildFacetSelectors = isChecked => {
+  const buildFacetSelectors = (isChecked: boolean): void => {
     const selectedFacetData = {
-      facetKey: props.selectedFacet,
+      facetKey: props.selectedFacet || '',
       facetDisplayText: props.facet.facetDisplayText,
       luceneExpression: '',
       checked: isChecked,
@@ -52,16 +68,16 @@ const FacetSelector = props => {
     if (props.facet.type === 'Range') {
       selectedFacetData.luceneExpression = `${
         props.selectedFacet
-      } ge ${FormatStringOrNumeric(props.facet.from)} and ${
+      } ge ${FormatStringOrNumeric(String(props.facet.from || 0))} and ${
         props.selectedFacet
-      } le ${FormatStringOrNumeric(props.facet.to)}`;
+      } le ${FormatStringOrNumeric(String(props.facet.to || 0))}`;
     } else {
       if (FacetToParseAsNumeric.includes(selectedFacetData.facetKey)) {
         selectedFacetData.luceneExpression = `${
           props.selectedFacet
-        } eq ${FormatStringOrNumeric(props.facet.value)}`;
+        } eq ${FormatStringOrNumeric(String(props.facet.value || 0))}`;
       } else {
-        selectedFacetData.luceneExpression = `${props.selectedFacet} eq '${props.facet.value}'`;
+        selectedFacetData.luceneExpression = `${props.selectedFacet} eq '${props.facet.value || ''}'`;
       }
     }
 
@@ -73,7 +89,6 @@ const FacetSelector = props => {
       props.saveFacetSelectors([...copyArr]);
     } else {
       if (
-        props.reduxFacetSelectors == [] ||
         props.reduxFacetSelectors.length === 0
       ) {
         props.saveFacetSelectors([selectedFacetData]);
@@ -103,7 +118,8 @@ const FacetSelector = props => {
     }
   };
 
-  const renderVehicleCount = count => {
+  const renderVehicleCount = (count?: number): string => {
+    if (!count) return '0 Vehicles';
     if (count === 1) {
       return '1 Vehicle';
     }
@@ -210,7 +226,7 @@ const FacetSelector = props => {
   );
 };
 
-const mapStateToProps = reduxState => {
+const mapStateToProps = (reduxState: RootState) => {
   return {
     reduxDialogOpen: reduxState.ui.isDialogOpen,
     reduxResultsCount: reduxState.search.searchCount,
@@ -220,29 +236,14 @@ const mapStateToProps = reduxState => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
-    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
-    saveFacetSelectors: facetSelectors =>
+    saveSearchTerm: (searchTerm: string) => dispatch(setSearchTerm(searchTerm)),
+    saveFacetSelectors: (facetSelectors: any[]) =>
       dispatch(setFacetSelectors(facetSelectors)),
   };
 };
 
-FacetSelector.propTypes = {
-  reduxDialogOpen: PropTypes.bool,
-  reduxResultsCount: PropTypes.number,
-  reduxFacetSelectors: PropTypes.array,
-  buttonLabel: PropTypes.string,
-  dialogLabel: PropTypes.string,
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
-  facet: PropTypes.object,
-  selectedFacet: PropTypes.string,
-  isChecked: PropTypes.bool,
-
-  saveSearchTerm: PropTypes.func,
-  saveFacetSelectors: PropTypes.func,
-  reduxPrimaryColour: PropTypes.string,
-  reduxSecondaryColour: PropTypes.string,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(FacetSelector);
+export default connector(FacetSelector);

@@ -1,26 +1,48 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { connect, ConnectedProps } from 'react-redux';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Box from '@mui/material/Box';
-import { setDialogOpen } from '../../../store/slices/uiSlice';
 import Button from '@mui/material/Button';
-import { resetFacets } from '../../../store/slices/facetSlice';
-import { DefaultTheme } from '../../../common/Constants';
 import { useTheme } from '@mui/material/styles';
 
-const FacetAppBar = props => {
+import { setDialogOpen } from '../../../store/slices/uiSlice';
+import { resetFacets } from '../../../store/slices/facetSlice';
+import { DefaultTheme } from '../../../common/Constants';
+import type { RootState } from '../../../store';
+
+const mapStateToProps = (reduxState: RootState) => ({
+  searchCount: reduxState.search.searchCount,
+  reduxNavBarColour: reduxState.theme.navBarColour,
+  reduxPrimaryColour: reduxState.theme.primaryColour,
+  reduxSecondaryColour: reduxState.theme.secondaryColour,
+});
+
+const mapDispatchToProps = {
+  saveDialogOpen: setDialogOpen,
+  saveResetFacets: resetFacets,
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+interface OwnProps {
+  vehicleData?: any[];
+}
+
+type FacetAppBarProps = PropsFromRedux & OwnProps;
+
+const FacetAppBar: React.FC<FacetAppBarProps> = (props) => {
   const theme = useTheme();
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     props.saveDialogOpen(false);
   };
 
-  const handleReset = () => {
+  const handleReset = (): void => {
     props.saveResetFacets();
   };
 
@@ -29,7 +51,7 @@ const FacetAppBar = props => {
       position="fixed"
       elevation={0}
       sx={{
-        background: props.reduxNavBarColour || DefaultTheme.navBarHexColour,
+        background: props.reduxNavBarColour || DefaultTheme.navBarHexColour || '#1976d2',
         borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
         zIndex: theme.zIndex.drawer + 1,
       }}
@@ -107,31 +129,4 @@ const FacetAppBar = props => {
   );
 };
 
-const mapStateToProps = reduxState => {
-  return {
-    searchCount: reduxState.search.searchCount,
-    reduxNavBarColour: reduxState.theme.navBarColour,
-    reduxPrimaryColour: reduxState.theme.primaryColour,
-    reduxSecondaryColour: reduxState.theme.secondaryColour,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
-    saveResetFacets: () => dispatch(resetFacets()),
-  };
-};
-
-FacetAppBar.propTypes = {
-  searchCount: PropTypes.number,
-  vehicleData: PropTypes.array,
-  saveVehicleData: PropTypes.func,
-  saveDialogOpen: PropTypes.func,
-  saveResetFacets: PropTypes.func,
-  reduxNavBarColour: PropTypes.string,
-  reduxPrimaryColour: PropTypes.string,
-  reduxSecondaryColour: PropTypes.string,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(FacetAppBar);
+export default connector(FacetAppBar);

@@ -1,25 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Dialog from '@mui/material/Dialog';
 import Slide from '@mui/material/Slide';
 import Box from '@mui/material/Box';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import { setDialogOpen } from '../../../store/slices/uiSlice';
 import FacetAppBar from '../filtersDialog/FacetAppBar';
 import FacetSelectionMenu from '../filtersDialog/FacetSelectionMenu';
 import FacetSelectionList from '../filtersDialog/FacetSelectorList';
 import { LogDetails } from '../../../helpers/LogDetails';
+import { RootState } from '../../../store';
 
 // *********************************************************************************************************************
 // ** - WARNING
 // ** this has to be outside of the component - adding inside will overlay with transparemcy so nothing can be selected
 // *********************************************************************************************************************
-const Transition = React.forwardRef(function Transition(props, ref) {
+const Transition = React.forwardRef(function Transition(
+  props: any,
+  ref: React.Ref<unknown>
+) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const FacetFullScreenDialog = props => {
-  const handleClose = () => {
+const FacetFullScreenDialog: React.FC<ConnectedProps<typeof connector>> = (
+  props
+) => {
+  const handleClose = (): void => {
     props.saveDialogOpen(false);
   };
 
@@ -53,25 +58,19 @@ const FacetFullScreenDialog = props => {
   );
 };
 
-const mapStateToProps = reduxState => {
+const mapStateToProps = (reduxState: RootState) => {
   return {
     reduxDialogOpen: reduxState.ui.isDialogOpen,
     defaultFacetData: reduxState.facet.defaultFacetData,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
-    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
+    saveDialogOpen: (dialogOpen: boolean) => dispatch(setDialogOpen(dialogOpen)),
   };
 };
 
-FacetFullScreenDialog.propTypes = {
-  reduxDialogOpen: PropTypes.bool,
-  saveDialogOpen: PropTypes.func,
-};
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FacetFullScreenDialog);
+export default connector(FacetFullScreenDialog);

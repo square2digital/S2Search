@@ -1,35 +1,41 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import {
   setFacetSelectors,
   setFacetChipDeleted,
   setFacetSelectedKeys,
 } from '../../../store/slices/facetSlice';
+import { RootState } from '../../../store';
 
 // Modern styles object
 const styles = {
-  root: theme => ({
+  root: {
     display: 'flex',
-    justifyContent: 'left',
-    flexWrap: 'wrap',
-    listStyle: 'none',
-    marginTop: theme.spacing(1.5),
+    justifyContent: 'left' as const,
+    flexWrap: 'wrap' as const,
+    listStyle: 'none' as const,
+    marginTop: 1.5,
     marginLeft: '-40px',
-  }),
+  },
   chip: {
     paddingRight: '10px',
     paddingTop: '5px',
   },
 };
 
-const FacetChips = props => {
+interface FacetData {
+  facetDisplayText: string;
+  facetKey: string;
+  [key: string]: any;
+}
+
+const FacetChips: React.FC<ConnectedProps<typeof connector>> = (props) => {
   // Removed problematic useEffect that was causing infinite loops
   // The facet selectors are already managed by the parent component
 
-  const handleDelete = facetChipToDelete => () => {
+  const handleDelete = (facetChipToDelete: FacetData) => () => {
     const updatedArray = props.reduxFacetSelectors.filter(
       facet => facet.facetDisplayText !== facetChipToDelete.facetDisplayText
     );
@@ -63,7 +69,7 @@ const FacetChips = props => {
   );
 };
 
-const mapStateToProps = reduxState => {
+const mapStateToProps = (reduxState: RootState) => {
   return {
     reduxFacetSelectors: reduxState.facet.facetSelectors,
     reduxFacetSelectedKeys: reduxState.facet.facetSelectedKeys,
@@ -73,24 +79,17 @@ const mapStateToProps = reduxState => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
-    saveFacetSelectors: facetSelectorArray =>
+    saveFacetSelectors: (facetSelectorArray: any[]) =>
       dispatch(setFacetSelectors(facetSelectorArray)),
-    saveFacetSelectedKeys: facetSelectedKeys =>
+    saveFacetSelectedKeys: (facetSelectedKeys: string[]) =>
       dispatch(setFacetSelectedKeys(facetSelectedKeys)),
-    saveFacetChipDeleted: facetChipDeleted =>
+    saveFacetChipDeleted: (facetChipDeleted: number) =>
       dispatch(setFacetChipDeleted(facetChipDeleted)),
   };
 };
 
-FacetChips.propTypes = {
-  reduxFacetSelectors: PropTypes.array,
-  reduxFacetSelectedKeys: PropTypes.array,
-  saveFacetSelectors: PropTypes.func,
-  saveFacetSelectedKeys: PropTypes.func,
-  saveFacetChipDeleted: PropTypes.func,
-  reduxFacetChipDeleted: PropTypes.number,
-};
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connect(mapStateToProps, mapDispatchToProps)(FacetChips);
+export default connector(FacetChips);

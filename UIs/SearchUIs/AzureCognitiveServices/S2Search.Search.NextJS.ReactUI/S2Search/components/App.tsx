@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from './Layout';
 import VehicleSearchApp from './VehicleSearchApp';
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <Layout>
       <VehicleSearchApp />

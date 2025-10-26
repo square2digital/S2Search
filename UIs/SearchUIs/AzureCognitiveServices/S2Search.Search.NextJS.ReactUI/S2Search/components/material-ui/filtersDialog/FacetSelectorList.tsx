@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { connect, ConnectedProps } from 'react-redux';
 import FacetSelector from '../filtersDialog/FacetSelector';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -21,29 +20,55 @@ import {
   getDefaultFacetsWithSelections,
   isSelectFacetMenuAlreadySelected,
 } from '../../../common/functions/FacetFunctions';
+import { RootState } from '../../../store';
 
-const FacetSelectionList = props => {
-  const [facetState, setfacetState] = useState({});
+// Re-export interfaces from FacetFunctions for consistency
+interface FacetItem {
+  facetDisplayText: string;
+  selected?: boolean;
+  checked?: boolean;
+  value?: string | number;
+  count?: number;
+  type?: string;
+  from?: number;
+  to?: number;
+  [key: string]: any;
+}
+
+interface FacetStateData {
+  facetKey?: string;
+  facetKeyDisplayName?: string;
+  facetItems?: FacetItem[];
+  enabled?: boolean;
+  [key: string]: any;
+}
+
+const FacetSelectionList: React.FC<ConnectedProps<typeof connector>> = (
+  props
+) => {
+  const [facetState, setfacetState] = useState<FacetStateData>({});
 
   const handleChecked = useCallback(
-    theFacet => {
+    (theFacet: FacetStateData): FacetStateData => {
       let theFacetUpdated = theFacet;
-      const updatedFacetItems = [];
+      const updatedFacetItems: FacetItem[] = [];
 
-      theFacet.facetItems.map(facetItem => {
-        if (
-          props.reduxFacetSelectors.some(
-            f => f.facetDisplayText === facetItem.facetDisplayText
-          )
-        ) {
-          updatedFacetItems.push({ ...facetItem, selected: true });
-        } else {
-          updatedFacetItems.push({ ...facetItem, selected: false });
+      if (theFacet.facetItems) {
+        theFacet.facetItems.map(facetItem => {
+          if (
+            props.reduxFacetSelectors.some(
+              f => f.facetDisplayText === facetItem.facetDisplayText
+            )
+          ) {
+            updatedFacetItems.push({ ...facetItem, selected: true });
+          } else {
+            updatedFacetItems.push({ ...facetItem, selected: false });
+          }
+        });
+
+        if (updatedFacetItems.length > 0) {
+          theFacetUpdated = { ...theFacetUpdated, facetItems: updatedFacetItems };
         }
-      });
-
-      if (updatedFacetItems.length > 0) {
-        theFacetUpdated = { ...theFacetUpdated, facetItems: updatedFacetItems };
       }
 
       return theFacetUpdated;
@@ -52,11 +77,11 @@ const FacetSelectionList = props => {
   );
 
   const generateFacetSelectors = useCallback(
-    facetKeyName => {
-      let theFacet = {};
-      let currentFacet = {};
-      let facetData = [];
-      const selectedFacetData = [];
+    (facetKeyName: string): void => {
+      let theFacet: FacetStateData = {};
+      let currentFacet: any = {};
+      let facetData: any[] = [];
+      const selectedFacetData: any[] = [];
 
       // ****************
       // facets To Load - default or from Search Results?
@@ -64,7 +89,7 @@ const FacetSelectionList = props => {
       // on the first load or if reduxFacetSelectors is empty we need to load the defaultFacets.
       // when a facet is selected, from that point the facets returned from search will be displayed
 
-      let facetsToLoad = [];
+      let facetsToLoad: any[] = [];
       if (props.reduxSearchTerm) {
         facetsToLoad = props.reduxFacetData;
       } else if (
@@ -81,7 +106,7 @@ const FacetSelectionList = props => {
         ) {
           facetsToLoad = getDefaultFacetsWithSelections(
             facetKeyName,
-            props.reduxDefaultFacetData,
+            props.reduxDefaultFacetData as any,
             props.reduxFacetSelectors
           );
         } else {
@@ -222,20 +247,20 @@ const FacetSelectionList = props => {
   );
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
-    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
-    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
-    saveFacetSelectors: resetFacetArray =>
+    saveVehicleData: (vehicleData: any[]) => dispatch(setVehicleData(vehicleData)),
+    savePageNumber: (pageNumber: number) => dispatch(setPageNumber(pageNumber)),
+    saveFacetSelectors: (resetFacetArray: any[]) =>
       dispatch(setFacetSelectors(resetFacetArray)),
-    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
-    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
-    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
-    saveSelectedFacet: facetName => dispatch(setSelectedFacet(facetName)),
+    saveSearchTerm: (searchTerm: string) => dispatch(setSearchTerm(searchTerm)),
+    saveOrderby: (orderBy: string) => dispatch(setOrderBy(orderBy)),
+    saveDialogOpen: (dialogOpen: boolean) => dispatch(setDialogOpen(dialogOpen)),
+    saveSelectedFacet: (facetName: string) => dispatch(setSelectedFacet(facetName)),
   };
 };
 
-const mapStateToProps = reduxState => {
+const mapStateToProps = (reduxState: RootState) => {
   return {
     reduxSearchTerm: reduxState.search.searchTerm,
     reduxSearchCount: reduxState.search.searchCount,
@@ -254,14 +279,6 @@ const mapStateToProps = reduxState => {
   };
 };
 
-FacetSelectionList.propTypes = {
-  reduxSearchTerm: PropTypes.string,
-  reduxFacetSelectors: PropTypes.array,
-  reduxDefaultFacetData: PropTypes.array,
-  reduxFacetData: PropTypes.array,
-  reduxSelectedFacet: PropTypes.string,
-  reduxFacetSelectedKeys: PropTypes.array,
-  searchData: PropTypes.array,
-};
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connect(mapStateToProps, mapDispatchToProps)(FacetSelectionList);
+export default connector(FacetSelectionList);

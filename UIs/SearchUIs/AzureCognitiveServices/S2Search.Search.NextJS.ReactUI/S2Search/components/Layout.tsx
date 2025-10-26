@@ -3,11 +3,15 @@ import VehicleSearchApp from './VehicleSearchApp';
 import Container from '@mui/material/Container';
 import ResetFacets from '../common/functions/ResetFacets';
 
-const Layout = () => {
+interface LayoutProps {
+  children?: React.ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
       <Container disableGutters maxWidth={false}>
-        <VehicleSearchApp />
+        {children || <VehicleSearchApp />}
         <ResetFacets />
       </Container>
     </>

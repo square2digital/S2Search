@@ -9,6 +9,20 @@ interface FacetData {
   to?: number;
 }
 
+// Interface for facet items within default facets
+interface FacetItem {
+  facetDisplayText: string;
+  checked?: boolean;
+  value?: string | number;
+}
+
+// Interface for default facet structure (metadata about facet categories)
+interface DefaultFacet {
+  facetKey: string;
+  facetKeyDisplayName?: string;
+  facetItems: FacetItem[];
+}
+
 interface SelectedFacetData {
   facetKey: string;
   facetDisplayText: string;
@@ -19,7 +33,7 @@ interface SelectedFacetData {
 interface FacetState {
   facetSelectors: SelectedFacetData[];
   facetSelectedKeys: string[];
-  defaultFacetData: FacetData[];
+  defaultFacetData: DefaultFacet[];
   facetData: FacetData[];
   selectedFacet: string;
   facetChipDeleted: number;
@@ -55,7 +69,7 @@ const facetSlice = createSlice({
     setFacetSelectedKeys: (state, action: PayloadAction<string[]>) => {
       state.facetSelectedKeys = action.payload;
     },
-    setDefaultFacetData: (state, action: PayloadAction<FacetData[]>) => {
+    setDefaultFacetData: (state, action: PayloadAction<DefaultFacet[]>) => {
       state.defaultFacetData = action.payload;
     },
     setFacetData: (state, action: PayloadAction<FacetData[]>) => {

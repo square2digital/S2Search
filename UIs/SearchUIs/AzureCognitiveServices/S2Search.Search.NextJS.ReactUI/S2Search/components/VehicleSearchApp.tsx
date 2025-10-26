@@ -1,0 +1,604 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import { grey, red } from '@mui/material/colors';
+
+import FacetFullScreenDialog from './material-ui/filtersDialog/FacetFullScreenDialog';
+import VehicleCardList from './material-ui/vehicleCards/VehicleCardList';
+import LoadMoreResultsButton from './LoadMoreResultsButton';
+import FacetChips from './material-ui/searchPage/FacetChips';
+import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
+import FloatingTopButton from './material-ui/searchPage/FloatingTopButton';
+import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar';
+
+import { createSearchRequest } from '../types/SearchRequest';
+import { 
+  insertQueryStringParam,
+  getQueryStringSearchTerm,
+  getQueryStringOrderBy
+} from '../common/functions/QueryStringFunctions';
+import { getSelectedFacets } from '../common/functions/FacetFunctions';
+import {
+  getConfigValueByKey,
+  getPlaceholdersArray,
+} from '../common/functions/ConfigFunctions';
+import {
+  IsPreviousRequestDataTheSame,
+  IsRequestReOrderBy,
+  ConvertStringToBoolean,
+  LogString,
+} from '../common/functions/SharedFunctions';
+import { LogDetails } from '../helpers/LogDetails';
+import {
+  DefaultPageSize,
+  DefaultPageNumber,
+  DefaultTheme,
+} from '../common/Constants';
+
+// New RTK action imports
+import {
+  setVehicleData,
+  setPageNumber,
+  setTotalDocumentCount,
+  setPreviousRequest,
+  setNetworkError,
+  setSearchCount,
+  setSearchTerm,
+} from '../store/slices/searchSlice';
+import {
+  setFacetData,
+  setDefaultFacetData,
+  setFacetSelectors,
+  setFacetSelectedKeys,
+} from '../store/slices/facetSlice';
+import { setLoading, setCancellationToken } from '../store/slices/uiSlice';
+import {
+  setPrimaryColour,
+  setSecondaryColour,
+  setNavBarColour,
+  setLogoURL,
+  setMissingImageURL,
+} from '../store/slices/themeSlice';
+import {
+  setConfigData,
+  setEnableAutoComplete,
+  setHideIconVehicleCounts,
+  setPlaceholderArray,
+} from '../store/slices/configSlice';
+
+// Type imports
+import type { RootState } from '../store';
+import type { SearchRequest as APISearchRequest } from '../types/searchTypes';
+
+// Modern styles using theme-aware sx prop patterns
+const styles = {
+  root: {
+    flexGrow: 1,
+  },
+  resultsText: {
+    color: grey[600],
+  },
+  noResultsText: {
+    color: red[600],
+  },
+  margin: (theme: any) => ({
+    margin: theme.spacing(1),
+  }),
+};
+
+// Define the component's Redux state mapping
+const mapStateToProps = (reduxState: RootState) => {
+  return {
+    reduxSearchTerm: reduxState.search.searchTerm,
+    reduxSearchCount: reduxState.search.searchCount,
+    reduxPageNumber: reduxState.search.pageNumber,
+    reduxTotalDocumentCount: reduxState.search.totalDocumentCount,
+    reduxVehicleData: reduxState.search.vehicleData,
+    reduxOrderBy: reduxState.search.orderBy,
+    reduxNetworkError: reduxState.search.networkError,
+    reduxPreviousRequest: reduxState.search.previousRequest,
+
+    reduxFacetSelectors: reduxState.facet.facetSelectors,
+    reduxFacetSelectedKeys: reduxState.facet.facetSelectedKeys,
+    reduxDefaultFacetData: reduxState.facet.defaultFacetData,
+    reduxFacetData: reduxState.facet.facetData,
+
+    reduxDialogOpen: reduxState.ui.isDialogOpen,
+    reduxLoading: reduxState.ui.isLoading,
+    reduxCancellationToken: reduxState.ui.cancellationToken,
+
+    reduxConfigData: reduxState.config.configData,
+
+    reduxSelectedFacet: reduxState.facet.selectedFacet,
+    reduxFacetChipDeleted: reduxState.facet.facetChipDeleted,
+  };
+};
+
+// Define the component's Redux action dispatchers
+const mapDispatchToProps = {
+  saveVehicleData: setVehicleData,
+  savePageNumber: setPageNumber,
+  saveTotalDocumentCount: setTotalDocumentCount,
+  savePreviousRequest: setPreviousRequest,
+  saveNetworkError: setNetworkError,
+  saveSearchCount: setSearchCount,
+  saveFacetData: setFacetData,
+  saveDefaultFacetData: setDefaultFacetData,
+  saveLoading: setLoading,
+  saveCancellationToken: setCancellationToken,
+
+  savePrimaryColour: setPrimaryColour,
+  saveSecondaryColour: setSecondaryColour,
+  saveNavBarColour: setNavBarColour,
+  saveLogoURL: setLogoURL,
+  saveMissingImageURL: setMissingImageURL,
+  saveConfigData: setConfigData,
+  saveEnableAutoComplete: setEnableAutoComplete,
+  saveHideIconVehicleCounts: setHideIconVehicleCounts,
+  savePlaceholderArray: setPlaceholderArray,
+
+  // RTK facet and search actions (replacing legacy actions)
+  saveFacetSelectors: setFacetSelectors,
+  saveFacetSelectedKeys: setFacetSelectedKeys,
+  saveSearchTerm: setSearchTerm,
+};
+
+// Infer the component props from Redux connect
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+// Additional props that the component might receive
+interface OwnProps {
+  orderBy?: string;
+  pageNumber?: number;
+  width?: number;
+  orderByData?: string;
+  allFacetFilters?: any[];
+  pageSize?: number;
+  searchCount?: number;
+}
+
+// Combined props type
+type VehicleSearchAppProps = PropsFromRedux & OwnProps;
+
+const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
+  const [themeConfigured, setThemeConfigured] = useState<boolean>(false);
+  const [searchConfigConfigured, setSearchConfigConfigured] = useState<boolean>(false);
+
+  // State for managing search debouncing and preventing infinite loops
+  const searchDebounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [lastExecutedSearch, setLastExecutedSearch] = useState<string | null>(null);
+  const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] = useState<boolean>(false);
+
+  // ******************************************************************************************
+  // ** this useEffect hook will setup configurations and theme settings - it is run once only
+  // ******************************************************************************************
+  const getThemeFromAPI = useCallback((): void => {
+    if (!themeConfigured) {
+      try {
+        fetch('/api/theme')
+          .then(response => response.json())
+          .then(function (theme: any) {
+            if (theme) {
+              props.savePrimaryColour(theme.primaryHexColour);
+              props.saveSecondaryColour(theme.secondaryHexColour);
+              props.saveNavBarColour(theme.navBarHexColour);
+              props.saveLogoURL(theme.logoURL);
+              props.saveMissingImageURL(theme.missingImageURL);
+
+              setThemeConfigured(true);
+            }
+          })
+          .catch(error => {
+            console.error('Failed to fetch theme:', error);
+            // Use default theme
+            props.savePrimaryColour(DefaultTheme.primaryHexColour || '#1976d2');
+            props.saveSecondaryColour(DefaultTheme.secondaryHexColour || '#dc004e');
+            props.saveNavBarColour(DefaultTheme.navBarHexColour || '#1976d2');
+            props.saveLogoURL(DefaultTheme.logoURL || '');
+            props.saveMissingImageURL(DefaultTheme.missingImageURL || '/images/no-image-available.png');
+            setThemeConfigured(true);
+          });
+      } catch (error) {
+        props.savePrimaryColour(DefaultTheme.primaryHexColour || '#1976d2');
+        props.saveSecondaryColour(DefaultTheme.secondaryHexColour || '#dc004e');
+        props.saveNavBarColour(DefaultTheme.navBarHexColour || '#1976d2');
+        props.saveLogoURL(DefaultTheme.logoURL || '');
+        props.saveMissingImageURL(DefaultTheme.missingImageURL || '/images/no-image-available.png');
+        setThemeConfigured(true);
+      }
+    }
+  }, [themeConfigured, props]);
+
+  const getDocumentCountAPI = useCallback((): void => {
+    fetch('/api/documentCount')
+      .then(response => response.json())
+      .then(function (documentCount: any) {
+        // Check if the response is an error object
+        if (documentCount && documentCount.error) {
+          console.warn(
+            'Document Count API returned error:',
+            documentCount.error
+          );
+          return;
+        }
+
+        // Check if documentCount is a valid number
+        if (documentCount && typeof documentCount === 'number') {
+          props.saveTotalDocumentCount(documentCount);
+        }
+      })
+      .catch(error => {
+        console.error('Failed to fetch document count:', error);
+      });
+  }, [props]);
+
+  useEffect(() => {
+    getThemeFromAPI();
+    getDocumentCountAPI();
+    const config: Array<{key: string; value: string}> = [];
+    if (props.reduxConfigData.length === 0) {
+      fetch('/api/configuration')
+        .then(response => response.json())
+        .then(function (configData: any) {
+          // Check if the response is an error object
+          if (configData && configData.error) {
+            console.warn('Configuration API returned error:', configData.error);
+            return;
+          }
+
+          if (
+            !searchConfigConfigured &&
+            configData &&
+            Array.isArray(configData)
+          ) {
+            configData.map(function (item: any) {
+              config.push({ key: item.key, value: item.value });
+              return item;
+            });
+
+            props.saveConfigData(config);
+            
+            // getPlaceholdersArray returns ConfigItem[], but savePlaceholderArray expects string[]
+            const placeholders = getPlaceholdersArray(config).map(item => item.value || '');
+            props.savePlaceholderArray(placeholders);
+
+            const enableAutoCompleteConfig = getConfigValueByKey(config, 'EnableAutoComplete');
+            const enableAutoComplete = ConvertStringToBoolean(
+              enableAutoCompleteConfig?.value || 'false'
+            );
+            props.saveEnableAutoComplete(enableAutoComplete);
+
+            const hideBadgesConfig = getConfigValueByKey(config, 'HideBadges');
+            ConvertStringToBoolean(hideBadgesConfig?.value || 'false');
+            // Note: savHideBadges action might need to be added to Redux if it doesn't exist
+
+            const hideIconVehicleCountsConfig = getConfigValueByKey(config, 'HideIconVehicleCounts');
+            const HideIconVehicleCounts = ConvertStringToBoolean(
+              hideIconVehicleCountsConfig?.value || 'false'
+            );
+            props.saveHideIconVehicleCounts(HideIconVehicleCounts);
+
+            setSearchConfigConfigured(true);
+          }
+        })
+        .catch(error => {
+          console.error('Failed to fetch configuration:', error);
+        });
+    }
+  }, [props, searchConfigConfigured, getThemeFromAPI, getDocumentCountAPI]);
+
+  // *********************************************************************************************************************
+  // ** this useEffect hook will trigger a search if the page loads with facets defined in the query string
+  // *********************************************************************************************************************
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !facetsLoadedFromUrl) {
+      const searchTerm = decodeURIComponent(getQueryStringSearchTerm());
+      const orderby = decodeURIComponent(getQueryStringOrderBy());
+
+      if (searchTerm?.length > 0) {
+        // Use RTK action instead of legacy action
+        props.saveSearchTerm(searchTerm);
+      }
+
+      if (orderby?.length > 0) {
+        // Note: Redux store might need orderBy action if not available
+        // Removing console.log for production readiness
+      }
+
+      setFacetsLoadedFromUrl(true);
+    }
+  }, [facetsLoadedFromUrl, props]);
+
+  // *********************************************************************************************************************
+  // ** this useEffect hook will update the browsers URL query string parameters when the searchterm changes
+  // *********************************************************************************************************************
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (props.reduxSearchTerm.length > 0) {
+        insertQueryStringParam(
+          'searchterm',
+          encodeURIComponent(props.reduxSearchTerm)
+        );
+      } else {
+        insertQueryStringParam('searchterm', '');
+      }
+    }
+  }, [props.reduxSearchTerm]);
+
+  // *********************************************************************************************************************
+  // ** this useEffect hook will update the browsers URL query string parameters when the orderby changes
+  // *********************************************************************************************************************
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (props.reduxOrderBy.length > 0) {
+        // Only add orderby parameter when there's an actual sort order selected
+        insertQueryStringParam(
+          'orderby',
+          encodeURIComponent(props.reduxOrderBy)
+        );
+      } else {
+        // Remove the parameter when no sort order is selected (default)
+        insertQueryStringParam('orderby', '');
+      }
+    }
+  }, [props.reduxOrderBy]);
+
+  // *********************************************************************************************************************
+  // ** This function will make a call to our search API and update the Redux store with the returned search results
+  // *********************************************************************************************************************
+  const triggerSearch = useCallback(
+    (searchRequest: APISearchRequest) => {
+      props.saveLoading(true);
+      props.saveNetworkError(false);
+
+      const url = `/api/search?searchTerm=${encodeURIComponent(
+        searchRequest.searchTerm
+      )}&filters=${encodeURIComponent(
+        searchRequest.facets
+      )}&orderBy=${encodeURIComponent(
+        searchRequest.orderBy
+      )}&pageNumber=${encodeURIComponent(
+        searchRequest.pageNumber.toString()
+      )}&pageSize=${encodeURIComponent(
+        searchRequest.pageSize.toString()
+      )}&numberOfExistingResults=${encodeURIComponent(
+        searchRequest.numberOfExistingResults.toString()
+      )}&callingHost=${encodeURIComponent(searchRequest.callingHost)}`;
+
+      LogDetails({ searchURL: url });
+
+      fetch(url)
+        .then(response => response.json())
+        .then(function (responseObject: any) {
+          props.saveLoading(false);
+
+          // Check if the response is an error object
+          if (responseObject && responseObject.error) {
+            console.error('Search API returned error:', responseObject.error);
+            props.saveNetworkError(true);
+            return;
+          }
+
+          if (
+            responseObject &&
+            responseObject.results &&
+            Array.isArray(responseObject.results)
+          ) {
+            if (searchRequest.pageNumber === 0) {
+              // First page - replace existing results
+              props.saveVehicleData(responseObject.results);
+            } else {
+              // Additional page - append to existing results
+              props.saveVehicleData([
+                ...props.reduxVehicleData,
+                ...responseObject.results,
+              ]);
+            }
+
+            props.saveSearchCount(responseObject.results.length);
+            // Convert API SearchRequest to Redux SearchRequest format
+            const reduxSearchRequest = {
+              searchTerm: searchRequest.searchTerm,
+              filters: searchRequest.facets,
+              orderBy: searchRequest.orderBy,
+              pageNumber: searchRequest.pageNumber,
+              pageSize: searchRequest.pageSize,
+            };
+            props.savePreviousRequest(reduxSearchRequest);
+          } else {
+            // No results or invalid response structure
+            if (searchRequest.pageNumber === 0) {
+              props.saveVehicleData([]);
+            }
+            props.saveSearchCount(0);
+          }
+        })
+        .catch(error => {
+          console.error('Search API call failed:', error);
+          props.saveLoading(false);
+          props.saveNetworkError(true);
+        });
+    },
+    [props]
+  );
+
+  // *********************************************************************************************************************
+  // ** Actual search execution function with debouncing protection
+  // *********************************************************************************************************************
+  const executeSearch = useCallback(
+    (searchRequest: APISearchRequest) => {
+      // Prevent execution if already searching or if this exact search was just executed
+      const searchSignature = JSON.stringify(searchRequest);
+      if (isSearching || searchSignature === lastExecutedSearch) {
+        LogString(
+          'Skipping search execution - already in progress or duplicate'
+        );
+        return;
+      }
+
+      setIsSearching(true);
+      setLastExecutedSearch(searchSignature);
+
+      LogString('Executing search with request: ' + searchSignature);
+      triggerSearch(searchRequest);
+
+      // Reset searching flag after a delay
+      setTimeout(() => {
+        setIsSearching(false);
+      }, 100);
+    },
+    [isSearching, lastExecutedSearch, triggerSearch]
+  );
+
+  // *********************************************************************************************************************
+  // ** Main search function that builds the search request and executes it
+  // *********************************************************************************************************************
+  const search = useCallback(
+    (
+      pageNumber: number = DefaultPageNumber,
+      pageSize: number = DefaultPageSize,
+      numberOfExistingResults: number = 0
+    ) => {
+      // Clear the debounce timer if it exists
+      if (searchDebounceTimer.current) {
+        clearTimeout(searchDebounceTimer.current);
+      }
+
+      // Set a new debounce timer
+      searchDebounceTimer.current = setTimeout(() => {
+        const facetFilters = getSelectedFacets(props.reduxFacetSelectors);
+        const facets = facetFilters.join(' AND ');
+
+        const searchRequest = createSearchRequest(
+          props.reduxSearchTerm,
+          facets,
+          props.reduxOrderBy,
+          pageNumber,
+          pageSize,
+          numberOfExistingResults,
+          'localhost:3000'
+        );
+
+        // Check if this is the same as the previous request to avoid duplicate calls
+        if (
+          props.reduxPreviousRequest &&
+          IsPreviousRequestDataTheSame(
+            {
+              searchTerm: searchRequest.searchTerm,
+              facets: [searchRequest.facets],
+              orderBy: searchRequest.orderBy,
+              pageNumber: searchRequest.pageNumber
+            }, 
+            {
+              searchTerm: props.reduxPreviousRequest.searchTerm,
+              orderBy: props.reduxPreviousRequest.orderBy,
+              pageNumber: props.reduxPreviousRequest.pageNumber,
+              facets: props.reduxPreviousRequest.filters ? [props.reduxPreviousRequest.filters] : []
+            }
+          )
+        ) {
+          LogString('Skipping duplicate search request');
+          return;
+        }
+
+        // Check if this is just a re-ordering request
+        if (
+          props.reduxPreviousRequest &&
+          IsRequestReOrderBy(
+            {
+              searchTerm: searchRequest.searchTerm,
+              facets: [searchRequest.facets],
+              orderBy: searchRequest.orderBy,
+              pageNumber: searchRequest.pageNumber
+            }, 
+            {
+              searchTerm: props.reduxPreviousRequest.searchTerm,
+              orderBy: props.reduxPreviousRequest.orderBy,
+              pageNumber: props.reduxPreviousRequest.pageNumber,
+              facets: props.reduxPreviousRequest.filters ? [props.reduxPreviousRequest.filters] : []
+            }
+          )
+        ) {
+          LogString('Re-ordering search results');
+          props.savePageNumber(0);
+        } else {
+          props.savePageNumber(pageNumber);
+        }
+
+        executeSearch(searchRequest);
+      }, 300); // 300ms debounce delay
+    },
+    [executeSearch, props]
+  );
+
+  // *********************************************************************************************************************
+  // ** UseEffect hook that triggers search when dependencies change
+  // *********************************************************************************************************************
+  useEffect(() => {
+    // Only search if we have either a search term or selected facets
+    if (
+      props.reduxSearchTerm.length > 0 ||
+      props.reduxFacetSelectors.some((facet: any) => facet.checked)
+    ) {
+      search(0, DefaultPageSize, 0);
+    }
+  }, [props.reduxSearchTerm, props.reduxFacetSelectors, search]);
+
+  // *********************************************************************************************************************
+  // ** UseEffect hook for handling facet changes
+  // *********************************************************************************************************************
+  useEffect(() => {
+    // Only trigger search if facets have been loaded and there are changes
+    if (facetsLoadedFromUrl && searchConfigConfigured) {
+      const hasFacetsSelected = props.reduxFacetSelectors.some(
+        (facet: any) => facet.checked
+      );
+      if (props.reduxSearchTerm.length > 0 || hasFacetsSelected) {
+        search(0, DefaultPageSize, 0);
+      }
+    }
+  }, [props.reduxFacetSelectors, facetsLoadedFromUrl, searchConfigConfigured, props.reduxSearchTerm, search]);
+
+  // Add separate useEffect for cancellation token logic
+  useEffect(() => {
+    if (props.reduxCancellationToken) {
+      props.saveCancellationToken(false);
+    }
+  }, [props.reduxCancellationToken, props]);
+
+  return (
+    <Box sx={styles.root}>
+      <AdaptiveNavBar />
+      <FacetChips />
+      <VehicleCardList />
+      <LoadMoreResultsButton />
+      <FacetFullScreenDialog />
+      <NetworkErrorDialog />
+      <FloatingTopButton />
+
+      {/* Development/Debug Information */}
+      {process.env.NODE_ENV === 'development' && (
+        <Box sx={{ p: 2, mt: 2, bgcolor: 'grey.100' }}>
+          <Alert severity="info">
+            <strong>Debug Info:</strong>
+            <br />
+            Search Term: {props.reduxSearchTerm}
+            <br />
+            Results Count: {props.reduxVehicleData.length}
+            <br />
+            Page Number: {props.reduxPageNumber}
+            <br />
+            Order By: {props.reduxOrderBy}
+            <br />
+            Selected Facets: {props.reduxFacetSelectors.filter((f: any) => f.checked).length}
+          </Alert>
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+export default connector(VehicleSearchApp);

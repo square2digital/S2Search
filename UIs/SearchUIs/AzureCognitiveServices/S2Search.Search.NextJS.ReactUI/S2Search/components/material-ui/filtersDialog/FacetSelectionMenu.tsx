@@ -1,6 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { connect, ConnectedProps } from 'react-redux';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -26,15 +25,18 @@ import {
   setSelectedFacet,
 } from '../../../store/slices/facetSlice';
 import { setDialogOpen } from '../../../store/slices/uiSlice';
+import { RootState } from '../../../store';
 
 const drawerWidth = 280;
 
-const FacetSelectionMenu = props => {
-  const resetFilters = () => {
+const FacetSelectionMenu: React.FC<ConnectedProps<typeof connector>> = (
+  props
+) => {
+  const resetFilters = (): void => {
     props.saveResetFacets();
   };
 
-  const facetMenuClick = facetKey => {
+  const facetMenuClick = (facetKey: string): void => {
     props.saveSelectedFacet(facetKey);
 
     const arr = [...props.reduxFacetSelectedKeys];
@@ -42,7 +44,7 @@ const FacetSelectionMenu = props => {
     props.saveFacetSelectedKeys(arr);
   };
 
-  const getSelectedCount = facetKey => {
+  const getSelectedCount = (facetKey: string): number => {
     return props.reduxFacetSelectors.filter(
       selector => selector.facetKey === facetKey
     ).length;
@@ -201,7 +203,7 @@ const FacetSelectionMenu = props => {
   );
 };
 
-const mapStateToProps = reduxState => {
+const mapStateToProps = (reduxState: RootState) => {
   return {
     searchCount: reduxState.search.searchCount,
     reduxResultsCount: reduxState.search.searchCount,
@@ -216,38 +218,22 @@ const mapStateToProps = reduxState => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
-    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
-    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
-    saveFacetSelectors: resetFacetArray =>
+    saveVehicleData: (vehicleData: any[]) => dispatch(setVehicleData(vehicleData)),
+    savePageNumber: (pageNumber: number) => dispatch(setPageNumber(pageNumber)),
+    saveFacetSelectors: (resetFacetArray: any[]) =>
       dispatch(setFacetSelectors(resetFacetArray)),
-    saveFacetSelectedKeys: facetSelectedKeys =>
+    saveFacetSelectedKeys: (facetSelectedKeys: string[]) =>
       dispatch(setFacetSelectedKeys(facetSelectedKeys)),
-    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
-    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
-    saveDialogOpen: dialogOpen => dispatch(setDialogOpen(dialogOpen)),
-    saveSelectedFacet: facet => dispatch(setSelectedFacet(facet)),
+    saveSearchTerm: (searchTerm: string) => dispatch(setSearchTerm(searchTerm)),
+    saveOrderby: (orderBy: string) => dispatch(setOrderBy(orderBy)),
+    saveDialogOpen: (dialogOpen: boolean) => dispatch(setDialogOpen(dialogOpen)),
+    saveSelectedFacet: (facet: string) => dispatch(setSelectedFacet(facet)),
     saveResetFacets: () => dispatch(resetFacets()),
   };
 };
 
-FacetSelectionMenu.propTypes = {
-  reduxFacetSelectors: PropTypes.array,
-  reduxResultsCount: PropTypes.number,
-  defaultFacetData: PropTypes.array,
-  reduxSelectedFacet: PropTypes.string,
-  reduxFacetSelectedKeys: PropTypes.array,
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
-  saveVehicleData: PropTypes.func,
-  savePageNumber: PropTypes.func,
-  saveFacetSelectors: PropTypes.func,
-  saveFacetSelectedKeys: PropTypes.func,
-  saveSearchTerm: PropTypes.func,
-  saveOrderby: PropTypes.func,
-  saveDialogOpen: PropTypes.func,
-  saveSelectedFacet: PropTypes.func,
-  saveResetFacets: PropTypes.func,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(FacetSelectionMenu);
+export default connector(FacetSelectionMenu);
