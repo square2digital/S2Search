@@ -1,7 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { AutoSuggestAPI } from '../../../../pages/api/helper/SearchAPI';
 import {
   setSearchTerm,
   setVehicleData,
@@ -42,21 +41,22 @@ export const AutoSuggest = props => {
   useEffect(() => {
     if (props.reduxSearchTerm) {
       if (props.reduxSearchTerm.length >= 2) {
-        AutoSuggestAPI(
-          props.reduxSearchTerm,
-          window.location.host,
-          props.reduxCancellationToken
-        ).then(function (axiosSuggestionsResponse) {
-          if (axiosSuggestionsResponse) {
-            if (axiosSuggestionsResponse.status === 200) {
-              let suggestions = axiosSuggestionsResponse.data;
+        fetch(
+          `/api/autoSuggest?searchTerm=${encodeURIComponent(props.reduxSearchTerm)}`
+        )
+          .then(response => response.json())
+          .then(function (suggestions) {
+            if (suggestions && Array.isArray(suggestions)) {
               suggestions.shift();
               setOptions(suggestions);
             } else {
               setOptions([]);
             }
-          }
-        });
+          })
+          .catch(error => {
+            console.error('AutoSuggest error:', error);
+            setOptions([]);
+          });
       } else {
         setOptions([]);
       }

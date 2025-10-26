@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import FacetFullScreenDialog from './material-ui/filtersDialog/FacetFullScreenDialog';
 import VehicleCardList from './material-ui/vehicleCards/VehicleCardList.tsx';
@@ -6,7 +6,7 @@ import LoadMoreResultsButton from './LoadMoreResultsButton';
 import FacetChips from './material-ui/searchPage/FacetChips';
 import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import { connect } from 'react-redux';
-import SearchRequest from '../pages/api/shared/request/SearchRequest';
+import { createSearchRequest } from '../types/SearchRequest';
 
 // New RTK action imports
 import {
@@ -50,12 +50,6 @@ import HelperFunctions from '../helpers/HelperFunctions';
 import { grey, red } from '@mui/material/colors';
 import Alert from '@mui/material/Alert';
 import FloatingTopButton from './material-ui/searchPage/FloatingTopButton';
-import {
-  SearchAndFacetsAPI,
-  DocumentCountAPI,
-} from '../pages/api/helper/SearchAPI';
-import ThemeAPI from '../pages/api/helper/ThemeAPI';
-import ConfigAPI from '../pages/api/helper/ConfigAPI';
 
 import {
   DefaultPageSize,
@@ -88,12 +82,17 @@ const styles = {
 };
 
 const VehicleSearchApp = props => {
-  const [facetSelectedKeys, setFacetSelectedKeys] = useState([]);
   const [searchCount, setSearchCount] = useState(0);
   const [timestamp, setTimestamp] = useState(undefined);
   const [themeConfigured, setThemeConfigured] = useState(false);
   const [searchConfigConfigured, setSearchConfigConfigured] = useState(false);
   const [autoCompleteSearchBar, setAutoCompleteSearchBar] = useState(undefined);
+
+  // State for managing search debouncing and preventing infinite loops
+  const searchDebounceTimer = useRef(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [lastExecutedSearch, setLastExecutedSearch] = useState(null);
+  const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] = useState(false);
 
   const router = useRouter();
 
@@ -105,10 +104,21 @@ const VehicleSearchApp = props => {
     getDocumentCountAPI();
     const config = [];
     if (props.reduxConfigData.length === 0) {
-      ConfigAPI(window.location.host).then(function (axiosConfigResponse) {
-        if (!searchConfigConfigured && axiosConfigResponse) {
-          if (axiosConfigResponse.status === 200) {
-            axiosConfigResponse.data.map(function (item) {
+      fetch('/api/configuration')
+        .then(response => response.json())
+        .then(function (configData) {
+          // Check if the response is an error object
+          if (configData && configData.error) {
+            console.warn('Configuration API returned error:', configData.error);
+            return;
+          }
+
+          if (
+            !searchConfigConfigured &&
+            configData &&
+            Array.isArray(configData)
+          ) {
+            configData.map(function (item) {
               config.push({ key: item.key, value: item.value });
             });
 
@@ -121,6 +131,11 @@ const VehicleSearchApp = props => {
             props.saveEnableAutoComplete(enableAutoComplete);
             setAutoCompleteSearchBar(enableAutoComplete);
 
+            const hideBadges = ConvertStringToBoolean(
+              getConfigValueByKey(config, 'HideBadges').value
+            );
+            props.saveHideBadges(hideBadges);
+
             const HideIconVehicleCounts = ConvertStringToBoolean(
               getConfigValueByKey(config, 'HideIconVehicleCounts').value
             );
@@ -128,36 +143,245 @@ const VehicleSearchApp = props => {
 
             setSearchConfigConfigured(true);
           }
-        }
-      });
+        })
+        .catch(error => {
+          console.error('Failed to fetch configuration:', error);
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // *********************************************************************************************************************
+  // ** Separate useEffect for handling URL parameters (facets, search terms) - runs when route changes
+  // *********************************************************************************************************************
   useEffect(() => {
+    const { saveFacetSelectors, saveFacetSelectedKeys, saveSearchTerm } = props;
+
     if (router && Object.keys(router.query).length > 0) {
-      if (router.query.searchterm) {
-        LogString(`searchterm = ${router.query.searchterm}`);
+      // Handle search term from URL
+      if (
+        router.query.searchterm &&
+        router.query.searchterm !== props.reduxSearchTerm
+      ) {
+        LogString(`Loading search term from URL: ${router.query.searchterm}`);
+        saveSearchTerm(router.query.searchterm);
+      }
+
+      // Handle facet selectors from URL
+      if (router.query.facetselectors && !facetsLoadedFromUrl) {
+        try {
+          const facetSelectors = JSON.parse(
+            decodeURIComponent(router.query.facetselectors)
+          );
+          LogString(
+            `Loading facet selectors from URL: ${JSON.stringify(facetSelectors)}`
+          );
+          saveFacetSelectors(facetSelectors);
+
+          // Extract facet keys for the selected keys array
+          const selectedKeys = facetSelectors
+            .filter(facet => facet.checked)
+            .map(facet => facet.facetKey);
+          saveFacetSelectedKeys(selectedKeys);
+
+          // Mark facets as loaded to prevent re-loading on subsequent renders
+          setFacetsLoadedFromUrl(true);
+        } catch (error) {
+          LogString(`Error parsing facet selectors from URL: ${error.message}`);
+        }
       }
     }
-  }, [router, router.query]);
+  }, [router, router.query, props, facetsLoadedFromUrl]);
 
   // *********************************************************************************************************************
-  // ** this useEffect hook manages the search - it will trigger on any change relating to search - see the dependencies
+  // ** URL parameter loading useEffect - separate from search triggering to prevent loops
   // *********************************************************************************************************************
   useEffect(() => {
+    if (
+      router &&
+      Object.keys(router.query).length > 0 &&
+      !facetsLoadedFromUrl
+    ) {
+      if (router.query.searchterm) {
+        LogString(`Loading search term from URL: ${router.query.searchterm}`);
+        props.saveSearchTerm(router.query.searchterm);
+      }
+
+      // Handle facet selectors from URL
+      if (router.query.facetselectors) {
+        try {
+          const facetSelectors = JSON.parse(
+            decodeURIComponent(router.query.facetselectors)
+          );
+          LogString(
+            `Loading facet selectors from URL: ${JSON.stringify(facetSelectors)}`
+          );
+          props.saveFacetSelectors(facetSelectors);
+
+          // Extract facet keys for the selected keys array
+          const selectedKeys = facetSelectors
+            .filter(facet => facet.checked)
+            .map(facet => facet.facetKey);
+          props.saveFacetSelectedKeys(selectedKeys);
+        } catch (error) {
+          LogString(`Error parsing facet selectors from URL: ${error.message}`);
+        }
+      }
+
+      // Mark that we've loaded facets from URL to prevent re-loading
+      setFacetsLoadedFromUrl(true);
+    }
+  }, [router, router.query, facetsLoadedFromUrl, props]);
+
+  // *********************************************************************************************************************
+  // ** Main search API function - moved here to resolve dependency order
+  // *********************************************************************************************************************
+  const triggerSearch = useCallback(
+    request => {
+      const requestPlain = request; // request is already a plain object
+
+      if (IsRequestReOrderBy(requestPlain, props.reduxPreviousRequest)) {
+        request.numberOfExistingResults = props.reduxVehicleData.length;
+        request.pageSize = request.numberOfExistingResults;
+        request.pageNumber = 0;
+        props.savePageNumber(0);
+      }
+
+      // **********************************************************
+      // ** only call the API if the search request is different **
+      // **********************************************************
+      if (
+        !IsPreviousRequestDataTheSame(
+          requestPlain,
+          props.reduxPreviousRequest
+        ) ||
+        props.reduxVehicleData.length == 0
+      ) {
+        props.saveLoading(true);
+        props.savePreviousRequest(requestPlain);
+
+        fetch('/api/search', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(request),
+        })
+          .then(response => response.json())
+          .then(function (searchResponse) {
+            // Check if the response is an error object
+            if (searchResponse && searchResponse.error) {
+              console.warn('Search API returned error:', searchResponse.error);
+              props.saveNetworkError(true);
+              return;
+            }
+
+            if (searchResponse) {
+              props.saveNetworkError(false);
+              if (searchResponse.results && searchResponse.results.length > 0) {
+                let vehicleSearchData = [];
+
+                if (
+                  props.reduxPageNumber !=
+                  (props.reduxPreviousRequest?.pageNumber || 0)
+                ) {
+                  vehicleSearchData = HelperFunctions.RemoveDuplicates([
+                    ...props.reduxVehicleData,
+                    ...searchResponse.results,
+                  ]);
+                } else {
+                  vehicleSearchData = searchResponse.results;
+                }
+
+                props.saveVehicleData(vehicleSearchData);
+                props.saveSearchCount(searchResponse.totalResults);
+              } else {
+                // no results found
+                props.savePageNumber(DefaultPageNumber);
+                props.saveVehicleData([]);
+              }
+
+              if (searchResponse.facets) {
+                props.saveFacetData(searchResponse.facets);
+              }
+              if (props.defaultFacetData.length === 0) {
+                fetch('/api/facet', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(request),
+                })
+                  .then(response => response.json())
+                  .then(function (facetResponse) {
+                    // Check if the response is an error object
+                    if (facetResponse && facetResponse.error) {
+                      console.warn(
+                        'Facet API returned error:',
+                        facetResponse.error
+                      );
+                      return;
+                    }
+
+                    if (facetResponse && facetResponse.facets) {
+                      props.saveDefaultFacetData(facetResponse.facets);
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Failed to fetch facets:', error);
+                  });
+              }
+
+              props.saveLoading(false);
+            }
+          })
+          .catch(error => {
+            console.error('Search API error:', error);
+            props.saveLoading(false);
+            props.saveNetworkError(true);
+          });
+      }
+    },
+    [props]
+  );
+
+  // *********************************************************************************************************************
+  // ** Main search useEffect - triggers searches based on user input changes with debouncing
+  // *********************************************************************************************************************
+  useEffect(() => {
+    // Only trigger searches for meaningful changes that indicate user intent
+    const hasSearchCriteria =
+      props.reduxSearchTerm.length > 0 ||
+      props.reduxFacetSelectedKeys.length > 0 ||
+      props.reduxPageNumber > 0;
+
+    if (!hasSearchCriteria) {
+      LogString('No search criteria present, skipping search');
+      return;
+    }
+
+    // Create search request
+    const currentSearchRequest = createSearchRequest(
+      props.reduxSearchTerm,
+      getSelectedFacets(props.reduxFacetSelectors),
+      props.reduxOrderBy,
+      props.reduxPageNumber,
+      DefaultPageSize,
+      props.reduxVehicleData.length,
+      typeof window !== 'undefined' ? window.location.host : 'localhost:2997'
+    );
+
+    // Handle cancellation token logic
     if (props.reduxSearchTerm.length === 0) {
       props.saveCancellationToken(false);
     } else {
       if (timestamp) {
         const milliseconds = new Date().getTime() - timestamp;
-
         if (milliseconds < MillisecondsDifference) {
           props.saveCancellationToken(true);
         } else {
           props.saveCancellationToken(false);
         }
-
         LogString(
           `milliseconds: ${milliseconds} cancellationToken: ${props.reduxCancellationToken} props.reduxSearchTerm : ${props.reduxSearchTerm.length}`
         );
@@ -165,38 +389,40 @@ const VehicleSearchApp = props => {
     }
 
     setTimestamp(new Date().getTime());
-    setSearchCount(searchCount + 1);
-    setFacetSelectedKeys(props.reduxFacetSelectedKeys);
+    setSearchCount(prev => prev + 1);
     updateQueryStringURL();
 
-    triggerSearch(
-      SearchRequest(
-        props.reduxSearchTerm,
-        getSelectedFacets(props.reduxFacetSelectors),
-        props.reduxOrderBy,
-        props.reduxPageNumber,
-        DefaultPageSize,
-        props.reduxVehicleData.length,
-        window.location.host
-      )
-    );
+    // Use debounced search to prevent rapid successive calls
+    debouncedSearch(currentSearchRequest);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     props.reduxSearchTerm,
     props.reduxOrderBy,
-    props.reduxDialogOpen,
-    props.reduxPageNumber,
     props.reduxFacetChipDeleted,
     props.reduxFacetSelectedKeys,
+    // Note: Intentionally NOT including props.reduxFacetSelectors to prevent loops
+    // Facet changes are captured via reduxFacetSelectedKeys changes
+    // Note: Intentionally NOT including props.reduxPageNumber to prevent loops
+    // Page number is managed internally by the search logic
   ]);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (searchDebounceTimer.current) {
+        clearTimeout(searchDebounceTimer.current);
+      }
+    };
+  }, []);
 
   const getThemeFromAPI = () => {
     if (!themeConfigured) {
       try {
-        ThemeAPI().then(function (axiosThemeResponse) {
-          if (axiosThemeResponse) {
-            if (axiosThemeResponse.status === 200) {
-              const theme = axiosThemeResponse.data;
+        fetch('/api/theme')
+          .then(response => response.json())
+          .then(function (theme) {
+            if (theme) {
               props.savePrimaryColour(theme.primaryHexColour);
               props.saveSecondaryColour(theme.secondaryHexColour);
               props.saveNavBarColour(theme.navBarHexColour);
@@ -205,8 +431,16 @@ const VehicleSearchApp = props => {
 
               setThemeConfigured(true);
             }
-          }
-        });
+          })
+          .catch(error => {
+            console.error('Failed to fetch theme:', error);
+            props.savePrimaryColour(DefaultTheme.primaryHexColour);
+            props.saveSecondaryColour(DefaultTheme.secondaryHexColour);
+            props.saveNavBarColour(DefaultTheme.navBarHexColour);
+            props.saveLogoURL(DefaultTheme.logoURL);
+            props.saveMissingImageURL(DefaultTheme.missingImageURL);
+            setThemeConfigured(true);
+          });
       } catch (error) {
         props.savePrimaryColour(DefaultTheme.primaryHexColour);
         props.saveSecondaryColour(DefaultTheme.secondaryHexColour);
@@ -219,100 +453,73 @@ const VehicleSearchApp = props => {
   };
 
   const getDocumentCountAPI = () => {
-    DocumentCountAPI(window.location.host).then(
-      function (axiosDocumentCountResponse) {
-        if (axiosDocumentCountResponse) {
-          if (axiosDocumentCountResponse.status === 200) {
-            const documentCount = axiosDocumentCountResponse.data;
-            props.saveTotalDocumentCount(documentCount);
-          }
+    fetch('/api/documentCount')
+      .then(response => response.json())
+      .then(function (documentCount) {
+        // Check if the response is an error object
+        if (documentCount && documentCount.error) {
+          console.warn(
+            'Document Count API returned error:',
+            documentCount.error
+          );
+          return;
         }
+
+        if (documentCount && typeof documentCount === 'number') {
+          props.saveTotalDocumentCount(documentCount);
+        }
+      })
+      .catch(error => {
+        console.error('Failed to fetch document count:', error);
+      });
+  };
+
+  // *********************************************************************************************************************
+  // ** Actual search execution function with debouncing protection
+  // *********************************************************************************************************************
+  const executeSearch = useCallback(
+    searchRequest => {
+      // Prevent execution if already searching or if this exact search was just executed
+      const searchSignature = JSON.stringify(searchRequest);
+      if (isSearching || searchSignature === lastExecutedSearch) {
+        LogString(
+          'Skipping search execution - already in progress or duplicate'
+        );
+        return;
       }
-    );
-  };
 
-  const triggerSearch = request => {
-    const requestPlain = request; // request is already a plain object
+      setIsSearching(true);
+      setLastExecutedSearch(searchSignature);
 
-    if (IsRequestReOrderBy(requestPlain, props.reduxPreviousRequest)) {
-      request.numberOfExistingResults = props.reduxVehicleData.length;
-      request.pageSize = request.numberOfExistingResults;
-      request.pageNumber = 0;
-      props.savePageNumber(0);
-    }
+      LogString('Executing search with request: ' + searchSignature);
+      triggerSearch(searchRequest);
 
-    // **********************************************************
-    // ** only call the API if the search request is different **
-    // **********************************************************
-    if (
-      !IsPreviousRequestDataTheSame(requestPlain, props.reduxPreviousRequest) ||
-      props.reduxVehicleData.length == 0 ||
-      facetSelectedKeys !== props.reduxFacetSelectedKeys
-    ) {
-      props.saveLoading(true);
-      props.savePreviousRequest(requestPlain);
+      // Reset searching flag after a delay
+      setTimeout(() => {
+        setIsSearching(false);
+      }, 100);
+    },
+    [isSearching, lastExecutedSearch, triggerSearch]
+  );
 
-      SearchAndFacetsAPI(request, props.reduxCancellationToken).then(
-        function (axiosSearchResponse) {
-          if (axiosSearchResponse) {
-            if (axiosSearchResponse.status !== 200) {
-              props.saveLoading(false);
-              return false;
-            } else {
-              props.saveNetworkError(false);
-              if (
-                axiosSearchResponse.data.results &&
-                axiosSearchResponse.data.results.length > 0
-              ) {
-                let vehicleSearchData = [];
+  // *********************************************************************************************************************
+  // ** Debounced search function to prevent rapid successive API calls
+  // *********************************************************************************************************************
+  const debouncedSearch = useCallback(
+    searchRequest => {
+      // Clear any existing timer
+      if (searchDebounceTimer.current) {
+        clearTimeout(searchDebounceTimer.current);
+      }
 
-                if (
-                  props.reduxPageNumber !=
-                  (props.reduxPreviousRequest?.pageNumber || 0)
-                ) {
-                  vehicleSearchData = HelperFunctions.RemoveDuplicates([
-                    ...props.reduxVehicleData,
-                    ...axiosSearchResponse.data.results,
-                  ]);
-                } else {
-                  vehicleSearchData = axiosSearchResponse.data.results;
-                }
+      const timer = setTimeout(() => {
+        executeSearch(searchRequest);
+      }, 300); // 300ms debounce delay
 
-                props.saveVehicleData(vehicleSearchData);
-                props.saveSearchCount(axiosSearchResponse.data.totalResults);
-              } else {
-                // no results found
-                props.savePageNumber(DefaultPageNumber);
-                props.saveVehicleData([]);
-              }
-
-              if (axiosSearchResponse.data.facets) {
-                props.saveFacetData(axiosSearchResponse.data.facets);
-              }
-              if (props.defaultFacetData.length === 0) {
-                SearchAndFacetsAPI(request, props.reduxCancellationToken).then(
-                  function (axiosFacetResponse) {
-                    if (
-                      axiosFacetResponse &&
-                      axiosFacetResponse.status === 200
-                    ) {
-                      if (axiosFacetResponse.data.facets) {
-                        props.saveDefaultFacetData(
-                          axiosFacetResponse.data.facets
-                        );
-                      }
-                    }
-                  }
-                );
-              }
-
-              props.saveLoading(false);
-            }
-          }
-        }
-      );
-    }
-  };
+      searchDebounceTimer.current = timer;
+    },
+    [executeSearch] // Now no dependencies on the timer ref
+  );
 
   const updateQueryStringURL = () => {
     if (props.reduxFacetSelectors.length > 0) {

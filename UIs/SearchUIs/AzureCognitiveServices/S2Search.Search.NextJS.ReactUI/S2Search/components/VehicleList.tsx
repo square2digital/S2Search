@@ -11,7 +11,6 @@ import {
   Alert,
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { AxiosGet } from '../pages/api/helper/AxiosAPICall';
 
 interface VehicleResult {
   vehicleID: string;
@@ -76,6 +75,8 @@ const VehicleList: React.FC = () => {
   }, []);
 
   const fetchVehicleData = useCallback(async () => {
+    const controller = new AbortController();
+    
     try {
       setLoading(true);
       setError(null);
@@ -84,32 +85,33 @@ const VehicleList: React.FC = () => {
       setSearchTerm(term);
 
       const url = buildSearchURL(term);
-      const axiosResponse = await AxiosGet(url);
-
-      // Check if it's an error response from our custom axios wrapper
-      if ('isError' in axiosResponse && axiosResponse.isError) {
-        setError(axiosResponse.message || 'Failed to fetch data');
-        return;
+      
+      const response = await fetch(url, {
+        signal: controller.signal
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
+      const data = await response.json();
 
       // Check if request was cancelled
-      if ('cancelled' in axiosResponse && axiosResponse.cancelled) {
+      if (controller.signal.aborted) {
         setError('Request was cancelled');
         return;
       }
 
-      // Standard axios response
-      if ('status' in axiosResponse && axiosResponse.status === 200) {
-        setVehicleData(axiosResponse.data);
-      } else if ('status' in axiosResponse) {
-        setError(`Failed to fetch data: ${axiosResponse.status}`);
-      } else {
-        setError('Unexpected response format');
-      }
+      // Successfully got data
+      setVehicleData(data);
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'An unknown error occurred';
-      setError(errorMessage);
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('Request was cancelled');
+      } else {
+        const errorMessage =
+          err instanceof Error ? err.message : 'An unknown error occurred';
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
