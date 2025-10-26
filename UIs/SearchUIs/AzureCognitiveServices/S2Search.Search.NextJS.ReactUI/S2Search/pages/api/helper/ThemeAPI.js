@@ -34,7 +34,7 @@
         };
       }
     } catch (error) {
-      console.log(`error on ThemeAPI (server-side)`, error);
+      console.error(`error on ThemeAPI (server-side)`, error);
       const { DefaultTheme } = require('../../../common/Constants');
       return {
         status: 200,
@@ -67,7 +67,7 @@
         };
       }
     } catch (error) {
-      console.log(`error on ThemeAPI - url ${URL}`, error);
+      console.error(`error on ThemeAPI - url ${URL}`, error);
       return {
         error: error.message,
         isError: true,
