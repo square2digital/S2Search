@@ -86,7 +86,12 @@ export const getDefaultFacetsWithSelections = (
   reduxDefaultFacets: DefaultFacet[],
   reduxFacetSelectors: FacetSelector[]
 ): DefaultFacet[] => {
-  const defaultFacetsCopy = [...reduxDefaultFacets];
+  // Create a deep copy of the defaultFacets to avoid mutating the original objects
+  const defaultFacetsCopy = reduxDefaultFacets.map(facet => ({
+    ...facet,
+    facetItems: facet.facetItems.map(item => ({ ...item }))
+  }));
+  
   const defaultFacetByKey = defaultFacetsCopy.filter(
     x => x.facetKey === facetKeyName
   );
@@ -102,7 +107,7 @@ export const getDefaultFacetsWithSelections = (
     }
   }
 
-  return [...defaultFacetsCopy];
+  return defaultFacetsCopy;
 };
 
 export const isSelectFacetMenuAlreadySelected = (
