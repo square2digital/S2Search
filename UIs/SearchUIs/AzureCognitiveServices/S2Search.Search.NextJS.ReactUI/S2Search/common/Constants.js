@@ -1,16 +1,12 @@
-﻿export const SearchAPIDomain = process.env.NEXT_PUBLIC_SEARCH_API_URL;
+﻿export const SearchAPIDomain = process.env.NEXT_PUBLIC_API_URL;
 export const DefaultPageNumber = Number(
   process.env.NEXT_PUBLIC_DEFAULT_PAGE_NUMBER
 );
 export const DefaultLoadSpeed = Number(
   process.env.NEXT_PUBLIC_DEFAULT_LOAD_SPEED
 );
-export const SearchAPIURL = process.env.NEXT_PUBLIC_SEARCH_API_URL;
-export const SearchAndFacetsAPIURL =
-  process.env.NEXT_PUBLIC_SEARCH_AND_FACETS_URL;
+
 export const SearchAPIEndpoint = process.env.NEXT_PUBLIC_SEARCH_API_ENDPOINT;
-export const ClientConfigurationAPIURL =
-  process.env.NEXT_PUBLIC_CLIENT_CONFIGIRATION_API_URL;
 export const FacetsAPIEndpoint = process.env.NEXT_PUBLIC_FACET_API_ENDPOINT;
 export const AutoCompleteURL = process.env.NEXT_PUBLIC_AUTO_COMPLETE_URL;
 export const DocumentCountURL = process.env.NEXT_PUBLIC_DOCUMENTS_COUNT_URL;
