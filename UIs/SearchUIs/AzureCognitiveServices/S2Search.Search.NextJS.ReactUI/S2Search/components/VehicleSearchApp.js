@@ -429,23 +429,51 @@ const VehicleSearchApp = props => {
   // Update URL when facets change to maintain shareable state
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const facetSelectorsJSON = JSON.stringify(props.reduxFacetSelectors);
-      insertQueryStringParam(
-        'facetselectors',
-        encodeURIComponent(facetSelectorsJSON)
-      );
+      if (props.reduxFacetSelectors.length > 0) {
+        // Only add facetselectors parameter when there are actual facets
+        const facetSelectorsJSON = JSON.stringify(props.reduxFacetSelectors);
+        insertQueryStringParam(
+          'facetselectors',
+          encodeURIComponent(facetSelectorsJSON)
+        );
+      } else {
+        // Remove the parameter when no facets are selected
+        insertQueryStringParam('facetselectors', '');
+      }
     }
   }, [props.reduxFacetSelectors]);
 
   // Update URL when search term changes to maintain shareable state
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      insertQueryStringParam(
-        'searchterm',
-        encodeURIComponent(props.reduxSearchTerm)
-      );
+      if (props.reduxSearchTerm.length > 0) {
+        // Only add searchterm parameter when there's an actual search term
+        insertQueryStringParam(
+          'searchterm',
+          encodeURIComponent(props.reduxSearchTerm)
+        );
+      } else {
+        // Remove the parameter when search term is empty
+        insertQueryStringParam('searchterm', '');
+      }
     }
   }, [props.reduxSearchTerm]);
+
+  // Update URL when order by changes to maintain shareable state
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (props.reduxOrderBy.length > 0) {
+        // Only add orderby parameter when there's an actual sort order selected
+        insertQueryStringParam(
+          'orderby',
+          encodeURIComponent(props.reduxOrderBy)
+        );
+      } else {
+        // Remove the parameter when no sort order is selected (default)
+        insertQueryStringParam('orderby', '');
+      }
+    }
+  }, [props.reduxOrderBy]);
 
   const getThemeFromAPI = () => {
     if (!themeConfigured) {
