@@ -5,10 +5,13 @@ import {
   setSearchTerm,
   setVehicleData,
   setPageNumber,
+  setOrderBy,
+  setSearchCount,
 } from '../../../../store/slices/searchSlice';
 import {
   resetFacets,
   setFacetSelectors,
+  setFacetSelectedKeys,
 } from '../../../../store/slices/facetSlice';
 import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -194,10 +197,15 @@ const mapStateToProps = reduxState => {
 const mapDispatchToProps = dispatch => {
   return {
     saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
-    saveResetFacets: resetFacetsFlag => dispatch(resetFacets()),
-    saveVehicleData: () => dispatch(setVehicleData([])),
-    savePageNumber: () => dispatch(setPageNumber(0)),
-    saveFacetSelectors: () => dispatch(setFacetSelectors([])),
+    saveResetFacets: () => dispatch(resetFacets()),
+    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
+    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
+    saveFacetSelectors: facetSelectors =>
+      dispatch(setFacetSelectors(facetSelectors)),
+    saveFacetSelectedKeys: facetSelectedKeys =>
+      dispatch(setFacetSelectedKeys(facetSelectedKeys)),
+    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
+    saveSearchCount: searchCount => dispatch(setSearchCount(searchCount)),
     // Note: saveCancellationToken might need to be implemented in uiSlice if still needed
     // saveCancellationToken: enable => dispatch(setCancellationToken(enable)),
   };

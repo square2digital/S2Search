@@ -377,6 +377,9 @@ const VehicleSearchApp = props => {
       ? selectedFacets.join(',')
       : selectedFacets;
 
+    LogString(
+      `Creating search request with vehicleData.length: ${props.reduxVehicleData.length}`
+    );
     const currentSearchRequest = createSearchRequest(
       props.reduxSearchTerm,
       facetsString,
