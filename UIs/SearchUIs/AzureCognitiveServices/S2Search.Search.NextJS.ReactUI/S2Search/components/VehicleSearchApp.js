@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import FacetFullScreenDialog from './material-ui/filtersDialog/FacetFullScreenDialog';
-import VehicleCardList from './material-ui/vehicleCards/VehicleCardList.tsx';
+import VehicleCardList from './material-ui/vehicleCards/VehicleCardList';
 import LoadMoreResultsButton from './LoadMoreResultsButton';
 import FacetChips from './material-ui/searchPage/FacetChips';
 import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
@@ -62,10 +62,9 @@ import {
   DefaultPageSize,
   DefaultPageNumber,
   DefaultTheme,
-  MillisecondsDifference,
 } from '../common/Constants';
 
-import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar.tsx';
+import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar';
 import { useRouter } from 'next/router';
 
 // Modern styles using theme-aware sx prop patterns
@@ -86,7 +85,6 @@ const styles = {
 
 const VehicleSearchApp = props => {
   const [searchCount, setSearchCount] = useState(0);
-  const [timestamp, setTimestamp] = useState(undefined);
   const [themeConfigured, setThemeConfigured] = useState(false);
   const [searchConfigConfigured, setSearchConfigConfigured] = useState(false);
   const [autoCompleteSearchBar, setAutoCompleteSearchBar] = useState(undefined);
@@ -329,7 +327,8 @@ const VehicleSearchApp = props => {
         );
       }
     },
-    [props]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   // *********************************************************************************************************************
@@ -374,21 +373,6 @@ const VehicleSearchApp = props => {
       typeof window !== 'undefined' ? window.location.host : 'localhost:2997'
     );
 
-    // Handle cancellation token logic
-    if (props.reduxSearchTerm.length === 0) {
-      props.saveCancellationToken(false);
-    } else {
-      if (timestamp) {
-        const milliseconds = new Date().getTime() - timestamp;
-        if (milliseconds < MillisecondsDifference) {
-          props.saveCancellationToken(true);
-        } else {
-          props.saveCancellationToken(false);
-        }
-      }
-    }
-
-    setTimestamp(new Date().getTime());
     setSearchCount(prev => prev + 1);
 
     // Use debounced search to prevent rapid successive calls
@@ -399,10 +383,18 @@ const VehicleSearchApp = props => {
     props.reduxSearchTerm,
     props.reduxOrderBy,
     props.reduxFacetChipDeleted,
-    props.reduxFacetSelectedKeys,
-    props.reduxFacetSelectors,
+    props.reduxFacetSelectedKeys.length, // Use length instead of array reference
+    props.reduxFacetSelectors.length, // Use length instead of array reference
     props.reduxPageNumber,
   ]);
+
+  // Separate useEffect for cancellation token logic to avoid interfering with search
+  useEffect(() => {
+    if (props.reduxSearchTerm.length === 0) {
+      props.saveCancellationToken(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.reduxSearchTerm]);
 
   // Cleanup debounce timer on unmount
   useEffect(() => {
@@ -564,7 +556,7 @@ const VehicleSearchApp = props => {
 
       searchDebounceTimer.current = timer;
     },
-    [executeSearch] // Now no dependencies on the timer ref
+    [executeSearch]
   );
 
   const RenderNetworkError = () => {

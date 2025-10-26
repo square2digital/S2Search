@@ -1,4 +1,4 @@
-import VehicleList from '../../components/VehicleList.tsx';
+import VehicleList from '../../components/VehicleList';
 import Head from 'next/head';
 
 function VehicleTest() {
