@@ -437,6 +437,16 @@ const VehicleSearchApp = props => {
     }
   }, [props.reduxFacetSelectors]);
 
+  // Update URL when search term changes to maintain shareable state
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      insertQueryStringParam(
+        'searchterm',
+        encodeURIComponent(props.reduxSearchTerm)
+      );
+    }
+  }, [props.reduxSearchTerm]);
+
   const getThemeFromAPI = () => {
     if (!themeConfigured) {
       try {
