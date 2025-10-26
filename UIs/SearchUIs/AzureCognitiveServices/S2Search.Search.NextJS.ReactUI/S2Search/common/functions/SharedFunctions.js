@@ -67,12 +67,12 @@ export const IsPreviousRequestDataTheSame = (newRequest, reduxRequest) => {
   }
 
   if (
-    JSON.stringify(newRequest.filters) != JSON.stringify(reduxRequest.filters)
+    JSON.stringify(newRequest.facets) != JSON.stringify(reduxRequest.facets)
   ) {
     LogRequests(
       newRequest,
       reduxRequest,
-      `compareRequestData is false - filters are different`
+      `compareRequestData is false - facets are different`
     );
     return false;
   }

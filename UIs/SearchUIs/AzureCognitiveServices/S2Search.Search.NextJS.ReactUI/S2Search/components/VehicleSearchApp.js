@@ -216,16 +216,21 @@ const VehicleSearchApp = props => {
       // **********************************************************
       // ** only call the API if the search request is different **
       // **********************************************************
-      if (
-        !IsPreviousRequestDataTheSame(
-          requestPlain,
-          props.reduxPreviousRequest
-        ) ||
-        props.reduxVehicleData.length == 0
-      ) {
+      const isDifferent = !IsPreviousRequestDataTheSame(
+        requestPlain,
+        props.reduxPreviousRequest
+      );
+      const hasNoData = props.reduxVehicleData.length == 0;
+
+      LogString(
+        `Request comparison - isDifferent: ${isDifferent}, hasNoData: ${hasNoData}`
+      );
+
+      if (isDifferent || hasNoData) {
         props.saveLoading(true);
         props.savePreviousRequest(requestPlain);
 
+        LogString('Making search API call...');
         fetch('/api/search', {
           method: 'POST',
           headers: {
@@ -233,7 +238,10 @@ const VehicleSearchApp = props => {
           },
           body: JSON.stringify(request),
         })
-          .then(response => response.json())
+          .then(response => {
+            LogString(`Search API response status: ${response.status}`);
+            return response.json();
+          })
           .then(function (searchResponse) {
             // Check if the response is an error object
             if (searchResponse && searchResponse.error) {
@@ -244,6 +252,9 @@ const VehicleSearchApp = props => {
 
             if (searchResponse) {
               props.saveNetworkError(false);
+              LogString(
+                `Search API response: ${searchResponse.results?.length || 0} results, ${searchResponse.totalResults || 0} total`
+              );
               if (searchResponse.results && searchResponse.results.length > 0) {
                 let vehicleSearchData = [];
 
@@ -259,10 +270,14 @@ const VehicleSearchApp = props => {
                   vehicleSearchData = searchResponse.results;
                 }
 
+                LogString(
+                  `Setting vehicle data: ${vehicleSearchData.length} vehicles`
+                );
                 props.saveVehicleData(vehicleSearchData);
                 props.saveSearchCount(searchResponse.totalResults);
               } else {
                 // no results found
+                LogString('No search results found, clearing vehicle data');
                 props.savePageNumber(DefaultPageNumber);
                 props.saveVehicleData([]);
               }
@@ -302,10 +317,15 @@ const VehicleSearchApp = props => {
             }
           })
           .catch(error => {
+            LogString(`Search API error: ${error.message}`);
             console.error('Search API error:', error);
             props.saveLoading(false);
             props.saveNetworkError(true);
           });
+      } else {
+        LogString(
+          'Skipping search - request is the same as previous or other conditions not met'
+        );
       }
     },
     [props]
