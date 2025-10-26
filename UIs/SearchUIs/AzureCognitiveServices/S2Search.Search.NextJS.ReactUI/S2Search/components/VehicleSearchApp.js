@@ -366,9 +366,10 @@ const VehicleSearchApp = props => {
       // Continue to execute search for default results
     } else if (!hasSearchCriteria) {
       LogString(
-        'No search criteria present and not initial load, skipping search'
+        'No search criteria present - executing search for default results'
       );
-      return;
+      // Continue to execute search to show default results
+      // This handles cases like clearing search term, clearing facets, etc.
     }
 
     // Create search request
