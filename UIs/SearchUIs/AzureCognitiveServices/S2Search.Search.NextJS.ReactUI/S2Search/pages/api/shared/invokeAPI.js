@@ -7,7 +7,7 @@ const invokeAPI = async (
   cancellation
 ) => {
   const {
-    SearchAPIDomain,
+    ApiRootEndpoint,
     AutoCompleteURL,
     DocumentCountURL,
     SearchAPIEndpoint,
@@ -42,7 +42,7 @@ const invokeAPI = async (
       // *****************
 
       case 'search':
-        url = `${SearchAPIDomain}${SearchAPIEndpoint}`;
+        url = `${ApiRootEndpoint}${SearchAPIEndpoint}`;
         axiosResponse = await axiosAPICall.AxiosGetWithQueryString(
           req,
           url,
@@ -52,7 +52,7 @@ const invokeAPI = async (
         break;
 
       case 'facets':
-        url = `${SearchAPIDomain}${FacetsAPIEndpoint}`;
+        url = `${ApiRootEndpoint}${FacetsAPIEndpoint}`;
         axiosResponse = await axiosAPICall.AxiosGetWithQueryString(
           req,
           url,
@@ -61,12 +61,12 @@ const invokeAPI = async (
         break;
 
       case 'documentCount':
-        url = `${SearchAPIDomain}${SearchAPIEndpoint}${DocumentCountURL}?callingHost=${callingHost}`;
+        url = `${ApiRootEndpoint}${SearchAPIEndpoint}${DocumentCountURL}?callingHost=${callingHost}`;
         axiosResponse = await axiosAPICall.AxiosGet(url, addApiKeyHeader);
         break;
 
       case 'autoSuggest':
-        url = `${SearchAPIDomain}${SearchAPIEndpoint}${AutoCompleteURL}?SearchTerm=${req.query.SearchTerm}&callingHost=${callingHost}`;
+        url = `${ApiRootEndpoint}${SearchAPIEndpoint}${AutoCompleteURL}?SearchTerm=${req.query.SearchTerm}&callingHost=${callingHost}`;
         axiosResponse = await axiosAPICall.AxiosGet(
           url,
           addApiKeyHeader,
@@ -78,12 +78,12 @@ const invokeAPI = async (
       // configuration Endpoints
       // *****************
       case 'configuration':
-        url = `${SearchAPIDomain}/api/configuration/${configType}/${callingHost}`;
+        url = `${ApiRootEndpoint}/api/configuration/${configType}/${callingHost}`;
         axiosResponse = await axiosAPICall.AxiosGet(url, addApiKeyHeader);
         break;
 
       case 'theme':
-        url = `${SearchAPIDomain}/api/configuration/${configType}/${callingHost}`;
+        url = `${ApiRootEndpoint}/api/configuration/${configType}/${callingHost}`;
         axiosResponse = await axiosAPICall.AxiosGet(url, addApiKeyHeader);
         break;
     }
