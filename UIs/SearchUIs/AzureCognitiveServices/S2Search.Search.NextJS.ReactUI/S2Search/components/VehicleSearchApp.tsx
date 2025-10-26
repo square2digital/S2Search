@@ -402,6 +402,12 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
             }
 
             props.saveSearchCount(responseObject.results.length);
+            
+            // Handle facets from search response
+            if (responseObject.facets && Array.isArray(responseObject.facets)) {
+              props.saveDefaultFacetData(responseObject.facets);
+            }
+            
             // Convert API SearchRequest to Redux SearchRequest format
             const reduxSearchRequest = {
               searchTerm: searchRequest.searchTerm,
