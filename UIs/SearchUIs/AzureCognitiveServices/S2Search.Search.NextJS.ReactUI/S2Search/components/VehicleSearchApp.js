@@ -342,6 +342,7 @@ const VehicleSearchApp = props => {
 
     // Only trigger searches for meaningful changes that indicate user intent
     // Include facet selectors count to ensure search triggers when facets are deleted
+    // Note: orderBy.length > 0 means user has explicitly selected a sort order
     const hasSearchCriteria =
       props.reduxSearchTerm.length > 0 ||
       props.reduxFacetSelectedKeys.length > 0 ||
@@ -359,15 +360,14 @@ const VehicleSearchApp = props => {
       props.reduxOrderBy.length === 0 &&
       searchCount === 0;
 
-    if (!hasSearchCriteria && !isInitialLoad) {
-      LogString(
-        'No search criteria present but not initial load, skipping search'
-      );
-      return;
-    }
-
+    // For initial load, we want to show default results, so we should search
     if (isInitialLoad) {
-      LogString('Initial load detected, skipping search to avoid empty query');
+      LogString('Initial load detected, executing search for default results');
+      // Continue to execute search for default results
+    } else if (!hasSearchCriteria) {
+      LogString(
+        'No search criteria present and not initial load, skipping search'
+      );
       return;
     }
 
