@@ -3,7 +3,7 @@ import { getValuesFromConfigArray } from '../../../../common/functions/ConfigFun
 
 const startString = 'Search for:';
 const FiveSpaces = '     ';
-const fallbackPlaceholders = [
+const fallbackPlaceholders: string[] = [
   `Ford Red 2019...${FiveSpaces}`,
   `Black suv...${FiveSpaces}`,
   `Convertible Blue...${FiveSpaces}`,
@@ -11,13 +11,13 @@ const fallbackPlaceholders = [
   `Porsche Silver...${FiveSpaces}`,
 ];
 
-const useDynamicPlaceholder = apiPlaceholders => {
-  const [placeholder, setPlaceholder] = useState('');
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [arrayIndex, setArrayIndex] = useState(0);
+const useDynamicPlaceholder = (apiPlaceholders: any[]): string => {
+  const [placeholder, setPlaceholder] = useState<string>('');
+  const [placeholderIndex, setPlaceholderIndex] = useState<number>(0);
+  const [arrayIndex, setArrayIndex] = useState<number>(0);
 
   // Memoize the placeholders array to prevent unnecessary re-renders
-  const placeholders = useMemo(() => {
+  const placeholders = useMemo((): string[] => {
     if (
       apiPlaceholders &&
       Array.isArray(apiPlaceholders) &&

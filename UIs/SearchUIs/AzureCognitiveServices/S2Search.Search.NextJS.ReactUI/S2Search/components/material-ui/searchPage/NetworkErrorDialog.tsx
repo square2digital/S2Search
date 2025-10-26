@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -8,19 +7,25 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Backdrop from '@mui/material/Backdrop';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setNetworkError } from '../../../store/slices/searchSlice';
-import { connect } from 'react-redux';
 
-const NetworkErrorDialog = props => {
-  const [open, setOpen] = useState(props.reduxNetworkError);
+const NetworkErrorDialog: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const reduxNetworkError = useAppSelector(state => state.search.networkError);
+  const [open, setOpen] = useState(reduxNetworkError);
 
-  const refreshPage = () => {
-    props.saveNetworkError(false);
+  useEffect(() => {
+    setOpen(reduxNetworkError);
+  }, [reduxNetworkError]);
+
+  const refreshPage = (): void => {
+    dispatch(setNetworkError(false));
     window.location.reload();
   };
 
-  const handleClose = () => {
-    props.saveNetworkError(false);
+  const handleClose = (): void => {
+    dispatch(setNetworkError(false));
     setOpen(false);
   };
 
@@ -39,7 +44,7 @@ const NetworkErrorDialog = props => {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title" onClose={handleClose}>
+          <DialogTitle id="alert-dialog-title">
             Connectivity Issue
           </DialogTitle>
           <DialogContent>
@@ -64,21 +69,4 @@ const NetworkErrorDialog = props => {
   );
 };
 
-const mapStateToProps = reduxState => {
-  return {
-    reduxNetworkError: reduxState.search.networkError,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    saveNetworkError: enable => dispatch(setNetworkError(enable)),
-  };
-};
-
-NetworkErrorDialog.propTypes = {
-  reduxNetworkError: PropTypes.bool,
-  saveNetworkError: PropTypes.func,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(NetworkErrorDialog);
+export default NetworkErrorDialog;

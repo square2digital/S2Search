@@ -7,14 +7,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import OrderByRadios from './OrderByRadios';
 import FormControl from '@mui/material/FormControl';
 
-const OrderByDialog = () => {
-  const [open, setOpen] = React.useState(false);
+const OrderByDialog: React.FC = () => {
+  const [open, setOpen] = React.useState<boolean>(false);
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (): void => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setOpen(false);
   };
 

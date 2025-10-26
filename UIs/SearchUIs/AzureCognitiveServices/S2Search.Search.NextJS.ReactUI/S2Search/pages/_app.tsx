@@ -1,3 +1,5 @@
+import type { AppProps } from 'next/app';
+import type { EmotionCache } from '@emotion/react';
 import '@/styles/globals.css';
 // Optimized font loading - only load weights we actually use
 import '@fontsource/roboto/400.css';
@@ -11,7 +13,11 @@ import Head from 'next/head';
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
-export default function App(props) {
+interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+}
+
+export default function App(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   return (

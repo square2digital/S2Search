@@ -1,7 +1,7 @@
 import VehicleList from '../../components/VehicleList';
 import Head from 'next/head';
 
-function VehicleTest() {
+const VehicleTest: React.FC = () => {
   return (
     <div>
       <Head>
@@ -10,6 +10,6 @@ function VehicleTest() {
       <VehicleList />
     </div>
   );
-}
+};
 
 export default VehicleTest;

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import Fab from '@mui/material/Fab';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import Tooltip from '@mui/material/Tooltip';
 import UseWindowSize from '../../../common/hooks/UseWindowSize';
 import Zoom from '@mui/material/Zoom';
 
-const setSize = width => {
+type FabSize = 'small' | 'medium' | 'large';
+
+const setSize = (width: number): FabSize => {
   if (width < 600) {
     return 'small';
   }
@@ -18,28 +18,28 @@ const setSize = width => {
   return 'large';
 };
 
-const handleClick = () => {
+const handleClick = (): void => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 const buttonPositionTrigger = 650;
 
-const FloatingTopButton = () => {
+const FloatingTopButton: React.FC = () => {
   const [width] = UseWindowSize();
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [scrollPosition, setScrollPosition] = useState<number>(0);
 
   useEffect(() => {
+    const handleScroll = (): void => {
+      const position = window.pageYOffset;
+      setScrollPosition(position);
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
-  const handleScroll = () => {
-    const position = window.pageYOffset;
-    setScrollPosition(position);
-  };
 
   return (
     <div>
@@ -66,16 +66,4 @@ const FloatingTopButton = () => {
   );
 };
 
-const mapStateToProps = reduxState => {
-  return {
-    reduxPrimaryColour: reduxState.theme.primaryColour,
-    reduxSecondaryColour: reduxState.theme.secondaryColour,
-  };
-};
-
-FloatingTopButton.propTypes = {
-  reduxPrimaryColour: PropTypes.string,
-  reduxSecondaryColour: PropTypes.string,
-};
-
-export default connect(mapStateToProps)(FloatingTopButton);
+export default FloatingTopButton;

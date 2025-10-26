@@ -1,18 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import {
-  setSearchTerm,
-  setVehicleData,
-  setPageNumber,
-  setOrderBy,
-  setSearchCount,
-} from '../../../../store/slices/searchSlice';
-import {
-  resetFacets,
-  setFacetSelectors,
-  setFacetSelectedKeys,
-} from '../../../../store/slices/facetSlice';
+import React, { useState, useEffect } from 'react';
 import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
 import Popper from '@mui/material/Popper';
@@ -32,23 +18,65 @@ import {
   disableResetFiltersButton,
   updateSearchTerm,
 } from './searchBarSharedFunctions';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import {
+  setSearchTerm,
+  setVehicleData,
+  setPageNumber,
+  setOrderBy,
+  setSearchCount,
+} from '../../../../store/slices/searchSlice';
+import {
+  resetFacets,
+  setFacetSelectors,
+  setFacetSelectedKeys,
+} from '../../../../store/slices/facetSlice';
 
-export const AutoSuggest = props => {
-  const [options, setOptions] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
+interface AutoSuggestProps {
+  placeholderText?: string;
+}
+
+interface SuggestionPart {
+  highlight: boolean;
+  text: string;
+}
+
+export const AutoSuggest: React.FC<AutoSuggestProps> = (props) => {
+  const [options, setOptions] = useState<string[]>([]);
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  
+  const dispatch = useAppDispatch();
+  const reduxSearchTerm = useAppSelector(state => state.search.searchTerm);
+  const reduxFacetSelectors = useAppSelector(state => state.facet.facetSelectors);
+  const reduxConfigPlaceholders = useAppSelector(state => state.config.placeholderArray);
+
   const { width: windowWidth } = useWindowSize();
-  const dynamicPlaceholder = useDynamicPlaceholder(
-    props.reduxConfigPlaceholders
-  );
+  const dynamicPlaceholder = useDynamicPlaceholder(reduxConfigPlaceholders);
+
+  // Create props object to match old interface
+  const searchBarProps = {
+    reduxSearchTerm,
+    reduxFacetSelectors,
+    searchTerm: reduxSearchTerm,
+    placeholderText: props.placeholderText,
+    saveSearchTerm: (term: string) => dispatch(setSearchTerm(term)),
+    saveVehicleData: (data: any[]) => dispatch(setVehicleData(data)),
+    saveFacetSelectors: (selectors: any[]) => dispatch(setFacetSelectors(selectors)),
+    saveFacetSelectedKeys: (keys: any[]) => dispatch(setFacetSelectedKeys(keys)),
+    savePageNumber: (page: number) => dispatch(setPageNumber(page)),
+    saveOrderby: (order: string) => dispatch(setOrderBy(order)),
+    saveSearchCount: (count: number) => dispatch(setSearchCount(count)),
+    saveResetFacets: () => dispatch(resetFacets()),
+  };
 
   useEffect(() => {
-    if (props.reduxSearchTerm) {
-      if (props.reduxSearchTerm.length >= 2) {
+    if (reduxSearchTerm) {
+      if (reduxSearchTerm.length >= 2) {
         fetch(
-          `/api/autoSuggest?searchTerm=${encodeURIComponent(props.reduxSearchTerm)}`
+          `/api/autoSuggest?searchTerm=${encodeURIComponent(reduxSearchTerm)}`
         )
           .then(response => response.json())
-          .then(function (suggestions) {
+          .then(function (suggestions: string[]) {
             if (suggestions && Array.isArray(suggestions)) {
               suggestions.shift();
               setOptions(suggestions);
@@ -66,37 +94,37 @@ export const AutoSuggest = props => {
     }
 
     setShowDropdown(options.length > 0);
-  }, [props.reduxSearchTerm, options.length]);
+  }, [reduxSearchTerm, options.length]);
 
-  const updateSearch = (event, value) => {
-    updateSearchTerm(value, props);
+  const updateSearch = (_event: React.SyntheticEvent, value: string | null): void => {
+    updateSearchTerm(value || '', searchBarProps);
   };
 
-  const reset = () => {
-    resetFilters(props);
+  const reset = (): void => {
+    resetFilters(searchBarProps);
   };
 
-  const saveOnChange = event => {
-    updateSearchTerm(event.target.value, props);
+  const saveOnChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    updateSearchTerm(event.target.value, searchBarProps);
   };
 
-  const disableResetButton = () => {
-    return disableResetFiltersButton(props);
+  const disableResetButton = (): boolean => {
+    return disableResetFiltersButton(searchBarProps);
   };
 
-  const PopperOverride = function (props) {
-    const styles = () => ({
+  const PopperOverride = function (popperProps: any) {
+    const styles = {
       popper: {
         width: 'fit-content',
       },
-    });
+    };
 
     if (MobileMaxWidth > windowWidth) {
       return (
-        <Popper {...props} style={styles.popper} placement="bottom-start" />
+        <Popper {...popperProps} style={styles.popper} placement="bottom-start" />
       );
     } else {
-      return <Popper {...props} />;
+      return <Popper {...popperProps} />;
     }
   };
 
@@ -109,10 +137,10 @@ export const AutoSuggest = props => {
       forcePopupIcon={showDropdown}
       options={options}
       onInputChange={updateSearch}
-      value={props.reduxSearchTerm}
-      renderOption={(renderProps, option) => {
-        const matches = match(option, props.reduxSearchTerm);
-        const parts = parse(option, matches);
+      value={reduxSearchTerm}
+      renderOption={(renderProps: any, option: string) => {
+        const matches = match(option, reduxSearchTerm);
+        const parts: SuggestionPart[] = parse(option, matches);
 
         return (
           <div {...renderProps}>
@@ -131,7 +159,7 @@ export const AutoSuggest = props => {
           </div>
         );
       }}
-      renderInput={params => {
+      renderInput={(params: any) => {
         const { ...rest } = params;
         return (
           <>
@@ -151,7 +179,7 @@ export const AutoSuggest = props => {
                   flex: 1,
                 }}
                 placeholder={generatePlaceholder(
-                  props,
+                  searchBarProps,
                   windowWidth,
                   MobileMaxWidth,
                   dynamicPlaceholder
@@ -159,7 +187,7 @@ export const AutoSuggest = props => {
                 variant="outlined"
                 onChange={saveOnChange}
                 onKeyPress={checkForEnter}
-                value={props.reduxSearchTerm}
+                value={reduxSearchTerm}
               />
               <Divider
                 style={{
@@ -185,44 +213,4 @@ export const AutoSuggest = props => {
   );
 };
 
-const mapStateToProps = reduxState => {
-  return {
-    reduxSearchTerm: reduxState.search.searchTerm,
-    reduxFacetSelectors: reduxState.facet.facetSelectors,
-    reduxConfigPlaceholders: reduxState.config.placeholderArray,
-    reduxCancellationToken: reduxState.ui.cancellationToken,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
-    saveResetFacets: () => dispatch(resetFacets()),
-    saveVehicleData: vehicleData => dispatch(setVehicleData(vehicleData)),
-    savePageNumber: pageNumber => dispatch(setPageNumber(pageNumber)),
-    saveFacetSelectors: facetSelectors =>
-      dispatch(setFacetSelectors(facetSelectors)),
-    saveFacetSelectedKeys: facetSelectedKeys =>
-      dispatch(setFacetSelectedKeys(facetSelectedKeys)),
-    saveOrderby: orderBy => dispatch(setOrderBy(orderBy)),
-    saveSearchCount: searchCount => dispatch(setSearchCount(searchCount)),
-    // Note: saveCancellationToken might need to be implemented in uiSlice if still needed
-    // saveCancellationToken: enable => dispatch(setCancellationToken(enable)),
-  };
-};
-
-AutoSuggest.propTypes = {
-  reduxFacetSelectors: PropTypes.array,
-  reduxSearchTerm: PropTypes.string,
-  saveSearchTerm: PropTypes.func,
-  saveResetFacets: PropTypes.func,
-  saveVehicleData: PropTypes.func,
-  savePageNumber: PropTypes.func,
-  saveFacetSelectors: PropTypes.func,
-  placeholderText: PropTypes.string,
-  reduxConfigPlaceholders: PropTypes.array,
-  reduxCancellationToken: PropTypes.bool,
-  saveCancellationToken: PropTypes.func,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AutoSuggest);
+export default AutoSuggest;

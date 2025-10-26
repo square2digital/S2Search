@@ -3,8 +3,15 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 
-const TestFacets = () => {
-  const [facetSelectors, setFacetSelectors] = useState([
+interface FacetSelector {
+  facetKey: string;
+  facetDisplayText: string;
+  luceneExpression: string;
+  checked: boolean;
+}
+
+const TestFacets: React.FC = () => {
+  const [facetSelectors, setFacetSelectors] = useState<FacetSelector[]>([
     {
       facetKey: 'model',
       facetDisplayText: '2 Series',
@@ -25,9 +32,9 @@ const TestFacets = () => {
     },
   ]);
 
-  const [searchTriggerCount, setSearchTriggerCount] = useState(0);
+  const [searchTriggerCount, setSearchTriggerCount] = useState<number>(0);
 
-  const handleDelete = facetToDelete => () => {
+  const handleDelete = (facetToDelete: FacetSelector) => () => {
     const updatedArray = facetSelectors.filter(
       facet => facet.facetDisplayText !== facetToDelete.facetDisplayText
     );
@@ -38,7 +45,7 @@ const TestFacets = () => {
     setSearchTriggerCount(prev => prev + 1);
   };
 
-  const resetFacets = () => {
+  const resetFacets = (): void => {
     setFacetSelectors([
       {
         facetKey: 'model',
