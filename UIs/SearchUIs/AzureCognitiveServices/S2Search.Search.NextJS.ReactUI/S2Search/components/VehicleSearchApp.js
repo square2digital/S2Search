@@ -94,7 +94,6 @@ const VehicleSearchApp = props => {
   const [themeConfigured, setThemeConfigured] = useState(false);
   const [searchConfigConfigured, setSearchConfigConfigured] = useState(false);
   const [autoCompleteSearchBar, setAutoCompleteSearchBar] = useState(undefined);
-  const [queryStringParams, setQueryStringParams] = useState({});
 
   const router = useRouter();
 
@@ -104,7 +103,7 @@ const VehicleSearchApp = props => {
   useEffect(() => {
     getThemeFromAPI();
     getDocumentCountAPI();
-    let config = [];
+    const config = [];
     if (props.reduxConfigData.length === 0) {
       ConfigAPI(window.location.host).then(function (axiosConfigResponse) {
         if (!searchConfigConfigured && axiosConfigResponse) {
@@ -132,16 +131,16 @@ const VehicleSearchApp = props => {
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (router && Object.keys(router.query).length > 0) {
-      setQueryStringParams(router.query);
-      if (queryStringParams) {
-        LogString(`searchterm = ${queryStringParams.searchterm}`);
+      if (router.query.searchterm) {
+        LogString(`searchterm = ${router.query.searchterm}`);
       }
     }
-  }, [router.query]);
+  }, [router, router.query]);
 
   // *********************************************************************************************************************
   // ** this useEffect hook manages the search - it will trigger on any change relating to search - see the dependencies
@@ -181,6 +180,7 @@ const VehicleSearchApp = props => {
         window.location.host
       )
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     props.reduxSearchTerm,
     props.reduxOrderBy,
@@ -188,7 +188,6 @@ const VehicleSearchApp = props => {
     props.reduxPageNumber,
     props.reduxFacetChipDeleted,
     props.reduxFacetSelectedKeys,
-    router.query,
   ]);
 
   const getThemeFromAPI = () => {
@@ -197,7 +196,7 @@ const VehicleSearchApp = props => {
         ThemeAPI().then(function (axiosThemeResponse) {
           if (axiosThemeResponse) {
             if (axiosThemeResponse.status === 200) {
-              let theme = axiosThemeResponse.data;
+              const theme = axiosThemeResponse.data;
               props.savePrimaryColour(theme.primaryHexColour);
               props.saveSecondaryColour(theme.secondaryHexColour);
               props.saveNavBarColour(theme.navBarHexColour);
@@ -224,7 +223,7 @@ const VehicleSearchApp = props => {
       function (axiosDocumentCountResponse) {
         if (axiosDocumentCountResponse) {
           if (axiosDocumentCountResponse.status === 200) {
-            let documentCount = axiosDocumentCountResponse.data;
+            const documentCount = axiosDocumentCountResponse.data;
             props.saveTotalDocumentCount(documentCount);
           }
         }

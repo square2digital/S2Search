@@ -62,15 +62,15 @@
         };
       } else {
         return {
-          status: response.status,
-          error: `HTTP error! status: ${response.status}`,
+          status: 200,
+          data: DefaultTheme,
         };
       }
     } catch (error) {
-      console.error(`error on ThemeAPI - url ${URL}`, error);
+      const { DefaultTheme } = require('../../../common/Constants');
       return {
-        error: error.message,
-        isError: true,
+        status: 200,
+        data: DefaultTheme,
       };
     }
   }
