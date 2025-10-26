@@ -350,26 +350,12 @@ const VehicleSearchApp = props => {
       props.reduxPageNumber > 0 ||
       props.reduxOrderBy.length > 0;
 
-    // Special case: if all criteria are empty, we still want to search to show default results
-    // but only if this is not the initial load (when everything is at default values)
-    const isInitialLoad =
-      props.reduxSearchTerm.length === 0 &&
-      props.reduxFacetSelectedKeys.length === 0 &&
-      props.reduxFacetSelectors.length === 0 &&
-      props.reduxPageNumber === 0 &&
-      props.reduxOrderBy.length === 0 &&
-      searchCount === 0;
-
-    // For initial load, we want to show default results, so we should search
-    if (isInitialLoad) {
-      LogString('Initial load detected, executing search for default results');
-      // Continue to execute search for default results
-    } else if (!hasSearchCriteria) {
+    // Always execute search when there are no criteria to show default results
+    // This handles initial load, clearing search terms, removing facets, etc.
+    if (!hasSearchCriteria) {
       LogString(
         'No search criteria present - executing search for default results'
       );
-      // Continue to execute search to show default results
-      // This handles cases like clearing search term, clearing facets, etc.
     }
 
     // Create search request
@@ -378,9 +364,6 @@ const VehicleSearchApp = props => {
       ? selectedFacets.join(',')
       : selectedFacets;
 
-    LogString(
-      `Creating search request with vehicleData.length: ${props.reduxVehicleData.length}`
-    );
     const currentSearchRequest = createSearchRequest(
       props.reduxSearchTerm,
       facetsString,

@@ -25,7 +25,7 @@ export const resetFilters = props => {
   props.saveOrderby('');
   props.saveSearchCount(0);
 
-  // Also trigger the async reset for any other cleanup
+  // Trigger async reset for dialog closing and other cleanup
   props.saveResetFacets(true);
   removeFullQueryString();
 };
