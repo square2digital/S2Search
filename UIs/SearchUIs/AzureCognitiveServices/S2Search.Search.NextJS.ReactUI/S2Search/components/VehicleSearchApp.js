@@ -16,8 +16,14 @@ import {
   setPreviousRequest,
   setNetworkError,
   setSearchCount,
+  setSearchTerm,
 } from '../store/slices/searchSlice';
-import { setFacetData, setDefaultFacetData } from '../store/slices/facetSlice';
+import {
+  setFacetData,
+  setDefaultFacetData,
+  setFacetSelectors,
+  setFacetSelectedKeys,
+} from '../store/slices/facetSlice';
 import { setLoading, setCancellationToken } from '../store/slices/uiSlice';
 import {
   setPrimaryColour,
@@ -59,10 +65,6 @@ import {
 } from '../common/Constants';
 
 import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar.tsx';
-import {
-  insertQueryStringParam,
-  removeFullQueryString,
-} from '../common/functions/QueryStringFunctions';
 import { useRouter } from 'next/router';
 
 // Modern styles using theme-aware sx prop patterns
@@ -155,83 +157,47 @@ const VehicleSearchApp = props => {
   // ** Separate useEffect for handling URL parameters (facets, search terms) - runs when route changes
   // *********************************************************************************************************************
   useEffect(() => {
-    const { saveFacetSelectors, saveFacetSelectedKeys, saveSearchTerm } = props;
+    if (!router || !router.query) return;
 
-    if (router && Object.keys(router.query).length > 0) {
-      // Handle search term from URL
-      if (
-        router.query.searchterm &&
-        router.query.searchterm !== props.reduxSearchTerm
-      ) {
-        LogString(`Loading search term from URL: ${router.query.searchterm}`);
-        saveSearchTerm(router.query.searchterm);
-      }
+    // Only process if we have actual query parameters
+    const hasQueryParams = Object.keys(router.query).length > 0;
+    if (!hasQueryParams) return;
 
-      // Handle facet selectors from URL
-      if (router.query.facetselectors && !facetsLoadedFromUrl) {
-        try {
-          const facetSelectors = JSON.parse(
-            decodeURIComponent(router.query.facetselectors)
-          );
-          LogString(
-            `Loading facet selectors from URL: ${JSON.stringify(facetSelectors)}`
-          );
-          saveFacetSelectors(facetSelectors);
+    LogString(`URL EFFECT: Processing URL parameters`);
 
-          // Extract facet keys for the selected keys array
-          const selectedKeys = facetSelectors
-            .filter(facet => facet.checked)
-            .map(facet => facet.facetKey);
-          saveFacetSelectedKeys(selectedKeys);
-
-          // Mark facets as loaded to prevent re-loading on subsequent renders
-          setFacetsLoadedFromUrl(true);
-        } catch (error) {
-          LogString(`Error parsing facet selectors from URL: ${error.message}`);
-        }
-      }
-    }
-  }, [router, router.query, props, facetsLoadedFromUrl]);
-
-  // *********************************************************************************************************************
-  // ** URL parameter loading useEffect - separate from search triggering to prevent loops
-  // *********************************************************************************************************************
-  useEffect(() => {
+    // Handle search term from URL (only if different from current)
     if (
-      router &&
-      Object.keys(router.query).length > 0 &&
-      !facetsLoadedFromUrl
+      router.query.searchterm &&
+      router.query.searchterm !== props.reduxSearchTerm
     ) {
-      if (router.query.searchterm) {
-        LogString(`Loading search term from URL: ${router.query.searchterm}`);
-        props.saveSearchTerm(router.query.searchterm);
-      }
-
-      // Handle facet selectors from URL
-      if (router.query.facetselectors) {
-        try {
-          const facetSelectors = JSON.parse(
-            decodeURIComponent(router.query.facetselectors)
-          );
-          LogString(
-            `Loading facet selectors from URL: ${JSON.stringify(facetSelectors)}`
-          );
-          props.saveFacetSelectors(facetSelectors);
-
-          // Extract facet keys for the selected keys array
-          const selectedKeys = facetSelectors
-            .filter(facet => facet.checked)
-            .map(facet => facet.facetKey);
-          props.saveFacetSelectedKeys(selectedKeys);
-        } catch (error) {
-          LogString(`Error parsing facet selectors from URL: ${error.message}`);
-        }
-      }
-
-      // Mark that we've loaded facets from URL to prevent re-loading
-      setFacetsLoadedFromUrl(true);
+      LogString(`Loading search term from URL: ${router.query.searchterm}`);
+      props.saveSearchTerm(router.query.searchterm);
     }
-  }, [router, router.query, facetsLoadedFromUrl, props]);
+
+    // Handle facet selectors from URL (only once per URL change)
+    if (router.query.facetselectors && !facetsLoadedFromUrl) {
+      try {
+        const facetSelectors = JSON.parse(
+          decodeURIComponent(router.query.facetselectors)
+        );
+        LogString(`Loading ${facetSelectors.length} facet selectors from URL`);
+
+        props.saveFacetSelectors(facetSelectors);
+
+        // Extract facet keys for the selected keys array
+        const selectedKeys = facetSelectors
+          .filter(facet => facet.checked)
+          .map(facet => facet.facetKey);
+        props.saveFacetSelectedKeys(selectedKeys);
+
+        // Mark facets as loaded to prevent re-loading
+        setFacetsLoadedFromUrl(true);
+      } catch (error) {
+        LogString(`Error parsing facet selectors from URL: ${error.message}`);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router?.query?.facetselectors, router?.query?.searchterm]);
 
   // *********************************************************************************************************************
   // ** Main search API function - moved here to resolve dependency order
@@ -349,6 +315,10 @@ const VehicleSearchApp = props => {
   // ** Main search useEffect - triggers searches based on user input changes with debouncing
   // *********************************************************************************************************************
   useEffect(() => {
+    LogString(
+      `Search useEffect triggered. Search term: "${props.reduxSearchTerm}", Selected keys: ${props.reduxFacetSelectedKeys.length}, Page: ${props.reduxPageNumber}`
+    );
+
     // Only trigger searches for meaningful changes that indicate user intent
     const hasSearchCriteria =
       props.reduxSearchTerm.length > 0 ||
@@ -382,15 +352,11 @@ const VehicleSearchApp = props => {
         } else {
           props.saveCancellationToken(false);
         }
-        LogString(
-          `milliseconds: ${milliseconds} cancellationToken: ${props.reduxCancellationToken} props.reduxSearchTerm : ${props.reduxSearchTerm.length}`
-        );
       }
     }
 
     setTimestamp(new Date().getTime());
     setSearchCount(prev => prev + 1);
-    updateQueryStringURL();
 
     // Use debounced search to prevent rapid successive calls
     debouncedSearch(currentSearchRequest);
@@ -401,10 +367,7 @@ const VehicleSearchApp = props => {
     props.reduxOrderBy,
     props.reduxFacetChipDeleted,
     props.reduxFacetSelectedKeys,
-    // Note: Intentionally NOT including props.reduxFacetSelectors to prevent loops
-    // Facet changes are captured via reduxFacetSelectedKeys changes
-    // Note: Intentionally NOT including props.reduxPageNumber to prevent loops
-    // Page number is managed internally by the search logic
+    props.reduxPageNumber,
   ]);
 
   // Cleanup debounce timer on unmount
@@ -520,28 +483,6 @@ const VehicleSearchApp = props => {
     },
     [executeSearch] // Now no dependencies on the timer ref
   );
-
-  const updateQueryStringURL = () => {
-    if (props.reduxFacetSelectors.length > 0) {
-      insertQueryStringParam(
-        'facetselectors',
-        JSON.stringify(props.reduxFacetSelectors)
-      );
-
-      insertQueryStringParam('orderby', props.reduxOrderBy);
-    }
-
-    if (props.reduxSearchTerm.length > 0) {
-      insertQueryStringParam('searchterm', props.reduxSearchTerm);
-    }
-
-    if (
-      props.reduxFacetSelectors.length === 0 &&
-      props.reduxSearchTerm.length === 0
-    ) {
-      removeFullQueryString();
-    }
-  };
 
   const RenderNetworkError = () => {
     if (props.reduxNetworkError === true) {
@@ -664,6 +605,13 @@ const mapDispatchToProps = dispatch => {
       dispatch(setHideIconVehicleCounts(hideIconVehicleCounts)),
     savePlaceholderArray: placeholderText =>
       dispatch(setPlaceholderArray(placeholderText)),
+
+    // RTK facet and search actions (replacing legacy actions)
+    saveFacetSelectors: facetSelectors =>
+      dispatch(setFacetSelectors(facetSelectors)),
+    saveFacetSelectedKeys: facetSelectedKeys =>
+      dispatch(setFacetSelectedKeys(facetSelectedKeys)),
+    saveSearchTerm: searchTerm => dispatch(setSearchTerm(searchTerm)),
   };
 };
 
