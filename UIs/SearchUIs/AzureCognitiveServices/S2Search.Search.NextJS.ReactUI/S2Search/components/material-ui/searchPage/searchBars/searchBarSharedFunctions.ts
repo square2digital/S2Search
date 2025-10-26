@@ -9,6 +9,7 @@ export const isCharForbidden = (searchTerm: string): boolean => {
   return result;
 };
 
+/* eslint-disable no-unused-vars */
 interface SearchBarProps {
   reduxSearchTerm: string;
   saveSearchTerm: (term: string) => void;
@@ -18,11 +19,12 @@ interface SearchBarProps {
   savePageNumber: (page: number) => void;
   saveOrderby: (order: string) => void;
   saveSearchCount: (count: number) => void;
-  saveResetFacets: (reset: boolean) => void;
+  saveResetFacets: () => void;
   reduxFacetSelectors: any[];
   searchTerm?: string;
   placeholderText?: string;
 }
+/* eslint-enable no-unused-vars */
 
 export const updateSearchTerm = (searchTerm: string, props: SearchBarProps): void => {
   if (searchTerm !== undefined && searchTerm !== props.reduxSearchTerm) {

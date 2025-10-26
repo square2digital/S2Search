@@ -62,7 +62,7 @@ export const SearchBar: React.FC<SearchBarProps> = (props) => {
     savePageNumber: (page: number) => dispatch(setPageNumber(page)),
     saveOrderby: (order: string) => dispatch(setOrderBy(order)),
     saveSearchCount: (count: number) => dispatch(setSearchCount(count)),
-    saveResetFacets: (_reset: boolean) => dispatch(resetFacets()),
+    saveResetFacets: () => dispatch(resetFacets()),
   };
 
   const updateSearch = (event: React.ChangeEvent<HTMLInputElement>): void => {
