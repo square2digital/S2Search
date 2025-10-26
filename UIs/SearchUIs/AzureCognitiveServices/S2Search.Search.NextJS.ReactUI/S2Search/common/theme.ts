@@ -1,19 +1,20 @@
 import { createTheme } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
+import { ThemeColors } from '../types/theme/colours';
 
 // Create a modern theme with improved defaults
-export const createAppTheme = (primaryColor?: string, secondaryColor?: string) => {
+export const createAppTheme = (colors: ThemeColors) => {
   return createTheme({
     palette: {
       mode: 'light',
       primary: {
-        main: primaryColor || '#1976d2',
+        main: colors.primaryColor || '#1976d2',
         light: '#42a5f5',
         dark: '#1565c0',
         contrastText: '#fff',
       },
       secondary: {
-        main: secondaryColor || '#dc004e',
+        main: colors.secondaryColor || '#dc004e',
         light: '#ff5983',
         dark: '#9a0036',
         contrastText: '#fff',
