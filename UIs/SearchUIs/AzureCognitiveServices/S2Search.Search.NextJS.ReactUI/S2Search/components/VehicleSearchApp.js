@@ -320,13 +320,31 @@ const VehicleSearchApp = props => {
     );
 
     // Only trigger searches for meaningful changes that indicate user intent
+    // Include facet selectors count to ensure search triggers when facets are deleted
     const hasSearchCriteria =
       props.reduxSearchTerm.length > 0 ||
       props.reduxFacetSelectedKeys.length > 0 ||
+      props.reduxFacetSelectors.length > 0 ||
       props.reduxPageNumber > 0;
 
-    if (!hasSearchCriteria) {
-      LogString('No search criteria present, skipping search');
+    // Special case: if all criteria are empty, we still want to search to show default results
+    // but only if this is not the initial load (when everything is at default values)
+    const isInitialLoad =
+      props.reduxSearchTerm.length === 0 &&
+      props.reduxFacetSelectedKeys.length === 0 &&
+      props.reduxFacetSelectors.length === 0 &&
+      props.reduxPageNumber === 0 &&
+      searchCount === 0;
+
+    if (!hasSearchCriteria && !isInitialLoad) {
+      LogString(
+        'No search criteria present but not initial load, skipping search'
+      );
+      return;
+    }
+
+    if (isInitialLoad) {
+      LogString('Initial load detected, skipping search to avoid empty query');
       return;
     }
 
@@ -344,21 +362,6 @@ const VehicleSearchApp = props => {
       DefaultPageSize,
       props.reduxVehicleData.length,
       typeof window !== 'undefined' ? window.location.host : 'localhost:2997'
-    );
-
-    // DEBUG: Add logging to understand what's happening with facets
-    LogString(
-      `FACET DEBUG: reduxFacetSelectors count: ${props.reduxFacetSelectors.length}`
-    );
-    LogString(
-      `FACET DEBUG: reduxFacetSelectors content: ${JSON.stringify(props.reduxFacetSelectors)}`
-    );
-    LogString(
-      `FACET DEBUG: getSelectedFacets result (array): ${JSON.stringify(selectedFacets)}`
-    );
-    LogString(`FACET DEBUG: facetsString (joined): ${facetsString}`);
-    LogString(
-      `FACET DEBUG: Search request facets: ${JSON.stringify(currentSearchRequest.facets)}`
     );
 
     // Handle cancellation token logic

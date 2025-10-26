@@ -43,31 +43,14 @@ export const isAnyFacetSelected = reduxFacetSelectors => {
 export const getSelectedFacets = reduxFacetSelectors => {
   const requestFilters = [];
 
-  // DEBUG: Log the facet selectors being processed
-  console.log(
-    '🔍 getSelectedFacets: Input reduxFacetSelectors:',
-    reduxFacetSelectors
-  );
-
   if (reduxFacetSelectors !== undefined) {
-    for (let item of reduxFacetSelectors) {
-      console.log(
-        '🔍 getSelectedFacets: Processing item:',
-        item,
-        'checked:',
-        item.checked
-      );
+    for (const item of reduxFacetSelectors) {
       if (item.checked) {
         requestFilters.push(item.luceneExpression);
-        console.log(
-          '🔍 getSelectedFacets: Added lucene expression:',
-          item.luceneExpression
-        );
       }
     }
   }
 
-  console.log('🔍 getSelectedFacets: Final requestFilters:', requestFilters);
   return requestFilters;
 };
 
