@@ -139,32 +139,51 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
 
   const router = useRouter();
 
-  const updateQueryStringURL = () => {
-    if (props.reduxFacetSelectors.length > 0) {
+  // Destructure specific props to avoid whole props object dependency
+  const {
+    saveLoading,
+    saveNetworkError,
+    saveVehicleData,
+    saveSearchCount,
+    saveDefaultFacetData,
+    savePreviousRequest,
+    reduxVehicleData,
+    savePrimaryColour,
+    saveSecondaryColour,
+    saveNavBarColour,
+    saveLogoURL,
+    saveMissingImageURL,
+    saveTotalDocumentCount,
+    saveSearchTerm,
+    reduxSearchTerm,
+    reduxOrderBy,
+    reduxPageNumber,
+    reduxFacetSelectors,
+  } = props;
+
+  const updateQueryStringURL = useCallback(() => {
+    if (reduxFacetSelectors.length > 0) {
       insertQueryStringParam(
         'facetselectors',
-        JSON.stringify(props.reduxFacetSelectors)
+        JSON.stringify(reduxFacetSelectors)
       );
 
-      insertQueryStringParam('orderby', props.reduxOrderBy);
+      insertQueryStringParam('orderby', reduxOrderBy);
     }
 
-    if (props.reduxSearchTerm.length > 0) {
-      insertQueryStringParam('searchterm', props.reduxSearchTerm);
+    if (reduxSearchTerm.length > 0) {
+      insertQueryStringParam('searchterm', reduxSearchTerm);
     }
 
-    if (
-      props.reduxFacetSelectors.length === 0 &&
-      props.reduxSearchTerm.length === 0
-    ) {
+    if (reduxFacetSelectors.length === 0 && reduxSearchTerm.length === 0) {
       removeFullQueryString();
     }
-  };
+  }, [reduxFacetSelectors, reduxOrderBy, reduxSearchTerm]);
 
   const triggerSearch = useCallback(
     (searchRequest: SearchRequest) => {
-      props.saveLoading(true);
-      props.saveNetworkError(false);
+      saveLoading(true);
+      saveNetworkError(false);
 
       LogDetails({ searchRequest });
 
@@ -177,12 +196,12 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
       })
         .then(response => response.json())
         .then(function (responseObject: any) {
-          props.saveLoading(false);
+          saveLoading(false);
 
           // Check if the response is an error object
           if (responseObject && responseObject.error) {
             console.error('Search API returned error:', responseObject.error);
-            props.saveNetworkError(true);
+            saveNetworkError(true);
             return;
           }
 
@@ -193,45 +212,42 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
           ) {
             if (searchRequest.pageNumber === 0) {
               // First page - replace existing results
-              props.saveVehicleData(responseObject.results);
+              saveVehicleData(responseObject.results);
             } else {
               // Additional page - append to existing results
-              props.saveVehicleData([
-                ...props.reduxVehicleData,
-                ...responseObject.results,
-              ]);
+              saveVehicleData([...reduxVehicleData, ...responseObject.results]);
             }
 
-            props.saveSearchCount(responseObject.results.length);
+            saveSearchCount(responseObject.results.length);
 
             // Handle facets from search response
             if (responseObject.facets && Array.isArray(responseObject.facets)) {
-              props.saveDefaultFacetData(responseObject.facets);
+              saveDefaultFacetData(responseObject.facets);
             }
 
-            props.savePreviousRequest(searchRequest);
+            savePreviousRequest(searchRequest);
           } else {
             // No results or invalid response structure
             if (searchRequest.pageNumber === 0) {
-              props.saveVehicleData([]);
+              saveVehicleData([]);
             }
-            props.saveSearchCount(0);
+            saveSearchCount(0);
           }
         })
         .catch(error => {
           console.error('Search API call failed:', error);
-          props.saveLoading(false);
-          props.saveNetworkError(true);
+          saveLoading(false);
+          saveNetworkError(true);
         });
     },
     [
-      props.saveLoading,
-      props.saveNetworkError,
-      props.saveVehicleData,
-      props.saveSearchCount,
-      props.saveDefaultFacetData,
-      props.savePreviousRequest,
-      props.reduxVehicleData,
+      saveLoading,
+      saveNetworkError,
+      saveVehicleData,
+      saveSearchCount,
+      saveDefaultFacetData,
+      savePreviousRequest,
+      reduxVehicleData,
     ]
   );
 
@@ -241,17 +257,17 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
 
     const applyTheme = (themeData: any) => {
       // Use API values when available, only fallback to defaults when API value is missing
-      props.savePrimaryColour(
+      savePrimaryColour(
         themeData?.primaryHexColour ?? DefaultTheme.primaryHexColour
       );
-      props.saveSecondaryColour(
+      saveSecondaryColour(
         themeData?.secondaryHexColour ?? DefaultTheme.secondaryHexColour
       );
-      props.saveNavBarColour(
+      saveNavBarColour(
         themeData?.navBarHexColour ?? DefaultTheme.navBarHexColour
       );
-      props.saveLogoURL(themeData?.logoURL ?? DefaultTheme.logoURL);
-      props.saveMissingImageURL(
+      saveLogoURL(themeData?.logoURL ?? DefaultTheme.logoURL);
+      saveMissingImageURL(
         themeData?.missingImageURL ?? DefaultTheme.missingImageURL
       );
       setThemeConfigured(true);
@@ -267,7 +283,14 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
         console.warn('Failed to fetch theme, using defaults:', error);
         applyTheme(DefaultTheme);
       });
-  }, [themeConfigured, props]);
+  }, [
+    themeConfigured,
+    savePrimaryColour,
+    saveSecondaryColour,
+    saveNavBarColour,
+    saveLogoURL,
+    saveMissingImageURL,
+  ]);
 
   const getDocumentCountAPI = useCallback((): void => {
     fetch('/api/documentCount')
@@ -284,13 +307,13 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
 
         // Check if documentCount is a valid number
         if (documentCount && typeof documentCount === 'number') {
-          props.saveTotalDocumentCount(documentCount);
+          saveTotalDocumentCount(documentCount);
         }
       })
       .catch(error => {
         console.error('Failed to fetch document count:', error);
       });
-  }, [props]);
+  }, [saveTotalDocumentCount]);
 
   // ******************************************************************************************
   // ** this useEffect hook will setup configurations and theme settings - it is run once only
@@ -305,13 +328,11 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     if (router && Object.keys(router.query).length > 0) {
       // Simple URL parameter loading
       if (router.query.searchterm) {
-        props.saveSearchTerm(
-          decodeURIComponent(router.query.searchterm as string)
-        );
+        saveSearchTerm(decodeURIComponent(router.query.searchterm as string));
       }
       setFacetsLoadedFromUrl(true);
     }
-  }, [router, props.saveSearchTerm]);
+  }, [router, saveSearchTerm]);
 
   // *********************************************************************************************************************
   // ** Simplified search effect - triggers when search parameters change
@@ -323,23 +344,25 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     updateQueryStringURL();
 
     const searchRequest = new SearchRequest(
-      props.reduxSearchTerm,
-      getSelectedFacets(props.reduxFacetSelectors), // This returns string[], constructor will handle conversion
-      props.reduxOrderBy,
-      props.reduxPageNumber,
+      reduxSearchTerm,
+      getSelectedFacets(reduxFacetSelectors), // This returns string[], constructor will handle conversion
+      reduxOrderBy,
+      reduxPageNumber,
       DefaultPageSize,
-      props.reduxVehicleData.length,
+      reduxVehicleData.length,
       window.location.host
     );
 
     triggerSearch(searchRequest);
   }, [
-    props.reduxSearchTerm,
-    props.reduxOrderBy,
-    props.reduxPageNumber,
-    props.reduxFacetSelectors,
+    reduxSearchTerm,
+    reduxOrderBy,
+    reduxPageNumber,
+    reduxFacetSelectors,
     facetsLoadedFromUrl,
     triggerSearch,
+    reduxVehicleData.length,
+    updateQueryStringURL,
   ]);
 
   return (
@@ -358,16 +381,16 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
           <Alert severity="info">
             <strong>Debug Info:</strong>
             <br />
-            Search Term: {props.reduxSearchTerm}
+            Search Term: {reduxSearchTerm}
             <br />
-            Results Count: {props.reduxVehicleData.length}
+            Results Count: {reduxVehicleData.length}
             <br />
-            Page Number: {props.reduxPageNumber}
+            Page Number: {reduxPageNumber}
             <br />
-            Order By: {props.reduxOrderBy}
+            Order By: {reduxOrderBy}
             <br />
             Selected Facets:{' '}
-            {props.reduxFacetSelectors.filter((f: any) => f.checked).length}
+            {reduxFacetSelectors.filter((f: any) => f.checked).length}
           </Alert>
         </Box>
       )}
