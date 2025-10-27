@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { ApiConfig, SearchQueryParams, ApiResponse } from '@/types/apiTypes';
-=======
 import { ApiConfig, ApiResponse } from '@/types/apiTypes';
->>>>>>> 54966491e121c343d5475bc3aa8b175d60bed95c
 import { SearchRequest } from '@/types/searchTypes';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { SearchAPIEndpoint, AutoCompleteURL, DocumentCountURL, ApiRootEndpoint } from '@/common/Constants';
@@ -121,20 +117,12 @@ export class ApiClient {
 
   async search(params: SearchRequest): Promise<ApiResponse> {
     const searchEndpoint = SearchAPIEndpoint;
-<<<<<<< HEAD
-    return this.invokeAPI(`${searchEndpoint}`, false, params);
-=======
     return this.invokeSearchAPI(`${searchEndpoint}`, false, params);
->>>>>>> 54966491e121c343d5475bc3aa8b175d60bed95c
   }
 
   async getFacets(params: SearchRequest): Promise<ApiResponse> {
     const facetEndpoint = process.env.NEXT_PUBLIC_FACET_API_ENDPOINT;
-<<<<<<< HEAD
-    return this.invokeAPI(`${facetEndpoint}`, false, params);
-=======
     return this.invokeSearchAPI(`${facetEndpoint}`, false, params);
->>>>>>> 54966491e121c343d5475bc3aa8b175d60bed95c
   }  
 
   // Specific API methods
@@ -151,17 +139,6 @@ export class ApiClient {
   async getDocumentCount(callingHost: string): Promise<ApiResponse<number>> {
     const host = formatCallingHost(callingHost);
     const countEndpoint = DocumentCountURL;
-<<<<<<< HEAD
-    return this.invokeAPI(`${countEndpoint}`, true, { callingHost: host });
-  }
-
-  async autoSuggest(searchTerm: string, callingHost: string): Promise<ApiResponse> {
-    const host = formatCallingHost(callingHost);
-    return this.invokeAPI(`${AutoCompleteURL}`, true, {
-      searchTerm: searchTerm,
-      callingHost: host,
-    });
-=======
     return this.invokeSearchAPI(`${countEndpoint}`, true, { callingHost: host });
   }
 
@@ -169,7 +146,6 @@ export class ApiClient {
     const host = formatCallingHost(params.callingHost);
     const autoCompleteEndpoint = AutoCompleteURL;
     return this.invokeSearchAPI(`${autoCompleteEndpoint}`, true, params);
->>>>>>> 54966491e121c343d5475bc3aa8b175d60bed95c
   }
 }
 
