@@ -11,6 +11,8 @@ import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar';
 import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import VehicleCardList from './material-ui/vehicleCards/VehicleCardList';
 
+import { getSelectedFacets } from '@/common/functions/FacetFunctions';
+
 import {
   DefaultPageNumber,
   DefaultPageSize,
@@ -20,7 +22,6 @@ import {
   getConfigValueByKey,
   getPlaceholdersArray,
 } from '../common/functions/ConfigFunctions';
-import { getSelectedFacets } from '../common/functions/FacetFunctions';
 import {
   getQueryStringSearchTerm,
   insertQueryStringParam,
@@ -217,34 +218,6 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     [props]
   );
 
-  // *********************************************************************************************************************
-  // ** Simple search function that builds the search request and executes it
-  // *********************************************************************************************************************
-  const search = useCallback(
-    (
-      pageNumber: number = DefaultPageNumber,
-      pageSize: number = DefaultPageSize,
-      numberOfExistingResults: number = 0
-    ) => {
-      const facetFilters = getSelectedFacets(props.reduxFacetSelectors);
-      const filters = facetFilters.join(' AND ');
-
-      const searchRequest: SearchRequest = {
-        searchTerm: props.reduxSearchTerm,
-        filters,
-        orderBy: props.reduxOrderBy,
-        pageNumber,
-        pageSize,
-        numberOfExistingResults,
-        customerEndpoint: window.location.host,
-      };
-
-      props.savePageNumber(pageNumber);
-      triggerSearch(searchRequest);
-    },
-    [props, triggerSearch]
-  );
-
   // Setup theme configuration from API
   const getThemeFromAPI = useCallback((): void => {
     if (themeConfigured) return;
@@ -415,15 +388,28 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   // ** UseEffect for initial search and when dependencies change
   // *********************************************************************************************************************
   useEffect(() => {
-    if (searchConfigConfigured && facetsLoadedFromUrl) {
-      search(0, DefaultPageSize, 0);
-    }
+    //if (!searchConfigConfigured || !facetsLoadedFromUrl) return;
+
+    const facetFilters = getSelectedFacets(props.reduxFacetSelectors);
+
+    const searchRequest: SearchRequest = {
+      searchTerm: props.reduxSearchTerm,
+      filters: facetFilters.join(' AND '), // Convert array to string for C# API
+      orderBy: props.reduxOrderBy,
+      pageNumber: DefaultPageNumber,
+      pageSize: DefaultPageSize,
+      numberOfExistingResults: 0, // Always start fresh for new searches
+      customerEndpoint: window.location.host,
+    };
+
+    triggerSearch(searchRequest);
   }, [
     props.reduxSearchTerm,
     props.reduxFacetSelectors,
+    props.reduxOrderBy,
     searchConfigConfigured,
     facetsLoadedFromUrl,
-    search,
+    triggerSearch,
   ]);
 
   return (
