@@ -1,20 +1,25 @@
 import { createTheme } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
 import { ThemeColors } from '../types/colourTypes';
+import { DefaultTheme } from './Constants';
 
 // Create a modern theme with improved defaults
-export const createAppTheme = (colors: ThemeColors) => {
+export const createAppTheme = (colors?: ThemeColors) => {
+  // Use provided colors, fallback to DefaultTheme, then to hardcoded defaults
+  const primaryColor = colors?.primaryColor || DefaultTheme.primaryHexColour || '#1976d2';
+  const secondaryColor = colors?.secondaryColor || DefaultTheme.secondaryHexColour || '#dc004e';
+
   return createTheme({
     palette: {
       mode: 'light',
       primary: {
-        main: colors.primaryColor || '#1976d2',
+        main: primaryColor,
         light: '#42a5f5',
         dark: '#1565c0',
         contrastText: '#fff',
       },
       secondary: {
-        main: colors.secondaryColor || '#dc004e',
+        main: secondaryColor,
         light: '#ff5983',
         dark: '#9a0036',
         contrastText: '#fff',

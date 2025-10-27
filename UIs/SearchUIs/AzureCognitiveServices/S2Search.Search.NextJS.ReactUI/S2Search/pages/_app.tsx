@@ -9,14 +9,11 @@ import Head from 'next/head';
 import { Provider } from 'react-redux';
 import { store } from '../store';
 import { ThemeProvider } from '@mui/material/styles';
-import { DefaultTheme } from '../common/Constants';
 import { createAppTheme } from '../common/theme';
 
 export default function App({ Component, pageProps }: AppProps) {
-  const theme = createAppTheme({
-    primaryColor: DefaultTheme.primaryHexColour,
-    secondaryColor: DefaultTheme.secondaryHexColour,
-  });
+  // Create theme with defaults from Constants
+  const theme = createAppTheme();
 
   return (
     <>
