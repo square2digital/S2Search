@@ -1,32 +1,31 @@
-import React from 'react';
 import {
-  Grid,
-  Typography,
-  Card,
-  CardContent,
-  CardActions,
-  Box,
-  Chip,
-  Stack,
-  IconButton,
-  Divider,
-  useTheme,
-  useMediaQuery,
   alpha,
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  Chip,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
+import React from 'react';
 // Individual icon imports for better tree-shaking
-import DriveEtaIcon from '@mui/icons-material/DriveEta';
-import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import SpeedIcon from '@mui/icons-material/Speed';
-import SettingsIcon from '@mui/icons-material/Settings';
+import DriveEtaIcon from '@mui/icons-material/DriveEta';
 import ElectricCarIcon from '@mui/icons-material/ElectricCar';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import SettingsIcon from '@mui/icons-material/Settings';
 import ShareIcon from '@mui/icons-material/Share';
+import SpeedIcon from '@mui/icons-material/Speed';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import { green, blue, orange, grey } from '@mui/material/colors';
-import VehicleImage from './VehicleImage';
+import { blue, green, grey, orange } from '@mui/material/colors';
 import { VehicleData } from '../types/vehicleTypes';
+import VehicleImage from './VehicleImage';
 
 interface VehicleCardProps {
   vehicleData: VehicleData[];
@@ -96,17 +95,17 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
             fontWeight: 'bold',
             color: theme.palette.primary.main,
             mb: 0.5,
-            fontSize: { xs: '1.1rem', sm: '1.25rem' }
+            fontSize: { xs: '1.1rem', sm: '1.25rem' },
           }}
         >
           £{priceStr}
         </Typography>
         {vehicle.monthlyPrice > 0 && (
-          <Typography 
-            variant="body2" 
+          <Typography
+            variant="body2"
             color="text.secondary"
             sx={{
-              fontSize: { xs: '0.75rem', sm: '0.875rem' }
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
             }}
           >
             £{monthlyStr}/month
@@ -117,16 +116,16 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
   };
 
   const renderVehicleSpecs = (vehicle: VehicleData) => (
-    <Stack 
-      direction="row" 
-      spacing={1} 
-      flexWrap="wrap" 
+    <Stack
+      direction="row"
+      spacing={1}
+      flexWrap="wrap"
       useFlexGap
-      sx={{ 
-        '& > *': { 
+      sx={{
+        '& > *': {
           mb: { xs: 0.5, sm: 1 },
-          fontSize: { xs: '0.75rem', sm: '0.875rem' }
-        } 
+          fontSize: { xs: '0.75rem', sm: '0.875rem' },
+        },
       }}
     >
       <Chip
@@ -229,20 +228,20 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
               variant="h6"
               component="h3"
               gutterBottom
-              sx={{ 
+              sx={{
                 fontWeight: 600,
-                fontSize: { xs: '1rem', sm: '1.25rem' }
+                fontSize: { xs: '1rem', sm: '1.25rem' },
               }}
             >
               {title} ✨
             </Typography>
 
-            <Typography 
-              variant="body2" 
-              color="text.secondary" 
+            <Typography
+              variant="body2"
+              color="text.secondary"
               gutterBottom
               sx={{
-                fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
               }}
             >
               {vehicle.variant}
@@ -254,18 +253,18 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
           </CardContent>
 
           <CardActions
-            sx={{ 
-              px: { xs: 1.5, sm: 2 }, 
-              pb: { xs: 1.5, sm: 2 }, 
-              pt: 0, 
-              justifyContent: 'space-between' 
+            sx={{
+              px: { xs: 1.5, sm: 2 },
+              pb: { xs: 1.5, sm: 2 },
+              pt: 0,
+              justifyContent: 'space-between',
             }}
           >
-            <Typography 
-              variant="body2" 
+            <Typography
+              variant="body2"
               color="text.secondary"
               sx={{
-                fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
               }}
             >
               {vehicle.location}
@@ -283,7 +282,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
     const title = `${vehicle.make} ${vehicle.model}`;
 
     return (
-      <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={vehicle.vehicleID}>
+      <Box key={vehicle.vehicleID}>
         <Card
           elevation={0}
           sx={{
@@ -351,7 +350,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
               sx={{
                 fontWeight: 600,
                 lineHeight: 1.3,
-                fontSize: { xs: '1.25rem', lg: '1.1rem', xl: '1rem' }
+                fontSize: { xs: '1.25rem', lg: '1.1rem', xl: '1rem' },
               }}
             >
               {title} ✨🚗
@@ -418,22 +417,35 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
             </IconButton>
           </CardActions>
         </Card>
-      </Grid>
+      </Box>
     );
   };
 
   if (isMobile) {
     return (
       <Box sx={{ width: '100%' }}>
-        {vehicleData.map((vehicle) => renderMobileCard(vehicle))}
+        {vehicleData.map(vehicle => renderMobileCard(vehicle))}
       </Box>
     );
   }
 
   return (
-    <Grid container spacing={{ xs: 2, sm: 2, md: 2, lg: 1.5 }} sx={{ width: '100%', m: 0 }}>
-      {vehicleData.map((vehicle) => renderDesktopCard(vehicle))}
-    </Grid>
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: {
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(2, 1fr)',
+          md: 'repeat(3, 1fr)',
+          lg: 'repeat(4, 1fr)',
+          xl: 'repeat(6, 1fr)',
+        },
+        gap: { xs: 2, sm: 2, md: 2, lg: 1.5 },
+        width: '100%',
+      }}
+    >
+      {vehicleData.map(vehicle => renderDesktopCard(vehicle))}
+    </Box>
   );
 };
 

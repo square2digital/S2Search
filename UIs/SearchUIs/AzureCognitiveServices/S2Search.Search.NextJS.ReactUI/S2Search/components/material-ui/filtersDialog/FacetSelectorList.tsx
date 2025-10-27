@@ -1,26 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import FacetSelector from '../filtersDialog/FacetSelector';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import {
-  setVehicleData,
-  setPageNumber,
-  setSearchTerm,
-  setOrderBy,
-} from '../../../store/slices/searchSlice';
-import {
-  setFacetSelectors,
-  setSelectedFacet,
-} from '../../../store/slices/facetSlice';
-import { setDialogOpen } from '../../../store/slices/uiSlice';
+import React, { useCallback, useEffect, useState } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 import { StaticFacets } from '../../../common/Constants';
 import {
   getDefaultFacetsWithSelections,
   isSelectFacetMenuAlreadySelected,
 } from '../../../common/functions/FacetFunctions';
 import { RootState } from '../../../store';
+import {
+  setFacetSelectors,
+  setSelectedFacet,
+} from '../../../store/slices/facetSlice';
+import {
+  setOrderBy,
+  setPageNumber,
+  setSearchTerm,
+  setVehicleData,
+} from '../../../store/slices/searchSlice';
+import { setDialogOpen } from '../../../store/slices/uiSlice';
+import FacetSelector from '../filtersDialog/FacetSelector';
 
 // Re-export interfaces from FacetFunctions for consistency
 interface FacetItem {
@@ -43,9 +42,9 @@ interface FacetStateData {
   [key: string]: any;
 }
 
-const FacetSelectionList: React.FC<ConnectedProps<typeof connector>> = (
-  props
-) => {
+const FacetSelectionList: React.FC<
+  ConnectedProps<typeof connector>
+> = props => {
   const [facetState, setfacetState] = useState<FacetStateData>({});
 
   const handleChecked = useCallback(
@@ -67,7 +66,10 @@ const FacetSelectionList: React.FC<ConnectedProps<typeof connector>> = (
         });
 
         if (updatedFacetItems.length > 0) {
-          theFacetUpdated = { ...theFacetUpdated, facetItems: updatedFacetItems };
+          theFacetUpdated = {
+            ...theFacetUpdated,
+            facetItems: updatedFacetItems,
+          };
         }
       }
 
@@ -187,30 +189,29 @@ const FacetSelectionList: React.FC<ConnectedProps<typeof connector>> = (
             </Typography>
           </Box>
 
-          <Grid
-            container
-            spacing={3}
+          <Box
             sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+                lg: 'repeat(4, 1fr)',
+              },
+              gap: 3,
               maxWidth: '100%',
             }}
           >
             {facetState.facetItems.map((facetSelectorItem, index) => (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-                key={`${index}-${facetSelectorItem.facetDisplayText}`}
-              >
+              <Box key={`${index}-${facetSelectorItem.facetDisplayText}`}>
                 <FacetSelector
                   facet={facetSelectorItem}
                   selectedFacet={facetState.facetKey}
                   isChecked={facetSelectorItem.selected}
                 />
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
         </>
       ) : (
         <Box
@@ -249,14 +250,17 @@ const FacetSelectionList: React.FC<ConnectedProps<typeof connector>> = (
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    saveVehicleData: (vehicleData: any[]) => dispatch(setVehicleData(vehicleData)),
+    saveVehicleData: (vehicleData: any[]) =>
+      dispatch(setVehicleData(vehicleData)),
     savePageNumber: (pageNumber: number) => dispatch(setPageNumber(pageNumber)),
     saveFacetSelectors: (resetFacetArray: any[]) =>
       dispatch(setFacetSelectors(resetFacetArray)),
     saveSearchTerm: (searchTerm: string) => dispatch(setSearchTerm(searchTerm)),
     saveOrderby: (orderBy: string) => dispatch(setOrderBy(orderBy)),
-    saveDialogOpen: (dialogOpen: boolean) => dispatch(setDialogOpen(dialogOpen)),
-    saveSelectedFacet: (facetName: string) => dispatch(setSelectedFacet(facetName)),
+    saveDialogOpen: (dialogOpen: boolean) =>
+      dispatch(setDialogOpen(dialogOpen)),
+    saveSelectedFacet: (facetName: string) =>
+      dispatch(setSelectedFacet(facetName)),
   };
 };
 
