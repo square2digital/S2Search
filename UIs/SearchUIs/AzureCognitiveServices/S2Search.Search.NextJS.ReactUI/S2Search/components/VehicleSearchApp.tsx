@@ -212,14 +212,17 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
 
             // Handle facets from search response
             if (responseObject.facets && Array.isArray(responseObject.facets)) {
-              // If this is initial load (no search term, no facet selectors), save as default facets
-              // Otherwise save as dynamic facets for filtered results
+              // Only save as defaultFacetData on the very first load AND if we don't already have defaultFacetData
+              // This preserves all facet options for multi-selection within categories
               const isInitialLoad =
                 props.reduxSearchTerm === '' &&
-                props.reduxFacetSelectors.length === 0;
+                props.reduxFacetSelectors.length === 0 &&
+                props.reduxDefaultFacetData.length === 0; // Only if we don't already have default data
+              
               console.log('Search response - facet handling:', {
                 searchTerm: props.reduxSearchTerm,
                 facetSelectors: props.reduxFacetSelectors.length,
+                existingDefaultData: props.reduxDefaultFacetData.length,
                 isInitialLoad,
                 facetsCount: responseObject.facets.length,
                 facetKeys: responseObject.facets.map(
@@ -228,11 +231,12 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
               });
 
               if (isInitialLoad) {
-                console.log('Saving as DEFAULT facet data');
+                console.log('Saving as DEFAULT facet data (first time only)');
                 props.saveDefaultFacetData(responseObject.facets);
               } else {
-                console.log('Saving as DYNAMIC facet data');
-                props.saveFacetData(responseObject.facets);
+                console.log('Skipping facet data save to preserve all options for multi-selection');
+                // Don't overwrite defaultFacetData or save filtered results
+                // This preserves all facet options for multi-selection
               }
             }
 

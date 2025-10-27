@@ -95,50 +95,29 @@ const FacetSelectionList: React.FC<
 
       let facetsToLoad: any[] = [];
 
-      // Updated logic:
-      // 1. Static facets (like 'make') always use default facets with selections merged
-      // 2. Dynamic facets use search result facets when available
-      // 3. Fallback to default facets if no dynamic data available
-
-      if (StaticFacets.includes(facetKeyName)) {
-        // Static facets - use default facets, merge with selections if any
-        if (
-          isSelectFacetMenuAlreadySelected(
-            props.reduxFacetSelectors,
-            facetKeyName
-          )
-        ) {
-          facetsToLoad = getDefaultFacetsWithSelections(
-            facetKeyName,
-            props.reduxDefaultFacetData as any,
-            props.reduxFacetSelectors
-          );
-        } else {
-          facetsToLoad = props.reduxDefaultFacetData;
-        }
+      // Fixed logic for multi-selection support:
+      // Always use defaultFacetData for displaying all available facet options
+      // This prevents filtered API responses from hiding unselected options
+      
+      if (
+        isSelectFacetMenuAlreadySelected(
+          props.reduxFacetSelectors,
+          facetKeyName
+        )
+      ) {
+        // Merge selections with default facets to show checked state
+        facetsToLoad = getDefaultFacetsWithSelections(
+          facetKeyName,
+          props.reduxDefaultFacetData as any,
+          props.reduxFacetSelectors
+        );
       } else {
-        // Dynamic facets - prefer search results, fallback to defaults
-        if (props.reduxFacetData.length > 0) {
-          // Use dynamic facets from search results
-          facetsToLoad = props.reduxFacetData;
-        } else {
-          // No search results yet - use default facets as fallback
-          if (
-            isSelectFacetMenuAlreadySelected(
-              props.reduxFacetSelectors,
-              facetKeyName
-            )
-          ) {
-            facetsToLoad = getDefaultFacetsWithSelections(
-              facetKeyName,
-              props.reduxDefaultFacetData as any,
-              props.reduxFacetSelectors
-            );
-          } else {
-            facetsToLoad = props.reduxDefaultFacetData;
-          }
-        }
+        // No selections yet - show all default facets
+        facetsToLoad = props.reduxDefaultFacetData;
       }
+      
+      // Note: We no longer use reduxFacetData for display to preserve all options
+      // This allows multiple selections within the same filter category
 
       console.log('facetsToLoad length:', facetsToLoad?.length || 0);
 
