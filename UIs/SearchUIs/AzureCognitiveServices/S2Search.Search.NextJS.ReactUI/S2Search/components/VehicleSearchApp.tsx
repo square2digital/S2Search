@@ -230,6 +230,10 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
                   );
                 }
               }
+            } else {
+              console.log(
+                'DEBUG - No facets in API response or invalid format'
+              );
             }
 
             props.savePreviousRequest(searchRequest);
@@ -257,6 +261,79 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
       // Removed props.reduxVehicleData - this was causing triggerSearch to be recreated constantly
     ]
   );
+
+  // Get initial facet data
+  const getFacetsFromAPI = useCallback((): void => {
+    const searchRequest = new SearchRequest(
+      '', // empty search term for getting all facets
+      '', // no filters
+      '', // no order by
+      0, // first page
+      DefaultPageSize,
+      0, // no existing results
+      window.location.host
+    );
+
+    fetch('/api/facet', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(searchRequest),
+    })
+      .then(response => response.json())
+      .then(function (responseObject: any) {
+        console.log('DEBUG - Facet API response:', responseObject);
+
+        if (responseObject && responseObject.error) {
+          console.error('Facet API returned error:', responseObject.error);
+          return;
+        }
+
+        // Handle both direct array response and object with facets property
+        let facetArray = null;
+        if (Array.isArray(responseObject)) {
+          facetArray = responseObject;
+        } else if (
+          responseObject &&
+          responseObject.facets &&
+          Array.isArray(responseObject.facets)
+        ) {
+          facetArray = responseObject.facets;
+        }
+
+        if (facetArray && facetArray.length > 0) {
+          console.log(
+            'DEBUG - Saving facet data to Redux, length:',
+            facetArray.length
+          );
+          console.log('DEBUG - First facet item:', facetArray[0]);
+          console.log('DEBUG - Sample facet structure check:', {
+            hasFacetKey: facetArray[0]?.facetKey !== undefined,
+            hasFacetKeyDisplayName:
+              facetArray[0]?.facetKeyDisplayName !== undefined,
+            hasFacetItems: facetArray[0]?.facetItems !== undefined,
+            keys: Object.keys(facetArray[0] || {}),
+          });
+          props.saveDefaultFacetData(facetArray);
+          // Also save to localStorage as backup
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(
+              'originalFacetData',
+              JSON.stringify(facetArray)
+            );
+          }
+        } else {
+          console.log(
+            'DEBUG - No valid facet array found in response:',
+            responseObject
+          );
+        }
+      })
+      .catch(error => {
+        console.error('Facet API call failed:', error);
+      });
+  }, [props.saveDefaultFacetData]);
 
   // Setup theme configuration from API
   const getThemeFromAPI = useCallback((): void => {
@@ -328,7 +405,8 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   useEffect(() => {
     getThemeFromAPI();
     getDocumentCountAPI();
-  }, []);
+    getFacetsFromAPI(); // Load initial facet data
+  }, [getThemeFromAPI, getDocumentCountAPI, getFacetsFromAPI]);
 
   // *********************************************************************************************************************
   // ** Simplified search effect - triggers when search parameters change

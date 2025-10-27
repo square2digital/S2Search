@@ -1,14 +1,14 @@
-import React from 'react';
+import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import Slide from '@mui/material/Slide';
-import Box from '@mui/material/Box';
+import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { LogDetails } from '../../../helpers/LogDetails';
+import { RootState } from '../../../store';
 import { setDialogOpen } from '../../../store/slices/uiSlice';
 import FacetAppBar from '../filtersDialog/FacetAppBar';
 import FacetSelectionMenu from '../filtersDialog/FacetSelectionMenu';
 import FacetSelectionList from '../filtersDialog/FacetSelectorList';
-import { LogDetails } from '../../../helpers/LogDetails';
-import { RootState } from '../../../store';
 
 // *********************************************************************************************************************
 // ** - WARNING
@@ -21,9 +21,9 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const FacetFullScreenDialog: React.FC<ConnectedProps<typeof connector>> = (
-  props
-) => {
+const FacetFullScreenDialog: React.FC<
+  ConnectedProps<typeof connector>
+> = props => {
   const handleClose = (): void => {
     props.saveDialogOpen(false);
   };
@@ -61,13 +61,14 @@ const FacetFullScreenDialog: React.FC<ConnectedProps<typeof connector>> = (
 const mapStateToProps = (reduxState: RootState) => {
   return {
     reduxDialogOpen: reduxState.ui.isDialogOpen,
-    defaultFacetData: reduxState.facet.defaultFacetData,
+    reduxDefaultFacetData: reduxState.facet.defaultFacetData,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    saveDialogOpen: (dialogOpen: boolean) => dispatch(setDialogOpen(dialogOpen)),
+    saveDialogOpen: (dialogOpen: boolean) =>
+      dispatch(setDialogOpen(dialogOpen)),
   };
 };
 

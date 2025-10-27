@@ -11,7 +11,6 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { GenerateUniqueID } from '../../../common/functions/SharedFunctions';
 import { RootState } from '../../../store';
 import {
   resetFacets,
@@ -32,6 +31,13 @@ const drawerWidth = 280;
 const FacetSelectionMenu: React.FC<
   ConnectedProps<typeof connector>
 > = props => {
+  console.log('DEBUG - FacetSelectionMenu render:', {
+    reduxDefaultFacetDataLength: props.reduxDefaultFacetData?.length || 0,
+    reduxDefaultFacetData: props.reduxDefaultFacetData,
+    hasData:
+      !!props.reduxDefaultFacetData && props.reduxDefaultFacetData.length > 0,
+  });
+
   const resetFilters = (): void => {
     props.saveResetFacets();
   };
@@ -96,12 +102,34 @@ const FacetSelectionMenu: React.FC<
         </Box>
 
         <List sx={{ px: 2 }}>
-          {props.defaultFacetData?.map(facet => {
+          {(!props.reduxDefaultFacetData ||
+            props.reduxDefaultFacetData.length === 0) && (
+            <Typography variant="body2" sx={{ p: 2, color: 'text.secondary' }}>
+              DEBUG: No facet data available (length:{' '}
+              {props.reduxDefaultFacetData?.length || 0})
+            </Typography>
+          )}
+
+          {props.reduxDefaultFacetData &&
+            props.reduxDefaultFacetData.length > 0 && (
+              <Typography variant="body2" sx={{ p: 2, color: 'text.primary' }}>
+                DEBUG: Found {props.reduxDefaultFacetData.length} facet
+                categories
+              </Typography>
+            )}
+
+          {props.reduxDefaultFacetData?.map((facet, index) => {
+            console.log('DEBUG - Rendering facet:', index, facet);
+            if (!facet || !facet.facetKey) {
+              console.warn('DEBUG - Invalid facet structure:', facet);
+              return null;
+            }
+
             const selectedCount = getSelectedCount(facet.facetKey);
             const isSelected = props.reduxSelectedFacet === facet.facetKey;
 
             return (
-              <React.Fragment key={GenerateUniqueID()}>
+              <React.Fragment key={`facet-${index}-${facet.facetKey}`}>
                 <ListItem disablePadding sx={{ mb: 1 }}>
                   <ListItemButton
                     onClick={() => facetMenuClick(facet.facetKey)}
@@ -131,7 +159,7 @@ const FacetSelectionMenu: React.FC<
                             color: isSelected ? 'primary.main' : 'text.primary',
                           }}
                         >
-                          {facet.facetKeyDisplayName}
+                          {facet.facetKeyDisplayName || facet.facetKey}
                         </Typography>
                       }
                     />
@@ -210,8 +238,8 @@ const mapStateToProps = (reduxState: RootState) => {
 
     reduxFacetSelectors: reduxState.facet.facetSelectors,
     reduxFacetSelectedKeys: reduxState.facet.facetSelectedKeys,
-    defaultFacetData: reduxState.facet.defaultFacetData,
-    facetData: reduxState.facet.facetData,
+    reduxDefaultFacetData: reduxState.facet.defaultFacetData,
+    reduxFacetData: reduxState.facet.facetData,
     reduxSelectedFacet: reduxState.facet.selectedFacet,
     reduxLoading: reduxState.ui.isLoading,
   };

@@ -125,13 +125,6 @@ const FacetSelectionList: React.FC<
 
       facetData = facetsToLoad.filter(x => x.facetKey === facetKeyName);
 
-      console.log('DEBUG - Filtered facetData for', facetKeyName, ':', {
-        facetsToLoadKeys: facetsToLoad.map(f => f.facetKey),
-        filteredCount: facetData.length,
-        targetKey: facetKeyName,
-        firstFacetItems: facetData[0]?.facetItems?.length || 0,
-      });
-
       currentFacet = facetData[0];
 
       theFacet = { ...currentFacet, enabled: false };
