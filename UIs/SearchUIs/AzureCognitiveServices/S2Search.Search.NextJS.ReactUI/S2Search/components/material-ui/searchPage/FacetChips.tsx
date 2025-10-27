@@ -1,13 +1,13 @@
-import React from 'react';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
+import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { RootState } from '../../../store';
 import {
-  setFacetSelectors,
   setFacetChipDeleted,
   setFacetSelectedKeys,
+  setFacetSelectors,
 } from '../../../store/slices/facetSlice';
-import { RootState } from '../../../store';
 
 // Modern styles object
 const styles = {
@@ -15,7 +15,6 @@ const styles = {
     display: 'flex',
     justifyContent: 'left' as const,
     flexWrap: 'wrap' as const,
-    listStyle: 'none' as const,
     marginTop: 1.5,
     marginLeft: '-40px',
   },
@@ -31,7 +30,7 @@ interface FacetData {
   [key: string]: any;
 }
 
-const FacetChips: React.FC<ConnectedProps<typeof connector>> = (props) => {
+const FacetChips: React.FC<ConnectedProps<typeof connector>> = props => {
   // Removed problematic useEffect that was causing infinite loops
   // The facet selectors are already managed by the parent component
 
@@ -51,10 +50,10 @@ const FacetChips: React.FC<ConnectedProps<typeof connector>> = (props) => {
   };
 
   return (
-    <Paper elevation={0} component="ul" sx={styles.root}>
+    <Paper elevation={0} sx={styles.root}>
       {props.reduxFacetSelectors.map((data, index) => {
         return (
-          <li key={index} style={styles.chip}>
+          <div key={index} style={styles.chip}>
             <Chip
               key={index}
               clickable
@@ -62,7 +61,7 @@ const FacetChips: React.FC<ConnectedProps<typeof connector>> = (props) => {
               onDelete={handleDelete(data)}
               color="secondary"
             />
-          </li>
+          </div>
         );
       })}
     </Paper>
