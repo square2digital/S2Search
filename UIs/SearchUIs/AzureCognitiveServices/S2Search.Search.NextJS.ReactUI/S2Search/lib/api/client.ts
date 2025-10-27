@@ -14,16 +14,6 @@ function getApiKey(): string {
   return process.env.NEXT_PUBLIC_OCP_APIM_SUBSCRIPTION_KEY || '';
 }
 
-function formatCustomerEndpoint (host: string): string {
-  if (process.env.NODE_ENV === 'development') {
-    return process.env.NEXT_PUBLIC_DEV_CUSTOMER_ENDPOINT || 'devtest';
-  }
-
-  return host
-    .replace(/^(https?:\/\/)?(www\.)?/, '')
-    .replace(/\/$/, '');
-}
-
 function buildConfig(includeApiKey: boolean = true): ApiConfig {
   const config: ApiConfig = {
     headers: {
@@ -127,22 +117,18 @@ export class ApiClient {
 
   // Specific API methods
   async getTheme(customerEndpoint: string): Promise<ApiResponse> {
-    customerEndpoint = formatCustomerEndpoint (customerEndpoint);
     return this.invokeSearchAPI(`/api/configuration/theme/${customerEndpoint}`, true);
   }
 
   async getConfiguration(customerEndpoint: string): Promise<ApiResponse> {
-    customerEndpoint = formatCustomerEndpoint (customerEndpoint);
     return this.invokeSearchAPI(`/api/configuration/search/${customerEndpoint}`, true);
   }
 
   async getDocumentCount(customerEndpoint: string): Promise<ApiResponse<number>> {
-    customerEndpoint = formatCustomerEndpoint (customerEndpoint);
     return this.invokeSearchAPI(`${DocumentCountURL}/${customerEndpoint}`, true);
   }
 
   async autoSuggest(searchTerm: string, customerEndpoint: string): Promise<ApiResponse> {
-    customerEndpoint = formatCustomerEndpoint (customerEndpoint);
     return this.invokeSearchAPI(`${AutoCompleteURL}/${searchTerm}/${customerEndpoint}`, true);
   }
 }
