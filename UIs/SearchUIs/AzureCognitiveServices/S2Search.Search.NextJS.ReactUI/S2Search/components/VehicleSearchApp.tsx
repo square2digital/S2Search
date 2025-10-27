@@ -1,64 +1,63 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import React, { useCallback, useEffect, useState } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 
-import FacetFullScreenDialog from './material-ui/filtersDialog/FacetFullScreenDialog';
-import VehicleCardList from './material-ui/vehicleCards/VehicleCardList';
 import LoadMoreResultsButton from './LoadMoreResultsButton';
+import FacetFullScreenDialog from './material-ui/filtersDialog/FacetFullScreenDialog';
 import FacetChips from './material-ui/searchPage/FacetChips';
-import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import FloatingTopButton from './material-ui/searchPage/FloatingTopButton';
 import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar';
+import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
+import VehicleCardList from './material-ui/vehicleCards/VehicleCardList';
 
 import {
-  insertQueryStringParam,
-  getQueryStringSearchTerm,
-  getQueryStringOrderBy,
-} from '../common/functions/QueryStringFunctions';
-import { getSelectedFacets } from '../common/functions/FacetFunctions';
+  DefaultPageNumber,
+  DefaultPageSize,
+  DefaultTheme,
+} from '../common/Constants';
 import {
   getConfigValueByKey,
   getPlaceholdersArray,
 } from '../common/functions/ConfigFunctions';
+import { getSelectedFacets } from '../common/functions/FacetFunctions';
+import {
+  getQueryStringSearchTerm,
+  insertQueryStringParam,
+} from '../common/functions/QueryStringFunctions';
 import { ConvertStringToBoolean } from '../common/functions/SharedFunctions';
 import { LogDetails } from '../helpers/LogDetails';
-import {
-  DefaultPageSize,
-  DefaultPageNumber,
-  DefaultTheme,
-} from '../common/Constants';
 
 // New RTK action imports
-import {
-  setVehicleData,
-  setPageNumber,
-  setTotalDocumentCount,
-  setPreviousRequest,
-  setNetworkError,
-  setSearchCount,
-  setSearchTerm,
-} from '../store/slices/searchSlice';
-import {
-  setFacetData,
-  setDefaultFacetData,
-  setFacetSelectors,
-  setFacetSelectedKeys,
-} from '../store/slices/facetSlice';
-import { setLoading, setCancellationToken } from '../store/slices/uiSlice';
-import {
-  setPrimaryColour,
-  setSecondaryColour,
-  setNavBarColour,
-  setLogoURL,
-  setMissingImageURL,
-} from '../store/slices/themeSlice';
 import {
   setConfigData,
   setEnableAutoComplete,
   setHideIconVehicleCounts,
   setPlaceholderArray,
 } from '../store/slices/configSlice';
+import {
+  setDefaultFacetData,
+  setFacetData,
+  setFacetSelectedKeys,
+  setFacetSelectors,
+} from '../store/slices/facetSlice';
+import {
+  setNetworkError,
+  setPageNumber,
+  setPreviousRequest,
+  setSearchCount,
+  setSearchTerm,
+  setTotalDocumentCount,
+  setVehicleData,
+} from '../store/slices/searchSlice';
+import {
+  setLogoURL,
+  setMissingImageURL,
+  setNavBarColour,
+  setPrimaryColour,
+  setSecondaryColour,
+} from '../store/slices/themeSlice';
+import { setCancellationToken, setLoading } from '../store/slices/uiSlice';
 
 // Type imports
 import type { RootState } from '../store';
@@ -145,6 +144,9 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     useState<boolean>(false);
   const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] =
     useState<boolean>(false);
+
+  // Destructure frequently used props to avoid dependency issues
+  const { saveSearchTerm } = props;
 
   // *********************************************************************************************************************
   // ** This function will make a call to our search API and update the Redux store with the returned search results
@@ -300,124 +302,114 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
       });
   }, [props]);
 
+  // Combined initialization effect - runs once on mount
   useEffect(() => {
-    getThemeFromAPI();
-    getDocumentCountAPI();
-    const config: Array<{ key: string; value: string }> = [];
-    if (props.reduxConfigData.length === 0) {
-      fetch('/api/configuration')
-        .then(response => response.json())
-        .then(function (configData: any) {
-          // Check if the response is an error object
-          if (configData && configData.error) {
-            console.warn('Configuration API returned error:', configData.error);
-            return;
-          }
+    const initializeApp = async () => {
+      try {
+        // Initialize theme, config, and document count in parallel
+        await Promise.allSettled([
+          getThemeFromAPI(),
+          getDocumentCountAPI(),
+          // Only fetch config if not already loaded
+          props.reduxConfigData.length === 0
+            ? (async () => {
+                const response = await fetch('/api/configuration');
+                const configData = await response.json();
 
-          if (
-            !searchConfigConfigured &&
-            configData &&
-            Array.isArray(configData)
-          ) {
-            configData.map(function (item: any) {
-              config.push({ key: item.key, value: item.value });
-              return item;
-            });
+                if (configData?.error) {
+                  console.warn(
+                    'Configuration API returned error:',
+                    configData.error
+                  );
+                  return;
+                }
 
-            props.saveConfigData(config);
+                if (configData && Array.isArray(configData)) {
+                  const config = configData.map(item => ({
+                    key: item.key,
+                    value: item.value,
+                  }));
+                  props.saveConfigData(config);
 
-            // getPlaceholdersArray returns ConfigItem[], but savePlaceholderArray expects string[]
-            const placeholders = getPlaceholdersArray(config).map(
-              item => item.value || ''
-            );
-            props.savePlaceholderArray(placeholders);
+                  // Process configuration values
+                  const placeholders = getPlaceholdersArray(config).map(
+                    item => item.value || ''
+                  );
+                  props.savePlaceholderArray(placeholders);
 
-            const enableAutoCompleteConfig = getConfigValueByKey(
-              config,
-              'EnableAutoComplete'
-            );
-            const enableAutoComplete = ConvertStringToBoolean(
-              enableAutoCompleteConfig?.value || 'false'
-            );
-            props.saveEnableAutoComplete(enableAutoComplete);
+                  const enableAutoComplete = ConvertStringToBoolean(
+                    getConfigValueByKey(config, 'EnableAutoComplete')?.value ||
+                      'false'
+                  );
+                  props.saveEnableAutoComplete(enableAutoComplete);
 
-            const hideBadgesConfig = getConfigValueByKey(config, 'HideBadges');
-            ConvertStringToBoolean(hideBadgesConfig?.value || 'false');
-            // Note: savHideBadges action might need to be added to Redux if it doesn't exist
+                  const hideIconVehicleCounts = ConvertStringToBoolean(
+                    getConfigValueByKey(config, 'HideIconVehicleCounts')
+                      ?.value || 'false'
+                  );
+                  props.saveHideIconVehicleCounts(hideIconVehicleCounts);
 
-            const hideIconVehicleCountsConfig = getConfigValueByKey(
-              config,
-              'HideIconVehicleCounts'
-            );
-            const HideIconVehicleCounts = ConvertStringToBoolean(
-              hideIconVehicleCountsConfig?.value || 'false'
-            );
-            props.saveHideIconVehicleCounts(HideIconVehicleCounts);
+                  setSearchConfigConfigured(true);
+                }
+              })()
+            : Promise.resolve(),
+        ]);
+      } catch (error) {
+        console.error('Failed to initialize app:', error);
+      }
+    };
 
-            setSearchConfigConfigured(true);
-          }
-        })
-        .catch(error => {
-          console.error('Failed to fetch configuration:', error);
-        });
+    if (
+      !searchConfigConfigured ||
+      !themeConfigured ||
+      props.reduxConfigData.length === 0
+    ) {
+      initializeApp();
     }
-  }, [props, searchConfigConfigured, getThemeFromAPI, getDocumentCountAPI]);
+  }, [
+    searchConfigConfigured,
+    themeConfigured,
+    props.reduxConfigData.length,
+    getThemeFromAPI,
+    getDocumentCountAPI,
+    props,
+  ]);
 
-  // *********************************************************************************************************************
-  // ** this useEffect hook will trigger a search if the page loads with facets defined in the query string
-  // *********************************************************************************************************************
+  // Load initial state from URL parameters - runs once on mount
   useEffect(() => {
     if (typeof window !== 'undefined' && !facetsLoadedFromUrl) {
       const searchTerm = decodeURIComponent(getQueryStringSearchTerm());
-      const orderby = decodeURIComponent(getQueryStringOrderBy());
+      // const orderby = decodeURIComponent(getQueryStringOrderBy()); // TODO: Add orderBy Redux action
 
+      // Load search term from URL if present
       if (searchTerm?.length > 0) {
-        // Use RTK action instead of legacy action
-        props.saveSearchTerm(searchTerm);
-      }
-
-      if (orderby?.length > 0) {
-        // Note: Redux store might need orderBy action if not available
-        // Removing console.log for production readiness
+        saveSearchTerm(searchTerm);
       }
 
       setFacetsLoadedFromUrl(true);
     }
-  }, [facetsLoadedFromUrl, props]);
+  }, [facetsLoadedFromUrl, saveSearchTerm]);
 
-  // *********************************************************************************************************************
-  // ** this useEffect hook will update the browsers URL query string parameters when the searchterm changes
-  // *********************************************************************************************************************
+  // Combined URL synchronization effect
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      if (props.reduxSearchTerm.length > 0) {
-        insertQueryStringParam(
-          'searchterm',
-          encodeURIComponent(props.reduxSearchTerm)
-        );
-      } else {
-        insertQueryStringParam('searchterm', '');
-      }
-    }
-  }, [props.reduxSearchTerm]);
+      // Update search term in URL
+      insertQueryStringParam(
+        'searchterm',
+        props.reduxSearchTerm.length > 0
+          ? encodeURIComponent(props.reduxSearchTerm)
+          : ''
+      );
 
-  // *********************************************************************************************************************
-  // ** this useEffect hook will update the browsers URL query string parameters when the orderby changes
-  // *********************************************************************************************************************
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (props.reduxOrderBy.length > 0) {
-        // Only add orderby parameter when there's an actual sort order selected
-        insertQueryStringParam(
-          'orderby',
-          encodeURIComponent(props.reduxOrderBy)
-        );
-      } else {
-        // Remove the parameter when no sort order is selected (default)
-        insertQueryStringParam('orderby', '');
-      }
+      // Update order by in URL
+      insertQueryStringParam(
+        'orderby',
+        props.reduxOrderBy.length > 0
+          ? encodeURIComponent(props.reduxOrderBy)
+          : ''
+      );
     }
-  }, [props.reduxOrderBy]);
+  }, [props.reduxSearchTerm, props.reduxOrderBy]);
 
   // *********************************************************************************************************************
   // ** UseEffect for initial search and when dependencies change
@@ -433,13 +425,6 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     facetsLoadedFromUrl,
     search,
   ]);
-
-  // Add separate useEffect for cancellation token logic
-  useEffect(() => {
-    if (props.reduxCancellationToken) {
-      props.saveCancellationToken(false);
-    }
-  }, [props.reduxCancellationToken, props]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
