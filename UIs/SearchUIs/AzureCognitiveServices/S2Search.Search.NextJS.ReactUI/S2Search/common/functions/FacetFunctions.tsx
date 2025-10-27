@@ -1,5 +1,5 @@
-import React from 'react';
 import CheckIcon from '@mui/icons-material/Check';
+import React from 'react';
 import { RemoveSpacesAndSetToLower } from './SharedFunctions';
 
 // Interface definitions
@@ -23,7 +23,7 @@ interface DefaultFacet {
 }
 
 export const setSelectedFacetButton = (
-  facetName: string, 
+  facetName: string,
   reduxFacetSelectors: FacetSelector[]
 ): React.ReactElement | undefined => {
   if (isFacetKeyButtonSelected(facetName, reduxFacetSelectors)) {
@@ -33,7 +33,7 @@ export const setSelectedFacetButton = (
 };
 
 export const isFacetKeyButtonSelected = (
-  facetName: string, 
+  facetName: string,
   reduxFacetSelectors: FacetSelector[]
 ): boolean => {
   if (reduxFacetSelectors && reduxFacetSelectors.length > 0) {
@@ -43,7 +43,7 @@ export const isFacetKeyButtonSelected = (
 };
 
 const isFacetSelected = (
-  facetName: string, 
+  facetName: string,
   reduxFacetSelectors: FacetSelector[]
 ): boolean => {
   const facetSelector = reduxFacetSelectors.filter(
@@ -55,7 +55,9 @@ const isFacetSelected = (
   return facetSelector.length > 0;
 };
 
-export const isAnyFacetSelected = (reduxFacetSelectors: FacetSelector[]): boolean => {
+export const isAnyFacetSelected = (
+  reduxFacetSelectors: FacetSelector[]
+): boolean => {
   let facetSelected = false;
 
   reduxFacetSelectors.filter(facet => {
@@ -67,7 +69,9 @@ export const isAnyFacetSelected = (reduxFacetSelectors: FacetSelector[]): boolea
   return facetSelected;
 };
 
-export const getSelectedFacets = (reduxFacetSelectors: FacetSelector[]): string[] => {
+export const getSelectedFacets = (
+  reduxFacetSelectors: FacetSelector[]
+): string[] => {
   const requestFilters: string[] = [];
 
   if (reduxFacetSelectors !== undefined) {
@@ -89,9 +93,9 @@ export const getDefaultFacetsWithSelections = (
   // Create a deep copy of the defaultFacets to avoid mutating the original objects
   const defaultFacetsCopy = reduxDefaultFacets.map(facet => ({
     ...facet,
-    facetItems: facet.facetItems.map(item => ({ ...item }))
+    facetItems: facet.facetItems.map(item => ({ ...item })),
   }));
-  
+
   const defaultFacetByKey = defaultFacetsCopy.filter(
     x => x.facetKey === facetKeyName
   );

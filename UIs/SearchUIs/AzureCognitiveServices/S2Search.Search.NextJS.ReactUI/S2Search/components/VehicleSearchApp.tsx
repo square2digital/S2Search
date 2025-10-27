@@ -212,18 +212,23 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
 
             // Handle facets from search response
             if (responseObject.facets && Array.isArray(responseObject.facets)) {
-              // Only save as defaultFacetData on the very first load AND if we don't already have defaultFacetData
-              // This preserves all facet options for multi-selection within categories
-              const isInitialLoad =
-                props.reduxSearchTerm === '' &&
-                props.reduxFacetSelectors.length === 0 &&
-                props.reduxDefaultFacetData.length === 0; // Only if we don't already have default data
+              // CRITICAL: Use localStorage as backup to ensure we never lose original facet data
+              const hasStoredFacetData =
+                typeof window !== 'undefined' &&
+                localStorage.getItem('originalFacetData') !== null;
 
-              if (isInitialLoad) {
+              const shouldSaveDefaultFacetData =
+                props.reduxDefaultFacetData.length === 0 && !hasStoredFacetData;
+
+              if (shouldSaveDefaultFacetData) {
                 props.saveDefaultFacetData(responseObject.facets);
-              } else {
-                // Don't overwrite defaultFacetData or save filtered results
-                // This preserves all facet options for multi-selection
+                // Also save to localStorage as backup
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem(
+                    'originalFacetData',
+                    JSON.stringify(responseObject.facets)
+                  );
+                }
               }
             }
 

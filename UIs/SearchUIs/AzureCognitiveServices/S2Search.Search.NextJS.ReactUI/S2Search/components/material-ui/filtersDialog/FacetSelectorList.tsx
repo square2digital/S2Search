@@ -90,6 +90,19 @@ const FacetSelectionList: React.FC<
       // Always use defaultFacetData for displaying all available facet options
       // This prevents filtered API responses from hiding unselected options
 
+      // Use localStorage backup if Redux state is empty (for persistence)
+      let defaultFacetDataToUse = props.reduxDefaultFacetData;
+      if (defaultFacetDataToUse.length === 0 && typeof window !== 'undefined') {
+        const storedFacetData = localStorage.getItem('originalFacetData');
+        if (storedFacetData) {
+          try {
+            defaultFacetDataToUse = JSON.parse(storedFacetData);
+          } catch (error) {
+            console.warn('Failed to parse stored facet data:', error);
+          }
+        }
+      }
+
       if (
         isSelectFacetMenuAlreadySelected(
           props.reduxFacetSelectors,
@@ -99,18 +112,25 @@ const FacetSelectionList: React.FC<
         // Merge selections with default facets to show checked state
         facetsToLoad = getDefaultFacetsWithSelections(
           facetKeyName,
-          props.reduxDefaultFacetData as any,
+          defaultFacetDataToUse as any,
           props.reduxFacetSelectors
         );
       } else {
         // No selections yet - show all default facets
-        facetsToLoad = props.reduxDefaultFacetData;
+        facetsToLoad = defaultFacetDataToUse;
       }
 
       // Note: We no longer use reduxFacetData for display to preserve all options
       // This allows multiple selections within the same filter category
 
       facetData = facetsToLoad.filter(x => x.facetKey === facetKeyName);
+
+      console.log('DEBUG - Filtered facetData for', facetKeyName, ':', {
+        facetsToLoadKeys: facetsToLoad.map(f => f.facetKey),
+        filteredCount: facetData.length,
+        targetKey: facetKeyName,
+        firstFacetItems: facetData[0]?.facetItems?.length || 0,
+      });
 
       currentFacet = facetData[0];
 
