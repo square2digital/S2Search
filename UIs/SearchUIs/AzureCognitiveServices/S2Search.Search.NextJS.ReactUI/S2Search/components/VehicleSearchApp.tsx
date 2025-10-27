@@ -146,6 +146,103 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] =
     useState<boolean>(false);
 
+  // *********************************************************************************************************************
+  // ** This function will make a call to our search API and update the Redux store with the returned search results
+  // *********************************************************************************************************************
+  const triggerSearch = useCallback(
+    (searchRequest: SearchRequest) => {
+      props.saveLoading(true);
+      props.saveNetworkError(false);
+
+      LogDetails({ searchRequest });
+
+      fetch('/api/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(searchRequest),
+      })
+        .then(response => response.json())
+        .then(function (responseObject: any) {
+          props.saveLoading(false);
+
+          // Check if the response is an error object
+          if (responseObject && responseObject.error) {
+            console.error('Search API returned error:', responseObject.error);
+            props.saveNetworkError(true);
+            return;
+          }
+
+          if (
+            responseObject &&
+            responseObject.results &&
+            Array.isArray(responseObject.results)
+          ) {
+            if (searchRequest.pageNumber === 0) {
+              // First page - replace existing results
+              props.saveVehicleData(responseObject.results);
+            } else {
+              // Additional page - append to existing results
+              props.saveVehicleData([
+                ...props.reduxVehicleData,
+                ...responseObject.results,
+              ]);
+            }
+
+            props.saveSearchCount(responseObject.results.length);
+
+            // Handle facets from search response
+            if (responseObject.facets && Array.isArray(responseObject.facets)) {
+              props.saveDefaultFacetData(responseObject.facets);
+            }
+
+            props.savePreviousRequest(searchRequest);
+          } else {
+            // No results or invalid response structure
+            if (searchRequest.pageNumber === 0) {
+              props.saveVehicleData([]);
+            }
+            props.saveSearchCount(0);
+          }
+        })
+        .catch(error => {
+          console.error('Search API call failed:', error);
+          props.saveLoading(false);
+          props.saveNetworkError(true);
+        });
+    },
+    [props]
+  );
+
+  // *********************************************************************************************************************
+  // ** Simple search function that builds the search request and executes it
+  // *********************************************************************************************************************
+  const search = useCallback(
+    (
+      pageNumber: number = DefaultPageNumber,
+      pageSize: number = DefaultPageSize,
+      numberOfExistingResults: number = 0
+    ) => {
+      const facetFilters = getSelectedFacets(props.reduxFacetSelectors);
+      const filters = facetFilters.join(' AND ');
+
+      const searchRequest: SearchRequest = {
+        searchTerm: props.reduxSearchTerm,
+        filters,
+        orderBy: props.reduxOrderBy,
+        pageNumber,
+        pageSize,
+        numberOfExistingResults,
+        customerEndpoint: window.location.host,
+      };
+
+      props.savePageNumber(pageNumber);
+      triggerSearch(searchRequest);
+    },
+    [props, triggerSearch]
+  );
+
   // Setup theme configuration from API
   const getThemeFromAPI = useCallback((): void => {
     if (themeConfigured) return;
@@ -321,103 +418,6 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
       }
     }
   }, [props.reduxOrderBy]);
-
-  // *********************************************************************************************************************
-  // ** This function will make a call to our search API and update the Redux store with the returned search results
-  // *********************************************************************************************************************
-  const triggerSearch = useCallback(
-    (searchRequest: SearchRequest) => {
-      props.saveLoading(true);
-      props.saveNetworkError(false);
-
-      LogDetails({ searchRequest });
-
-      fetch('/api/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(searchRequest),
-      })
-        .then(response => response.json())
-        .then(function (responseObject: any) {
-          props.saveLoading(false);
-
-          // Check if the response is an error object
-          if (responseObject && responseObject.error) {
-            console.error('Search API returned error:', responseObject.error);
-            props.saveNetworkError(true);
-            return;
-          }
-
-          if (
-            responseObject &&
-            responseObject.results &&
-            Array.isArray(responseObject.results)
-          ) {
-            if (searchRequest.pageNumber === 0) {
-              // First page - replace existing results
-              props.saveVehicleData(responseObject.results);
-            } else {
-              // Additional page - append to existing results
-              props.saveVehicleData([
-                ...props.reduxVehicleData,
-                ...responseObject.results,
-              ]);
-            }
-
-            props.saveSearchCount(responseObject.results.length);
-
-            // Handle facets from search response
-            if (responseObject.facets && Array.isArray(responseObject.facets)) {
-              props.saveDefaultFacetData(responseObject.facets);
-            }
-
-            props.savePreviousRequest(searchRequest);
-          } else {
-            // No results or invalid response structure
-            if (searchRequest.pageNumber === 0) {
-              props.saveVehicleData([]);
-            }
-            props.saveSearchCount(0);
-          }
-        })
-        .catch(error => {
-          console.error('Search API call failed:', error);
-          props.saveLoading(false);
-          props.saveNetworkError(true);
-        });
-    },
-    [props]
-  );
-
-  // *********************************************************************************************************************
-  // ** Simple search function that builds the search request and executes it
-  // *********************************************************************************************************************
-  const search = useCallback(
-    (
-      pageNumber: number = DefaultPageNumber,
-      pageSize: number = DefaultPageSize,
-      numberOfExistingResults: number = 0
-    ) => {
-      const facetFilters = getSelectedFacets(props.reduxFacetSelectors);
-      const filters = facetFilters.join(' AND ');
-
-      const searchRequest: SearchRequest = {
-        searchTerm: props.reduxSearchTerm,
-        filters,
-        orderBy: props.reduxOrderBy,
-        pageNumber,
-        pageSize,
-        numberOfExistingResults,
-        customerEndpoint: window.location.host,
-      };
-
-      props.savePageNumber(pageNumber);
-      triggerSearch(searchRequest);
-    },
-    [props, triggerSearch]
-  );
 
   // *********************************************************************************************************************
   // ** UseEffect for initial search and when dependencies change

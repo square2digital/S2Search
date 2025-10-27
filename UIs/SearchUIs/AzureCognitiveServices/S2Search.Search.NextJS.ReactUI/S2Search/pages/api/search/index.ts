@@ -18,7 +18,6 @@ export default async function handler(
     // Map facets to filters for backend compatibility
     const backendRequest = {
       ...searchRequest,
-      filters: searchRequest.facets, // Backend expects 'filters', frontend sends 'facets'
       customerEndpoint: customerEndpoint
     }; 
     
