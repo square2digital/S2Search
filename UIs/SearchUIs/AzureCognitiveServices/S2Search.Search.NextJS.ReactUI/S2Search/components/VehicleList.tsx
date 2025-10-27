@@ -10,7 +10,31 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { RootState } from '../store';
+
+// Redux state mapping
+const mapStateToProps = (reduxState: RootState) => ({
+  vehicleData: reduxState.search.vehicleData,
+  loading: reduxState.ui.isLoading,
+  networkError: reduxState.search.networkError,
+  searchTerm: reduxState.search.searchTerm,
+  searchCount: reduxState.search.searchCount,
+  totalDocumentCount: reduxState.search.totalDocumentCount,
+  facetSelectors: reduxState.facet.facetSelectors,
+  orderBy: reduxState.search.orderBy,
+  pageNumber: reduxState.search.pageNumber,
+});
+
+// Redux action dispatchers - simplified to just use existing state
+const mapDispatchToProps = {
+  // For now, we'll just rely on VehicleSearchApp to handle search logic
+  // This component will be a pure display component using Redux state
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface VehicleResult {
   vehicleID: string;
@@ -25,83 +49,20 @@ interface VehicleResult {
   colour: string;
 }
 
-interface VehicleListResponse {
-  results: VehicleResult[];
-  totalResults: number;
-  status: string;
-}
-
-const VehicleList: React.FC = () => {
-  const [vehicleData, setVehicleData] = useState<VehicleListResponse | null>(
-    null
-  );
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-
-  const buildSearchURL = useCallback((term: string): string => {
-    const params = new URLSearchParams({
-      searchTerm: term,
-      filters: '',
-      orderBy: '',
-      pageNumber: '0',
-      pageSize: '24',
-      numberOfExistingResults: '0',
-      customerEndpoint: window.location.host,
-    });
-
-    return `/api/search?${params.toString()}`;
-  }, []);
-
-  const fetchVehicleData = useCallback(async () => {
-    const controller = new AbortController();
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const url = buildSearchURL(searchTerm);
-
-      const response = await fetch(url, {
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      // Check if request was cancelled
-      if (controller.signal.aborted) {
-        setError('Request was cancelled');
-        return;
-      }
-
-      // Successfully got data
-      setVehicleData(data);
-    } catch (err) {
-      if (err instanceof Error && err.name === 'AbortError') {
-        setError('Request was cancelled');
-      } else {
-        const errorMessage =
-          err instanceof Error ? err.message : 'An unknown error occurred';
-        setError(errorMessage);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [searchTerm, buildSearchURL]);
-
-  useEffect(() => {
-    fetchVehicleData();
-  }, [fetchVehicleData]);
-
+const VehicleList: React.FC<PropsFromRedux> = props => {
   const handleRefresh = () => {
-    fetchVehicleData();
+    // Since this component is now a pure display component,
+    // refresh functionality should be handled by the parent component
+    // that manages the search state (e.g., VehicleSearchApp)
+    console.log(
+      'Refresh requested - parent component should handle search logic'
+    );
+
+    // Alternative: Reload the page to trigger a fresh search
+    window.location.reload();
   };
 
-  if (loading) {
+  if (props.loading) {
     return (
       <Box
         display="flex"
@@ -117,11 +78,11 @@ const VehicleList: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (props.networkError) {
     return (
       <Box sx={{ p: 2 }}>
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          Failed to load vehicle data. Please try again.
         </Alert>
         <Button
           variant="contained"
@@ -141,33 +102,33 @@ const VehicleList: React.FC = () => {
           variant="contained"
           onClick={handleRefresh}
           startIcon={<RefreshIcon />}
-          disabled={loading}
+          disabled={props.loading}
         >
           Refresh Vehicle List
         </Button>
 
-        {searchTerm && (
+        {props.searchTerm && (
           <Typography variant="h6" color="primary">
-            Search term: &ldquo;{searchTerm}&rdquo;
+            Search term: &ldquo;{props.searchTerm}&rdquo;
           </Typography>
         )}
       </Box>
 
-      {vehicleData?.results && vehicleData.results.length > 0 ? (
+      {props.vehicleData && props.vehicleData.length > 0 ? (
         <Paper elevation={1}>
           <Typography
             variant="h6"
             sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}
           >
-            Found {vehicleData.totalResults || vehicleData.results.length}{' '}
+            Found {props.totalDocumentCount || props.vehicleData.length}{' '}
             vehicles
           </Typography>
 
           <List>
-            {vehicleData.results.map((vehicle, index) => (
+            {props.vehicleData.map((vehicle: VehicleResult, index: number) => (
               <ListItem
                 key={vehicle.vehicleID || `vehicle-${index}`}
-                divider={index < vehicleData.results.length - 1}
+                divider={index < props.vehicleData.length - 1}
               >
                 <ListItemText
                   primary={`${vehicle.make} ${vehicle.model} ${vehicle.variant || ''}`}
@@ -204,11 +165,11 @@ const VehicleList: React.FC = () => {
         </Paper>
       ) : (
         <Alert severity="info">
-          No vehicles found for the current search term.
+          No vehicles found for the current search criteria.
         </Alert>
       )}
     </Box>
   );
 };
 
-export default VehicleList;
+export default connector(VehicleList);
