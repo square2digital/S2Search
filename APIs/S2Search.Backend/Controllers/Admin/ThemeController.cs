@@ -5,7 +5,7 @@ using S2Search.Backend.Domain.Interfaces.Repositories;
 
 namespace S2Search.Backend.Controllers.Admin
 {
-    [Route("api/customers/{customerId}/searchindex/{searchIndexId}/theme")]
+    [Route("v1/[controller]")]
     [ApiController]
     public class ThemeController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace S2Search.Backend.Controllers.Admin
         /// Retrieve the theme for the requested customerEndpoint
         /// </summary>
         /// <param name="customerEndpoint">The host that is calling the application consuming this endpoint.</param>
-        [HttpGet("theme/{customerEndpoint}", Name = "GetTheme")]
+        [HttpGet("GetTheme/{customerEndpoint}")]
         [ProducesResponseType(typeof(Theme), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -55,11 +55,11 @@ namespace S2Search.Backend.Controllers.Admin
         /// <param name="searchIndexId"></param>
         /// <param name="themeId"></param>
         /// <returns></returns>
-        [HttpGet("{themeId}", Name = "GetThemeById")]
+        [HttpGet("GetThemeById/{themeId}")]
         [ProducesResponseType(typeof(Theme), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Theme>> GetThemeById(Guid customerId, Guid searchIndexId, Guid themeId)
+        public async Task<ActionResult<Theme>> GetThemeById(Guid themeId)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace S2Search.Backend.Controllers.Admin
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error on {nameof(GetThemeById)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
+                _logger.LogError(ex, $"Error on {nameof(GetThemeById)} | themeId: {themeId} | Message: {ex.Message}");
                 throw;
             }
         }
@@ -80,11 +80,11 @@ namespace S2Search.Backend.Controllers.Admin
         /// <param name="customerId"></param>
         /// <param name="searchIndexId"></param>
         /// <returns></returns>
-        [HttpGet(Name = "GetThemeBySearchIndexId")]
+        [HttpGet("GetThemeBySearchIndexId/{searchIndexId}")]
         [ProducesResponseType(typeof(Theme), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Theme>> GetThemeBySearchIndexId(Guid customerId, Guid searchIndexId)
+        public async Task<ActionResult<Theme>> GetThemeBySearchIndexId(Guid searchIndexId)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace S2Search.Backend.Controllers.Admin
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error on {nameof(GetThemeBySearchIndexId)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
+                _logger.LogError(ex, $"Error on {nameof(GetThemeBySearchIndexId)} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
                 throw;
             }
         }
@@ -103,8 +103,8 @@ namespace S2Search.Backend.Controllers.Admin
         /// Gets all themes associated to the CustomerId
         /// </summary>
         /// <param name="customerId"></param>
-        /// <returns></returns>
-        [HttpGet("all", Name = "GetThemesByCustomerId")]
+        /// <returns></returns/>
+        [HttpGet("GetThemesByCustomerId/{customerId}")]
         [ProducesResponseType(typeof(ThemeCollection), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -130,12 +130,12 @@ namespace S2Search.Backend.Controllers.Admin
         /// <param name="searchIndexId"></param>
         /// <param name="theme"></param>
         /// <returns></returns>
-        [HttpPut("update", Name = "UpdateTheme")]
+        [HttpPut("UpdateTheme")]
         [ProducesResponseType(typeof(Theme), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<bool>> UpdateTheme(Guid customerId, Guid searchIndexId, [FromBody] ThemeRequest theme)
+        public async Task<ActionResult<bool>> UpdateTheme([FromBody] ThemeRequest theme)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace S2Search.Backend.Controllers.Admin
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error on {nameof(UpdateTheme)} | CustomerId: {customerId} | SearchIndexId: {searchIndexId} | Message: {ex.Message}");
+                _logger.LogError(ex, $"Error on {nameof(UpdateTheme)} | themeId: {theme.themeId} | Message: {ex.Message}");
                 throw;
             }
         }

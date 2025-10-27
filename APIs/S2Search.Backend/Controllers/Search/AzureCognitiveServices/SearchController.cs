@@ -137,7 +137,7 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
             });
         }
 
-        [HttpGet("TotalDocumentCount")]
+        [HttpGet("TotalDocumentCount/{callingHost}")]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -170,7 +170,7 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
             }
         }
 
-        [HttpGet("AutoSuggest")]
+        [HttpGet("AutoSuggest/{searchTerm}/{callingHost}")]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

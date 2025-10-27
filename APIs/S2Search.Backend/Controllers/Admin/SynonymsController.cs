@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using S2Search.Backend.Domain.Configuration.SearchResources.Synonyms;
 using S2Search.Backend.Domain.Customer.SearchResources.Synonyms;
 using S2Search.Backend.Domain.Interfaces.Repositories;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
 
 namespace S2Search.Backend.Controllers.Admin
 {
-    [Route("api/customers/{customerId}/searchindex/{searchIndexId}/synonyms")]
+    [Route("v1/[controller]")]
     [ApiController]
     public class SynonymsController : ControllerBase
     {
