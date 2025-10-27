@@ -134,8 +134,6 @@ type VehicleSearchAppProps = PropsFromRedux & OwnProps;
 
 const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   const [themeConfigured, setThemeConfigured] = useState<boolean>(false);
-  const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] =
-    useState<boolean>(false);
 
   const router = useRouter();
 
@@ -311,9 +309,8 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   // ** Simplified search effect - triggers when search parameters change
   // *********************************************************************************************************************
   useEffect(() => {
-    // Only search if we have loaded initial state
+    // Trigger initial search when component mounts or search parameters change
     //if (!facetsLoadedFromUrl) return;
-
     updateQueryStringURL();
 
     const searchRequest = new SearchRequest(
@@ -332,10 +329,9 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     props.reduxOrderBy,
     props.reduxPageNumber,
     props.reduxFacetSelectors,
-    facetsLoadedFromUrl,
-    //triggerSearch,
     props.reduxVehicleData.length,
     updateQueryStringURL,
+    triggerSearch,
   ]);
 
   return (
