@@ -21,7 +21,6 @@ interface OrderByOption {
 }
 
 const OrderByDropdown: React.FC = () => {
-  const [orderBy, setLocalOrderBy] = React.useState<string>('');
   const [open, setOpen] = React.useState<boolean>(false);
 
   const dispatch = useAppDispatch();
@@ -44,7 +43,6 @@ const OrderByDropdown: React.FC = () => {
   };
 
   const handleChange = (event: any): void => {
-    setLocalOrderBy(event.target.value);
     dispatch(setOrderBy(event.target.value));
   };
 
@@ -67,8 +65,7 @@ const OrderByDropdown: React.FC = () => {
           color="secondary"
           onClose={handleClose}
           onOpen={handleOpen}
-          value={orderBy}
-          renderValue={selected => reduxOrderBy !== selected}
+          value={reduxOrderBy}
           onChange={handleChange}
           label="Order By"
         >

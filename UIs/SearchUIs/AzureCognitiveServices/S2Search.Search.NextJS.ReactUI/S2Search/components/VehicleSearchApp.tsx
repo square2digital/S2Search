@@ -138,22 +138,29 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   const router = useRouter();
 
   const updateQueryStringURL = useCallback(() => {
+    // Add facet selectors if present
     if (props.reduxFacetSelectors.length > 0) {
       insertQueryStringParam(
         'facetselectors',
         JSON.stringify(props.reduxFacetSelectors)
       );
+    }
 
+    // Add order by if present (independent of facets)
+    if (props.reduxOrderBy && props.reduxOrderBy.length > 0) {
       insertQueryStringParam('orderby', props.reduxOrderBy);
     }
 
+    // Add search term if present
     if (props.reduxSearchTerm.length > 0) {
       insertQueryStringParam('searchterm', props.reduxSearchTerm);
     }
 
+    // Only remove full query string if nothing is set
     if (
       props.reduxFacetSelectors.length === 0 &&
-      props.reduxSearchTerm.length === 0
+      props.reduxSearchTerm.length === 0 &&
+      (!props.reduxOrderBy || props.reduxOrderBy.length === 0)
     ) {
       removeFullQueryString();
     }

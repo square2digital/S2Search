@@ -21,8 +21,6 @@ interface OrderByOption {
 }
 
 const OrderByRadios: React.FC = () => {
-  const [orderBy, setLocalOrderBy] = React.useState<string>('');
-
   const dispatch = useAppDispatch();
   const reduxOrderBy = useAppSelector(state => state.search.orderBy);
 
@@ -48,7 +46,6 @@ const OrderByRadios: React.FC = () => {
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setLocalOrderBy(event.target.value);
     dispatch(setOrderBy(event.target.value));
   };
 
@@ -58,7 +55,7 @@ const OrderByRadios: React.FC = () => {
         <RadioGroup
           color="secondary"
           name="Order By"
-          value={orderBy}
+          value={reduxOrderBy}
           onChange={handleChange}
         >
           {GenerateRadios()}
