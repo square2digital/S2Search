@@ -337,9 +337,19 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AdaptiveNavBar />
-      <FacetChips />
-      <VehicleCardList />
-      <LoadMoreResultsButton />
+      {/* Content container with responsive top padding to account for fixed navbar */}
+      <Box
+        sx={{
+          pt: {
+            xs: '100px', // Mobile - navbar is taller due to stacked layout
+            md: '80px', // Desktop - standard navbar height
+          },
+        }}
+      >
+        <FacetChips />
+        <VehicleCardList />
+        <LoadMoreResultsButton />
+      </Box>
       <FacetFullScreenDialog />
       <NetworkErrorDialog />
       <FloatingTopButton />
