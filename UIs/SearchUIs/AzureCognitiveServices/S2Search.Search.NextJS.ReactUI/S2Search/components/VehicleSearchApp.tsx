@@ -169,6 +169,10 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
       LogDetails({ searchRequest });
 
       fetch('/api/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(searchRequest),
       })
         .then(response => response.json())
@@ -308,7 +312,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   // *********************************************************************************************************************
   useEffect(() => {
     // Only search if we have loaded initial state
-    if (!facetsLoadedFromUrl) return;
+    //if (!facetsLoadedFromUrl) return;
 
     updateQueryStringURL();
 
