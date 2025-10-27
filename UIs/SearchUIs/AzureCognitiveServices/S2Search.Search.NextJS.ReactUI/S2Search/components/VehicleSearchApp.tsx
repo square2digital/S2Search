@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
@@ -22,12 +22,7 @@ import {
   getConfigValueByKey,
   getPlaceholdersArray,
 } from '../common/functions/ConfigFunctions';
-import {
-  IsPreviousRequestDataTheSame,
-  IsRequestReOrderBy,
-  ConvertStringToBoolean,
-  LogString,
-} from '../common/functions/SharedFunctions';
+import { ConvertStringToBoolean } from '../common/functions/SharedFunctions';
 import { LogDetails } from '../helpers/LogDetails';
 import {
   DefaultPageSize,
@@ -69,22 +64,6 @@ import {
 // Type imports
 import type { RootState } from '../store';
 import type { SearchRequest } from '../types/searchTypes';
-
-// Modern styles using theme-aware sx prop patterns
-const styles = {
-  root: {
-    flexGrow: 1,
-  },
-  resultsText: {
-    color: grey[600],
-  },
-  noResultsText: {
-    color: red[600],
-  },
-  margin: (theme: any) => ({
-    margin: theme.spacing(1),
-  }),
-};
 
 // Define the component's Redux state mapping
 const mapStateToProps = (reduxState: RootState) => {
@@ -164,13 +143,7 @@ type VehicleSearchAppProps = PropsFromRedux & OwnProps;
 const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
   const [themeConfigured, setThemeConfigured] = useState<boolean>(false);
   const [searchConfigConfigured, setSearchConfigConfigured] = useState<boolean>(false);
-
-  // State for managing search debouncing and preventing infinite loops
-  const searchDebounceTimer = useRef<NodeJS.Timeout | null>(null);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [lastExecutedSearch, setLastExecutedSearch] = useState<string | null>(null);
   const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] = useState<boolean>(false);
-  const initialSearchDone = useRef<boolean>(false);
 
   // ******************************************************************************************
   // ** this useEffect hook will setup configurations and theme settings - it is run once only
@@ -194,19 +167,18 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
           .catch(error => {
             console.error('Failed to fetch theme:', error);
             // Use default theme
-            props.savePrimaryColour(DefaultTheme.primaryHexColour || '#1976d2');
-            props.saveSecondaryColour(DefaultTheme.secondaryHexColour || '#dc004e');
-            props.saveNavBarColour(DefaultTheme.navBarHexColour || '#1976d2');
-            props.saveLogoURL(DefaultTheme.logoURL || '');
-            props.saveMissingImageURL(DefaultTheme.missingImageURL || '/images/no-image-available.png');
+            props.savePrimaryColour(DefaultTheme.primaryHexColour);
+            props.saveSecondaryColour(DefaultTheme.secondaryHexColour);
+            props.saveNavBarColour(DefaultTheme.navBarHexColour);
+            props.saveLogoURL(DefaultTheme.logoURL);
+            props.saveMissingImageURL(DefaultTheme.missingImageURL);
             setThemeConfigured(true);
           });
       } catch (error) {
-        props.savePrimaryColour(DefaultTheme.primaryHexColour || '#1976d2');
-        props.saveSecondaryColour(DefaultTheme.secondaryHexColour || '#dc004e');
-        props.saveNavBarColour(DefaultTheme.navBarHexColour || '#1976d2');
-        props.saveLogoURL(DefaultTheme.logoURL || '');
-        props.saveMissingImageURL(DefaultTheme.missingImageURL || '/images/no-image-available.png');
+        props.savePrimaryColour(DefaultTheme.primaryHexColour);
+        props.saveSecondaryColour(DefaultTheme.secondaryHexColour);
+        props.saveLogoURL(DefaultTheme.logoURL);
+        props.saveMissingImageURL(DefaultTheme.missingImageURL);
         setThemeConfigured(true);
       }
     }
@@ -424,35 +396,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
   );
 
   // *********************************************************************************************************************
-  // ** Actual search execution function with debouncing protection
-  // *********************************************************************************************************************
-  const executeSearch = useCallback(
-    (searchRequest: SearchRequest) => {
-      // Prevent execution if already searching or if this exact search was just executed
-      const searchSignature = JSON.stringify(searchRequest);
-      if (isSearching || searchSignature === lastExecutedSearch) {
-        LogString(
-          'Skipping search execution - already in progress or duplicate'
-        );
-        return;
-      }
-
-      setIsSearching(true);
-      setLastExecutedSearch(searchSignature);
-
-      LogString('Executing search with request: ' + searchSignature);
-      triggerSearch(searchRequest);
-
-      // Reset searching flag after a delay
-      setTimeout(() => {
-        setIsSearching(false);
-      }, 100);
-    },
-    [isSearching, lastExecutedSearch, triggerSearch]
-  );
-
-  // *********************************************************************************************************************
-  // ** Main search function that builds the search request and executes it
+  // ** Simple search function that builds the search request and executes it
   // *********************************************************************************************************************
   const search = useCallback(
     (
@@ -460,116 +404,33 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
       pageSize: number = DefaultPageSize,
       numberOfExistingResults: number = 0
     ) => {
-      // Clear the debounce timer if it exists
-      if (searchDebounceTimer.current) {
-        clearTimeout(searchDebounceTimer.current);
-      }
+      const facetFilters = getSelectedFacets(props.reduxFacetSelectors);
+      const filters = facetFilters.join(' AND ');
 
-      // Set a new debounce timer
-      searchDebounceTimer.current = setTimeout(() => {
-        const facetFilters = getSelectedFacets(props.reduxFacetSelectors);
-        const filters = facetFilters.join(' AND ');
+      const searchRequest: SearchRequest = {
+        searchTerm: props.reduxSearchTerm,
+        filters,
+        orderBy: props.reduxOrderBy,
+        pageNumber,
+        pageSize,
+        numberOfExistingResults,
+        callingHost: 'localhost:3000'
+      };
 
-        const searchRequest: SearchRequest = {
-          searchTerm: props.reduxSearchTerm,
-          filters,
-          orderBy: props.reduxOrderBy,
-          pageNumber,
-          pageSize,
-          numberOfExistingResults,
-          callingHost: 'localhost:3000'
-        };
-
-        // Check if this is the same as the previous request to avoid duplicate calls
-        if (
-          props.reduxPreviousRequest &&
-          IsPreviousRequestDataTheSame(
-            {
-              searchTerm: searchRequest.searchTerm,
-              facets: [searchRequest.filters],
-              orderBy: searchRequest.orderBy,
-              pageNumber: searchRequest.pageNumber
-            }, 
-            {
-              searchTerm: props.reduxPreviousRequest.searchTerm,
-              orderBy: props.reduxPreviousRequest.orderBy,
-              pageNumber: props.reduxPreviousRequest.pageNumber,
-              facets: props.reduxPreviousRequest.filters ? [props.reduxPreviousRequest.filters] : []
-            }
-          )
-        ) {
-          LogString('Skipping duplicate search request');
-          return;
-        }
-
-        // Check if this is just a re-ordering request
-        if (
-          props.reduxPreviousRequest &&
-          IsRequestReOrderBy(
-            {
-              searchTerm: searchRequest.searchTerm,
-              facets: [searchRequest.filters],
-              orderBy: searchRequest.orderBy,
-              pageNumber: searchRequest.pageNumber
-            }, 
-            {
-              searchTerm: props.reduxPreviousRequest.searchTerm,
-              orderBy: props.reduxPreviousRequest.orderBy,
-              pageNumber: props.reduxPreviousRequest.pageNumber,
-              facets: props.reduxPreviousRequest.filters ? [props.reduxPreviousRequest.filters] : []
-            }
-          )
-        ) {
-          LogString('Re-ordering search results');
-          props.savePageNumber(0);
-        } else {
-          props.savePageNumber(pageNumber);
-        }
-
-        executeSearch(searchRequest);
-      }, 300); // 300ms debounce delay
+      props.savePageNumber(pageNumber);
+      triggerSearch(searchRequest);
     },
-    [executeSearch, props]
+    [props, triggerSearch]
   );
 
   // *********************************************************************************************************************
-  // ** UseEffect for initial search on component mount
+  // ** UseEffect for initial search and when dependencies change
   // *********************************************************************************************************************
   useEffect(() => {
-    // Trigger initial search when component mounts and no search has been done yet
-    if (!initialSearchDone.current && props.reduxVehicleData.length === 0) {
-      initialSearchDone.current = true;
+    if (searchConfigConfigured && facetsLoadedFromUrl) {
       search(0, DefaultPageSize, 0);
     }
-  }, [props.reduxVehicleData.length, search]);
-
-  // *********************************************************************************************************************
-  // ** UseEffect hook that triggers search when dependencies change
-  // *********************************************************************************************************************
-  useEffect(() => {
-    // Trigger search when search term or facets change
-    if (
-      props.reduxSearchTerm.length > 0 ||
-      props.reduxFacetSelectors.some((facet: any) => facet.checked)
-    ) {
-      search(0, DefaultPageSize, 0);
-    }
-  }, [props.reduxSearchTerm, props.reduxFacetSelectors, search]);
-
-  // *********************************************************************************************************************
-  // ** UseEffect hook for handling facet changes
-  // *********************************************************************************************************************
-  useEffect(() => {
-    // Only trigger search if facets have been loaded and there are changes
-    if (facetsLoadedFromUrl && searchConfigConfigured) {
-      const hasFacetsSelected = props.reduxFacetSelectors.some(
-        (facet: any) => facet.checked
-      );
-      if (props.reduxSearchTerm.length > 0 || hasFacetsSelected) {
-        search(0, DefaultPageSize, 0);
-      }
-    }
-  }, [props.reduxFacetSelectors, facetsLoadedFromUrl, searchConfigConfigured, props.reduxSearchTerm, search]);
+  }, [props.reduxSearchTerm, props.reduxFacetSelectors, searchConfigConfigured, facetsLoadedFromUrl, search]);
 
   // Add separate useEffect for cancellation token logic
   useEffect(() => {
@@ -579,7 +440,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
   }, [props.reduxCancellationToken, props]);
 
   return (
-    <Box sx={styles.root}>
+    <Box sx={{flexGrow: 1}}>
       <AdaptiveNavBar />
       <FacetChips />
       <VehicleCardList />

@@ -48,11 +48,11 @@ export const StaticFacets = ['make'];
 
 // global S2 theme
 export const DefaultTheme = {
-  primaryHexColour: process.env.NEXT_PUBLIC_THEME_PRIMARY_COLOUR,
-  secondaryHexColour: process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR,
-  navBarHexColour: process.env.NEXT_PUBLIC_THEME_NAVBAR_COLOUR,
-  logoURL: process.env.NEXT_PUBLIC_THEME_LOGO_URL,
-  missingImageURL: process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL,
+  primaryHexColour: process.env.NEXT_PUBLIC_THEME_PRIMARY_COLOUR || '#3cdb11ff',
+  secondaryHexColour: process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR || '#c2bf15ff',
+  navBarHexColour: process.env.NEXT_PUBLIC_THEME_NAVBAR_COLOUR || '#d21991ff',
+  logoURL: process.env.NEXT_PUBLIC_THEME_LOGO_URL || '',
+  missingImageURL: process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL || '/images/Square2Digital-Logo-2024.svg',
 };
 
 export const DefaultConfigData = [

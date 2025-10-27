@@ -26,28 +26,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { green, blue, orange, grey } from '@mui/material/colors';
 import VehicleImage from './VehicleImage';
-
-interface VehicleData {
-  vehicleID: string;
-  make: string;
-  model: string;
-  variant: string;
-  location: string;
-  price: number;
-  monthlyPrice: number;
-  mileage: number;
-  fuelType: string;
-  transmission: string;
-  doors: number;
-  engineSize: number;
-  bodyStyle: string;
-  colour: string;
-  year: number;
-  description: string;
-  manufactureColour: string;
-  vrm: string;
-  imageURL: string | null | undefined;
-}
+import { VehicleData } from '../types/vehicleTypes';
 
 interface VehicleCardProps {
   vehicleData: VehicleData[];
