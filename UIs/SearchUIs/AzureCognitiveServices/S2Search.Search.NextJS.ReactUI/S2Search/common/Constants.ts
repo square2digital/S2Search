@@ -17,9 +17,6 @@ export const DefaultPageSize = Number(
 );
 
 export const MobileMaxWidth = Number(process.env.NEXT_PUBLIC_MOBILE_MAX_WIDTH);
-export const MillisecondsDifference = Number(
-  process.env.NEXT_PUBLIC_MILLISECONDS_DIFFERENCE
-);
 
 export const InitialSearchTerm = 'Initial Search Term';
 export const GetOrderByData = [
@@ -48,9 +45,9 @@ export const StaticFacets = ['make'];
 
 // global S2 theme
 export const DefaultTheme = {
-  primaryHexColour: process.env.NEXT_PUBLIC_THEME_PRIMARY_COLOUR || '#3cdb11ff',
-  secondaryHexColour: process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR || '#c2bf15ff',
-  navBarHexColour: process.env.NEXT_PUBLIC_THEME_NAVBAR_COLOUR || '#d21991ff',
+  primaryHexColour: process.env.NEXT_PUBLIC_THEME_PRIMARY_COLOUR || '#616161',
+  secondaryHexColour: process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR || '#303f9f',
+  navBarHexColour: process.env.NEXT_PUBLIC_THEME_NAVBAR_COLOUR || '#40739dff',
   logoURL: process.env.NEXT_PUBLIC_THEME_LOGO_URL || '',
   missingImageURL: process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL || '/images/Square2Digital-Logo-2024.svg',
 };
