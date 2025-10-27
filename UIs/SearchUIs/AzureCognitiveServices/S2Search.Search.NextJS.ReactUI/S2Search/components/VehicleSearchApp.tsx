@@ -11,8 +11,6 @@ import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar';
 import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import VehicleCardList from './material-ui/vehicleCards/VehicleCardList';
 
-import { LogString } from '../common/functions/SharedFunctions';
-
 import {
   insertQueryStringParam,
   removeFullQueryString,
@@ -20,11 +18,7 @@ import {
 
 import { getSelectedFacets } from '@/common/functions/FacetFunctions';
 
-import {
-  DefaultPageSize,
-  DefaultTheme,
-  MillisecondsDifference,
-} from '../common/Constants';
+import { DefaultPageSize, DefaultTheme } from '../common/Constants';
 import { LogDetails } from '../helpers/LogDetails';
 
 // New RTK action imports
@@ -139,17 +133,10 @@ interface OwnProps {
 type VehicleSearchAppProps = PropsFromRedux & OwnProps;
 
 const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
-  const [facetSelectedKeys, setFacetSelectedKeys] = useState<string[]>([]);
-  const [searchCount, setSearchCount] = useState<number>(0);
-  const [timestamp, setTimestamp] = useState<number>(0);
   const [themeConfigured, setThemeConfigured] = useState<boolean>(false);
-  const [searchConfigConfigured, setSearchConfigConfigured] =
+  const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] =
     useState<boolean>(false);
-  const [autoCompleteSearchBar, setAutoCompleteSearchBar] =
-    useState<string>('');
-  const [queryStringParams, setQueryStringParams] = useState<any>();
 
-  // Destructure frequently used props to avoid dependency issues
   const router = useRouter();
 
   const updateQueryStringURL = () => {
@@ -311,92 +298,48 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   useEffect(() => {
     getThemeFromAPI();
     getDocumentCountAPI();
-    /*     const config = [];
-    if (props.reduxConfigData.length === 0) {
-      ConfigAPI(window.location.host).then(function (axiosConfigResponse) {
-        if (!searchConfigConfigured && axiosConfigResponse) {
-          if (axiosConfigResponse.status === 200) {
-            axiosConfigResponse.data.map(function (item) {
-              config.push({ key: item.key, value: item.value });
-            });
+  }, [getThemeFromAPI, getDocumentCountAPI]);
 
-            props.saveConfigData(config);
-            props.savePlaceholderArray(getPlaceholdersArray(config));
-
-            const enableAutoComplete = ConvertStringToBoolean(
-              getConfigValueByKey(config, 'EnableAutoComplete').value
-            );
-            props.saveEnableAutoComplete(enableAutoComplete);
-            setAutoCompleteSearchBar(enableAutoComplete);
-
-            const HideIconVehicleCounts = ConvertStringToBoolean(
-              getConfigValueByKey(config, 'HideIconVehicleCounts').value
-            );
-            props.saveHideIconVehicleCounts(HideIconVehicleCounts);
-
-            setSearchConfigConfigured(true);
-          }
-        }
-      });
-    } */
-  }, []);
-
+  // Remove the complex cancellation/debouncing logic
   useEffect(() => {
     if (router && Object.keys(router.query).length > 0) {
-      setQueryStringParams(router.query);
-      if (queryStringParams) {
-        LogDetails({ searchterm: queryStringParams.searchterm });
-      }
-    }
-  }, [router.query]);
-
-  // *********************************************************************************************************************
-  // ** this useEffect hook manages the search - it will trigger on any change relating to search - see the dependencies
-  // *********************************************************************************************************************
-  useEffect(() => {
-    if (props.reduxSearchTerm.length === 0) {
-      props.saveCancellationToken(false);
-    } else {
-      if (timestamp) {
-        const milliseconds = new Date().getTime() - timestamp;
-
-        if (milliseconds < MillisecondsDifference) {
-          props.saveCancellationToken(true);
-        } else {
-          props.saveCancellationToken(false);
-        }
-
-        LogString(
-          `milliseconds: ${milliseconds} cancellationToken: ${props.reduxCancellationToken} props.reduxSearchTerm : ${props.reduxSearchTerm.length}`
+      // Simple URL parameter loading
+      if (router.query.searchterm) {
+        props.saveSearchTerm(
+          decodeURIComponent(router.query.searchterm as string)
         );
       }
+      setFacetsLoadedFromUrl(true);
     }
+  }, [router, props.saveSearchTerm]);
 
-    setTimestamp(new Date().getTime());
-    setSearchCount(searchCount + 1);
-    setFacetSelectedKeys(props.reduxFacetSelectedKeys);
+  // *********************************************************************************************************************
+  // ** Simplified search effect - triggers when search parameters change
+  // *********************************************************************************************************************
+  useEffect(() => {
+    // Only search if we have loaded initial state
+    if (!facetsLoadedFromUrl) return;
+
     updateQueryStringURL();
 
-    triggerSearch(
-      new SearchRequest(
-        props.reduxSearchTerm,
-        getSelectedFacets(props.reduxFacetSelectors), // This returns string[], constructor will handle conversion
-        props.reduxOrderBy,
-        props.reduxPageNumber,
-        DefaultPageSize,
-        props.reduxVehicleData.length,
-        window.location.host
-      )
+    const searchRequest = new SearchRequest(
+      props.reduxSearchTerm,
+      getSelectedFacets(props.reduxFacetSelectors), // This returns string[], constructor will handle conversion
+      props.reduxOrderBy,
+      props.reduxPageNumber,
+      DefaultPageSize,
+      props.reduxVehicleData.length,
+      window.location.host
     );
+
+    triggerSearch(searchRequest);
   }, [
     props.reduxSearchTerm,
     props.reduxOrderBy,
-    props.reduxDialogOpen,
     props.reduxPageNumber,
-    props.reduxFacetChipDeleted,
-    props.reduxFacetSelectedKeys,
-    queryStringParams,
-    props.reduxCancellationToken,
+    props.reduxFacetSelectors,
+    facetsLoadedFromUrl,
+    triggerSearch,
   ]);
 
   return (
