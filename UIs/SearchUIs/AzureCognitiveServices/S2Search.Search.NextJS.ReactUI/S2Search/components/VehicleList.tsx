@@ -68,7 +68,7 @@ const VehicleList: React.FC = () => {
       pageNumber: '0',
       pageSize: '24',
       numberOfExistingResults: '0',
-      customerEndpoint: 'localhost:3000',
+      customerEndpoint: window.location.host,
     });
 
     return `/api/search?${params.toString()}`;
