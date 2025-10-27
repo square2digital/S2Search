@@ -200,9 +200,10 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
               // First page - replace existing results
               props.saveVehicleData(responseObject.results);
             } else {
-              // Additional page - append to existing results
+              // Additional page - get current data from Redux store at time of request
+              const currentVehicleData = props.reduxVehicleData;
               props.saveVehicleData([
-                ...props.reduxVehicleData,
+                ...currentVehicleData,
                 ...responseObject.results,
               ]);
             }
@@ -236,7 +237,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
       props.saveSearchCount,
       props.saveDefaultFacetData,
       props.savePreviousRequest,
-      props.reduxVehicleData,
+      // Removed props.reduxVehicleData - this was causing triggerSearch to be recreated constantly
     ]
   );
 
@@ -317,7 +318,6 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   // *********************************************************************************************************************
   useEffect(() => {
     // Trigger initial search when component mounts or search parameters change
-    //if (!facetsLoadedFromUrl) return;
     updateQueryStringURL();
 
     const searchRequest = new SearchRequest(
@@ -336,9 +336,8 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     props.reduxOrderBy,
     props.reduxPageNumber,
     props.reduxFacetSelectors,
-    props.reduxVehicleData.length,
     updateQueryStringURL,
-    triggerSearch,
+    triggerSearch, // Re-added since it's now stable (no longer depends on reduxVehicleData)
   ]);
 
   return (
