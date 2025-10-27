@@ -28,6 +28,6 @@ public class SearchRequest
     [JsonPropertyName("numberOfExistingResults")]
     public int NumberOfExistingResults { get; set; }
 
-    [JsonPropertyName("callingHost")]
-    public string CallingHost { get; set; }
+    [JsonPropertyName("customerEndpoint")]
+    public string CustomerEndpoint { get; set; }
 }

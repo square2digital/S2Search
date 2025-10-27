@@ -4,5 +4,5 @@ namespace Services.Interfaces;
 
 public interface ISearchIndexQueryCredentialsProvider
 {
-    Task<SearchIndexQueryCredentials> GetAsync(string callingHost);
+    Task<SearchIndexQueryCredentials> GetAsync(string customerEndpoint);
 }

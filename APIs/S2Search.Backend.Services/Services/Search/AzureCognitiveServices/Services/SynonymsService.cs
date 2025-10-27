@@ -27,12 +27,12 @@ namespace Services.Services
         /// </summary>
         /// <param name="category">Get Synomyns by category - default is "vehicles"</param>
         /// <returns></returns>
-        public async Task<List<string>> GetGenericSynonyms(string callingHost, string category = "vehicles")
+        public async Task<List<string>> GetGenericSynonyms(string customerEndpoint, string category = "vehicles")
         {
             if (_appSettings.RedisCacheSettings.EnableRedisCache)
             {
                 string cacheKey = $"{CacheKeys.Synonyms}";
-                var redisKey = _redisService.CreateRedisKey(callingHost, cacheKey, S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers.HashHelper.GetXXHashString(cacheKey));
+                var redisKey = _redisService.CreateRedisKey(customerEndpoint, cacheKey, S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers.HashHelper.GetXXHashString(cacheKey));
                 var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
 
                 if (redisValue != null)

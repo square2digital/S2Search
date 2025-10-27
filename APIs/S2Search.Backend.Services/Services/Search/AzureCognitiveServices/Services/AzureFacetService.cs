@@ -44,10 +44,10 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
         /// The default facets are all the facets returned from a search with no filters or search term
         /// these are used on first load and for generating lucence search strings 
         /// </summary>
-        /// <param name="callingHost"></param>
+        /// <param name="customerEndpoint"></param>
         /// <param name="targetSearchResource"></param>
         /// <returns></returns>
-        public async Task<IList<FacetGroup>> GetDefaultFacets(string callingHost, SearchIndexQueryCredentials targetSearchResource)
+        public async Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials targetSearchResource)
         {
             SearchRequest request = new SearchRequest
             {
@@ -57,7 +57,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                 PageNumber = 0,
                 PageSize = 0,
                 NumberOfExistingResults = 0,
-                CallingHost = callingHost,
+                CustomerEndpoint = customerEndpoint,
             };
 
             var data = await InvokeFacetRequest(request, targetSearchResource);
@@ -65,28 +65,28 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
         }
 
         /// <summary>
-        /// This will add the default facets to the cache by customer using the callingHost for the cache key
+        /// This will add the default facets to the cache by customer using the customerEndpoint for the cache key
         /// its intended to be called via "fire and forget" rather than async awaiting
         /// Once we have the FTP solution setup we can generate the default factes for a customer at the point of updating an indxex
         /// and store that in a distributed cache store such as redis -
         /// 
         /// for now this will save the defaut facets to memory cache on the call to the facets endpoint which occurs as soon as the search UI starts
         /// </summary>
-        /// <param name="callingHost"></param>
+        /// <param name="customerEndpoint"></param>
         /// <returns></returns>
-        public IList<FacetGroup> GetOrSetDefaultFacets(string callingHost, SearchIndexQueryCredentials queryCredentials)
+        public IList<FacetGroup> GetOrSetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials)
         {
             var cacheKey = $"{CacheKeys.DefaultFacets}";
-            var func = GetDefaultFacetsFunc(callingHost, queryCredentials);
+            var func = GetDefaultFacetsFunc(customerEndpoint, queryCredentials);
             return _memoryCacheService.GetOrAdd(cacheKey, func, TimeSpan.FromSeconds(_appSettings.MemoryCacheSettings.DefaultFacetsCacheExpiryInSeconds));
         }
 
-        private Func<IList<FacetGroup>> GetDefaultFacetsFunc(string callingHost, SearchIndexQueryCredentials queryCredentials)
+        private Func<IList<FacetGroup>> GetDefaultFacetsFunc(string customerEndpoint, SearchIndexQueryCredentials queryCredentials)
         {
             return () =>
             {
-                _logger.LogInformation($"Cache miss on Default Facets | callingHost: {callingHost}");
-                return GetDefaultFacets(callingHost, queryCredentials).GetAwaiter().GetResult();
+                _logger.LogInformation($"Cache miss on Default Facets | customerEndpoint: {customerEndpoint}");
+                return GetDefaultFacets(customerEndpoint, queryCredentials).GetAwaiter().GetResult();
             };
         }
 
