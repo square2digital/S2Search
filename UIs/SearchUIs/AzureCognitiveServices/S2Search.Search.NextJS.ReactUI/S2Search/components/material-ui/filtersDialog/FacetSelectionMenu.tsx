@@ -96,13 +96,6 @@ const FacetSelectionMenu: React.FC<
         </Box>
 
         <List sx={{ px: 2 }}>
-          {(() => {
-            console.log(
-              'FacetSelectionMenu - defaultFacetData:',
-              props.defaultFacetData
-            );
-            return null;
-          })()}
           {props.defaultFacetData?.map(facet => {
             const selectedCount = getSelectedCount(facet.facetKey);
             const isSelected = props.reduxSelectedFacet === facet.facetKey;

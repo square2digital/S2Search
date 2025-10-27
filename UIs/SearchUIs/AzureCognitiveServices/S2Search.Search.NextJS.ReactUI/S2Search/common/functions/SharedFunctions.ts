@@ -11,7 +11,10 @@ interface FacetData {
   [key: string]: any;
 }
 
-export const GenerateFacetArray = (stateArray: string[], facetKey: string): string | string[] => {
+export const GenerateFacetArray = (
+  stateArray: string[],
+  facetKey: string
+): string | string[] => {
   if (facetKey === '' || typeof facetKey === 'undefined') {
     return [];
   } else {
@@ -57,7 +60,10 @@ export const GenerateUniqueID = (): string => {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 };
 
-export const GetFacetData = (facetJSONData: FacetData[], facetName: string): FacetData | undefined => {
+export const GetFacetData = (
+  facetJSONData: FacetData[],
+  facetName: string
+): FacetData | undefined => {
   if (facetJSONData) {
     for (const facet of facetJSONData) {
       if (facet.value === facetName) {
@@ -75,7 +81,7 @@ export const GetFacetData = (facetJSONData: FacetData[], facetName: string): Fac
 // - NumberOfExistingResults
 // - pageSize
 export const IsPreviousRequestDataTheSame = (
-  newRequest: SearchRequest, 
+  newRequest: SearchRequest,
   reduxRequest: SearchRequest | null
 ): boolean => {
   if (!reduxRequest || Object.keys(reduxRequest).length === 0) {
@@ -127,8 +133,8 @@ export const IsPreviousRequestDataTheSame = (
 };
 
 const LogRequests = (
-  newRequest: SearchRequest, 
-  reduxRequest: SearchRequest, 
+  newRequest: SearchRequest,
+  reduxRequest: SearchRequest,
   logString: string
 ): void => {
   if (process.env.NODE_ENV !== 'production') {
@@ -154,7 +160,7 @@ export const LogString = (str: string): void => {
 // - NumberOfExistingResults
 // - pageSize
 export const IsRequestReOrderBy = (
-  newRequest: SearchRequest, 
+  newRequest: SearchRequest,
   reduxRequest: SearchRequest | null
 ): boolean => {
   if (!reduxRequest) {
@@ -171,8 +177,6 @@ export const IsRequestReOrderBy = (
     newRequest.pageNumber === reduxRequest.pageNumber &&
     newRequest.searchTerm.trim() === reduxRequest.searchTerm.trim()
   ) {
-    // eslint-disable-next-line no-console
-    console.log(`request is just for a OrderBy of results`);
     return true;
   } else {
     return false;

@@ -2,7 +2,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { StaticFacets } from '../../../common/Constants';
 import {
   getDefaultFacetsWithSelections,
   isSelectFacetMenuAlreadySelected,
@@ -80,14 +79,6 @@ const FacetSelectionList: React.FC<
 
   const generateFacetSelectors = useCallback(
     (facetKeyName: string): void => {
-      console.log('generateFacetSelectors called for:', facetKeyName);
-      console.log('Available data:', {
-        reduxDefaultFacetData: props.reduxDefaultFacetData?.length || 0,
-        reduxFacetData: props.reduxFacetData?.length || 0,
-        reduxFacetSelectors: props.reduxFacetSelectors?.length || 0,
-        isStatic: StaticFacets.includes(facetKeyName),
-      });
-
       let theFacet: FacetStateData = {};
       let currentFacet: any = {};
       let facetData: any[] = [];
@@ -119,14 +110,7 @@ const FacetSelectionList: React.FC<
       // Note: We no longer use reduxFacetData for display to preserve all options
       // This allows multiple selections within the same filter category
 
-      console.log('facetsToLoad length:', facetsToLoad?.length || 0);
-
       facetData = facetsToLoad.filter(x => x.facetKey === facetKeyName);
-
-      console.log('Filtered facetData for', facetKeyName, ':', {
-        found: facetData.length,
-        facetKeys: facetsToLoad.map(f => f.facetKey),
-      });
 
       currentFacet = facetData[0];
 
