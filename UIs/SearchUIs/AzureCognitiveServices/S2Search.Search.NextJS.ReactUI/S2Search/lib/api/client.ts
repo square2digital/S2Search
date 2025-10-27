@@ -1,7 +1,7 @@
 import { ApiConfig, ApiResponse } from '@/types/apiTypes';
 import { SearchRequest } from '@/types/searchTypes';
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import { SearchAPIEndpoint, AutoCompleteURL, DocumentCountURL, ApiRootEndpoint } from '@/common/Constants';
+import { SearchAPIEndpoint, AutoCompleteURL, DocumentCountURL, ApiRootEndpoint, ThemeURL } from '@/common/Constants';
 import https from 'https';
 
 // Constants
@@ -11,10 +11,10 @@ const HTTPS_AGENT = new https.Agent({
 
 // Utility functions
 function getApiKey(): string {
-  return process.env.NEXT_PUBLIC_OCP_APIM_SUBSCRIPTION_KEY || '';
+  return process.env.NEXT_PUBLIC_S2SEARCH_API_KEY || '';
 }
 
-function buildConfig(includeApiKey: boolean = true): ApiConfig {
+function buildApiConfig(includeApiKey: boolean = true): ApiConfig {
   const config: ApiConfig = {
     headers: {
       'Accept': 'application/json',
@@ -27,23 +27,11 @@ function buildConfig(includeApiKey: boolean = true): ApiConfig {
   if (includeApiKey) {
     const apiKey = getApiKey();
     if (apiKey) {
-      config.headers['Ocp-Apim-Subscription-Key'] = apiKey;
+      config.headers['s2search-api-Key'] = apiKey;
     }
   }
 
   return config;
-}
-
-function buildSearchQueryString(params: SearchRequest): string {
-  const queryParams = new URLSearchParams();
-  
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      queryParams.append(key, String(value));
-    }
-  });
-
-  return queryParams.toString();
 }
 
 // Main API client
@@ -90,34 +78,26 @@ export class ApiClient {
   async invokeSearchAPI<T = any>(
     endpoint: string,
     includeApiKey: boolean = true,
-    params?: SearchRequest 
   ): Promise<ApiResponse<T>> {
-    const config = buildConfig(includeApiKey);
-    
-    // If endpoint is already a full URL, use it as-is, otherwise prepend baseUrl
-    let url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
-
-    if (params) {
-      const queryString = buildSearchQueryString(params);
-      url += `?${queryString}`;
-    }
+    const config = buildApiConfig(includeApiKey);
+    const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
 
     return this.handleRequest(axios.get<T>(url, config));
   }
 
-  async search(params: SearchRequest ): Promise<ApiResponse> {
+  async search(): Promise<ApiResponse> {
     const searchEndpoint = SearchAPIEndpoint;
-    return this.invokeSearchAPI(`${searchEndpoint}`, false, params);
+    return this.invokeSearchAPI(`${searchEndpoint}`, true);
   }
 
-  async getFacets(params: SearchRequest ): Promise<ApiResponse> {
+  async getFacets(): Promise<ApiResponse> {
     const facetEndpoint = process.env.NEXT_PUBLIC_FACET_API_ENDPOINT;
-    return this.invokeSearchAPI(`${facetEndpoint}`, false, params);
+    return this.invokeSearchAPI(`${facetEndpoint}`, true);
   }  
 
   // Specific API methods
   async getTheme(customerEndpoint: string): Promise<ApiResponse> {
-    return this.invokeSearchAPI(`/api/configuration/theme/${customerEndpoint}`, true);
+    return this.invokeSearchAPI(`${ThemeURL}/${customerEndpoint}`, true);
   }
 
   async getConfiguration(customerEndpoint: string): Promise<ApiResponse> {
