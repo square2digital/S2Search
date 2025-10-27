@@ -333,7 +333,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     props.reduxPageNumber,
     props.reduxFacetSelectors,
     facetsLoadedFromUrl,
-    triggerSearch,
+    //triggerSearch,
     props.reduxVehicleData.length,
     updateQueryStringURL,
   ]);

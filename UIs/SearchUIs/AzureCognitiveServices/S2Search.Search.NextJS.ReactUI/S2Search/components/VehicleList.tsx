@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import {
-  Button,
-  Typography,
+  Alert,
   Box,
+  Button,
+  CircularProgress,
   List,
   ListItem,
   ListItemText,
   Paper,
-  CircularProgress,
-  Alert,
+  Typography,
 } from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import React, { useCallback, useEffect, useState } from 'react';
 
 interface VehicleResult {
   vehicleID: string;
@@ -31,22 +31,6 @@ interface VehicleListResponse {
   status: string;
 }
 
-const SEARCH_TERMS = [
-  'bmw',
-  'audi',
-  'porsche',
-  'bentley',
-  'red',
-  'yellow',
-  'black',
-  'volvo',
-  'ford',
-  'audi rs',
-  'white',
-  'suv',
-  'convert',
-] as const;
-
 const VehicleList: React.FC = () => {
   const [vehicleData, setVehicleData] = useState<VehicleListResponse | null>(
     null
@@ -54,11 +38,6 @@ const VehicleList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
-
-  const getRandomSearchTerm = useCallback((): string => {
-    const randomIndex = Math.floor(Math.random() * SEARCH_TERMS.length);
-    return SEARCH_TERMS[randomIndex];
-  }, []);
 
   const buildSearchURL = useCallback((term: string): string => {
     const params = new URLSearchParams({
@@ -81,10 +60,7 @@ const VehicleList: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const term = getRandomSearchTerm();
-      setSearchTerm(term);
-
-      const url = buildSearchURL(term);
+      const url = buildSearchURL(searchTerm);
 
       const response = await fetch(url, {
         signal: controller.signal,
@@ -115,7 +91,7 @@ const VehicleList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [getRandomSearchTerm, buildSearchURL]);
+  }, [searchTerm, buildSearchURL]);
 
   useEffect(() => {
     fetchVehicleData();
