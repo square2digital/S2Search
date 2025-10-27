@@ -80,26 +80,28 @@ const FacetSelectionList: React.FC<
 
   const generateFacetSelectors = useCallback(
     (facetKeyName: string): void => {
+      console.log('generateFacetSelectors called for:', facetKeyName);
+      console.log('Available data:', {
+        reduxDefaultFacetData: props.reduxDefaultFacetData?.length || 0,
+        reduxFacetData: props.reduxFacetData?.length || 0,
+        reduxFacetSelectors: props.reduxFacetSelectors?.length || 0,
+        isStatic: StaticFacets.includes(facetKeyName),
+      });
+
       let theFacet: FacetStateData = {};
       let currentFacet: any = {};
       let facetData: any[] = [];
       const selectedFacetData: any[] = [];
 
-      // ****************
-      // facets To Load - default or from Search Results?
-      // ****************
-      // on the first load or if reduxFacetSelectors is empty we need to load the defaultFacets.
-      // when a facet is selected, from that point the facets returned from search will be displayed
-
       let facetsToLoad: any[] = [];
-      if (props.reduxSearchTerm) {
-        facetsToLoad = props.reduxFacetData;
-      } else if (
-        props.reduxFacetSelectors.length === 0 &&
-        StaticFacets.includes(facetKeyName)
-      ) {
-        facetsToLoad = props.reduxDefaultFacetData;
-      } else {
+
+      // Updated logic:
+      // 1. Static facets (like 'make') always use default facets with selections merged
+      // 2. Dynamic facets use search result facets when available
+      // 3. Fallback to default facets if no dynamic data available
+
+      if (StaticFacets.includes(facetKeyName)) {
+        // Static facets - use default facets, merge with selections if any
         if (
           isSelectFacetMenuAlreadySelected(
             props.reduxFacetSelectors,
@@ -112,11 +114,40 @@ const FacetSelectionList: React.FC<
             props.reduxFacetSelectors
           );
         } else {
+          facetsToLoad = props.reduxDefaultFacetData;
+        }
+      } else {
+        // Dynamic facets - prefer search results, fallback to defaults
+        if (props.reduxFacetData.length > 0) {
+          // Use dynamic facets from search results
           facetsToLoad = props.reduxFacetData;
+        } else {
+          // No search results yet - use default facets as fallback
+          if (
+            isSelectFacetMenuAlreadySelected(
+              props.reduxFacetSelectors,
+              facetKeyName
+            )
+          ) {
+            facetsToLoad = getDefaultFacetsWithSelections(
+              facetKeyName,
+              props.reduxDefaultFacetData as any,
+              props.reduxFacetSelectors
+            );
+          } else {
+            facetsToLoad = props.reduxDefaultFacetData;
+          }
         }
       }
 
+      console.log('facetsToLoad length:', facetsToLoad?.length || 0);
+
       facetData = facetsToLoad.filter(x => x.facetKey === facetKeyName);
+
+      console.log('Filtered facetData for', facetKeyName, ':', {
+        found: facetData.length,
+        facetKeys: facetsToLoad.map(f => f.facetKey),
+      });
 
       currentFacet = facetData[0];
 

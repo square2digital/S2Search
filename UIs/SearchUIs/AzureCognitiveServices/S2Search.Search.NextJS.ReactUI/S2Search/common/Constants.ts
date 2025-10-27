@@ -45,8 +45,8 @@ export const GetOrderByData = [
 // add facets to this array that you want parsing as strings not numbers
 export const FacetToParseAsNumeric = ['year', 'doors', 'engineSize'];
 
-// this array conatins the facets that will be generated from the default facets
-// rather than the dynamic facets returns from search
+// this array contains the facets that will be generated from the default facets
+// rather than the dynamic facets returned from search
 export const StaticFacets = ['make'];
 
 // global S2 theme

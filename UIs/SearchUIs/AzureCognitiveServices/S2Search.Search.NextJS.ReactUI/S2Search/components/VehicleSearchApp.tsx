@@ -212,7 +212,16 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
 
             // Handle facets from search response
             if (responseObject.facets && Array.isArray(responseObject.facets)) {
-              props.saveDefaultFacetData(responseObject.facets);
+              // If this is initial load (no search term, no facet selectors), save as default facets
+              // Otherwise save as dynamic facets for filtered results
+              if (
+                props.reduxSearchTerm === '' &&
+                props.reduxFacetSelectors.length === 0
+              ) {
+                props.saveDefaultFacetData(responseObject.facets);
+              } else {
+                props.saveFacetData(responseObject.facets);
+              }
             }
 
             props.savePreviousRequest(searchRequest);
