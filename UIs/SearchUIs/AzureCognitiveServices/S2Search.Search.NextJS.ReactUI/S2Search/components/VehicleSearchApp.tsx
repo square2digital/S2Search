@@ -406,7 +406,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
         pageNumber,
         pageSize,
         numberOfExistingResults,
-        callingHost: 'localhost:3000',
+        customerEndpoint: 'localhost:3000',
       };
 
       props.savePageNumber(pageNumber);

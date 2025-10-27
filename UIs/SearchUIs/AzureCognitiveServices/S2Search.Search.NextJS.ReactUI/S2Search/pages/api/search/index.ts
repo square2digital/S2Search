@@ -18,7 +18,7 @@ export default async function handler(
     const backendRequest = {
       ...searchRequest,
       filters: searchRequest.facets, // Backend expects 'filters', frontend sends 'facets'
-      callingHost: host
+      customerEndpoint: host
     };
     
     // Remove the facets field since backend doesn't expect it

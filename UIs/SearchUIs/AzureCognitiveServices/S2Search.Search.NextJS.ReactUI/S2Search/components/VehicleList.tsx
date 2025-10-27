@@ -68,7 +68,7 @@ const VehicleList: React.FC = () => {
       pageNumber: '0',
       pageSize: '24',
       numberOfExistingResults: '0',
-      callingHost: 'localhost:3000',
+      customerEndpoint: 'localhost:3000',
     });
 
     return `/api/search?${params.toString()}`;
@@ -76,7 +76,7 @@ const VehicleList: React.FC = () => {
 
   const fetchVehicleData = useCallback(async () => {
     const controller = new AbortController();
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -85,15 +85,15 @@ const VehicleList: React.FC = () => {
       setSearchTerm(term);
 
       const url = buildSearchURL(term);
-      
+
       const response = await fetch(url, {
-        signal: controller.signal
+        signal: controller.signal,
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
 
       // Check if request was cancelled

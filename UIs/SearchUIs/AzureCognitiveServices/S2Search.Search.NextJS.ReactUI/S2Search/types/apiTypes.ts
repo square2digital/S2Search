@@ -18,5 +18,5 @@ export interface SearchQueryParams {
   pageNumber?: number;
   pageSize?: number;
   numberOfExistingResults?: number;
-  callingHost?: string;
+  customerEndpoint?: string;
 }

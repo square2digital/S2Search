@@ -16,7 +16,7 @@ export default async function handler(
     
     const response = await apiClient.getFacets({
       ...searchRequest,
-      callingHost: host
+      customerEndpoint: host
     });
 
     if (response.success) {
