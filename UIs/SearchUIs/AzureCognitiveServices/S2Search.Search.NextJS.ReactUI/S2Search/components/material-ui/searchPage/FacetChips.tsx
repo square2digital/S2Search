@@ -1,5 +1,4 @@
 import Chip from '@mui/material/Chip';
-import Paper from '@mui/material/Paper';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../../../store';
@@ -9,15 +8,8 @@ import {
   setFacetSelectors,
 } from '../../../store/slices/facetSlice';
 
-// Modern styles object
+// Styles for individual chips
 const styles = {
-  root: {
-    display: 'flex',
-    justifyContent: 'left' as const,
-    flexWrap: 'wrap' as const,
-    marginTop: 1.5,
-    marginLeft: '-40px',
-  },
   chip: {
     paddingRight: '10px',
     paddingTop: '5px',
@@ -50,7 +42,17 @@ const FacetChips: React.FC<ConnectedProps<typeof connector>> = props => {
   };
 
   return (
-    <Paper elevation={0} sx={styles.root}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'left',
+        flexWrap: 'wrap',
+        marginTop: '12px', // 1.5 * 8px theme spacing
+        marginLeft: '-40px',
+        padding: 0,
+        backgroundColor: 'transparent',
+      }}
+    >
       {props.reduxFacetSelectors.map((data, index) => {
         return (
           <div key={index} style={styles.chip}>
@@ -64,7 +66,7 @@ const FacetChips: React.FC<ConnectedProps<typeof connector>> = props => {
           </div>
         );
       })}
-    </Paper>
+    </div>
   );
 };
 
