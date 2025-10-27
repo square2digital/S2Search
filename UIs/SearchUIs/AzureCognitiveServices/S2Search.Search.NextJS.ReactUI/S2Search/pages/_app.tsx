@@ -1,11 +1,11 @@
-import type { AppProps } from 'next/app';
 import '@/styles/globals.css';
 import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
+import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { Provider } from 'react-redux';
-import { store } from '../store';
-import { ThemeProvider } from '@mui/material/styles';
 import { createAppTheme } from '../common/theme';
+import { store } from '../store';
 
 export default function App({ Component, pageProps }: AppProps) {
   // Create theme with defaults from Constants
