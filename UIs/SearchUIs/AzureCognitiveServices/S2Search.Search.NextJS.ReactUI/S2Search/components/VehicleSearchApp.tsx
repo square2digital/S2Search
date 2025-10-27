@@ -1,6 +1,6 @@
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import LoadMoreResultsButton from './LoadMoreResultsButton';
@@ -10,16 +10,6 @@ import FloatingTopButton from './material-ui/searchPage/FloatingTopButton';
 import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar';
 import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import VehicleCardList from './material-ui/vehicleCards/VehicleCardList';
-
-import {
-  insertQueryStringParam,
-  removeFullQueryString,
-} from '@/common/functions/QueryStringFunctions';
-
-import { getSelectedFacets } from '@/common/functions/FacetFunctions';
-
-import { DefaultPageSize, DefaultTheme } from '../common/Constants';
-import { LogDetails } from '../helpers/LogDetails';
 
 // New RTK action imports
 import {
@@ -53,9 +43,7 @@ import {
 import { setCancellationToken, setLoading } from '../store/slices/uiSlice';
 
 // Type imports
-import { useRouter } from 'next/router';
 import type { RootState } from '../store';
-import { SearchRequest } from '../types/searchTypes'; // Changed from 'import type' to regular import
 
 // Define the component's Redux state mapping
 const mapStateToProps = (reduxState: RootState) => {
@@ -133,174 +121,24 @@ interface OwnProps {
 type VehicleSearchAppProps = PropsFromRedux & OwnProps;
 
 const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
-  const [themeConfigured, setThemeConfigured] = useState<boolean>(false);
-  const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] =
-    useState<boolean>(false);
-
-  const router = useRouter();
-
-  const updateQueryStringURL = useCallback(() => {
-    if (reduxFacetSelectors.length > 0) {
-      insertQueryStringParam(
-        'facetselectors',
-        JSON.stringify(reduxFacetSelectors)
-      );
-
-      insertQueryStringParam('orderby', reduxOrderBy);
-    }
-
-    if (reduxSearchTerm.length > 0) {
-      insertQueryStringParam('searchterm', reduxSearchTerm);
-    }
-
-    if (reduxFacetSelectors.length === 0 && reduxSearchTerm.length === 0) {
-      removeFullQueryString();
-    }
-  }, [props.reduxFacetSelectors, props.reduxOrderBy, props.reduxSearchTerm]);
-
-  const triggerSearch = useCallback(
-    (searchRequest: SearchRequest) => {
-      props.saveLoading(true);
-      props.saveNetworkError(false);
-
-      LogDetails({ searchRequest });
-
-      fetch('/api/search', {
-        body: JSON.stringify(searchRequest),
-      })
-        .then(response => response.json())
-        .then(function (responseObject: any) {
-          props.saveLoading(false);
-
-          // Check if the response is an error object
-          if (responseObject && responseObject.error) {
-            console.error('Search API returned error:', responseObject.error);
-            props.saveNetworkError(true);
-            return;
-          }
-
-          if (
-            responseObject &&
-            responseObject.results &&
-            Array.isArray(responseObject.results)
-          ) {
-            if (searchRequest.pageNumber === 0) {
-              // First page - replace existing results
-              props.saveVehicleData(responseObject.results);
-            } else {
-              // Additional page - append to existing results
-              props.saveVehicleData([
-                ...props.reduxVehicleData,
-                ...responseObject.results,
-              ]);
-            }
-
-            props.saveSearchCount(responseObject.results.length);
-
-            // Handle facets from search response
-            if (responseObject.facets && Array.isArray(responseObject.facets)) {
-              props.saveDefaultFacetData(responseObject.facets);
-            }
-
-            props.savePreviousRequest(searchRequest);
-          } else {
-            // No results or invalid response structure
-            if (searchRequest.pageNumber === 0) {
-              props.saveVehicleData([]);
-            }
-            props.saveSearchCount(0);
-          }
-        })
-        .catch(error => {
-          console.error('Search API call failed:', error);
-          props.saveLoading(false);
-          props.saveNetworkError(true);
-        });
-    },
-    [
-      props.saveLoading,
-      props.saveNetworkError,
-      props.saveVehicleData,
-      props.saveSearchCount,
-      props.saveDefaultFacetData,
-      props.savePreviousRequest,
-      props.reduxVehicleData,
-    ]
-  );
-
-  // Setup theme configuration from API
-  const getThemeFromAPI = useCallback((): void => {
-    if (themeConfigured) return;
-
-    const applyTheme = (themeData: any) => {
-      // Use API values when available, only fallback to defaults when API value is missing
-      props.savePrimaryColour(
-        themeData?.primaryHexColour ?? DefaultTheme.primaryHexColour
-      );
-      props.saveSecondaryColour(
-        themeData?.secondaryHexColour ?? DefaultTheme.secondaryHexColour
-      );
-      props.saveNavBarColour(
-        themeData?.navBarHexColour ?? DefaultTheme.navBarHexColour
-      );
-      props.saveLogoURL(themeData?.logoURL ?? DefaultTheme.logoURL);
-      props.saveMissingImageURL(
-        themeData?.missingImageURL ?? DefaultTheme.missingImageURL
-      );
-      setThemeConfigured(true);
-    };
-
-    fetch('/api/theme')
-      .then(response => response.json())
-      .then(theme => {
-        // Only use DefaultTheme as fallback if API returns null/undefined
-        applyTheme(theme ?? DefaultTheme);
-      })
-      .catch(error => {
-        console.warn('Failed to fetch theme, using defaults:', error);
-        applyTheme(DefaultTheme);
-      });
-  }, [
-    props.themeConfigured,
-    props.savePrimaryColour,
-    props.saveSecondaryColour,
-    props.saveNavBarColour,
-    props.saveLogoURL,
-    props.saveMissingImageURL,
-  ]);
-
-  const getDocumentCountAPI = useCallback((): void => {
-    fetch('/api/documentCount')
-      .then(response => response.json())
-      .then(function (documentCount: any) {
-        // Check if the response is an error object
-        if (documentCount && documentCount.error) {
-          console.warn(
-            'Document Count API returned error:',
-            documentCount.error
-          );
-          return;
-        }
-
-        // Check if documentCount is a valid number
-        if (documentCount && typeof documentCount === 'number') {
-          saveTotalDocumentCount(documentCount);
-        }
-      })
-      .catch(error => {
-        console.error('Failed to fetch document count:', error);
-      });
-  }, [props.saveTotalDocumentCount]);
+  // Destructure only the props we actually use in the render
+  const {
+    reduxSearchTerm,
+    reduxPageNumber,
+    reduxOrderBy,
+    reduxVehicleData,
+    reduxFacetSelectors,
+  } = props;
 
   // ******************************************************************************************
   // ** this useEffect hook will setup configurations and theme settings - it is run once only
   // ******************************************************************************************
-  useEffect(() => {
+  /*   useEffect(() => {
     getThemeFromAPI();
     getDocumentCountAPI();
-  }, []);
+  }, []); */
 
-  // *********************************************************************************************************************
+  /*   // *********************************************************************************************************************
   // ** Simplified search effect - triggers when search parameters change
   // *********************************************************************************************************************
   useEffect(() => {
@@ -329,7 +167,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     triggerSearch,
     props.reduxVehicleData.length,
     updateQueryStringURL,
-  ]);
+  ]); */
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -347,16 +185,16 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
           <Alert severity="info">
             <strong>Debug Info:</strong>
             <br />
-            Search Term: {props.reduxSearchTerm}
+            Search Term: {reduxSearchTerm}
             <br />
-            Results Count: {props.reduxVehicleData.length}
+            Results Count: {reduxVehicleData.length}
             <br />
-            Page Number: {props.reduxPageNumber}
+            Page Number: {reduxPageNumber}
             <br />
-            Order By: {props.reduxOrderBy}
+            Order By: {reduxOrderBy}
             <br />
             Selected Facets:{' '}
-            {props.reduxFacetSelectors.filter((f: any) => f.checked).length}
+            {reduxFacetSelectors.filter((f: any) => f.checked).length}
           </Alert>
         </Box>
       )}
