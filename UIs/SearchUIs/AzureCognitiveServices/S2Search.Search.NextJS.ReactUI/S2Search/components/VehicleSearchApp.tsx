@@ -218,7 +218,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
                 props.reduxSearchTerm === '' &&
                 props.reduxFacetSelectors.length === 0 &&
                 props.reduxDefaultFacetData.length === 0; // Only if we don't already have default data
-              
+
               console.log('Search response - facet handling:', {
                 searchTerm: props.reduxSearchTerm,
                 facetSelectors: props.reduxFacetSelectors.length,
@@ -234,7 +234,9 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
                 console.log('Saving as DEFAULT facet data (first time only)');
                 props.saveDefaultFacetData(responseObject.facets);
               } else {
-                console.log('Skipping facet data save to preserve all options for multi-selection');
+                console.log(
+                  'Skipping facet data save to preserve all options for multi-selection'
+                );
                 // Don't overwrite defaultFacetData or save filtered results
                 // This preserves all facet options for multi-selection
               }

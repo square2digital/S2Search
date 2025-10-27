@@ -98,7 +98,7 @@ const FacetSelectionList: React.FC<
       // Fixed logic for multi-selection support:
       // Always use defaultFacetData for displaying all available facet options
       // This prevents filtered API responses from hiding unselected options
-      
+
       if (
         isSelectFacetMenuAlreadySelected(
           props.reduxFacetSelectors,
@@ -115,7 +115,7 @@ const FacetSelectionList: React.FC<
         // No selections yet - show all default facets
         facetsToLoad = props.reduxDefaultFacetData;
       }
-      
+
       // Note: We no longer use reduxFacetData for display to preserve all options
       // This allows multiple selections within the same filter category
 
