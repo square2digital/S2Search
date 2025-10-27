@@ -12,7 +12,6 @@ import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import FloatingTopButton from './material-ui/searchPage/FloatingTopButton';
 import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar';
 
-import { createSearchRequest } from '../types/SearchRequest';
 import { 
   insertQueryStringParam,
   getQueryStringSearchTerm,
@@ -69,7 +68,7 @@ import {
 
 // Type imports
 import type { RootState } from '../store';
-import type { SearchRequest as APISearchRequest } from '../types/searchTypes';
+import type { SearchRequest } from '../types/searchTypes';
 
 // Modern styles using theme-aware sx prop patterns
 const styles = {
@@ -351,28 +350,18 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
   // ** This function will make a call to our search API and update the Redux store with the returned search results
   // *********************************************************************************************************************
   const triggerSearch = useCallback(
-    (searchRequest: APISearchRequest) => {
+    (searchRequest: SearchRequest) => {
       props.saveLoading(true);
       props.saveNetworkError(false);
 
-      const searchRequestBody = {
-        searchTerm: searchRequest.searchTerm,
-        facets: searchRequest.facets,
-        orderBy: searchRequest.orderBy,
-        pageNumber: searchRequest.pageNumber,
-        pageSize: searchRequest.pageSize,
-        numberOfExistingResults: searchRequest.numberOfExistingResults,
-        callingHost: searchRequest.callingHost
-      };
-
-      LogDetails({ searchRequestBody });
+      LogDetails({ searchRequest });
 
       fetch('/api/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(searchRequestBody)
+        body: JSON.stringify(searchRequest)
       })
         .then(response => response.json())
         .then(function (responseObject: any) {
@@ -411,7 +400,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
             // Convert API SearchRequest to Redux SearchRequest format
             const reduxSearchRequest = {
               searchTerm: searchRequest.searchTerm,
-              filters: searchRequest.facets,
+              filters: searchRequest.filters,
               orderBy: searchRequest.orderBy,
               pageNumber: searchRequest.pageNumber,
               pageSize: searchRequest.pageSize,
@@ -438,7 +427,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
   // ** Actual search execution function with debouncing protection
   // *********************************************************************************************************************
   const executeSearch = useCallback(
-    (searchRequest: APISearchRequest) => {
+    (searchRequest: SearchRequest) => {
       // Prevent execution if already searching or if this exact search was just executed
       const searchSignature = JSON.stringify(searchRequest);
       if (isSearching || searchSignature === lastExecutedSearch) {
@@ -479,17 +468,17 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
       // Set a new debounce timer
       searchDebounceTimer.current = setTimeout(() => {
         const facetFilters = getSelectedFacets(props.reduxFacetSelectors);
-        const facets = facetFilters.join(' AND ');
+        const filters = facetFilters.join(' AND ');
 
-        const searchRequest = createSearchRequest(
-          props.reduxSearchTerm,
-          facets,
-          props.reduxOrderBy,
+        const searchRequest: SearchRequest = {
+          searchTerm: props.reduxSearchTerm,
+          filters,
+          orderBy: props.reduxOrderBy,
           pageNumber,
           pageSize,
           numberOfExistingResults,
-          'localhost:3000'
-        );
+          callingHost: 'localhost:3000'
+        };
 
         // Check if this is the same as the previous request to avoid duplicate calls
         if (
@@ -497,7 +486,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
           IsPreviousRequestDataTheSame(
             {
               searchTerm: searchRequest.searchTerm,
-              facets: [searchRequest.facets],
+              facets: [searchRequest.filters],
               orderBy: searchRequest.orderBy,
               pageNumber: searchRequest.pageNumber
             }, 
@@ -519,7 +508,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
           IsRequestReOrderBy(
             {
               searchTerm: searchRequest.searchTerm,
-              facets: [searchRequest.facets],
+              facets: [searchRequest.filters],
               orderBy: searchRequest.orderBy,
               pageNumber: searchRequest.pageNumber
             }, 

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { SearchRequest } from '../../types/searchTypes';
 
 interface VehicleData {
   vehicleID: string;
@@ -20,14 +21,6 @@ interface VehicleData {
   manufactureColour: string;
   vrm: string;
   imageURL: string | null | undefined;
-}
-
-interface SearchRequest {
-  searchTerm: string;
-  filters: string;
-  orderBy: string;
-  pageNumber: number;
-  pageSize: number;
 }
 
 interface SearchState {
