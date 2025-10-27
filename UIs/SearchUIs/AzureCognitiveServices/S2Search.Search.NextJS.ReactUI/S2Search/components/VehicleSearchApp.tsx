@@ -61,7 +61,7 @@ import { setCancellationToken, setLoading } from '../store/slices/uiSlice';
 // Type imports
 import { useRouter } from 'next/router';
 import type { RootState } from '../store';
-import type { SearchRequest } from '../types/searchTypes';
+import { SearchRequest } from '../types/searchTypes'; // Changed from 'import type' to regular import
 
 // Define the component's Redux state mapping
 const mapStateToProps = (reduxState: RootState) => {
@@ -150,7 +150,6 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   const [queryStringParams, setQueryStringParams] = useState<any>();
 
   // Destructure frequently used props to avoid dependency issues
-  const { saveSearchTerm } = props;
   const router = useRouter();
 
   const updateQueryStringURL = () => {
@@ -238,7 +237,15 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
           props.saveNetworkError(true);
         });
     },
-    [props]
+    [
+      props.saveLoading,
+      props.saveNetworkError,
+      props.saveVehicleData,
+      props.saveSearchCount,
+      props.saveDefaultFacetData,
+      props.savePreviousRequest,
+      props.reduxVehicleData,
+    ]
   );
 
   // Setup theme configuration from API
@@ -373,7 +380,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     triggerSearch(
       new SearchRequest(
         props.reduxSearchTerm,
-        getSelectedFacets(props.reduxFacetSelectors),
+        getSelectedFacets(props.reduxFacetSelectors), // This returns string[], constructor will handle conversion
         props.reduxOrderBy,
         props.reduxPageNumber,
         DefaultPageSize,
