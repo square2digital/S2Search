@@ -42,11 +42,11 @@ export const StaticFacets = ['make'];
 
 // global S2 theme
 export const DefaultTheme = {
-  primaryHexColour: process.env.NEXT_PUBLIC_THEME_PRIMARY_COLOUR || '#616161',
-  secondaryHexColour: process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR || '#303f9f',
-  navBarHexColour: process.env.NEXT_PUBLIC_THEME_NAVBAR_COLOUR || '#40739dff',
+  primaryHexColour: process.env.NEXT_PUBLIC_THEME_PRIMARY_COLOUR || '#616161ff',
+  secondaryHexColour: process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR || '#9f3092ff',
+  navBarHexColour: process.env.NEXT_PUBLIC_THEME_NAVBAR_COLOUR || '#4c9d40ff',
   logoURL: process.env.NEXT_PUBLIC_THEME_LOGO_URL || '',
-  missingImageURL: process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL || '/images/Square2Digital-Logo-2024.svg',
+  missingImageURL: process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL || '/images/Square_2_Logo_Colour.svg',
 };
 
 export const EnableAutoComplete = true;

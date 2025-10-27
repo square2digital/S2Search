@@ -151,25 +151,29 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
     if (themeConfigured) return;
 
     const applyTheme = (themeData: any) => {
+      // Use API values when available, only fallback to defaults when API value is missing
       props.savePrimaryColour(
-        themeData.primaryHexColour || DefaultTheme.primaryHexColour
+        themeData?.primaryHexColour ?? DefaultTheme.primaryHexColour
       );
       props.saveSecondaryColour(
-        themeData.secondaryHexColour || DefaultTheme.secondaryHexColour
+        themeData?.secondaryHexColour ?? DefaultTheme.secondaryHexColour
       );
       props.saveNavBarColour(
-        themeData.navBarHexColour || DefaultTheme.navBarHexColour
+        themeData?.navBarHexColour ?? DefaultTheme.navBarHexColour
       );
-      props.saveLogoURL(themeData.logoURL || DefaultTheme.logoURL);
+      props.saveLogoURL(themeData?.logoURL ?? DefaultTheme.logoURL);
       props.saveMissingImageURL(
-        themeData.missingImageURL || DefaultTheme.missingImageURL
+        themeData?.missingImageURL ?? DefaultTheme.missingImageURL
       );
       setThemeConfigured(true);
     };
 
     fetch('/api/theme')
       .then(response => response.json())
-      .then(theme => applyTheme(theme || DefaultTheme))
+      .then(theme => {
+        // Only use DefaultTheme as fallback if API returns null/undefined
+        applyTheme(theme ?? DefaultTheme);
+      })
       .catch(error => {
         console.warn('Failed to fetch theme, using defaults:', error);
         applyTheme(DefaultTheme);

@@ -78,6 +78,7 @@ export class ApiClient {
   async invokeSearchAPI<T = any>(
     endpoint: string,
     includeApiKey: boolean = true,
+    params?: SearchRequest  
   ): Promise<ApiResponse<T>> {
     const config = buildApiConfig(includeApiKey);
     const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
@@ -85,14 +86,14 @@ export class ApiClient {
     return this.handleRequest(axios.get<T>(url, config));
   }
 
-  async search(): Promise<ApiResponse> {
+  async search(params: SearchRequest ): Promise<ApiResponse> {
     const searchEndpoint = SearchAPIEndpoint;
-    return this.invokeSearchAPI(`${searchEndpoint}`, true);
+    return this.invokeSearchAPI(`${searchEndpoint}`, false, params);
   }
 
-  async getFacets(): Promise<ApiResponse> {
+  async getFacets(params: SearchRequest ): Promise<ApiResponse> {
     const facetEndpoint = process.env.NEXT_PUBLIC_FACET_API_ENDPOINT;
-    return this.invokeSearchAPI(`${facetEndpoint}`, true);
+    return this.invokeSearchAPI(`${facetEndpoint}`, false, params);
   }  
 
   // Specific API methods

@@ -13,11 +13,11 @@ export default async function handler(
     if (response.success) {
       res.status(200).json(response.data);
     } else {
-      // Return default theme on error
-      res.status(200).json(DefaultTheme);
+      console.error('Failed to call Theme from API:', response.error);
+      res.status(500).json(DefaultTheme);
     }
   } catch (error) {
     console.error('Theme API Error:', error);
-    res.status(200).json(DefaultTheme);
+    res.status(500).json(DefaultTheme);
   }
 }
