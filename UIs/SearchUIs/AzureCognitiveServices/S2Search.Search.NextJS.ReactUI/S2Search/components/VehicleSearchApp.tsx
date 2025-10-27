@@ -214,12 +214,24 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
             if (responseObject.facets && Array.isArray(responseObject.facets)) {
               // If this is initial load (no search term, no facet selectors), save as default facets
               // Otherwise save as dynamic facets for filtered results
-              if (
+              const isInitialLoad =
                 props.reduxSearchTerm === '' &&
-                props.reduxFacetSelectors.length === 0
-              ) {
+                props.reduxFacetSelectors.length === 0;
+              console.log('Search response - facet handling:', {
+                searchTerm: props.reduxSearchTerm,
+                facetSelectors: props.reduxFacetSelectors.length,
+                isInitialLoad,
+                facetsCount: responseObject.facets.length,
+                facetKeys: responseObject.facets.map(
+                  (f: any) => f.facetKey || f.key
+                ),
+              });
+
+              if (isInitialLoad) {
+                console.log('Saving as DEFAULT facet data');
                 props.saveDefaultFacetData(responseObject.facets);
               } else {
+                console.log('Saving as DYNAMIC facet data');
                 props.saveFacetData(responseObject.facets);
               }
             }
@@ -327,6 +339,13 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   // *********************************************************************************************************************
   useEffect(() => {
     // Trigger initial search when component mounts or search parameters change
+    console.log('Search effect triggered with:', {
+      searchTerm: props.reduxSearchTerm,
+      orderBy: props.reduxOrderBy,
+      pageNumber: props.reduxPageNumber,
+      facetSelectors: props.reduxFacetSelectors.length,
+    });
+
     updateQueryStringURL();
 
     const searchRequest = new SearchRequest(

@@ -70,6 +70,15 @@ const facetSlice = createSlice({
       state.facetSelectedKeys = action.payload;
     },
     setDefaultFacetData: (state, action: PayloadAction<DefaultFacet[]>) => {
+      console.log(
+        'Redux: setDefaultFacetData called with:',
+        action.payload?.length,
+        'facets'
+      );
+      console.log(
+        'Facet keys:',
+        action.payload?.map(f => f.facetKey)
+      );
       state.defaultFacetData = action.payload;
     },
     setFacetData: (state, action: PayloadAction<FacetData[]>) => {
