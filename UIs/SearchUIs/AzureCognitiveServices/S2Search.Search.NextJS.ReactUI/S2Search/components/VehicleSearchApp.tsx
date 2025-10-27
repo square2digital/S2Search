@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
-import { grey, red } from '@mui/material/colors';
 
 import FacetFullScreenDialog from './material-ui/filtersDialog/FacetFullScreenDialog';
 import VehicleCardList from './material-ui/vehicleCards/VehicleCardList';

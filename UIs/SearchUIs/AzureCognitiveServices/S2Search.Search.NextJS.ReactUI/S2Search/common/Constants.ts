@@ -8,9 +8,6 @@ export const DocumentCountURL = process.env.NEXT_PUBLIC_DOCUMENTS_COUNT_URL;
 export const DefaultPageNumber = Number(
   process.env.NEXT_PUBLIC_DEFAULT_PAGE_NUMBER
 );
-export const DefaultLoadSpeed = Number(
-  process.env.NEXT_PUBLIC_DEFAULT_LOAD_SPEED
-);
 
 export const DefaultPageSize = Number(
   process.env.NEXT_PUBLIC_DEFAULT_PAGE_SIZE
@@ -18,7 +15,6 @@ export const DefaultPageSize = Number(
 
 export const MobileMaxWidth = Number(process.env.NEXT_PUBLIC_MOBILE_MAX_WIDTH);
 
-export const InitialSearchTerm = 'Initial Search Term';
 export const GetOrderByData = [
   { name: 'Price_High', display: 'Price - high to low', value: 'price desc' },
   { name: 'Price_Low', display: 'Price - low to high', value: 'price asc' },
@@ -51,13 +47,6 @@ export const DefaultTheme = {
   logoURL: process.env.NEXT_PUBLIC_THEME_LOGO_URL || '',
   missingImageURL: process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL || '/images/Square2Digital-Logo-2024.svg',
 };
-
-export const DefaultConfigData = [
-  {
-    key: 'EnableAutoComplete',
-    value: 'false',
-  },
-];
 
 export const EnableAutoComplete = true;
 export const HideIconVehicleCounts = false;
