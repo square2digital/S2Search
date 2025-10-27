@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { ApiConfig, SearchQueryParams, ApiResponse } from '@/types/apiTypes';
+=======
+import { ApiConfig, ApiResponse } from '@/types/apiTypes';
+>>>>>>> 54966491e121c343d5475bc3aa8b175d60bed95c
 import { SearchRequest } from '@/types/searchTypes';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { SearchAPIEndpoint, AutoCompleteURL, DocumentCountURL, ApiRootEndpoint } from '@/common/Constants';
@@ -44,7 +48,7 @@ function buildConfig(includeApiKey: boolean = true): ApiConfig {
   return config;
 }
 
-function buildSearchQueryString(params: SearchQueryParams): string {
+function buildSearchQueryString(params: SearchRequest): string {
   const queryParams = new URLSearchParams();
   
   Object.entries(params).forEach(([key, value]) => {
@@ -97,10 +101,10 @@ export class ApiClient {
   }
 
   // Core invoke API method
-  async invokeAPI<T = any>(
+  async invokeSearchAPI<T = any>(
     endpoint: string,
     includeApiKey: boolean = true,
-    params?: SearchQueryParams
+    params?: SearchRequest
   ): Promise<ApiResponse<T>> {
     const config = buildConfig(includeApiKey);
     
@@ -117,28 +121,37 @@ export class ApiClient {
 
   async search(params: SearchRequest): Promise<ApiResponse> {
     const searchEndpoint = SearchAPIEndpoint;
+<<<<<<< HEAD
     return this.invokeAPI(`${searchEndpoint}`, false, params);
+=======
+    return this.invokeSearchAPI(`${searchEndpoint}`, false, params);
+>>>>>>> 54966491e121c343d5475bc3aa8b175d60bed95c
   }
 
   async getFacets(params: SearchRequest): Promise<ApiResponse> {
     const facetEndpoint = process.env.NEXT_PUBLIC_FACET_API_ENDPOINT;
+<<<<<<< HEAD
     return this.invokeAPI(`${facetEndpoint}`, false, params);
+=======
+    return this.invokeSearchAPI(`${facetEndpoint}`, false, params);
+>>>>>>> 54966491e121c343d5475bc3aa8b175d60bed95c
   }  
 
   // Specific API methods
   async getTheme(callingHost: string): Promise<ApiResponse> {
     const host = formatCallingHost(callingHost);
-    return this.invokeAPI(`/api/configuration/theme/${host}`, true);
+    return this.invokeSearchAPI(`/api/configuration/theme/${host}`, true);
   }
 
   async getConfiguration(callingHost: string): Promise<ApiResponse> {
     const host = formatCallingHost(callingHost);
-    return this.invokeAPI(`/api/configuration/search/${host}`, true);
+    return this.invokeSearchAPI(`/api/configuration/search/${host}`, true);
   }
 
   async getDocumentCount(callingHost: string): Promise<ApiResponse<number>> {
     const host = formatCallingHost(callingHost);
     const countEndpoint = DocumentCountURL;
+<<<<<<< HEAD
     return this.invokeAPI(`${countEndpoint}`, true, { callingHost: host });
   }
 
@@ -148,6 +161,15 @@ export class ApiClient {
       searchTerm: searchTerm,
       callingHost: host,
     });
+=======
+    return this.invokeSearchAPI(`${countEndpoint}`, true, { callingHost: host });
+  }
+
+  async autoSuggest(params: SearchRequest): Promise<ApiResponse> {
+    const host = formatCallingHost(params.callingHost);
+    const autoCompleteEndpoint = AutoCompleteURL;
+    return this.invokeSearchAPI(`${autoCompleteEndpoint}`, true, params);
+>>>>>>> 54966491e121c343d5475bc3aa8b175d60bed95c
   }
 }
 
