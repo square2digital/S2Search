@@ -6,7 +6,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import CssBaseline from '@mui/material/CssBaseline';
 import Head from 'next/head';
-import { Provider as ReduxProvider } from 'react-redux';
+import { Provider } from 'react-redux';
 import { store } from '../store';
 import { ThemeProvider } from '@mui/material/styles';
 import { DefaultTheme } from '../common/Constants';
@@ -31,9 +31,9 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <ReduxProvider store={store}>
+        <Provider store={store}>
           <Component {...pageProps} />
-        </ReduxProvider>
+        </Provider>
       </ThemeProvider>
     </>
   );
