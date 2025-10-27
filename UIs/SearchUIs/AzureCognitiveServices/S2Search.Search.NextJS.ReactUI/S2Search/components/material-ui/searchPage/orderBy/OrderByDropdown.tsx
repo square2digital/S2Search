@@ -1,8 +1,8 @@
-import React from 'react';
+import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import React from 'react';
 import { GetOrderByData } from '../../../../common/Constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { setOrderBy } from '../../../../store/slices/searchSlice';
@@ -27,8 +27,8 @@ const OrderByDropdown: React.FC = () => {
   const dispatch = useAppDispatch();
   const reduxOrderBy = useAppSelector(state => state.search.orderBy);
 
-  const GenerateDropdown = (): JSX.Element[] => {
-    const dropdownArray: JSX.Element[] = [];
+  const GenerateDropdown = (): React.ReactElement[] => {
+    const dropdownArray: React.ReactElement[] = [];
 
     if (GetOrderByData) {
       for (const order of GetOrderByData as OrderByOption[]) {
@@ -68,7 +68,7 @@ const OrderByDropdown: React.FC = () => {
           onClose={handleClose}
           onOpen={handleOpen}
           value={orderBy}
-          renderValue={(selected) => reduxOrderBy !== selected}
+          renderValue={selected => reduxOrderBy !== selected}
           onChange={handleChange}
           label="Order By"
         >

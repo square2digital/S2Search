@@ -1,8 +1,8 @@
-import React from 'react';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
+import React from 'react';
 import { GetOrderByData } from '../../../../common/Constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { setOrderBy } from '../../../../store/slices/searchSlice';
@@ -22,12 +22,12 @@ interface OrderByOption {
 
 const OrderByRadios: React.FC = () => {
   const [orderBy, setLocalOrderBy] = React.useState<string>('');
-  
+
   const dispatch = useAppDispatch();
   const reduxOrderBy = useAppSelector(state => state.search.orderBy);
 
-  const GenerateRadios = (): JSX.Element[] => {
-    const dropdownArray: JSX.Element[] = [];
+  const GenerateRadios = (): React.ReactElement[] => {
+    const dropdownArray: React.ReactElement[] = [];
 
     if (GetOrderByData) {
       let index = 0;
