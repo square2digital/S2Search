@@ -1,9 +1,9 @@
-﻿export const ApiRootEndpoint = process.env.NEXT_PUBLIC_API_URL;
+﻿export const ApiRootEndpoint = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:5001';
 
-export const SearchAPIEndpoint = process.env.NEXT_PUBLIC_SEARCH_API_ENDPOINT;
-export const FacetsAPIEndpoint = process.env.NEXT_PUBLIC_FACET_API_ENDPOINT;
-export const AutoCompleteURL = process.env.NEXT_PUBLIC_AUTO_COMPLETE_URL;
-export const DocumentCountURL = process.env.NEXT_PUBLIC_DOCUMENTS_COUNT_URL;
+export const SearchAPIEndpoint = process.env.NEXT_PUBLIC_SEARCH_API_ENDPOINT || '/v1/search';
+export const FacetsAPIEndpoint = process.env.NEXT_PUBLIC_FACET_API_ENDPOINT || '/v1/facet';
+export const AutoCompleteURL = process.env.NEXT_PUBLIC_AUTO_COMPLETE_URL || '/AutoSuggest';
+export const DocumentCountURL = process.env.NEXT_PUBLIC_DOCUMENTS_COUNT_URL || '/TotalDocumentCount';
 
 export const DefaultPageNumber = Number(
   process.env.NEXT_PUBLIC_DEFAULT_PAGE_NUMBER

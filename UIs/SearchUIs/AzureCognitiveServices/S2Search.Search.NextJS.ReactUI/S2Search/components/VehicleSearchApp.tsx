@@ -369,15 +369,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
               props.saveDefaultFacetData(responseObject.facets);
             }
 
-            // Convert API SearchRequest to Redux SearchRequest format
-            const reduxSearchRequest = {
-              searchTerm: searchRequest.searchTerm,
-              filters: searchRequest.filters,
-              orderBy: searchRequest.orderBy,
-              pageNumber: searchRequest.pageNumber,
-              pageSize: searchRequest.pageSize,
-            };
-            props.savePreviousRequest(reduxSearchRequest);
+            props.savePreviousRequest(searchRequest);
           } else {
             // No results or invalid response structure
             if (searchRequest.pageNumber === 0) {
