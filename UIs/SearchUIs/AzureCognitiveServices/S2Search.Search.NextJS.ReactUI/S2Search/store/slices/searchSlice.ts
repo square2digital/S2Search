@@ -81,7 +81,10 @@ const searchSlice = createSlice({
     setNetworkError: (state, action: PayloadAction<boolean>) => {
       state.networkError = action.payload;
     },
-    setPreviousRequest: (state, action: PayloadAction<SearchRequest | ISearchRequest>) => {
+    setPreviousRequest: (
+      state,
+      action: PayloadAction<SearchRequest | ISearchRequest>
+    ) => {
       // Convert class instance to plain object for serialization
       const payload = action.payload;
       state.previousRequest = {
