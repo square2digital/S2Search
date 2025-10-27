@@ -8,68 +8,26 @@ import { DefaultTheme } from '../common/Constants';
 import ThemeColours from '../common/ThemeColours';
 import { createAppTheme } from '../common/theme';
 
-interface ThemeData {
-  palette: {
-    primary: {
-      main: string;
-    };
-    secondary: {
-      main: string;
-    };
-  };
-  overrides?: any;
-}
-
 interface HomeProps {
-  data?: ThemeData;
-  primaryHexColour?: string;
-  secondaryHexColour?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
 }
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async ({ req }) => {
-  const data = await ThemeColours(req);
-
-  if (!data) {
-    return {
-      props: {
-        primaryHexColour: DefaultTheme.primaryHexColour,
-        secondaryHexColour: DefaultTheme.secondaryHexColour,
-      },
-    };
-  }
-
-  // Ensure all required values are defined with fallbacks
-  const primaryColor = data.palette?.primary?.main ?? DefaultTheme.primaryHexColour;
-  const secondaryColor = data.palette?.secondary?.main ?? DefaultTheme.secondaryHexColour;
-
-  // Type assertion to ensure they are strings (we know they are after nullish coalescing)
-  const themeData: ThemeData = {
-    palette: {
-      primary: {
-        main: primaryColor as string,
-      },
-      secondary: {
-        main: secondaryColor as string,
-      },
-    },
-    overrides: data.overrides,
-  };
+  const themeData = await ThemeColours(req);
 
   return {
     props: {
-      data: themeData,
+      primaryColor: themeData?.palette?.primary?.main || DefaultTheme.primaryHexColour,
+      secondaryColor: themeData?.palette?.secondary?.main || DefaultTheme.secondaryHexColour,
     },
   };
 };
 
-const Home: React.FC<HomeProps> = (props) => {
-  // Create theme using the modern theme factory
-  const primaryColor = props.data?.palette?.primary?.main || props.primaryHexColour || DefaultTheme.primaryHexColour;
-  const secondaryColor = props.data?.palette?.secondary?.main || props.secondaryHexColour || DefaultTheme.secondaryHexColour;
-  
+const Home: React.FC<HomeProps> = ({ primaryColor, secondaryColor }) => {
   const theme = createAppTheme({
-    primaryColor,
-    secondaryColor,
+    primaryColor: primaryColor || DefaultTheme.primaryHexColour,
+    secondaryColor: secondaryColor || DefaultTheme.secondaryHexColour,
   });
 
   return (
