@@ -32,7 +32,7 @@ export class SearchRequest implements ISearchRequest {
 
     // Convert filters array to string if needed, otherwise use as-is
     if (Array.isArray(filters)) {
-      this.filters = filters.join(' OR ');
+      this.filters = filters.join(' or ');
     } else {
       this.filters = filters || '';
     }
