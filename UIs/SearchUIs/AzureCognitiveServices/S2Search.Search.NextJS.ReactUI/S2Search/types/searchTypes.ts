@@ -5,7 +5,7 @@ export interface SearchRequest {
   pageNumber: number;
   pageSize: number;
   numberOfExistingResults?: number;
-  callingHost?: string;
+  callingHost: string;
 }
 
 export interface SelectedFacetData {

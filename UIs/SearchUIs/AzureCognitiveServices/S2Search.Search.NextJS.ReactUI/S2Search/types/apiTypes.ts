@@ -10,13 +10,3 @@ export interface ApiResponse<T = any> {
   success: boolean;
   error?: string;
 }
-
-export interface SearchQueryParams {
-  searchTerm?: string;
-  filters?: string;
-  orderBy?: string;
-  pageNumber?: number;
-  pageSize?: number;
-  numberOfExistingResults?: number;
-  callingHost?: string;
-}
