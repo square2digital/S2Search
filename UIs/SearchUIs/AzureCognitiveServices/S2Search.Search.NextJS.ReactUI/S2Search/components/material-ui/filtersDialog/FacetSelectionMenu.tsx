@@ -1,37 +1,37 @@
-import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import Badge from '@mui/material/Badge';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
-import Badge from '@mui/material/Badge';
+import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 import { GenerateUniqueID } from '../../../common/functions/SharedFunctions';
+import { RootState } from '../../../store';
 import {
-  setVehicleData,
-  setPageNumber,
-  setSearchTerm,
-  setOrderBy,
-} from '../../../store/slices/searchSlice';
-import {
-  setFacetSelectors,
-  setFacetSelectedKeys,
   resetFacets,
+  setFacetSelectedKeys,
+  setFacetSelectors,
   setSelectedFacet,
 } from '../../../store/slices/facetSlice';
+import {
+  setOrderBy,
+  setPageNumber,
+  setSearchTerm,
+  setVehicleData,
+} from '../../../store/slices/searchSlice';
 import { setDialogOpen } from '../../../store/slices/uiSlice';
-import { RootState } from '../../../store';
 
 const drawerWidth = 280;
 
-const FacetSelectionMenu: React.FC<ConnectedProps<typeof connector>> = (
-  props
-) => {
+const FacetSelectionMenu: React.FC<
+  ConnectedProps<typeof connector>
+> = props => {
   const resetFilters = (): void => {
     props.saveResetFacets();
   };
@@ -51,9 +51,8 @@ const FacetSelectionMenu: React.FC<ConnectedProps<typeof connector>> = (
   };
 
   return (
-    <Box
-      component="nav"
-      sx={{
+    <nav
+      style={{
         width: drawerWidth,
         flexShrink: 0,
         height: '100vh',
@@ -199,7 +198,7 @@ const FacetSelectionMenu: React.FC<ConnectedProps<typeof connector>> = (
           </ListItem>
         </List>
       </Paper>
-    </Box>
+    </nav>
   );
 };
 
@@ -220,7 +219,8 @@ const mapStateToProps = (reduxState: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    saveVehicleData: (vehicleData: any[]) => dispatch(setVehicleData(vehicleData)),
+    saveVehicleData: (vehicleData: any[]) =>
+      dispatch(setVehicleData(vehicleData)),
     savePageNumber: (pageNumber: number) => dispatch(setPageNumber(pageNumber)),
     saveFacetSelectors: (resetFacetArray: any[]) =>
       dispatch(setFacetSelectors(resetFacetArray)),
@@ -228,7 +228,8 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(setFacetSelectedKeys(facetSelectedKeys)),
     saveSearchTerm: (searchTerm: string) => dispatch(setSearchTerm(searchTerm)),
     saveOrderby: (orderBy: string) => dispatch(setOrderBy(orderBy)),
-    saveDialogOpen: (dialogOpen: boolean) => dispatch(setDialogOpen(dialogOpen)),
+    saveDialogOpen: (dialogOpen: boolean) =>
+      dispatch(setDialogOpen(dialogOpen)),
     saveSelectedFacet: (facet: string) => dispatch(setSelectedFacet(facet)),
     saveResetFacets: () => dispatch(resetFacets()),
   };

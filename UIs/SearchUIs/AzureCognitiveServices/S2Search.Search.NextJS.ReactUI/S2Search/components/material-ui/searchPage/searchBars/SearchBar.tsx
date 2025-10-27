@@ -1,32 +1,31 @@
-import React from 'react';
-import Paper from '@mui/material/Paper';
+import RotateLeftIcon from '@mui/icons-material/RotateLeft';
+import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
-import Divider from '@mui/material/Divider';
-import RotateLeftIcon from '@mui/icons-material/RotateLeft';
+import React from 'react';
 import { MobileMaxWidth } from '../../../../common/Constants';
-import {
-  checkForEnter,
-  generatePlaceholder,
-  resetFilters,
-  disableResetFiltersButton,
-  updateSearchTerm,
-} from './searchBarSharedFunctions';
 import { useWindowSize } from '../../../../hooks/useWindowSize';
-import useDynamicPlaceholder from './DynamicPlaceholder';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
+  resetFacets,
+  setFacetSelectedKeys,
+  setFacetSelectors,
+} from '../../../../store/slices/facetSlice';
+import {
+  setOrderBy,
+  setPageNumber,
+  setSearchCount,
   setSearchTerm,
   setVehicleData,
-  setPageNumber,
-  setOrderBy,
-  setSearchCount,
 } from '../../../../store/slices/searchSlice';
+import useDynamicPlaceholder from './DynamicPlaceholder';
 import {
-  resetFacets,
-  setFacetSelectors,
-  setFacetSelectedKeys,
-} from '../../../../store/slices/facetSlice';
+  checkForEnter,
+  disableResetFiltersButton,
+  generatePlaceholder,
+  resetFilters,
+  updateSearchTerm,
+} from './searchBarSharedFunctions';
 
 // Inline styles object (converted from makeStyles)
 const styles = {
@@ -40,11 +39,15 @@ interface SearchBarProps {
   placeholderText?: string;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = (props) => {
+export const SearchBar: React.FC<SearchBarProps> = props => {
   const dispatch = useAppDispatch();
   const reduxSearchTerm = useAppSelector(state => state.search.searchTerm);
-  const reduxFacetSelectors = useAppSelector(state => state.facet.facetSelectors);
-  const reduxConfigPlaceholders = useAppSelector(state => state.config.placeholderArray);
+  const reduxFacetSelectors = useAppSelector(
+    state => state.facet.facetSelectors
+  );
+  const reduxConfigPlaceholders = useAppSelector(
+    state => state.config.placeholderArray
+  );
 
   const { width: windowWidth } = useWindowSize();
   const dynamicPlaceholder = useDynamicPlaceholder(reduxConfigPlaceholders);
@@ -57,8 +60,10 @@ export const SearchBar: React.FC<SearchBarProps> = (props) => {
     placeholderText: props.placeholderText,
     saveSearchTerm: (term: string) => dispatch(setSearchTerm(term)),
     saveVehicleData: (data: any[]) => dispatch(setVehicleData(data)),
-    saveFacetSelectors: (selectors: any[]) => dispatch(setFacetSelectors(selectors)),
-    saveFacetSelectedKeys: (keys: any[]) => dispatch(setFacetSelectedKeys(keys)),
+    saveFacetSelectors: (selectors: any[]) =>
+      dispatch(setFacetSelectors(selectors)),
+    saveFacetSelectedKeys: (keys: any[]) =>
+      dispatch(setFacetSelectedKeys(keys)),
     savePageNumber: (page: number) => dispatch(setPageNumber(page)),
     saveOrderby: (order: string) => dispatch(setOrderBy(order)),
     saveSearchCount: (count: number) => dispatch(setSearchCount(count)),
@@ -79,12 +84,15 @@ export const SearchBar: React.FC<SearchBarProps> = (props) => {
 
   return (
     <>
-      <Paper
-        component="form"
+      <form
         style={{
           padding: '2px 4px',
           display: 'flex',
           height: 45,
+          backgroundColor: 'white',
+          borderRadius: '4px',
+          border: '1px solid rgba(0, 0, 0, 0.23)',
+          boxShadow: 'none',
         }}
       >
         <InputBase
@@ -112,7 +120,7 @@ export const SearchBar: React.FC<SearchBarProps> = (props) => {
         >
           <RotateLeftIcon />
         </IconButton>
-      </Paper>
+      </form>
     </>
   );
 };

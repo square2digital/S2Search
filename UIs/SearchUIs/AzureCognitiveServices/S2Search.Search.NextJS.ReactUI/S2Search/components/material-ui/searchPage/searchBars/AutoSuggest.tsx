@@ -1,36 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import InputBase from '@mui/material/InputBase';
-import Autocomplete from '@mui/material/Autocomplete';
-import Popper from '@mui/material/Popper';
-import parse from 'autosuggest-highlight/parse';
-import match from 'autosuggest-highlight/match';
-import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
-import Divider from '@mui/material/Divider';
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
+import Autocomplete from '@mui/material/Autocomplete';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import Popper from '@mui/material/Popper';
+import match from 'autosuggest-highlight/match';
+import parse from 'autosuggest-highlight/parse';
+import React, { useEffect, useState } from 'react';
 import { MobileMaxWidth } from '../../../../common/Constants';
 import { useWindowSize } from '../../../../hooks/useWindowSize';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import {
+  resetFacets,
+  setFacetSelectedKeys,
+  setFacetSelectors,
+} from '../../../../store/slices/facetSlice';
+import {
+  setOrderBy,
+  setPageNumber,
+  setSearchCount,
+  setSearchTerm,
+  setVehicleData,
+} from '../../../../store/slices/searchSlice';
 import useDynamicPlaceholder from './DynamicPlaceholder';
 import {
   checkForEnter,
+  disableResetFiltersButton,
   generatePlaceholder,
   resetFilters,
-  disableResetFiltersButton,
   updateSearchTerm,
 } from './searchBarSharedFunctions';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import {
-  setSearchTerm,
-  setVehicleData,
-  setPageNumber,
-  setOrderBy,
-  setSearchCount,
-} from '../../../../store/slices/searchSlice';
-import {
-  resetFacets,
-  setFacetSelectors,
-  setFacetSelectedKeys,
-} from '../../../../store/slices/facetSlice';
 
 interface AutoSuggestProps {
   placeholderText?: string;
@@ -41,14 +40,18 @@ interface SuggestionPart {
   text: string;
 }
 
-export const AutoSuggest: React.FC<AutoSuggestProps> = (props) => {
+export const AutoSuggest: React.FC<AutoSuggestProps> = props => {
   const [options, setOptions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
-  
+
   const dispatch = useAppDispatch();
   const reduxSearchTerm = useAppSelector(state => state.search.searchTerm);
-  const reduxFacetSelectors = useAppSelector(state => state.facet.facetSelectors);
-  const reduxConfigPlaceholders = useAppSelector(state => state.config.placeholderArray);
+  const reduxFacetSelectors = useAppSelector(
+    state => state.facet.facetSelectors
+  );
+  const reduxConfigPlaceholders = useAppSelector(
+    state => state.config.placeholderArray
+  );
 
   const { width: windowWidth } = useWindowSize();
   const dynamicPlaceholder = useDynamicPlaceholder(reduxConfigPlaceholders);
@@ -61,8 +64,10 @@ export const AutoSuggest: React.FC<AutoSuggestProps> = (props) => {
     placeholderText: props.placeholderText,
     saveSearchTerm: (term: string) => dispatch(setSearchTerm(term)),
     saveVehicleData: (data: any[]) => dispatch(setVehicleData(data)),
-    saveFacetSelectors: (selectors: any[]) => dispatch(setFacetSelectors(selectors)),
-    saveFacetSelectedKeys: (keys: any[]) => dispatch(setFacetSelectedKeys(keys)),
+    saveFacetSelectors: (selectors: any[]) =>
+      dispatch(setFacetSelectors(selectors)),
+    saveFacetSelectedKeys: (keys: any[]) =>
+      dispatch(setFacetSelectedKeys(keys)),
     savePageNumber: (page: number) => dispatch(setPageNumber(page)),
     saveOrderby: (order: string) => dispatch(setOrderBy(order)),
     saveSearchCount: (count: number) => dispatch(setSearchCount(count)),
@@ -96,7 +101,10 @@ export const AutoSuggest: React.FC<AutoSuggestProps> = (props) => {
     setShowDropdown(options.length > 0);
   }, [reduxSearchTerm, options.length]);
 
-  const updateSearch = (_event: React.SyntheticEvent, value: string | null): void => {
+  const updateSearch = (
+    _event: React.SyntheticEvent,
+    value: string | null
+  ): void => {
     updateSearchTerm(value || '', searchBarProps);
   };
 
@@ -121,7 +129,11 @@ export const AutoSuggest: React.FC<AutoSuggestProps> = (props) => {
 
     if (MobileMaxWidth > windowWidth) {
       return (
-        <Popper {...popperProps} style={styles.popper} placement="bottom-start" />
+        <Popper
+          {...popperProps}
+          style={styles.popper}
+          placement="bottom-start"
+        />
       );
     } else {
       return <Popper {...popperProps} />;
@@ -163,12 +175,15 @@ export const AutoSuggest: React.FC<AutoSuggestProps> = (props) => {
         const { ...rest } = params;
         return (
           <>
-            <Paper
-              component="form"
+            <form
               style={{
                 padding: '2px 4px',
                 display: 'flex',
                 height: 45,
+                backgroundColor: 'white',
+                borderRadius: '4px',
+                border: '1px solid rgba(0, 0, 0, 0.23)',
+                boxShadow: 'none',
               }}
             >
               <InputBase
@@ -205,7 +220,7 @@ export const AutoSuggest: React.FC<AutoSuggestProps> = (props) => {
               >
                 <RotateLeftIcon />
               </IconButton>
-            </Paper>
+            </form>
           </>
         );
       }}
