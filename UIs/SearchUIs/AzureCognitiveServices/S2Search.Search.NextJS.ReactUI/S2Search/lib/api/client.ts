@@ -1,5 +1,7 @@
 import { ApiConfig, SearchQueryParams, ApiResponse } from '@/types/apiTypes';
+import { SearchRequest } from '@/types/searchTypes';
 import axios, { AxiosResponse, AxiosError } from 'axios';
+import { SearchAPIEndpoint, AutoCompleteURL, DocumentCountURL, ApiRootEndpoint } from '@/common/Constants';
 import https from 'https';
 
 // Constants
@@ -13,10 +15,7 @@ function getApiKey(): string {
 }
 
 function formatCallingHost(host: string): string {
-  if (
-    process.env.NODE_ENV === 'development' &&
-    (host.includes('localhost') || host.includes('127.0.0.1'))
-  ) {
+  if (process.env.NODE_ENV === 'development') {
     return process.env.NEXT_PUBLIC_DEV_CUSTOMER_ENDPOINT || 'devtest';
   }
 
@@ -61,10 +60,8 @@ function buildSearchQueryString(params: SearchQueryParams): string {
 export class ApiClient {
   private baseUrl: string;
 
-  constructor(baseUrl?: string) {
-    this.baseUrl = baseUrl || 
-                   process.env.NEXT_PUBLIC_API_URL || 
-                   'https://localhost:5001';
+  constructor() {
+    this.baseUrl = ApiRootEndpoint;
   }
 
   private async handleRequest<T>(
@@ -118,6 +115,16 @@ export class ApiClient {
     return this.handleRequest(axios.get<T>(url, config));
   }
 
+  async search(params: SearchRequest): Promise<ApiResponse> {
+    const searchEndpoint = SearchAPIEndpoint;
+    return this.invokeAPI(`${searchEndpoint}`, false, params);
+  }
+
+  async getFacets(params: SearchRequest): Promise<ApiResponse> {
+    const facetEndpoint = process.env.NEXT_PUBLIC_FACET_API_ENDPOINT;
+    return this.invokeAPI(`${facetEndpoint}`, false, params);
+  }  
+
   // Specific API methods
   async getTheme(callingHost: string): Promise<ApiResponse> {
     const host = formatCallingHost(callingHost);
@@ -131,27 +138,16 @@ export class ApiClient {
 
   async getDocumentCount(callingHost: string): Promise<ApiResponse<number>> {
     const host = formatCallingHost(callingHost);
-    const countEndpoint = process.env.NEXT_PUBLIC_DOCUMENT_COUNT_URL || '/TotalDocumentCount';
+    const countEndpoint = DocumentCountURL;
     return this.invokeAPI(`${countEndpoint}`, true, { callingHost: host });
-  }
-
-  async search(params: SearchQueryParams): Promise<ApiResponse> {
-    const searchEndpoint = process.env.NEXT_PUBLIC_SEARCH_API_ENDPOINT || '/v1/search';
-    return this.invokeAPI(`${searchEndpoint}`, false, params);
   }
 
   async autoSuggest(searchTerm: string, callingHost: string): Promise<ApiResponse> {
     const host = formatCallingHost(callingHost);
-    const autoCompleteEndpoint = process.env.NEXT_PUBLIC_AUTO_COMPLETE_URL || '/AutoSuggest';
-    return this.invokeAPI(`${autoCompleteEndpoint}`, true, {
+    return this.invokeAPI(`${AutoCompleteURL}`, true, {
       searchTerm: searchTerm,
       callingHost: host,
     });
-  }
-
-  async getFacets(params: SearchQueryParams): Promise<ApiResponse> {
-    const facetEndpoint = process.env.NEXT_PUBLIC_FACET_API_ENDPOINT || '/v1/facet';
-    return this.invokeAPI(`${facetEndpoint}`, false, params);
   }
 }
 
