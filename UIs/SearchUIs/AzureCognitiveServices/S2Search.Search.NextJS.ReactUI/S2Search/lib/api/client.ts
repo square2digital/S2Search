@@ -127,25 +127,25 @@ export class ApiClient {
 
   // Specific API methods
   async getTheme(callingHost: string): Promise<ApiResponse> {
-    const host = formatCallingHost(callingHost);
-    return this.invokeSearchAPI(`/api/configuration/theme/${host}`, true);
+    callingHost = formatCallingHost(callingHost);
+    return this.invokeSearchAPI(`/api/configuration/theme/${callingHost}`, true);
   }
 
   async getConfiguration(callingHost: string): Promise<ApiResponse> {
-    const host = formatCallingHost(callingHost);
-    return this.invokeSearchAPI(`/api/configuration/search/${host}`, true);
+    callingHost = formatCallingHost(callingHost);
+    return this.invokeSearchAPI(`/api/configuration/search/${callingHost}`, true);
   }
 
   async getDocumentCount(callingHost: string): Promise<ApiResponse<number>> {
-    const host = formatCallingHost(callingHost);
+    callingHost = formatCallingHost(callingHost);
     const countEndpoint = DocumentCountURL;
-    return this.invokeSearchAPI(`${countEndpoint}`, true, { callingHost: host });
+    return this.invokeSearchAPI(`${countEndpoint}/${callingHost}`, true);
   }
 
-  async autoSuggest(params: SearchRequest): Promise<ApiResponse> {
-    const host = formatCallingHost(params.callingHost);
+  async autoSuggest(searchTerm: string, callingHost: string): Promise<ApiResponse> {
+    callingHost = formatCallingHost(callingHost);
     const autoCompleteEndpoint = AutoCompleteURL;
-    return this.invokeSearchAPI(`${autoCompleteEndpoint}`, true, params);
+    return this.invokeSearchAPI(`${autoCompleteEndpoint}/${searchTerm}/${callingHost}`, true);
   }
 }
 
