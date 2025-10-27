@@ -1,10 +1,18 @@
-﻿export const ApiRootEndpoint = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:5001';
+﻿export const ApiRootEndpoint =
+  process.env.NEXT_PUBLIC_API_URL || 'https://localhost:5001';
 
-export const SearchAPIEndpoint = process.env.NEXT_PUBLIC_SEARCH_API_ENDPOINT || '/v1/search';
-export const AutoCompleteURL = process.env.NEXT_PUBLIC_AUTO_COMPLETE_URL || `${SearchAPIEndpoint}/AutoSuggest`;
-export const DocumentCountURL = process.env.NEXT_PUBLIC_DOCUMENTS_COUNT_URL || `${SearchAPIEndpoint}/TotalDocumentCount`;
-export const FacetsAPIEndpoint = process.env.NEXT_PUBLIC_FACET_API_ENDPOINT || '/v1/facet';
-export const ThemeURL = process.env.NEXT_PUBLIC_THEME_URL || `/v1/theme/GetTheme`;
+export const SearchAPIEndpoint =
+  process.env.NEXT_PUBLIC_SEARCH_API_ENDPOINT || '/v1/search';
+export const AutoCompleteURL =
+  process.env.NEXT_PUBLIC_AUTO_COMPLETE_URL ||
+  `${SearchAPIEndpoint}/AutoSuggest`;
+export const DocumentCountURL =
+  process.env.NEXT_PUBLIC_DOCUMENTS_COUNT_URL ||
+  `${SearchAPIEndpoint}/TotalDocumentCount`;
+export const FacetsAPIEndpoint =
+  process.env.NEXT_PUBLIC_FACET_API_ENDPOINT || '/v1/facet';
+export const ThemeURL =
+  process.env.NEXT_PUBLIC_THEME_URL || `/v1/theme/GetTheme`;
 
 export const DefaultPageNumber = Number(
   process.env.NEXT_PUBLIC_DEFAULT_PAGE_NUMBER
@@ -15,6 +23,7 @@ export const DefaultPageSize = Number(
 );
 
 export const MobileMaxWidth = Number(process.env.NEXT_PUBLIC_MOBILE_MAX_WIDTH);
+export const MillisecondsDifference = 5;
 
 export const GetOrderByData = [
   { name: 'Price_High', display: 'Price - high to low', value: 'price desc' },
@@ -43,10 +52,13 @@ export const StaticFacets = ['make'];
 // global S2 theme
 export const DefaultTheme = {
   primaryHexColour: process.env.NEXT_PUBLIC_THEME_PRIMARY_COLOUR || '#616161ff',
-  secondaryHexColour: process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR || '#9f3092ff',
+  secondaryHexColour:
+    process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR || '#9f3092ff',
   navBarHexColour: process.env.NEXT_PUBLIC_THEME_NAVBAR_COLOUR || '#4c9d40ff',
   logoURL: process.env.NEXT_PUBLIC_THEME_LOGO_URL || '',
-  missingImageURL: process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL || '/images/Square_2_Logo_Colour.svg',
+  missingImageURL:
+    process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL ||
+    '/images/Square_2_Logo_Colour.svg',
 };
 
 export const EnableAutoComplete = true;

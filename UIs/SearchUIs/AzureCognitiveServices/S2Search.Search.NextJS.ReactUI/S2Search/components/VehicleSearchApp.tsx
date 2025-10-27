@@ -11,22 +11,20 @@ import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar';
 import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import VehicleCardList from './material-ui/vehicleCards/VehicleCardList';
 
+import { LogString } from '../common/functions/SharedFunctions';
+
+import {
+  insertQueryStringParam,
+  removeFullQueryString,
+} from '@/common/functions/QueryStringFunctions';
+
 import { getSelectedFacets } from '@/common/functions/FacetFunctions';
 
 import {
-  DefaultPageNumber,
   DefaultPageSize,
   DefaultTheme,
+  MillisecondsDifference,
 } from '../common/Constants';
-import {
-  getConfigValueByKey,
-  getPlaceholdersArray,
-} from '../common/functions/ConfigFunctions';
-import {
-  getQueryStringSearchTerm,
-  insertQueryStringParam,
-} from '../common/functions/QueryStringFunctions';
-import { ConvertStringToBoolean } from '../common/functions/SharedFunctions';
 import { LogDetails } from '../helpers/LogDetails';
 
 // New RTK action imports
@@ -61,6 +59,7 @@ import {
 import { setCancellationToken, setLoading } from '../store/slices/uiSlice';
 
 // Type imports
+import { useRouter } from 'next/router';
 import type { RootState } from '../store';
 import type { SearchRequest } from '../types/searchTypes';
 
@@ -140,18 +139,42 @@ interface OwnProps {
 type VehicleSearchAppProps = PropsFromRedux & OwnProps;
 
 const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
+  const [facetSelectedKeys, setFacetSelectedKeys] = useState<string[]>([]);
+  const [searchCount, setSearchCount] = useState<number>(0);
+  const [timestamp, setTimestamp] = useState<number>(0);
   const [themeConfigured, setThemeConfigured] = useState<boolean>(false);
   const [searchConfigConfigured, setSearchConfigConfigured] =
     useState<boolean>(false);
-  const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] =
-    useState<boolean>(false);
+  const [autoCompleteSearchBar, setAutoCompleteSearchBar] =
+    useState<string>('');
+  const [queryStringParams, setQueryStringParams] = useState<any>();
 
   // Destructure frequently used props to avoid dependency issues
   const { saveSearchTerm } = props;
+  const router = useRouter();
 
-  // *********************************************************************************************************************
-  // ** This function will make a call to our search API and update the Redux store with the returned search results
-  // *********************************************************************************************************************
+  const updateQueryStringURL = () => {
+    if (props.reduxFacetSelectors.length > 0) {
+      insertQueryStringParam(
+        'facetselectors',
+        JSON.stringify(props.reduxFacetSelectors)
+      );
+
+      insertQueryStringParam('orderby', props.reduxOrderBy);
+    }
+
+    if (props.reduxSearchTerm.length > 0) {
+      insertQueryStringParam('searchterm', props.reduxSearchTerm);
+    }
+
+    if (
+      props.reduxFacetSelectors.length === 0 &&
+      props.reduxSearchTerm.length === 0
+    ) {
+      removeFullQueryString();
+    }
+  };
+
   const triggerSearch = useCallback(
     (searchRequest: SearchRequest) => {
       props.saveLoading(true);
@@ -275,141 +298,98 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
       });
   }, [props]);
 
-  // Combined initialization effect - runs once on mount
+  // ******************************************************************************************
+  // ** this useEffect hook will setup configurations and theme settings - it is run once only
+  // ******************************************************************************************
   useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        // Initialize theme, config, and document count in parallel
-        await Promise.allSettled([
-          getThemeFromAPI(),
-          getDocumentCountAPI(),
-          // Only fetch config if not already loaded
-          props.reduxConfigData.length === 0
-            ? (async () => {
-                const response = await fetch('/api/configuration');
-                const configData = await response.json();
+    getThemeFromAPI();
+    getDocumentCountAPI();
+    /*     const config = [];
+    if (props.reduxConfigData.length === 0) {
+      ConfigAPI(window.location.host).then(function (axiosConfigResponse) {
+        if (!searchConfigConfigured && axiosConfigResponse) {
+          if (axiosConfigResponse.status === 200) {
+            axiosConfigResponse.data.map(function (item) {
+              config.push({ key: item.key, value: item.value });
+            });
 
-                if (configData?.error) {
-                  console.warn(
-                    'Configuration API returned error:',
-                    configData.error
-                  );
-                  return;
-                }
+            props.saveConfigData(config);
+            props.savePlaceholderArray(getPlaceholdersArray(config));
 
-                if (configData && Array.isArray(configData)) {
-                  const config = configData.map(item => ({
-                    key: item.key,
-                    value: item.value,
-                  }));
-                  props.saveConfigData(config);
+            const enableAutoComplete = ConvertStringToBoolean(
+              getConfigValueByKey(config, 'EnableAutoComplete').value
+            );
+            props.saveEnableAutoComplete(enableAutoComplete);
+            setAutoCompleteSearchBar(enableAutoComplete);
 
-                  // Process configuration values
-                  const placeholders = getPlaceholdersArray(config).map(
-                    item => item.value || ''
-                  );
-                  props.savePlaceholderArray(placeholders);
+            const HideIconVehicleCounts = ConvertStringToBoolean(
+              getConfigValueByKey(config, 'HideIconVehicleCounts').value
+            );
+            props.saveHideIconVehicleCounts(HideIconVehicleCounts);
 
-                  const enableAutoComplete = ConvertStringToBoolean(
-                    getConfigValueByKey(config, 'EnableAutoComplete')?.value ||
-                      'false'
-                  );
-                  props.saveEnableAutoComplete(enableAutoComplete);
+            setSearchConfigConfigured(true);
+          }
+        }
+      });
+    } */
+  }, []);
 
-                  const hideIconVehicleCounts = ConvertStringToBoolean(
-                    getConfigValueByKey(config, 'HideIconVehicleCounts')
-                      ?.value || 'false'
-                  );
-                  props.saveHideIconVehicleCounts(hideIconVehicleCounts);
-
-                  setSearchConfigConfigured(true);
-                }
-              })()
-            : Promise.resolve(),
-        ]);
-      } catch (error) {
-        console.error('Failed to initialize app:', error);
+  useEffect(() => {
+    if (router && Object.keys(router.query).length > 0) {
+      setQueryStringParams(router.query);
+      if (queryStringParams) {
+        LogDetails({ searchterm: queryStringParams.searchterm });
       }
-    };
-
-    if (
-      !searchConfigConfigured ||
-      !themeConfigured ||
-      props.reduxConfigData.length === 0
-    ) {
-      initializeApp();
     }
-  }, [
-    searchConfigConfigured,
-    themeConfigured,
-    props.reduxConfigData.length,
-    getThemeFromAPI,
-    getDocumentCountAPI,
-    props,
-  ]);
-
-  // Load initial state from URL parameters - runs once on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !facetsLoadedFromUrl) {
-      const searchTerm = decodeURIComponent(getQueryStringSearchTerm());
-      // const orderby = decodeURIComponent(getQueryStringOrderBy()); // TODO: Add orderBy Redux action
-
-      // Load search term from URL if present
-      if (searchTerm?.length > 0) {
-        saveSearchTerm(searchTerm);
-      }
-
-      setFacetsLoadedFromUrl(true);
-    }
-  }, [facetsLoadedFromUrl, saveSearchTerm]);
-
-  // Combined URL synchronization effect
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Update search term in URL
-      insertQueryStringParam(
-        'searchterm',
-        props.reduxSearchTerm.length > 0
-          ? encodeURIComponent(props.reduxSearchTerm)
-          : ''
-      );
-
-      // Update order by in URL
-      insertQueryStringParam(
-        'orderby',
-        props.reduxOrderBy.length > 0
-          ? encodeURIComponent(props.reduxOrderBy)
-          : ''
-      );
-    }
-  }, [props.reduxSearchTerm, props.reduxOrderBy]);
+  }, [router.query]);
 
   // *********************************************************************************************************************
-  // ** UseEffect for initial search and when dependencies change
+  // ** this useEffect hook manages the search - it will trigger on any change relating to search - see the dependencies
   // *********************************************************************************************************************
   useEffect(() => {
-    //if (!searchConfigConfigured || !facetsLoadedFromUrl) return;
+    if (props.reduxSearchTerm.length === 0) {
+      props.saveCancellationToken(false);
+    } else {
+      if (timestamp) {
+        const milliseconds = new Date().getTime() - timestamp;
 
-    const facetFilters = getSelectedFacets(props.reduxFacetSelectors);
+        if (milliseconds < MillisecondsDifference) {
+          props.saveCancellationToken(true);
+        } else {
+          props.saveCancellationToken(false);
+        }
 
-    const searchRequest: SearchRequest = {
-      searchTerm: props.reduxSearchTerm,
-      filters: facetFilters.join(' AND '), // Convert array to string for C# API
-      orderBy: props.reduxOrderBy,
-      pageNumber: DefaultPageNumber,
-      pageSize: DefaultPageSize,
-      numberOfExistingResults: 0, // Always start fresh for new searches
-      customerEndpoint: window.location.host,
-    };
+        LogString(
+          `milliseconds: ${milliseconds} cancellationToken: ${props.reduxCancellationToken} props.reduxSearchTerm : ${props.reduxSearchTerm.length}`
+        );
+      }
+    }
 
-    triggerSearch(searchRequest);
+    setTimestamp(new Date().getTime());
+    setSearchCount(searchCount + 1);
+    setFacetSelectedKeys(props.reduxFacetSelectedKeys);
+    updateQueryStringURL();
+
+    triggerSearch(
+      new SearchRequest(
+        props.reduxSearchTerm,
+        getSelectedFacets(props.reduxFacetSelectors),
+        props.reduxOrderBy,
+        props.reduxPageNumber,
+        DefaultPageSize,
+        props.reduxVehicleData.length,
+        window.location.host
+      )
+    );
   }, [
     props.reduxSearchTerm,
-    props.reduxFacetSelectors,
     props.reduxOrderBy,
-    searchConfigConfigured,
-    facetsLoadedFromUrl,
-    triggerSearch,
+    props.reduxDialogOpen,
+    props.reduxPageNumber,
+    props.reduxFacetChipDeleted,
+    props.reduxFacetSelectedKeys,
+    queryStringParams,
+    props.reduxCancellationToken,
   ]);
 
   return (
