@@ -11,10 +11,10 @@ import NetworkErrorDialog from './material-ui/searchPage/NetworkErrorDialog';
 import FloatingTopButton from './material-ui/searchPage/FloatingTopButton';
 import AdaptiveNavBar from './material-ui/searchPage/navBars/AdaptiveNavBar';
 
-import { 
+import {
   insertQueryStringParam,
   getQueryStringSearchTerm,
-  getQueryStringOrderBy
+  getQueryStringOrderBy,
 } from '../common/functions/QueryStringFunctions';
 import { getSelectedFacets } from '../common/functions/FacetFunctions';
 import {
@@ -139,48 +139,41 @@ interface OwnProps {
 // Combined props type
 type VehicleSearchAppProps = PropsFromRedux & OwnProps;
 
-const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
+const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   const [themeConfigured, setThemeConfigured] = useState<boolean>(false);
-  const [searchConfigConfigured, setSearchConfigConfigured] = useState<boolean>(false);
-  const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] = useState<boolean>(false);
+  const [searchConfigConfigured, setSearchConfigConfigured] =
+    useState<boolean>(false);
+  const [facetsLoadedFromUrl, setFacetsLoadedFromUrl] =
+    useState<boolean>(false);
 
-  // ******************************************************************************************
-  // ** this useEffect hook will setup configurations and theme settings - it is run once only
-  // ******************************************************************************************
+  // Setup theme configuration from API
   const getThemeFromAPI = useCallback((): void => {
-    if (!themeConfigured) {
-      try {
-        fetch('/api/theme')
-          .then(response => response.json())
-          .then(function (theme: any) {
-            if (theme) {
-              props.savePrimaryColour(theme.primaryHexColour);
-              props.saveSecondaryColour(theme.secondaryHexColour);
-              props.saveNavBarColour(theme.navBarHexColour);
-              props.saveLogoURL(theme.logoURL);
-              props.saveMissingImageURL(theme.missingImageURL);
+    if (themeConfigured) return;
 
-              setThemeConfigured(true);
-            }
-          })
-          .catch(error => {
-            console.error('Failed to fetch theme:', error);
-            // Use default theme
-            props.savePrimaryColour(DefaultTheme.primaryHexColour);
-            props.saveSecondaryColour(DefaultTheme.secondaryHexColour);
-            props.saveNavBarColour(DefaultTheme.navBarHexColour);
-            props.saveLogoURL(DefaultTheme.logoURL);
-            props.saveMissingImageURL(DefaultTheme.missingImageURL);
-            setThemeConfigured(true);
-          });
-      } catch (error) {
-        props.savePrimaryColour(DefaultTheme.primaryHexColour);
-        props.saveSecondaryColour(DefaultTheme.secondaryHexColour);
-        props.saveLogoURL(DefaultTheme.logoURL);
-        props.saveMissingImageURL(DefaultTheme.missingImageURL);
-        setThemeConfigured(true);
-      }
-    }
+    const applyTheme = (themeData: any) => {
+      props.savePrimaryColour(
+        themeData.primaryHexColour || DefaultTheme.primaryHexColour
+      );
+      props.saveSecondaryColour(
+        themeData.secondaryHexColour || DefaultTheme.secondaryHexColour
+      );
+      props.saveNavBarColour(
+        themeData.navBarHexColour || DefaultTheme.navBarHexColour
+      );
+      props.saveLogoURL(themeData.logoURL || DefaultTheme.logoURL);
+      props.saveMissingImageURL(
+        themeData.missingImageURL || DefaultTheme.missingImageURL
+      );
+      setThemeConfigured(true);
+    };
+
+    fetch('/api/theme')
+      .then(response => response.json())
+      .then(theme => applyTheme(theme || DefaultTheme))
+      .catch(error => {
+        console.warn('Failed to fetch theme, using defaults:', error);
+        applyTheme(DefaultTheme);
+      });
   }, [themeConfigured, props]);
 
   const getDocumentCountAPI = useCallback((): void => {
@@ -209,7 +202,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
   useEffect(() => {
     getThemeFromAPI();
     getDocumentCountAPI();
-    const config: Array<{key: string; value: string}> = [];
+    const config: Array<{ key: string; value: string }> = [];
     if (props.reduxConfigData.length === 0) {
       fetch('/api/configuration')
         .then(response => response.json())
@@ -231,12 +224,17 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
             });
 
             props.saveConfigData(config);
-            
+
             // getPlaceholdersArray returns ConfigItem[], but savePlaceholderArray expects string[]
-            const placeholders = getPlaceholdersArray(config).map(item => item.value || '');
+            const placeholders = getPlaceholdersArray(config).map(
+              item => item.value || ''
+            );
             props.savePlaceholderArray(placeholders);
 
-            const enableAutoCompleteConfig = getConfigValueByKey(config, 'EnableAutoComplete');
+            const enableAutoCompleteConfig = getConfigValueByKey(
+              config,
+              'EnableAutoComplete'
+            );
             const enableAutoComplete = ConvertStringToBoolean(
               enableAutoCompleteConfig?.value || 'false'
             );
@@ -246,7 +244,10 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
             ConvertStringToBoolean(hideBadgesConfig?.value || 'false');
             // Note: savHideBadges action might need to be added to Redux if it doesn't exist
 
-            const hideIconVehicleCountsConfig = getConfigValueByKey(config, 'HideIconVehicleCounts');
+            const hideIconVehicleCountsConfig = getConfigValueByKey(
+              config,
+              'HideIconVehicleCounts'
+            );
             const HideIconVehicleCounts = ConvertStringToBoolean(
               hideIconVehicleCountsConfig?.value || 'false'
             );
@@ -332,7 +333,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(searchRequest)
+        body: JSON.stringify(searchRequest),
       })
         .then(response => response.json())
         .then(function (responseObject: any) {
@@ -362,12 +363,12 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
             }
 
             props.saveSearchCount(responseObject.results.length);
-            
+
             // Handle facets from search response
             if (responseObject.facets && Array.isArray(responseObject.facets)) {
               props.saveDefaultFacetData(responseObject.facets);
             }
-            
+
             // Convert API SearchRequest to Redux SearchRequest format
             const reduxSearchRequest = {
               searchTerm: searchRequest.searchTerm,
@@ -413,7 +414,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
         pageNumber,
         pageSize,
         numberOfExistingResults,
-        callingHost: 'localhost:3000'
+        callingHost: 'localhost:3000',
       };
 
       props.savePageNumber(pageNumber);
@@ -429,7 +430,13 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
     if (searchConfigConfigured && facetsLoadedFromUrl) {
       search(0, DefaultPageSize, 0);
     }
-  }, [props.reduxSearchTerm, props.reduxFacetSelectors, searchConfigConfigured, facetsLoadedFromUrl, search]);
+  }, [
+    props.reduxSearchTerm,
+    props.reduxFacetSelectors,
+    searchConfigConfigured,
+    facetsLoadedFromUrl,
+    search,
+  ]);
 
   // Add separate useEffect for cancellation token logic
   useEffect(() => {
@@ -439,7 +446,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
   }, [props.reduxCancellationToken, props]);
 
   return (
-    <Box sx={{flexGrow: 1}}>
+    <Box sx={{ flexGrow: 1 }}>
       <AdaptiveNavBar />
       <FacetChips />
       <VehicleCardList />
@@ -462,7 +469,8 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = (props) => {
             <br />
             Order By: {props.reduxOrderBy}
             <br />
-            Selected Facets: {props.reduxFacetSelectors.filter((f: any) => f.checked).length}
+            Selected Facets:{' '}
+            {props.reduxFacetSelectors.filter((f: any) => f.checked).length}
           </Alert>
         </Box>
       )}
