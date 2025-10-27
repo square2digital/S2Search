@@ -188,10 +188,6 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
       LogDetails({ searchRequest });
 
       fetch('/api/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(searchRequest),
       })
         .then(response => response.json())
@@ -321,18 +317,7 @@ const VehicleSearchApp: React.FC<VehicleSearchAppProps> = props => {
   useEffect(() => {
     getThemeFromAPI();
     getDocumentCountAPI();
-  }, [getThemeFromAPI, getDocumentCountAPI]);
-
-  // Remove the complex cancellation/debouncing logic
-  useEffect(() => {
-    if (router && Object.keys(router.query).length > 0) {
-      // Simple URL parameter loading
-      if (router.query.searchterm) {
-        saveSearchTerm(decodeURIComponent(router.query.searchterm as string));
-      }
-      setFacetsLoadedFromUrl(true);
-    }
-  }, [router, saveSearchTerm]);
+  }, []);
 
   // *********************************************************************************************************************
   // ** Simplified search effect - triggers when search parameters change
