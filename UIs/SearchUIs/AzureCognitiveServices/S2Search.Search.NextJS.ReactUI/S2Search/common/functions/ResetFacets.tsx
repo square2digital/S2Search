@@ -6,17 +6,17 @@ import type { RootState } from '../../store/index';
 
 // New RTK action imports
 import {
-  setVehicleData,
-  setPageNumber,
-  setSearchTerm,
-  setOrderBy,
-} from '../../store/slices/searchSlice';
-import {
-  setFacetSelectors,
   setFacetSelectedKeys,
+  setFacetSelectors,
   setResetFacets,
   setSelectedFacet,
 } from '../../store/slices/facetSlice';
+import {
+  setOrderBy,
+  setPageNumber,
+  setSearchTerm,
+  setVehicleData,
+} from '../../store/slices/searchSlice';
 import { setDialogOpen } from '../../store/slices/uiSlice';
 
 import { DefaultPageNumber } from '../Constants';
@@ -46,7 +46,7 @@ interface ResetFacetsProps {
   saveResetFacets: (reset: boolean) => void;
 }
 
-const ResetFacets: React.FC<ResetFacetsProps> = (props) => {
+const ResetFacets: React.FC<ResetFacetsProps> = props => {
   const resetFacetsData = (currentProps: ResetFacetsProps): void => {
     if (currentProps.reduxResetFacets === true) {
       currentProps.saveVehicleData([]);
@@ -68,7 +68,7 @@ const ResetFacets: React.FC<ResetFacetsProps> = (props) => {
 
   useEffect(() => {
     resetFacetsData(props);
-  }, [props.reduxResetFacets, props]);
+  }, [props]);
 
   return null;
 };
@@ -91,17 +91,20 @@ const mapStateToProps = (reduxState: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    saveVehicleData: (vehicleData: any[]) => dispatch(setVehicleData(vehicleData)),
+    saveVehicleData: (vehicleData: any[]) =>
+      dispatch(setVehicleData(vehicleData)),
     savePageNumber: (pageNumber: number) => dispatch(setPageNumber(pageNumber)),
     saveFacetSelectors: (resetFacetArray: any[]) =>
       dispatch(setFacetSelectors(resetFacetArray)),
     saveSearchTerm: (searchTerm: string) => dispatch(setSearchTerm(searchTerm)),
     saveOrderby: (orderBy: string) => dispatch(setOrderBy(orderBy)),
-    saveDialogOpen: (dialogOpen: boolean) => dispatch(setDialogOpen(dialogOpen)),
+    saveDialogOpen: (dialogOpen: boolean) =>
+      dispatch(setDialogOpen(dialogOpen)),
     saveSelectedFacet: (facet: string) => dispatch(setSelectedFacet(facet)),
     saveFacetSelectedKeys: (facetSelectedKeys: string[]) =>
       dispatch(setFacetSelectedKeys(facetSelectedKeys)),
-    saveResetFacets: (resetFacets: boolean) => dispatch(setResetFacets(resetFacets)),
+    saveResetFacets: (resetFacets: boolean) =>
+      dispatch(setResetFacets(resetFacets)),
   };
 };
 
