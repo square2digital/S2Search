@@ -54,10 +54,8 @@ namespace Search.Controllers
         [SwaggerOperation("Facets_Get")]
         public async Task<IActionResult> Get([FromQuery] SearchRequest request)
         {
-            if (request == null)
-            {
-                return BadRequest();
-            }
+            var validator = base.ValidateRequest(request);
+            if (validator != null) return validator;
 
             var customerEndpoint = StringHelpers.FormatCustomerEndpoint(request.CustomerEndpoint);
 

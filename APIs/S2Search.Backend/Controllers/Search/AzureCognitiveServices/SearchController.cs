@@ -56,12 +56,10 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
         [SwaggerOperation("Search_Get")]
         public async Task<IActionResult> Get([FromQuery] SearchRequest request)
         {
-            var result = new SearchResultRoot();
+            var validator = base.ValidateRequest(request);
+            if (validator != null) return validator;
 
-            if (request == null)
-            {
-                return BadRequest();
-            }
+            var result = new SearchResultRoot();
 
             try
             {
