@@ -27,7 +27,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.WORKDIR }}/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('${{ env.WORKDIR }}/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search/package-lock.json') }}
 
       - name: Install dependencies
         run: npm ci
@@ -37,12 +37,12 @@ jobs:
         run: npm run type-check
         working-directory: ${{ env.WORKDIR }}
 
-      - name: Build Next.js app
-        run: npm run build
+      - name: Lint code
+        run: npx next lint --dir .
         working-directory: ${{ env.WORKDIR }}
 
-      - name: Lint code
-        run: next lint --dir .
+      - name: Build Next.js app
+        run: npm run build
         working-directory: ${{ env.WORKDIR }}
 
       - name: Build Docker image
