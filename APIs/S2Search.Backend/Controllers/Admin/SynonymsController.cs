@@ -5,7 +5,7 @@ using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Repositories;
 
 namespace S2Search.Backend.Controllers.Admin
 {
-    [Route("v1/[controller]")]
+    [Route("api/customers/{customerId}/searchindex/{searchIndexId}/synonyms")]
     [ApiController]
     public class SynonymsController : ControllerBase
     {
