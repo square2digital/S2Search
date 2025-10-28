@@ -48,7 +48,7 @@ const FacetChips: React.FC<ConnectedProps<typeof connector>> = props => {
         justifyContent: 'left',
         flexWrap: 'wrap',
         marginTop: '12px', // 1.5 * 8px theme spacing
-        marginLeft: '-40px',
+        marginLeft: '15px',
         padding: 0,
         backgroundColor: 'transparent',
       }}
