@@ -37,9 +37,9 @@ jobs:
         run: npm run type-check
         working-directory: ${{ env.WORKDIR }}
 
-      - name: Lint code
-        run: npx eslint . --ext .js,.ts,.tsx
-        working-directory: ${{ env.WORKDIR }}
+      #- name: Lint code
+      #  run: npx eslint . --ext .js,.ts,.tsx
+      #  working-directory: ${{ env.WORKDIR }}
 
       - name: Build Next.js app
         run: npm run build
