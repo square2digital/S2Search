@@ -5,7 +5,6 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useAppSelector, useAppDispatch } from '../../../store/hooks';
 import {
   selectSearchCount,
-  selectPageNumber,
   selectVehicleData,
   selectIsLoading,
   selectPrimaryColour,
@@ -18,7 +17,6 @@ const LoadMoreResultsButton: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const searchCount = useAppSelector(selectSearchCount);
-  const pageNumber = useAppSelector(selectPageNumber);
   const vehicleData = useAppSelector(selectVehicleData);
   const isLoading = useAppSelector(selectIsLoading);
   const primaryColour = useAppSelector(selectPrimaryColour);

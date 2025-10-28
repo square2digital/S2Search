@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ISearchRequest, SearchRequest } from '../../types/searchTypes';
 
 interface VehicleData {
   vehicleID: string;
@@ -19,15 +20,7 @@ interface VehicleData {
   description: string;
   manufactureColour: string;
   vrm: string;
-  imageURL: string;
-}
-
-interface SearchRequest {
-  searchTerm: string;
-  filters: string;
-  orderBy: string;
-  pageNumber: number;
-  pageSize: number;
+  imageURL: string | null | undefined;
 }
 
 interface SearchState {
@@ -39,7 +32,7 @@ interface SearchState {
   pageNumber: number;
   hasMoreResults: boolean;
   networkError: boolean;
-  previousRequest: SearchRequest | null;
+  previousRequest: ISearchRequest | null;
 }
 
 const initialState: SearchState = {
@@ -88,8 +81,21 @@ const searchSlice = createSlice({
     setNetworkError: (state, action: PayloadAction<boolean>) => {
       state.networkError = action.payload;
     },
-    setPreviousRequest: (state, action: PayloadAction<SearchRequest>) => {
-      state.previousRequest = action.payload;
+    setPreviousRequest: (
+      state,
+      action: PayloadAction<SearchRequest | ISearchRequest>
+    ) => {
+      // Convert class instance to plain object for serialization
+      const payload = action.payload;
+      state.previousRequest = {
+        searchTerm: payload.searchTerm,
+        filters: payload.filters,
+        orderBy: payload.orderBy,
+        pageNumber: payload.pageNumber,
+        pageSize: payload.pageSize,
+        numberOfExistingResults: payload.numberOfExistingResults,
+        customerEndpoint: payload.customerEndpoint,
+      };
     },
     resetSearch: () => initialState,
   },

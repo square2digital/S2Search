@@ -2,27 +2,27 @@
 {
     public static class StringHelpers
     {
-        public static string FormatCallingHost(string callingHost)
+        public static string FormatCustomerEndpoint(string customerEndpoint)
         {
-            if (callingHost.Contains("http://"))
+            if (customerEndpoint.Contains("http://"))
             {
-                callingHost = callingHost.Replace("http://", string.Empty);
+                customerEndpoint = customerEndpoint.Replace("http://", string.Empty);
             }
 
-            if (callingHost.Contains("https://"))
+            if (customerEndpoint.Contains("https://"))
             {
-                callingHost = callingHost.Replace("https://", string.Empty);
+                customerEndpoint = customerEndpoint.Replace("https://", string.Empty);
             }
 
-            if (callingHost.Contains("www."))
+            if (customerEndpoint.Contains("www."))
             {
-                callingHost = callingHost.Replace("www.", string.Empty);
+                customerEndpoint = customerEndpoint.Replace("www.", string.Empty);
             }
 
-            int lastSlash = callingHost.LastIndexOf('/');
-            callingHost = lastSlash > -1 ? callingHost.Substring(0, lastSlash) : callingHost;
+            int lastSlash = customerEndpoint.LastIndexOf('/');
+            customerEndpoint = lastSlash > -1 ? customerEndpoint.Substring(0, lastSlash) : customerEndpoint;
 
-            return callingHost;
+            return customerEndpoint;
         }
     }
 }

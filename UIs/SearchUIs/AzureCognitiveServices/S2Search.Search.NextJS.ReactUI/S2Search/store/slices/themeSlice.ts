@@ -12,7 +12,7 @@ const initialState: ThemeState = {
   primaryColour: '#616161',
   secondaryColour: '#303f9f',
   navBarColour: '#1976d2',
-  logoURL: '/images/s2Logo-blue.svg',
+  logoURL: '/images/Square_2_Logo_Colour.svg',
   missingImageURL: '/images/no-image-available.png',
 };
 

@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
+import configReducer from './slices/configSlice';
+import facetReducer from './slices/facetSlice';
 import searchReducer from './slices/searchSlice';
 import themeReducer from './slices/themeSlice';
 import uiReducer from './slices/uiSlice';
-import facetReducer from './slices/facetSlice';
-import configReducer from './slices/configSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,9 +16,17 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        ignoredActions: [
+          'persist/PERSIST',
+          'persist/REHYDRATE',
+          'search/setPreviousRequest', // Ignore SearchRequest class serialization
+        ],
         // Performance: ignore large state paths
-        ignoredPaths: ['search.vehicleData', 'facet.facetData'],
+        ignoredPaths: [
+          'search.vehicleData',
+          'facet.facetData',
+          'search.previousRequest',
+        ],
       },
       // Enable immutability check only in development
       immutableCheck: process.env.NODE_ENV === 'development',

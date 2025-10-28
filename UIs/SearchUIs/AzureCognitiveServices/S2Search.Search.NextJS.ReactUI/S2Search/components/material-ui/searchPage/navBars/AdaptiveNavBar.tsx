@@ -43,28 +43,6 @@ interface AdaptiveNavBarProps {
 
 const s2logoWidth = 57;
 
-// Inline styles object (converted from makeStyles)
-const styles = {
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    margin: 'auto',
-  },
-  firstBadgeContainer: {
-    marginLeft: 2,
-  },
-  badgeContainer: {
-    marginLeft: 2,
-  },
-  topMargin: {
-    marginTop: 18,
-  },
-  resultsText: {
-    fontSize: '0.875rem',
-  },
-};
-
 const AdaptiveNavBar: React.FC<AdaptiveNavBarProps> = ({
   autoCompleteSearchBar = false,
 }) => {

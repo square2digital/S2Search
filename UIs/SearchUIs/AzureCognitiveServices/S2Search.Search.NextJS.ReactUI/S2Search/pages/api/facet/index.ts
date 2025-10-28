@@ -11,12 +11,10 @@ export default async function handler(
   }
 
   try {
-    const host = req.headers.host || 'localhost:2997';
     const searchRequest = req.body;
     
     const response = await apiClient.getFacets({
-      ...searchRequest,
-      callingHost: host
+      ...searchRequest
     });
 
     if (response.success) {

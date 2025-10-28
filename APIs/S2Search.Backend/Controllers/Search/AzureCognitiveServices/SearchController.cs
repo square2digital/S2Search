@@ -56,16 +56,14 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
         [SwaggerOperation("Search_Get")]
         public async Task<IActionResult> Get([FromQuery] SearchRequest request)
         {
-            var result = new SearchResultRoot();
+            var validator = base.ValidateRequest(request);
+            if (validator != null) return validator;
 
-            if (request == null)
-            {
-                return BadRequest();
-            }
+            var result = new SearchResultRoot();
 
             try
             {
-                request.CallingHost = StringHelpers.FormatCallingHost(request.CallingHost);
+                request.CustomerEndpoint = StringHelpers.FormatCustomerEndpoint(request.CustomerEndpoint);
                 string redisKey = null;
                 string redisValue = null;
 
@@ -73,7 +71,7 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
                 {
                     try
                     {
-                        redisKey = _redisService.CreateRedisKey(request.CallingHost, "search", HashHelper.GetXXHashString(JsonConvert.SerializeObject(request)));
+                        redisKey = _redisService.CreateRedisKey(request.CustomerEndpoint, "search", HashHelper.GetXXHashString(JsonConvert.SerializeObject(request)));
                         redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
                     }
                     catch (Exception ex)
@@ -89,11 +87,11 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
                     return Ok(searchResults.SearchProductResult);
                 }
 
-                var queryCredentials = await _queryCredentialsProvider.GetAsync(request.CallingHost);
+                var queryCredentials = await _queryCredentialsProvider.GetAsync(request.CustomerEndpoint);
 
                 if (queryCredentials == null)
                 {
-                    return BadRequest("CallingHost not recognised.");
+                    return BadRequest("customerEndpoint not recognised.");
                 }
 
                 result = await _azureSearchService.InvokeSearchRequest(request, queryCredentials);
@@ -137,27 +135,27 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
             });
         }
 
-        [HttpGet("TotalDocumentCount")]
+        [HttpGet("TotalDocumentCount/{customerEndpoint}")]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation("Search_TotalDocumentCount")]
-        public async Task<IActionResult> TotalDocumentCount(string callingHost)
+        public async Task<IActionResult> TotalDocumentCount(string customerEndpoint)
         {
-            if (string.IsNullOrEmpty(callingHost))
+            if (string.IsNullOrEmpty(customerEndpoint))
             {
                 return BadRequest();
             }
 
             try
             {
-                callingHost = StringHelpers.FormatCallingHost(callingHost);
+                customerEndpoint = StringHelpers.FormatCustomerEndpoint(customerEndpoint);
 
-                var queryCredentials = await _queryCredentialsProvider.GetAsync(callingHost);
+                var queryCredentials = await _queryCredentialsProvider.GetAsync(customerEndpoint);
 
                 if (queryCredentials == null)
                 {
-                    return BadRequest("CallingHost not recognised.");
+                    return BadRequest("customerEndpoint not recognised.");
                 }
 
                 var total = await _azureSearchService.TotalDocumentCount(queryCredentials);
@@ -170,12 +168,12 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
             }
         }
 
-        [HttpGet("AutoSuggest")]
+        [HttpGet("AutoSuggest/{searchTerm}/{customerEndpoint}")]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation("Search_Autocomplete")]
-        public async Task<IActionResult> AutocompleteWithSuggestions(string searchTerm, string callingHost)
+        public async Task<IActionResult> AutocompleteWithSuggestions(string searchTerm, string customerEndpoint)
         {
             if (string.IsNullOrEmpty(searchTerm))
             {
@@ -187,8 +185,8 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
                 if (_appSettings.RedisCacheSettings.EnableRedisCache)
                 {
 
-                    callingHost = StringHelpers.FormatCallingHost(callingHost);
-                    var redisKey = _redisService.CreateRedisKey(callingHost, "autocomplete", HashHelper.GetXXHashString(JsonConvert.SerializeObject(searchTerm)));
+                    customerEndpoint = StringHelpers.FormatCustomerEndpoint(customerEndpoint);
+                    var redisKey = _redisService.CreateRedisKey(customerEndpoint, "autocomplete", HashHelper.GetXXHashString(JsonConvert.SerializeObject(searchTerm)));
                     var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
 
                     if (redisValue != null)
@@ -196,10 +194,10 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
                         return Ok(JsonConvert.DeserializeObject<IEnumerable<string>>(redisValue));
                     }
 
-                    var queryCredentials = await _queryCredentialsProvider.GetAsync(callingHost);
+                    var queryCredentials = await _queryCredentialsProvider.GetAsync(customerEndpoint);
                     if (queryCredentials == null)
                     {
-                        return BadRequest("CallingHost not recognised.");
+                        return BadRequest("customerEndpoint not recognised.");
                     }
 
                     var suggestions = await _azureSearchService.AutocompleteWithSuggestions(searchTerm, queryCredentials);
@@ -209,7 +207,7 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
                 }
                 else
                 {
-                    var queryCredentials = await _queryCredentialsProvider.GetAsync(callingHost);
+                    var queryCredentials = await _queryCredentialsProvider.GetAsync(customerEndpoint);
                     var suggestions = await _azureSearchService.AutocompleteWithSuggestions(searchTerm, queryCredentials);
                     return Ok(suggestions);
                 }

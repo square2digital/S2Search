@@ -1,15 +1,16 @@
-import dynamic from 'next/dynamic';
+import React from 'react'; // Keep this import for JSX support
 import { Box, CircularProgress } from '@mui/material';
+import dynamic from 'next/dynamic';
 
 // Dynamic import with loading component
 const VehicleCard = dynamic(() => import('./VehicleCard'), {
   loading: () => (
-    <Box 
-      sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: 200 
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: 200,
       }}
     >
       <CircularProgress />

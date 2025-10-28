@@ -130,7 +130,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             return Convert.ToInt32(result);
         }
 
-        public async Task<IList<FacetGroup>> GetDefaultFacets(string callingHost, SearchIndexQueryCredentials targetSearchResource)
+        public async Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials targetSearchResource)
         {
             SearchRequest request = new SearchRequest
             {
@@ -140,7 +140,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                 PageNumber = 0,
                 PageSize = 0,
                 NumberOfExistingResults = 0,
-                CallingHost = callingHost,
+                CustomerEndpoint = customerEndpoint,
             };
 
             var data = await InvokeSearchRequest(request, targetSearchResource);

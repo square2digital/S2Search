@@ -5,8 +5,6 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { incrementPageNumber } from '../store/slices/searchSlice';
 import {
-  selectSearchCount,
-  selectVehicleData,
   selectHasMoreResults,
   selectIsSearchEmpty,
 } from '../store/selectors/searchSelectors';

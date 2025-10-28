@@ -11,24 +11,15 @@ export default async function handler(
   }
 
   try {
-    const host = req.headers.host || 'localhost:2997';
+    // this gets the host via the node API request headers
+    const customerEndpoint = req.headers.host || 'localhost:2997';
     const searchRequest = req.body;
-    
-    // DEBUG: Log the incoming search request to see what facets are being sent
-    console.log('🔍 SEARCH API: Received search request:', JSON.stringify(searchRequest, null, 2));
-    console.log('🔍 SEARCH API: Facets in request:', searchRequest.facets);
     
     // Map facets to filters for backend compatibility
     const backendRequest = {
       ...searchRequest,
-      filters: searchRequest.facets, // Backend expects 'filters', frontend sends 'facets'
-      callingHost: host
-    };
-    
-    // Remove the facets field since backend doesn't expect it
-    delete backendRequest.facets;
-    
-    console.log('🔍 SEARCH API: Mapped request for backend:', JSON.stringify(backendRequest, null, 2));
+      customerEndpoint: customerEndpoint
+    }; 
     
     const response = await apiClient.search(backendRequest);
 

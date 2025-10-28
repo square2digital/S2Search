@@ -22,7 +22,7 @@ public class ConnectionStrings
 
 public class SearchSettings
 {
-    public bool UseRequestedCallingHost { get; set; }
+    public bool UseRequestedCustomerEndpoint { get; set; }
     public string DefaultFacetsURL { get; set; }
     public string DefaultSearchOrderBy { get; set; }
     public string FacetOrder { get; set; }

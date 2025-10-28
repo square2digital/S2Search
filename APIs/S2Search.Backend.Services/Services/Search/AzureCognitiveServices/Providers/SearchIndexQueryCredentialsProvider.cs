@@ -28,7 +28,7 @@ namespace Services.Providers
             _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
-        public async Task<SearchIndexQueryCredentials> GetAsync(string callingHost)
+        public async Task<SearchIndexQueryCredentials> GetAsync(string customerEndpoint)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace Services.Providers
                 if (_appSettings.RedisCacheSettings.EnableRedisCache)
                 {
                     string cacheKey = CacheKeys.QueryCredentials;
-                    var redisKey = _redisService.CreateRedisKey(cacheKey, callingHost, HashHelper.GetXXHashString(JsonConvert.SerializeObject(cacheKey)));
+                    var redisKey = _redisService.CreateRedisKey(cacheKey, customerEndpoint, HashHelper.GetXXHashString(JsonConvert.SerializeObject(cacheKey)));
                     var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
 
                     if (redisValue != null)
@@ -56,7 +56,7 @@ namespace Services.Providers
                         return searchResults;
                     }
 
-                    var result = await GetQueryCredentialsAsync(callingHost);
+                    var result = await GetQueryCredentialsAsync(customerEndpoint);
 
                     if (result != null)
                     {
@@ -67,21 +67,21 @@ namespace Services.Providers
                 }
                 else
                 {
-                    return await GetQueryCredentialsAsync(callingHost);
+                    return await GetQueryCredentialsAsync(customerEndpoint);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error on {nameof(GetAsync)} | CallingHost: {callingHost} | CacheDuration: {_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds} | Message: {ex.Message}");
+                _logger.LogError(ex, $"Error on {nameof(GetAsync)} | customerEndpoint: {customerEndpoint} | CacheDuration: {_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds} | Message: {ex.Message}");
                 throw;
             }
         }
 
-        private async Task<SearchIndexQueryCredentials> GetQueryCredentialsAsync(string callingHost)
+        private async Task<SearchIndexQueryCredentials> GetQueryCredentialsAsync(string customerEndpoint)
         {
             try
             {
-                var queryCredentials = await _searchIndexRepo.GetQueryCredentials(callingHost);
+                var queryCredentials = await _searchIndexRepo.GetQueryCredentials(customerEndpoint);
                 var azureSearchResource = new SearchIndexQueryCredentials()
                 {
                     id = queryCredentials.id,
@@ -95,7 +95,7 @@ namespace Services.Providers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error on {nameof(GetQueryCredentialsAsync)} | CallingHost: {callingHost} | Message: {ex.Message}");
+                _logger.LogError(ex, $"Error on {nameof(GetQueryCredentialsAsync)} | customerEndpoint: {customerEndpoint} | Message: {ex.Message}");
                 throw;
             }
         }

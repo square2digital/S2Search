@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   // Enable standalone output for better Docker builds
   output: 'standalone',
   compiler: {
@@ -17,84 +16,21 @@ const nextConfig = {
   // Optimize build output
   poweredByHeader: false,
   generateEtags: false,
-  eslint: {
-    // Allow production builds to complete even with ESLint warnings
-    ignoreDuringBuilds: false,
-  },
   typescript: {
     // Allow production builds to complete even with TypeScript errors
     ignoreBuildErrors: false,
   },
-  // Enhanced webpack optimizations
-  webpack: (config, { isServer, dev }) => {
-    // Optimize bundle for better performance
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-      };
-    }
-
-    // Bundle analyzer (optional - enable when needed)
-    // if (!dev && !isServer) {
-    //   const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-    //   config.plugins.push(
-    //     new BundleAnalyzerPlugin({
-    //       analyzerMode: 'static',
-    //       openAnalyzer: false,
-    //     })
-    //   );
-    // }
-
-    // Optimize chunks
-    if (!dev && !isServer) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          default: false,
-          vendors: false,
-          // Vendor chunk
-          vendor: {
-            name: 'vendor',
-            chunks: 'all',
-            test: /node_modules/,
-            priority: 20,
-          },
-          // MUI chunk
-          mui: {
-            name: 'mui',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/]@mui[\\/]/,
-            priority: 30,
-          },
-          // Redux chunk
-          redux: {
-            name: 'redux',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](@reduxjs|react-redux)[\\/]/,
-            priority: 30,
-          },
-          // Common chunk
-          common: {
-            name: 'common',
-            minChunks: 2,
-            chunks: 'all',
-            priority: 10,
-            reuseExistingChunk: true,
-            enforce: true,
-          },
-        },
-      };
-    }
-
-    return config;
-  },
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
-  // Enhanced image optimization
+  // Enhanced image optimization - using remotePatterns instead of domains
   images: {
-    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+    ],
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
@@ -102,7 +38,6 @@ const nextConfig = {
   },
   // Experimental features for performance
   experimental: {
-    // optimizeCss: true, // Disabled - requires critters package
     optimizePackageImports: ['@mui/material', '@mui/icons-material'],
   },
   // Security headers

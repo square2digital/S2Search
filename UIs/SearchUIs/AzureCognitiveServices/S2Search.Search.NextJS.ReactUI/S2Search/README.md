@@ -1,110 +1,207 @@
-## About
+# S2Search - Vehicle Search UI
 
-Next.js is a framework that makes it easy to create 'universal' React apps - React apps that do both client and server side rendering.
+A modern, fully TypeScript-powered Next.js application for vehicle search and discovery, built with Material-UI and Redux Toolkit.
 
-With Next.js, React pages are automatically rendered on both client and server side, without the hassle of setting up dependancies like webpack or babel and with automatic routing and without the constraints of projects like Create React App.
+## 🚀 Technology Stack
 
-This is a starter project that provides an example of how to use Next.js with Express, SASS/SCSS, Bootstrap, Reactstrap (Boostrap 4 for React), the Ionicons icon set, examples of how to include data from remote REST APIs and incorporate an authentication system that supports both oAuth and Email using Passport (a popular authentication framework for Node.js).
+- **Framework**: Next.js 14.2.31 with TypeScript
+- **UI Library**: Material-UI (MUI) v5
+- **State Management**: Redux Toolkit with TypeScript
+- **Styling**: CSS Modules + Material-UI theming
+- **Search**: Azure Cognitive Services integration
+- **Performance**: Optimized with modern ES2022 features
 
-This project exists to make it easier to get started a creating production app in React. You are invited to use it as a reference or to copy it and use it as a base for your own projects. Contributions to improve this project are welcome.
+## ✨ Key Features
 
-## Running locally in development mode
+- **🔍 Advanced Search**: Intelligent vehicle search with auto-suggestions
+- **🎛️ Dynamic Filtering**: Real-time faceted search with multiple filter options
+- **📱 Responsive Design**: Mobile-first responsive interface
+- **🎨 Dynamic Theming**: Configurable color themes via API
+- **⚡ Performance**: Server-side rendering (SSR) for optimal loading
+- **🔒 Type Safety**: Full TypeScript implementation for robust development
+- **♿ Accessibility**: ARIA-compliant components and keyboard navigation
 
-To get started, just clone the repository and run `npm install && npm run dev`:
+## 🏗️ Architecture
 
-    git clone https://github.com/iaincollins/nextjs-starter.git
-    npm install
-    npm run dev
+### Frontend Structure
 
-Note: If you are running on Windows run install --noptional flag (i.e. `npm install --no-optional`) which will skip installing fsevents.
+```
+├── components/           # React components (fully TypeScript)
+│   ├── material-ui/     # MUI-based components
+│   │   ├── searchPage/  # Search interface components
+│   │   ├── filtersDialog/ # Filter management
+│   │   └── vehicleCards/ # Vehicle display components
+│   └── App.tsx          # Main application component
+├── pages/               # Next.js pages (TypeScript)
+│   ├── api/            # API routes for backend integration
+│   ├── index.tsx       # Home page with SSR
+│   └── _app.tsx        # App wrapper with theme provider
+├── store/              # Redux Toolkit store (TypeScript)
+│   ├── slices/         # Feature-based state slices
+│   └── hooks.ts        # Typed Redux hooks
+├── types/              # TypeScript type definitions
+├── common/             # Shared utilities and constants
+└── styles/             # Global styles and themes
+```
 
-## Building and deploying in production
+### State Management
 
-If you wanted to run this site in production, you should install modules then build the site with `npm run build` and run it with `npm start`:
+- **Redux Toolkit**: Modern Redux with TypeScript
+- **Typed Hooks**: `useAppSelector` and `useAppDispatch`
+- **Feature Slices**: Modular state management for search, facets, and UI
 
-    npm install
-    npm run build
-    npm start
+## 🛠️ Development
 
-You should run `npm run build` again any time you make changes to the site.
+### Prerequisites
 
-Note: If you are already running a webserver on port 80 (e.g. Macs usually have the Apache webserver running on port 80) you can still start the example in production mode by passing a different port as an Environment Variable when starting (e.g. `PORT=3000 npm start`).
+- Node.js 18+
+- npm or yarn
+- TypeScript knowledge recommended
 
-## Configuring
+### Getting Started
 
-If you configure a .env file (just copy [.env.example](https://github.com/iaincollins/nextjs-starter/blob/master/.env.example) over to '.env' and fill in the options) you can configure a range of options.
+1. **Clone and Install**
 
-See the [AUTHENTICATION.md](https://github.com/iaincollins/nextjs-starter/blob/master/AUTHENTICATION.md) for how to set up oAuth if you want to do that. It suggested you start with Twitter as it's the easiest to get working.
+   ```bash
+   git clone <repository-url>
+   cd S2Search
+   npm install
+   ```
 
-## Deploying to the cloud with now.sh
+2. **Development Mode**
 
-To deploy to production on [Zeit's now.sh cloud platform](https://zeit.co) you will need to install the `Now` desktop app on your computer. If you don't want to install the `Now` desktop app, you can use the following command to install it (either approach is fine):
+   ```bash
+   npm run dev
+   ```
 
-    sudo npm i -g --unsafe-perm now
+   Opens [http://localhost:3000](http://localhost:3000)
 
-Once installed, open `now.json` and set a `name` and `alias` for your site.
+3. **Type Checking**
 
-To deploy, just run `now` in the working directory:
+   ```bash
+   npm run type-check
+   # or continuous checking
+   npx tsc --watch --noEmit
+   ```
 
-    npm install -g now
-    now
+4. **Linting**
+   ```bash
+   npm run lint
+   ```
 
-If you configure a .env file `now` will include it when deploying if you use the -E option to deploy:
+### Build and Deploy
 
-    now -E
+1. **Production Build**
 
-If you want to have your local `.env` file have variables for local development and have a different sent of variables you use in production, you can create additional .env files and tell `now` to use a specific file when deploying:
+   ```bash
+   npm run build
+   npm start
+   ```
 
-    now -E production.env
+2. **Type Safety Check**
+   ```bash
+   npx tsc --noEmit
+   ```
 
-### After deploying
+## 🔧 Configuration
 
-Once you have deployed, `now` will return a URL where the site when it has been deployed to, you can use this to preview everything works correctly in the browser.
+### Environment Variables
 
-If you have set an alias for the site, you can then make the site live on the alias you have defined using `now alias`:
+Create a `.env.local` file:
 
-    now alias
+```env
+NEXT_PUBLIC_API_BASE_URL=your-api-endpoint
+NEXT_PUBLIC_SEARCH_INDEX=your-search-index
+```
 
-By default, this will point any aliases you have set in `now.json` to your site.
+### TypeScript Configuration
 
-You can configure `now` to use aliases with custom domains using the `now domain` and `now dns` commands.
+The project uses modern TypeScript configuration (`tsconfig.json`):
+
+- **Target**: ES2022 for optimal performance
+- **Strict Mode**: Full type safety enabled
+- **Path Mapping**: Clean imports with `@/` aliases
+- **Next.js Integration**: Automatic type generation
+
+### Theme Configuration
+
+Dynamic theming supports:
+
+- Primary/secondary color customization
+- Material-UI theme overrides
+- Server-side theme injection
+- Responsive breakpoints
+
+## 🧪 Testing and Quality
+
+### Code Quality Tools
+
+- **TypeScript**: Compile-time type checking
+- **ESLint**: Code linting with TypeScript rules
+- **Next.js**: Built-in performance optimization
+
+### Development Workflow
+
+```bash
+# Development with type checking
+npm run dev
+
+# Full type check
+npm run type-check
+
+# Lint and fix
+npm run lint
+
+# Production build test
+npm run build
+```
+
+## 📱 Features Deep Dive
+
+### Search Interface
+
+- **Auto-complete**: Real-time search suggestions
+- **Search History**: Dynamic placeholder text
+- **Reset Functionality**: Clear all filters and search
+- **Keyboard Navigation**: Full accessibility support
+
+### Filtering System
+
+- **Faceted Search**: Multiple filter categories
+- **Real-time Updates**: Instant result filtering
+- **State Persistence**: Maintains filters across navigation
+- **URL Integration**: Shareable filtered states
+
+### Vehicle Display
+
+- **Card Layout**: Responsive vehicle cards
+- **Lazy Loading**: Performance-optimized image loading
+- **Infinite Scroll**: Load more results on demand
+- **Sort Options**: Multiple sorting criteria
+
+## 🔮 TypeScript Migration Benefits
+
+This application was fully migrated from JavaScript to TypeScript, providing:
+
+- **🛡️ Type Safety**: Compile-time error detection
+- **🚀 Developer Experience**: Enhanced IDE support and autocomplete
+- **📚 Self-Documentation**: Interfaces serve as living documentation
+- **🔧 Refactoring Confidence**: Safe large-scale code changes
+- **🎯 API Integration**: Typed API responses and error handling
+- **⚡ Performance**: Better tree-shaking and optimization
+
+## 🤝 Contributing
+
+1. Follow TypeScript best practices
+2. Use the established component patterns
+3. Maintain type safety throughout
+4. Test in both development and production builds
+5. Ensure responsive design compatibility
+
+## 📄 License
+
+© 2025 Square2Digital. All rights reserved.
 
 ---
 
-## Further reading
-
-### Database hosting
-
-If you need an instance of MongoDB in the cloud https://mlab.com/ have free and inexpensive options.
-
-### Secrets for Environment Variables
-
-Once you are comfortable using `.env` files for configuration and running and deploying your app, take a look at `now secrets` to set options in the cloud so you don't have to set them each time you deploy.
-
-### GitHub integration
-
-You can integrate `now` with a GitHub account to trigger automated deployments anytime you push to GitHub. This works great if you have secrets set up!
-
-### Now 2.0
-
-When you deploy this project you will see this message as of November 2018:
-
-    WARN! You are using an old version of the Now Platform. More: https://zeit.co/docs/v1-upgrade
-
-Now 2.0 was released in November 2018 and works differently from Now 1.0. This project has not been updated for Now 2.0. You may ignore this message for now.
-
-### Alternate hosting options
-
-You can host your Next.js site with any hosting provider. Although it works great on Now, it also works great with other providers like Heroku, Amazon Web Service, Google Cloud Platform, Microsoft Azure, DigitalOcean and others.
-© 2021 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
+_Built with ❤️ using Next.js, TypeScript, and Material-UI_
