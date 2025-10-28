@@ -6,6 +6,7 @@
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "explicit"
   },
+  "eslint.codeActionsOnSave.rules": ["!react-hooks/exhaustive-deps"],
   "javascript.preferences.quoteStyle": "single",
   "typescript.suggest.autoImports": true,
   "javascript.suggest.autoImports": true,

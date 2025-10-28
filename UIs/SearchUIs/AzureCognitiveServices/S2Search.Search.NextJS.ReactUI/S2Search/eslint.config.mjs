@@ -29,6 +29,10 @@ export default [
       ...pluginReact.configs.recommended.rules,
       ...pluginReactHooks.configs.recommended.rules,
       ...tseslint.configs.recommended.rules,
+
+      // Custom overrides
+      'react-hooks/exhaustive-deps': 'warn', // Change from error to warn to prevent auto-fixing
+      'react/prop-types': 'off', // Turn off since you're using TypeScript
     },
   },
   {
