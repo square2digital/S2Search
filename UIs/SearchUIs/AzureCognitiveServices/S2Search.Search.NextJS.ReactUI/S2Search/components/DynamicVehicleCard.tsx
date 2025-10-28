@@ -1,3 +1,4 @@
+import React from 'react'; // Keep this import for JSX support
 import { Box, CircularProgress } from '@mui/material';
 import dynamic from 'next/dynamic';
 
