@@ -35,7 +35,7 @@ jobs:
         working-directory: UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search
 
       - name: Lint code
-        run: npm run lint
+        run: next lint --dir .
         working-directory: UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search
 
       - name: Build Next.js app
