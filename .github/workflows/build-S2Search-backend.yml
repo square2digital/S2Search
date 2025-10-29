@@ -11,6 +11,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      WORKDIR: APIs/S2Search.API/S2Search.Backend.API.csproj
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,16 +24,16 @@ jobs:
           dotnet-version: "9.0.x"
 
       - name: Restore dependencies
-        run: dotnet restore APIs/S2Search.Backend/S2Search.Backend.csproj
+        run: dotnet restore ${{ env.WORKDIR }}
 
       - name: Build
-        run: dotnet build APIs/S2Search.Backend/S2Search.Backend.csproj --configuration Release --no-restore
+        run: dotnet build ${{ env.WORKDIR }} --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish APIs/S2Search.Backend/S2Search.Backend.csproj --configuration Release --output ./publish
+        run: dotnet publish ${{ env.WORKDIR }} --configuration Release --output ./publish
 
       - name: Build Docker image
-        run: docker build -t s2search-backend:latest -f APIs/S2Search.Backend/Dockerfile ./publish
+        run: docker build -t s2search-backend:latest -f APIs/S2Search.API/Dockerfile ./publish
 
       - name: Set image tag from commit SHA
         run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
