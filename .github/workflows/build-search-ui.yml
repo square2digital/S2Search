@@ -1,4 +1,4 @@
-name: Build S2Search UI
+name: Build AzureCognitiveServices S2Search UI
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      WORKDIR: UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search
+      WORKDIR: UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI
 
     steps:
       - name: Checkout repository
@@ -27,7 +27,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.WORKDIR }}/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/package-lock.json') }}
 
       - name: Install dependencies
         run: npm ci
@@ -37,9 +37,12 @@ jobs:
         run: npm run type-check
         working-directory: ${{ env.WORKDIR }}
 
-      #- name: Lint code
-      #  run: npm run lint
-      #  working-directory: ${{ env.WORKDIR }}
+      - name: Lint code
+        # If the 'npm run lint' command returns a non-zero exit code (an error), 
+        # the step will be marked as failed, but the workflow will continue.
+        continue-on-error: true        
+        run: npm run lint
+        working-directory: ${{ env.WORKDIR }}
 
       - name: Build Next.js app
         run: npm run build
