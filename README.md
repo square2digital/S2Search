@@ -1,3 +1,7 @@
+[![Cache Manager Build Status](https://github.com/square2digital/S2Search/actions/workflows/build-cachemanager.yml/badge.svg)](https://github.com/square2digital/S2Search/actions/workflows/build-cachemanager.yml)
+[![Backend Build Status](https://github.com/square2digital/S2Search/actions/workflows/build-S2Search-backend.yml/badge.svg)](https://github.com/square2digital/S2Search/actions/workflows/build-S2Search-backend.yml)
+[![Search UI Build Status](https://github.com/square2digital/S2Search/actions/workflows/build-search-ui.yml/badge.svg)](https://github.com/square2digital/S2Search/actions/workflows/build-search-ui.yml)
+
 # S2 Search
 
 <p align="center"><a href="https://www.square2digital.com/s2-search/" target="_blank" rel="noopener noreferrer"><img src="https://s2storagedev.blob.core.windows.net/assets/logos/Square2Digital-Logo-2024.png" alt="S2 Search Logo" width="30%"></a></p>
