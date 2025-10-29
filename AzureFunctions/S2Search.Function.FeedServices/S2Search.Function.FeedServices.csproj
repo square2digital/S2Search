@@ -24,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\S2Search.Backend.Domain\S2Search.Backend.Domain.csproj" />
-    <ProjectReference Include="..\S2Search.Backend.Services\S2Search.Backend.Services.csproj" />
+    <ProjectReference Include="..\..\APIs\S2Search.Backend.Domain\S2Search.Backend.Domain.csproj" />
+	<ProjectReference Include="..\..\APIs\S2Search.Backend.Services\S2Search.Backend.Services.csproj" />
   </ItemGroup>
 
 </Project>
