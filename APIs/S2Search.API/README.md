@@ -2,79 +2,96 @@
 
 ## Overview
 
-S2Search Backend is a modular, enterprise-grade backend platform for automotive search and management. It is built with .NET 9 and designed for scalability, maintainability, and integration with modern cloud and on-premises environments.
+S2Search is a modular backend platform for automotive search and management. The codebase targets .NET9 and is organized into multiple projects (APIs, services, domain, importer, cache manager, and Azure Functions).
 
-## Projects
+## Projects (current)
 
-- **S2Search.CacheManager**: Caching layer for high-performance data access.
-- **S2Search.Backend**: Core backend logic and orchestration.
-- **S2Search.Backend.Services**: Service layer for business logic, including queue management and customer operations.
-- **S2Search.Backend.Domain**: Domain models, constants, and shared types.
-- **S2Search.Backend.Importer**: Data import and integration utilities.
+- `S2Search.Backend.API` - API project for backend HTTP endpoints. Path: `APIs/S2Search.API/S2Search.Backend.API.csproj`
+- `S2Search.Backend.Services` - Service layer containing business logic and queue management. Path: `Services/S2Search.Backend.Services/S2Search.Backend.Services.csproj`
+- `S2Search.CacheManager` - Caching layer for Redis and in-memory cache. Path: `CacheManager/S2Search.CacheManager/S2Search.CacheManager.csproj`
+- `S2Search.Backend.Domain` - Domain models, constants, and shared types. Path: `Domain/S2Search.Backend.Domain/S2Search.Backend.Domain.csproj`
+- `S2Search.Backend.Importer` - Importer and integration utilities. Path: `Importer/S2Search.Backend.Importer/S2Search.Backend.Importer.csproj`
+- `S2Search.Function.FeedServices` - Azure Function(s) for feed processing. Path: `AzureFunctions/S2Search.Function.FeedServices/S2Search.Function.FeedServices.csproj`
+- `S2Search.Functions.SearchInsights` - Azure Function(s) for search insights and telemetry. Path: `AzureFunctions/S2Search.Functions.SearchInsights/S2Search.Functions.SearchInsights.csproj`
+
+> Note: Project paths above are relative to the repository root.
 
 ## Technologies
 
-- **.NET 9**
-- **C# 13**
-- **Azure Storage Queues**
-- **Redis**
-- **Dapper**
-- **REST APIs**
+- .NET9
+- C# (latest supported by .NET9)
+- Azure Storage Queues (optional)
+- Redis (optional)
+- Dapper
+- REST APIs
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
+- .NET9 SDK: https://dotnet.microsoft.com/download
+- Visual Studio2022+ or VS Code
+- Docker Desktop (optional)
+- Redis (optional for caching)
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download)
-- [Visual Studio 2022+](https://visualstudio.microsoft.com/)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) (optional for containerization)
-- [Redis](https://redis.io/) (optional for caching)
-
-### Build & Run
+## Build & Run
 
 1. Clone the repository:
-```sh
-git clone https://github.com/square2digital/S2Search.git
-cd S2Search/Backend
-```
+
+    ```sh
+    git clone https://github.com/square2digital/S2Search.git
+    cd S2Search
+    ```
+
 2. Restore dependencies:
-```sh
-dotnet restore
-```
+
+    ```sh
+    dotnet restore
+    ```
+
 3. Build the solution:
-```sh
-dotnet build
-```
-4. Run a project (example):
-```sh
-dotnet run --project S2Search.Backend/S2Search.Backend.csproj
-```
 
-## Folder Structure
+    ```sh
+    dotnet build
+    ```
+
+4. Run an individual project (example - API):
+
+    ```sh
+    dotnet run --project APIs/S2Search.API/S2Search.Backend.API.csproj
+    ```
+
+5. Run services or functions in a similar way by pointing `dotnet run` to the relevant `.csproj` file.
+
+## Folder Structure (high-level)
 
 ```
-Backend/
-??? S2Search.CacheManager/
-??? S2Search.Backend/
-??? S2Search.Backend.Services/
-??? S2Search.Backend.Domain/
-??? S2Search.Backend.Importer/
+S2Search/
+?? APIs/
+? ?? S2Search.API/ # API project
+?? Services/
+? ?? S2Search.Backend.Services/ # Business services
+?? CacheManager/
+? ?? S2Search.CacheManager/ # Caching layer
+?? Domain/
+? ?? S2Search.Backend.Domain/ # Domain models and shared types
+?? Importer/
+? ?? S2Search.Backend.Importer/ # Importer utilities
+?? AzureFunctions/
+? ?? S2Search.Function.FeedServices/
+? ?? S2Search.Functions.SearchInsights/
 ```
 
 ## Contributing
 
 1. Fork the repository.
 2. Create a feature branch.
-3. Make your changes and add tests.
-4. Ensure all code builds and tests pass.
-5. Submit a pull request.
+3. Make changes and add tests where appropriate.
+4. Ensure `dotnet build` succeeds.
+5. Open a pull request.
 
 ## License
 
-This project is proprietary. See [LICENSE](../LICENSE) for details.
+This project is proprietary. See `LICENSE` in the repository root for details.
 
 ## Maintainers
 
-- Jonathan Gilmartin - [@JGilmartin-S2](https://github.com/JGilmartin-S2)
-
----
+- Jonathan Gilmartin - @JGilmartin-S2
