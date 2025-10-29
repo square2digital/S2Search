@@ -11,6 +11,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      WORKDIR: CacheManager/S2Search.CacheManager
+      PROJECT: ${{ env.WORKDIR }}/S2Search.CacheManager.csproj
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,11 +25,11 @@ jobs:
           dotnet-version: "9.0.x"
 
       - name: Restore dependencies
-        run: dotnet restore APIs/S2Search.CacheManager/S2Search.CacheManager.csproj
+        run: dotnet restore ${{ env.PROJECT }}
 
       - name: Build
-        run: dotnet build APIs/S2Search.CacheManager/S2Search.CacheManager.csproj --configuration Release --no-restore
+        run: dotnet build ${{ env.PROJECT }} --configuration Release --no-restore
 
       - name: Build Docker image
         run: docker build -t s2search-cachemanager:latest .
-        working-directory: APIs/S2Search.CacheManager/CacheManager
+        working-directory: ${{ env.WORKDIR }}/CacheManager
