@@ -38,9 +38,9 @@ jobs:
         working-directory: ${{ env.WORKDIR }}
 
       - name: Lint code
-        # If the 'npm run lint' command returns a non-zero exit code (an error), 
+        # If the 'npm run lint' command returns a non-zero exit code (an error),
         # the step will be marked as failed, but the workflow will continue.
-        continue-on-error: true        
+        continue-on-error: true
         run: npm run lint
         working-directory: ${{ env.WORKDIR }}
 
