@@ -39,6 +39,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\S2Search.Backend.Domain\S2Search.Backend.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="AzureFunctions\SearchInsights\Mappers\" />
     <Folder Include="AzureFunctions\SearchInsights\Repositories\" />
   </ItemGroup>
