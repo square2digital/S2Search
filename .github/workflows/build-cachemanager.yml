@@ -13,7 +13,7 @@ jobs:
 
     env:
       WORKDIR: CacheManager/S2Search.CacheManager
-      PROJECT: ${{ env.WORKDIR }}/S2Search.CacheManager.csproj
+      PROJECT: CacheManager/S2Search.CacheManager/S2Search.CacheManager.csproj
 
     steps:
       - name: Checkout code
