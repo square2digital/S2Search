@@ -1,4 +1,489 @@
-# Contributing to _S2 Search_
+# Contributing to S2Search
+
+Thank you for your interest in contributing to S2Search! We welcome contributions from developers, DevOps engineers, and the broader community. This guide will help you get started with contributing to our enterprise search platform.
+
+## 🚀 Quick Start
+
+Before you begin, please:
+
+1. ⭐ **Star the repository** if you find S2Search useful
+2. 📖 **Read our [README](README.md)** to understand the project architecture
+3. 🔍 **Search [existing issues](https://github.com/square2digital/S2Search/issues)** to avoid duplicates
+4. 💬 **Join discussions** in our [GitHub Discussions](https://github.com/square2digital/S2Search/discussions)
+
+## 🐛 Reporting Issues
+
+### Before Submitting an Issue
+
+- [ ] Check the [README](README.md) and project documentation
+- [ ] Search [existing issues](https://github.com/square2digital/S2Search/issues) (including closed ones)
+- [ ] Try the latest version to see if the issue has been resolved
+- [ ] Check our [troubleshooting guides](K8s/Legacy/K8s.Local.Development.Environment/DEPLOYMENT.md#troubleshooting)
+
+### How to Submit a Bug Report
+
+When creating a bug report, please include:
+
+```markdown
+**Environment:**
+
+- S2Search Version: [e.g., v1.2.0]
+- OS: [e.g., Windows 11, Ubuntu 22.04, macOS 14]
+- Kubernetes Version: [e.g., v1.28.0]
+- Deployment Method: [Legacy K8s, Helm Chart, Docker]
+- Browser: [if UI-related, e.g., Chrome 119, Firefox 120]
+
+**Description:**
+A clear and concise description of what the bug is.
+
+**Steps to Reproduce:**
+
+1. Go to '...'
+2. Click on '....'
+3. Scroll down to '....'
+4. See error
+
+**Expected Behavior:**
+What you expected to happen.
+
+**Actual Behavior:**
+What actually happened.
+
+**Screenshots/Logs:**
+If applicable, add screenshots or log output to help explain your problem.
+
+**Additional Context:**
+Any other context about the problem here.
+```
+
+### Issue Labels
+
+We use the following labels to categorize issues:
+
+- 🐛 `bug` - Something isn't working
+- ✨ `enhancement` - New feature or request
+- 📚 `documentation` - Improvements or additions to documentation
+- 🚀 `performance` - Performance-related improvements
+- 🔒 `security` - Security-related issues
+- 🏗️ `infrastructure` - K8s, Docker, deployment-related
+- 🎨 `ui` - Frontend/UI related
+- 🔧 `api` - Backend API related
+- 🔍 `search` - Elasticsearch or Azure Cognitive Services related
+- 🆘 `help-wanted` - Community help is appreciated
+- 🥇 `good-first-issue` - Good for newcomers
+
+## 🛠️ Development Setup
+
+### Prerequisites
+
+Before contributing code, ensure you have:
+
+- **Node.js 20+** - For frontend development
+- **.NET 8 SDK** - For backend API development
+- **Docker Desktop** - For containerization
+- **Kubernetes** - Docker Desktop with K8s enabled or minikube
+- **Git** - Version control
+- **PowerShell 7+** - For deployment scripts (Windows/macOS/Linux)
+
+### Local Development Setup
+
+1. **Fork and Clone**
+
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/S2Search.git
+   cd S2Search
+   ```
+
+2. **Frontend Setup** (Choose your area of focus)
+
+   ```bash
+   # Modern TypeScript UI (Next.js 16)
+   cd UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI
+   npm install
+   npm run dev
+
+   # New TypeScript UI (Next.js 14)
+   cd UIs/SearchUIs/ElasticSearch.2023/elastic.ui.2023
+   npm install
+   npm run dev
+
+   # Admin UI
+   cd UIs/AdminUI/S2Search.Admin.NextJS.ReactUI
+   npm install
+   npm run dev
+   ```
+
+3. **Backend Setup**
+
+   ```bash
+   # Main API
+   cd APIs/S2Search.API
+   dotnet restore
+   dotnet build
+   dotnet run
+
+   # Search APIs
+   cd APIs/Search/SearchAPIs/ElasticSearch/S2Search.Elastic.API
+   dotnet restore
+   dotnet run
+   ```
+
+4. **Full Local Deployment**
+   ```powershell
+   cd K8s/Legacy/K8s.Local.Development.Environment
+   .\deployment-script.ps1 -includeElasticUI $true -includeSearchUI $true -includeAdminUI $true
+   ```
+
+### Development Workflow
+
+1. **Create a Feature Branch**
+
+   ```bash
+   git checkout -b feature/your-feature-name
+   # or
+   git checkout -b fix/issue-number-description
+   ```
+
+2. **Make Your Changes**
+
+   - Follow our [coding standards](#coding-standards)
+   - Write tests for new functionality
+   - Update documentation as needed
+
+3. **Test Your Changes**
+
+   ```bash
+   # Frontend tests
+   npm run lint
+   npm run type-check
+   npm run test
+
+   # Backend tests
+   dotnet test
+
+   # Full integration test
+   cd K8s/Legacy/K8s.Local.Development.Environment
+   .\deployment-script.ps1 # Test full deployment
+   ```
+
+4. **Commit and Push**
+
+   ```bash
+   git add .
+   git commit -m "feat: add new search filtering capability"
+   git push origin feature/your-feature-name
+   ```
+
+5. **Create Pull Request**
+   - Use our [PR template](#pull-request-guidelines)
+   - Link to relevant issues
+   - Provide clear description of changes
+
+## 🎯 Coding Standards
+
+### General Principles
+
+- **Code Quality** - Write clean, readable, and maintainable code
+- **Type Safety** - Use TypeScript for all frontend code, strong typing in C#
+- **Performance** - Consider performance implications of your changes
+- **Security** - Follow security best practices
+- **Documentation** - Document complex logic and public APIs
+
+### Frontend Standards (TypeScript/React)
+
+```typescript
+// ✅ Good - Proper TypeScript with interfaces
+interface SearchResult {
+  id: string;
+  title: string;
+  description: string;
+  price?: number;
+}
+
+const SearchResultCard: React.FC<{ result: SearchResult }> = ({ result }) => {
+  return (
+    <div className="search-result-card">
+      <h3>{result.title}</h3>
+      <p>{result.description}</p>
+      {result.price && <span>${result.price}</span>}
+    </div>
+  );
+};
+
+// ❌ Avoid - Any types and unclear interfaces
+const SearchCard = ({ data }: any) => {
+  return <div>{data.stuff}</div>;
+};
+```
+
+### Backend Standards (.NET 8/C#)
+
+```csharp
+// ✅ Good - Proper async/await patterns with error handling
+public async Task<IActionResult> SearchVehiclesAsync(
+    SearchRequest request,
+    CancellationToken cancellationToken = default)
+{
+    try
+    {
+        var results = await _searchService.SearchAsync(request, cancellationToken);
+        return Ok(results);
+    }
+    catch (SearchException ex)
+    {
+        _logger.LogError(ex, "Search failed for request {Request}", request);
+        return BadRequest(new { Error = "Search failed", Details = ex.Message });
+    }
+}
+
+// ❌ Avoid - Synchronous operations and poor error handling
+public IActionResult Search(object request)
+{
+    var results = _searchService.Search(request); // Blocking call
+    return Ok(results); // No error handling
+}
+```
+
+### Kubernetes/Infrastructure Standards
+
+```yaml
+# ✅ Good - Proper resource limits and health checks
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s2search-api
+spec:
+  template:
+    spec:
+      containers:
+        - name: api
+          image: s2search-api:latest
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+```
+
+## 📝 Pull Request Guidelines
+
+### PR Title Format
+
+Use [Conventional Commits](https://www.conventionalcommits.org/) format:
+
+- `feat: add new vehicle search filters`
+- `fix: resolve search result pagination issue`
+- `docs: update Kubernetes deployment guide`
+- `perf: optimize Elasticsearch query performance`
+- `refactor: improve search service architecture`
+- `test: add integration tests for admin API`
+- `ci: update GitHub Actions workflow`
+
+### PR Description Template
+
+```markdown
+## Description
+
+Brief description of the changes made.
+
+## Type of Change
+
+- [ ] 🐛 Bug fix (non-breaking change which fixes an issue)
+- [ ] ✨ New feature (non-breaking change which adds functionality)
+- [ ] 💥 Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] 📚 Documentation update
+- [ ] 🏗️ Infrastructure/DevOps changes
+- [ ] 🧪 Tests
+
+## Testing
+
+Describe the tests you ran to verify your changes:
+
+- [ ] Frontend unit tests pass (`npm test`)
+- [ ] Backend unit tests pass (`dotnet test`)
+- [ ] Integration tests pass
+- [ ] Manual testing performed
+- [ ] K8s deployment tested
+
+## Screenshots (if applicable)
+
+Add screenshots for UI changes.
+
+## Checklist
+
+- [ ] My code follows the project's style guidelines
+- [ ] I have performed a self-review of my code
+- [ ] I have commented my code, particularly in hard-to-understand areas
+- [ ] I have made corresponding changes to the documentation
+- [ ] My changes generate no new warnings
+- [ ] I have added tests that prove my fix is effective or that my feature works
+- [ ] New and existing unit tests pass locally with my changes
+- [ ] Any dependent changes have been merged and published
+
+## Related Issues
+
+Fixes #(issue number)
+Closes #(issue number)
+Related to #(issue number)
+```
+
+### Review Process
+
+1. **Automated Checks** - All CI/CD checks must pass
+2. **Code Review** - At least one maintainer review required
+3. **Testing** - Manual testing for critical changes
+4. **Documentation** - Updates to documentation if needed
+5. **Security Review** - Security-sensitive changes require additional review
+
+## 🔧 Component-Specific Guidelines
+
+### Frontend Development
+
+**UI Components:**
+
+- Use Material-UI (MUI) components consistently
+- Follow responsive design principles
+- Implement proper accessibility (ARIA labels, keyboard navigation)
+- Use TypeScript interfaces for all props and state
+
+**State Management:**
+
+- Use Redux Toolkit for global state
+- Prefer local state for component-specific data
+- Implement proper error boundaries
+
+**Performance:**
+
+- Use React.memo for expensive components
+- Implement lazy loading for routes
+- Optimize bundle size with code splitting
+
+### Backend Development
+
+**API Design:**
+
+- Follow RESTful principles
+- Use proper HTTP status codes
+- Implement comprehensive error handling
+- Add Swagger/OpenAPI documentation
+
+**Database:**
+
+- Support both SQL Azure and PostgreSQL
+- Use Entity Framework or Dapper appropriately
+- Implement proper connection pooling
+- Follow database migration best practices
+
+**Security:**
+
+- Validate all inputs
+- Use proper authentication/authorization
+- Implement rate limiting
+- Follow OWASP guidelines
+
+### Infrastructure Development
+
+**Kubernetes:**
+
+- Include resource limits and requests
+- Implement health checks
+- Use proper ConfigMaps and Secrets
+- Follow security best practices
+
+**Docker:**
+
+- Use multi-stage builds
+- Minimize image size
+- Run as non-root user
+- Include proper health checks
+
+## 🌟 Recognition
+
+We appreciate all contributions! Contributors will be recognized in:
+
+- 📜 **Contributors section** in README
+- 🎉 **Release notes** for significant contributions
+- 💼 **LinkedIn recommendations** for substantial contributions (with permission)
+- 🏆 **Special contributor badges** for ongoing contributors
+
+## 📞 Getting Help
+
+### Community Support
+
+- 💬 **GitHub Discussions** - General questions and community help
+- 🐛 **GitHub Issues** - Bug reports and feature requests
+- 📧 **Email** - [info@square2digital.com](mailto:info@square2digital.com) for sensitive issues
+
+### Maintainer Contact
+
+- **Jonathan Gilmartin** - [@JGilmartin-S2](https://github.com/JGilmartin-S2) - Project Lead
+
+### Response Times
+
+We aim to respond to:
+
+- 🚨 **Critical bugs**: Within 24 hours
+- 🐛 **Bug reports**: Within 3-5 business days
+- ✨ **Feature requests**: Within 1 week
+- 📚 **Documentation**: Within 1 week
+- 💬 **General questions**: Within 1 week
+
+## 🔒 Security
+
+### Reporting Security Issues
+
+Please **DO NOT** open a public issue for security vulnerabilities. Instead:
+
+1. Email us directly at [security@square2digital.com](mailto:security@square2digital.com)
+2. Include a detailed description of the vulnerability
+3. Provide steps to reproduce if applicable
+4. We will respond within 48 hours
+
+### Security Best Practices
+
+When contributing:
+
+- Never commit secrets, API keys, or passwords
+- Use environment variables for configuration
+- Follow OWASP security guidelines
+- Implement proper input validation
+- Use secure communication protocols
+
+## 📄 License
+
+By contributing to S2Search, you agree that your contributions will be licensed under the same proprietary license as the project. See [LICENSE](LICENSE) for details.
+
+## 🎯 Roadmap
+
+Interested in major features? Check our roadmap for upcoming work:
+
+- 🔍 **Enhanced Search AI** - Advanced ML-powered search capabilities
+- 🌐 **Multi-language Support** - Internationalization features
+- 📊 **Advanced Analytics** - Real-time business intelligence dashboards
+- 🔄 **GraphQL API** - Modern API layer with GraphQL
+- 🏗️ **Multi-cloud Support** - AWS and GCP deployment options
+
+## 🙏 Thank You
+
+Thank you for contributing to S2Search! Your efforts help make enterprise search better for everyone. If you include the 🔍 emoji at the top of your issue or pull request, we'll know you've read this guide thoroughly!
+
+---
+
+_Built with ❤️ by the S2Search community_
 
 ## I want to report a problem or ask a question
 
