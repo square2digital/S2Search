@@ -24,6 +24,7 @@ param (
     [bool]$includeFunctions = $false
 )
 
+# Supported colour values - Black DarkBlue DarkGreen DarkCyan DarkRed DarkMagenta DarkYellow Gray DarkGray Blue Green Cyan Red Magenta Yellow White
 function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
     for ($i = 0; $i -lt $Text.Length; $i++) {
         Write-Host $Text[$i] -Foreground $Color[$i] -NoNewLine
@@ -58,7 +59,7 @@ $S2SearchAsciiArt = @"
                                            ░                                   
 "@
 
-Write-Color -Text "$S2SearchAsciiArt" -Color Green
+Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
 
 ############
 # Variables
@@ -66,24 +67,20 @@ Write-Color -Text "$S2SearchAsciiArt" -Color Green
 
 # the PatToken is for the "Azure DevOps Artifacts Credentials Provider" which allows the docker images
 # when built to pull down dependacies from the DevOps artifacts repo "square2digital"
-$PatToken = "4quc53ontolu6jwvy4ktkj2o5z2mhojgpykrzba6mh477wc6zhcq"
-$DeploymentRoot = "E:\github\S2Search"
+#$PatToken = "4quc53ontolu6jwvy4ktkj2o5z2mhojgpykrzba6mh477wc6zhcq"
+#$DeploymentRoot = "E:\github\S2Search"
+$S2Namespace = "s2search"
 
-$ApplicationPathSearchUI = "$DeploymentRoot\UIs\SearchUIs\AzureCognitiveServices\S2Search.Search.NextJS.ReactUI\"
-Write-Color -Text "The ApplicationPathSearchUI is -> $ApplicationPathSearchUI" -Color Blue
+Write-Color -Text "################################" -Color DarkBlue
+Write-Color -Text "Helm Deployment"                  -Color DarkBlue
+Write-Color -Text "################################" -Color DarkBlue
 
-Write-Color -Text "################################" -Color Green
-Write-Color -Text "Building Docker Images"           -Color Green
-Write-Color -Text "################################" -Color Green
+# Add namespace (optional but recommended)
+kubectl create namespace $S2Namespace
 
-if ($includeSearchUI) {
-    Set-Location $ApplicationPathSearchUI
-    npm install
-    Write-Color -Text "Building Docker Image - S2 Search UI (NextJS) at location $ApplicationPathSearchUI" -Color Magenta    
-    Write-Color -Text "docker build --pull --rm -f Dockerfile -t s2searchui:dev . --build-arg NODE_ENV=production" -Color Yellow
-    docker build --pull --rm -f "Dockerfile" -t s2searchui:dev . --build-arg NODE_ENV=production
-}
+# Install chart with default values
+helm install s2search . -n $S2Namespace
 
 Write-Color -Text "################################" -Color Green
-Write-Color -Text "Process Complete" -Color Green
+Write-Color -Text "Process Complete"                 -Color Green
 Write-Color -Text "################################" -Color Green
