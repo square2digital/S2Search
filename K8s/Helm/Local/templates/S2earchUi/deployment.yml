@@ -35,12 +35,6 @@ spec:
               memory: {{ .Values.S2SearchUi.resources.requests.memory }}
               cpu: {{ .Values.S2SearchUi.resources.requests.cpu }}
           imagePullPolicy: {{ .Values.S2SearchUi.image.pullPolicy }}
-          livenessProbe:
-            httpGet:
-              path: /vehicletest
-              port: 3000
-            initialDelaySeconds: 15
-            periodSeconds: 10
           envFrom:
             - configMapRef:
                 name: s2searchui-env
