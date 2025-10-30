@@ -63,7 +63,7 @@ postgresql:
     username: "s2search"
     database: "postgres"
   service:
-    type: ClusterIP
+    type: NodePort
   image:
     registry: docker.io
     repository: bitnami/postgresql
