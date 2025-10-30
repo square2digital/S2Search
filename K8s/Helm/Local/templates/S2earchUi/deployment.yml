@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Values.S2SearchUi.image.name }}-deployment"
+  name: "s2search-ui-deployment"
   labels:
     app: {{ .Values.S2SearchUi.image.name }}
 spec:

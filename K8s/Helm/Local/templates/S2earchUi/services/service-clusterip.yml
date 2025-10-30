@@ -1,8 +1,7 @@
-# ClusterIP Service for the Next.js UI Application
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ .Values.S2SearchUi.image.name }}-service"
+  name: "s2search-ui-service"
   namespace: s2search
 spec:
   # ClusterIP makes this Service only accessible internally within the cluster,
@@ -10,7 +9,7 @@ spec:
   type: ClusterIP
   selector:
     # This must match the label on your UI Deployment Pods
-    app: s2search-ui-service
+    app: s2search-ui
   ports:
     - name: http
       protocol: TCP
