@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DOCKERFILE_PATH: APIs/S2Search.API/Dockerfile # Ensure this matches your Canvas file name
+      DOCKERFILE_PATH: APIs/S2Search.API/Dockerfile
       IMAGE_NAME: s2search-backend-api
 
     steps:
