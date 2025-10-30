@@ -67,3 +67,18 @@ jobs:
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/s2search-ui:latest
           docker push ghcr.io/${{ github.repository_owner }}/s2search-ui:${{ env.IMAGE_TAG }}
+
+  cleanup-ghcr:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Delete old container versions from GHCR
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: s2search-ui
+          package-type: container
+          min-versions-to-keep: 10
+          delete-only-untagged-versions: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHCR_PAT }}
