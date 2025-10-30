@@ -530,7 +530,7 @@ kubectl get endpoints --namespace s2search
 
 # Test internal connectivity
 kubectl exec -it <backend-pod> --namespace s2search -- \
-  curl http://search-api-service/api/SearchStatus
+  curl http://s2search-api-service/api/SearchStatus
 
 # Check DNS resolution
 kubectl exec -it <pod-name> --namespace s2search -- \

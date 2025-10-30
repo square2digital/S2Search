@@ -217,7 +217,7 @@ Configured in `templates/S2earchUi/ConfigMaps/configmap-ui-env.yml`:
 NEXT_PUBLIC_DEFAULT_PAGE_SIZE: "24"
 NEXT_PUBLIC_SEARCH_API_ENDPOINT: "/v1/search"
 NEXT_PUBLIC_FACET_API_ENDPOINT: "/v1/facet"
-NEXT_PUBLIC_SEARCH_API_URL: "http://search-api-service"
+NEXT_PUBLIC_SEARCH_API_URL: "http://s2search-api-service"
 NEXT_PUBLIC_THEME_PRIMARY_COLOUR: "#616161"
 NEXT_PUBLIC_THEME_SECONDARY_COLOUR: "#303f9f"
 NEXT_PUBLIC_PLACEHOLDER_TEXT_1: "Lexus blue 2012..."
@@ -464,7 +464,7 @@ kubectl create secret docker-registry ghcr-secret \
 
 ```bash
 # Test internal service connectivity
-kubectl exec -it <backend-pod> -n s2search -- curl http://search-api-service/api/SearchStatus
+kubectl exec -it <backend-pod> -n s2search -- curl http://s2search-api-service/api/SearchStatus
 
 # Check service endpoints
 kubectl get endpoints -n s2search
