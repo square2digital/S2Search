@@ -66,9 +66,10 @@ Output-Parameters -param $includeFunctions -name "includeFunctions"
 
 # Check if GitHub credentials are provided
 if ([string]::IsNullOrEmpty($githubUsername) -or [string]::IsNullOrEmpty($githubToken)) {
-    Write-Color -Text "Warning: GitHub credentials not provided. You may need to create the ghcr-secret manually." -Color Yellow
-    Write-Color -Text "To create the secret manually, run:" -Color Yellow
-    Write-Color -Text "kubectl create secret docker-registry ghcr-secret --docker-server=ghcr.io --docker-username=<your-github-username> --docker-password=<your-github-token> -n s2search" -Color Yellow
+    Write-Color -Text "Warning: GitHub credentials not provided. You may need to create the ghcr-secret manually." -Color Red
+    Write-Color -Text "To create the secret manually, run:" -Color Red
+    Write-Color -Text "kubectl create secret docker-registry ghcr-secret --docker-server=ghcr.io --docker-username=<your-github-username> --docker-password=<your-github-token> -n s2search" -Color Red
+    exit
 }
 else {
     Write-Color -Text "GitHub credentials provided. Will create ghcr-secret." -Color Green
@@ -134,8 +135,8 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
     }
 }
 
-# Install chart
-helm install s2search . -n $S2Namespace
+# Install chart with verbose output
+helm install s2search . -n $S2Namespace --debug --verbose
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green
