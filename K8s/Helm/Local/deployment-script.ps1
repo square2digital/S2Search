@@ -14,14 +14,16 @@
 #######################
 # debug the elastic UI
 #######################
-# build everything
-# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\deployment-script.ps1 -includeSearchUI $true -includePostgres $true -includeSearchAPI $true -includeFunctions $true
+# build everything with GitHub authentication
+# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\deployment-script.ps1 -includeSearchUI $true -includePostgres $true -includeSearchAPI $true -includeFunctions $true -githubUsername "your-username" -githubToken "your-token"
 
 param (
     [bool]$includeSearchUI = $false,
     [bool]$includePostgres = $false,    
     [bool]$includeSearchAPI = $false,
-    [bool]$includeFunctions = $false
+    [bool]$includeFunctions = $false,
+    [string]$githubUsername = "",
+    [string]$githubToken = ""
 )
 
 # Supported colour values - Black DarkBlue DarkGreen DarkCyan DarkRed DarkMagenta DarkYellow Gray DarkGray Blue Green Cyan Red Magenta Yellow White
@@ -45,6 +47,16 @@ Output-Parameters -param $includeSearchUI -name "includeSearchUI"
 Output-Parameters -param $includePostgres -name "includePostgres"
 Output-Parameters -param $includeSearchAPI -name "includeSearchAPI"
 Output-Parameters -param $includeFunctions -name "includeFunctions"
+
+# Check if GitHub credentials are provided
+if ([string]::IsNullOrEmpty($githubUsername) -or [string]::IsNullOrEmpty($githubToken)) {
+    Write-Color -Text "Warning: GitHub credentials not provided. You may need to create the ghcr-secret manually." -Color Yellow
+    Write-Color -Text "To create the secret manually, run:" -Color Yellow
+    Write-Color -Text "kubectl create secret docker-registry ghcr-secret --docker-server=ghcr.io --docker-username=<your-github-username> --docker-password=<your-github-token> -n s2search" -Color Yellow
+}
+else {
+    Write-Color -Text "GitHub credentials provided. Will create ghcr-secret." -Color Green
+}
 
 $S2SearchAsciiArt = @"
   ██████   ██████ ▓█████ ▄▄▄       ██▀███   ▄████▄   ██░ ██     ██ ▄█▀  ██████ 
@@ -77,6 +89,29 @@ Write-Color -Text "################################" -Color DarkBlue
 
 # Add namespace (optional but recommended)
 kubectl create namespace $S2Namespace
+
+# Create GitHub Container Registry secret if credentials are provided
+if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEmpty($githubToken)) {
+    Write-Color -Text "Creating GitHub Container Registry secret..." -Color Yellow
+    
+    # Delete existing secret if it exists (ignore errors)
+    kubectl delete secret ghcr-secret -n $S2Namespace 2>$null
+    
+    # Create the secret
+    kubectl create secret docker-registry ghcr-secret `
+        --docker-server=ghcr.io `
+        --docker-username=$githubUsername `
+        --docker-password=$githubToken `
+        -n $S2Namespace
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Color -Text "GitHub Container Registry secret created successfully!" -Color Green
+    }
+    else {
+        Write-Color -Text "Failed to create GitHub Container Registry secret!" -Color Red
+        exit 1
+    }
+}
 
 # Install chart with default values
 helm install s2search . -n $S2Namespace
