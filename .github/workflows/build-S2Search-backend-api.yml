@@ -20,9 +20,6 @@ jobs:
         # IMPORTANT: This fetches the entire repository, setting the build context root.
         uses: actions/checkout@v4
 
-      # --- Removed redundant dotnet restore/build/publish steps ---
-      # The multi-stage Dockerfile handles the restore, build, and publish entirely within the container.
-
       - name: Build Docker image
         # Context is set to the repository root (`.`) so that the Dockerfile can access
         # the entire solution structure (Domain, Services, APIs).
