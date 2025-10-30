@@ -1,0 +1,35 @@
+# Ingress Resource for external routing
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: s2search-ingress
+  namespace: s2search
+spec:
+  # Assumes an Ingress Controller (like Nginx or Traefik) is running in Rancher Desktop
+  ingressClassName: nginx # Use 'traefik' or 'nginx' based on your Rancher setup. Nginx is a safe default.
+  rules:
+    # Rule for the API
+    - host: api.s2search.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                # The name of the API Service we defined
+                name: s2search-api-service
+                port:
+                  number: 80
+
+    # Rule for the UI
+    - host: ui.s2search.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                # The name of the UI Service we defined
+                name: s2search-ui-service
+                port:
+                  number: 3000
