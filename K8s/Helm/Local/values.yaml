@@ -62,8 +62,9 @@ postgresql:
     postgresPassword: "34gfDF43@g548734SDFG5yh5662"
     username: "s2search"
     database: "postgres"
-  service:
-    type: NodePort
+  primary:
+    service:
+      type: NodePort
   image:
     registry: docker.io
     repository: bitnami/postgresql
