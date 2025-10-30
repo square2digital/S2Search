@@ -2,13 +2,15 @@
 
 # Build stage: use the .NET SDK to restore and publish
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-LABEL author="Square2 Digital"
 WORKDIR /src
 
-# Copy everything and restore/publish the API project
+# copy csproj(s) and restore (adjust relative paths if your repo layout differs)
+COPY APIs/S2Search.API/S2Search.Backend.API.csproj ./APIs/S2Search.API/
+RUN dotnet restore ./APIs/S2Search.API/S2Search.Backend.API.csproj
+
+# copy remaining sources and publish
 COPY . .
-RUN dotnet restore "APIs/S2Search.API/S2Search.Backend.API.csproj"
-RUN dotnet publish "APIs/S2Search.API/S2Search.Backend.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish ./APIs/S2Search.API/S2Search.Backend.API.csproj -c Release -o /app/publish /p:UseAppHost=false
 
 # Runtime stage: use the smaller ASP.NET runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
