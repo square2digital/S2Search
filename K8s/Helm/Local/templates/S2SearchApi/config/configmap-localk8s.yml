@@ -24,7 +24,7 @@ data:
       },
       "AllowedHosts": "*",
       "ConnectionStrings": {
-        "SqlDatabase": "postgresql://<USER>:<PASSWORD>@my-postgres-service:5432/<DATABASE_NAME>",
+        "SqlDatabase": "User Id=s2search;Password=34gfDF43@g548734SDFG5yh5662;Server=s2search-postgresql;Port=5432;Database=postgres",
         "AzureStorage": "ADD_AZURE_STORAGE_CONNECTION_STRING",
         "Redis": "localhost:32388,ssl=false,password=a-very-complex-password-here,abortConnect=false,connectTimeout=15000,responseTimeout=5000"
       },

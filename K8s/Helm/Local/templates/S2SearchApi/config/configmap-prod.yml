@@ -24,6 +24,7 @@ data:
       },
       "AllowedHosts": "*",
       "ConnectionStrings": {
+        "SqlDatabase": "User Id=s2search;Password=34gfDF43@g548734SDFG5yh5662;Server=s2search-postgresql;Port=5432;Database=postgres",      
         "StorageQueue": "DefaultEndpointsProtocol=https;AccountName=storages2searchwesteu;AccountKey=Hr5Jw94HFgkwhjd0u4XML6R1BGg1I2Q5RBgsyCSrRzjZ7vu0WHNdg0AAwTqYABm7bWYH/PI00INxEIw25VkCLg==;EndpointSuffix=core.windows.net",
         "CustomerResourceStore": "Server=tcp:s2-sql-dev.database.windows.net,1433;Initial Catalog=CustomerResourceStore;Persist Security Info=False;User ID=jgilmartin;Password=y5j5G5jikDdy5jtSUd#ZhP3x48m@7nVwxRg5YA$QUKaYrf%456Gd@w£d*h45QUKaY;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       },
