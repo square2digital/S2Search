@@ -1,6 +1,12 @@
 apiVersion: v2
 name: S2Search
-description: S2Search Helm chart
+description: S2Search Helm charts for deploying S2Search Backend and UI
 type: application
 version: 1.1.0
-appVersion: "1.1.0"
+
+dependencies:
+  - name: postgresql
+    version: "14.1.2" # Always pin to a specific version
+    repository: "https://charts.bitnami.com/bitnami"
+    # The condition below lets you easily disable the DB for production
+    condition: postgresql.enabled

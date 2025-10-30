@@ -55,3 +55,16 @@ S2SearchUi:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "34gfDF43@g548734SDFG5yh5662"
+    username: "s2search"
+    database: "postgres"
+  service:
+    type: ClusterIP
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: "sha256-2b08aaced99e1aff63ec8fff5a07bd0eb2e70cde4769df218d16fa4a542bbd45"

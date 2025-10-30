@@ -148,6 +148,8 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
     }
 }
 
+helm dependency update .
+
 # Install chart with verbose output
 helm install s2search . -n $S2Namespace
 
