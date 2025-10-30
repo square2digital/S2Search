@@ -14,8 +14,11 @@
 #######################
 # debug the elastic UI
 #######################
-# build everything with GitHub authentication
-# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\deployment-script.ps1 -includeSearchUI $true -includePostgres $true -includeSearchAPI $true -includeFunctions $true -githubUsername "your-username" -githubToken "your-token"
+# build everything (credentials loaded from .env file)
+# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -includeSearchUI $true -includePostgres $true -includeSearchAPI $true -includeFunctions $true
+# 
+# Or with explicit credentials (not recommended for public repos):
+# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -includeSearchUI $true -includePostgres $true -includeSearchAPI $true -includeFunctions $true -githubUsername "your-username" -githubToken "your-token"
 
 param (
     [bool]$includeSearchUI = $false,
@@ -34,6 +37,30 @@ function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
     Write-Host
 }
 
+function Load-EnvFile([string]$envFilePath) {
+    if (Test-Path $envFilePath) {
+        Write-Color -Text "Loading environment variables from $envFilePath" -Color Green
+        Get-Content $envFilePath | ForEach-Object {
+            if ($_ -match "^\s*([^#][^=]*)\s*=\s*(.*)\s*$") {
+                $name = $matches[1].Trim()
+                $value = $matches[2].Trim()
+                
+                # Remove quotes if present
+                if ($value -match '^"(.*)"$' -or $value -match "^'(.*)'$") {
+                    $value = $matches[1]
+                }
+                
+                Set-Item -Path "env:$name" -Value $value
+                Write-Color -Text "Loaded: $name" -Color DarkGray
+            }
+        }
+    }
+    else {
+        Write-Color -Text "Environment file not found: $envFilePath" -Color Yellow
+        Write-Color -Text "You can create one from .env.example or provide credentials via parameters" -Color Yellow
+    }
+}
+
 function Output-Parameters([bool]$param, [String]$name) {
     if ($param) {
         Write-Color -Text "Parameter $name is $param" -Color Green    
@@ -41,6 +68,20 @@ function Output-Parameters([bool]$param, [String]$name) {
     else {
         Write-Color -Text "Parameter $name is $param" -Color Red
     }
+}
+
+# Load environment variables from .env file
+Load-EnvFile -envFilePath ".env"
+
+# Use environment variables if parameters are not provided
+if ([string]::IsNullOrEmpty($githubUsername) -and $env:GITHUB_USERNAME) {
+    $githubUsername = $env:GITHUB_USERNAME
+    Write-Color -Text "Using GitHub username from environment variable" -Color Green
+}
+
+if ([string]::IsNullOrEmpty($githubToken) -and $env:GITHUB_TOKEN) {
+    $githubToken = $env:GITHUB_TOKEN
+    Write-Color -Text "Using GitHub token from environment variable" -Color Green
 }
 
 Output-Parameters -param $includeSearchUI -name "includeSearchUI"
@@ -81,11 +122,15 @@ Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
 # when built to pull down dependacies from the DevOps artifacts repo "square2digital"
 #$PatToken = "4quc53ontolu6jwvy4ktkj2o5z2mhojgpykrzba6mh477wc6zhcq"
 #$DeploymentRoot = "E:\github\S2Search"
-$S2Namespace = "s2search"
+
+# Use environment variable for namespace if available, otherwise use default
+$S2Namespace = if ($env:S2_NAMESPACE) { $env:S2_NAMESPACE } else { "s2search" }
 
 Write-Color -Text "################################" -Color DarkBlue
 Write-Color -Text "Helm Deployment"                  -Color DarkBlue
 Write-Color -Text "################################" -Color DarkBlue
+
+kubectl delete namespace $S2Namespace -IgnoreNotFound
 
 # Add namespace (optional but recommended)
 kubectl create namespace $S2Namespace

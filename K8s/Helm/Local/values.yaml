@@ -53,3 +53,10 @@ S2SearchUi:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+
+# GitHub Container Registry configuration
+ghcr:
+  enabled: false # Set to true to create the secret via Helm
+  server: ghcr.io
+  username: "" # Your GitHub username
+  password: "" # Your GitHub Personal Access Token
