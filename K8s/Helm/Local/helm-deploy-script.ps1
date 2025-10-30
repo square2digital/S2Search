@@ -37,30 +37,6 @@ function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
     Write-Host
 }
 
-function Load-EnvFile([string]$envFilePath) {
-    if (Test-Path $envFilePath) {
-        Write-Color -Text "Loading environment variables from $envFilePath" -Color Green
-        Get-Content $envFilePath | ForEach-Object {
-            if ($_ -match "^\s*([^#][^=]*)\s*=\s*(.*)\s*$") {
-                $name = $matches[1].Trim()
-                $value = $matches[2].Trim()
-                
-                # Remove quotes if present
-                if ($value -match '^"(.*)"$' -or $value -match "^'(.*)'$") {
-                    $value = $matches[1]
-                }
-                
-                Set-Item -Path "env:$name" -Value $value
-                Write-Color -Text "Loaded: $name" -Color DarkGray
-            }
-        }
-    }
-    else {
-        Write-Color -Text "Environment file not found: $envFilePath" -Color Yellow
-        Write-Color -Text "You can create one from .env.example or provide credentials via parameters" -Color Yellow
-    }
-}
-
 function Output-Parameters([bool]$param, [String]$name) {
     if ($param) {
         Write-Color -Text "Parameter $name is $param" -Color Green    
@@ -70,19 +46,21 @@ function Output-Parameters([bool]$param, [String]$name) {
     }
 }
 
-# Load environment variables from .env file
-Load-EnvFile -envFilePath ".env"
+# Load .env file if it exists
+if (Test-Path ".env") {
+    Get-Content ".env" | ForEach-Object {
+        if ($_ -match "^\s*([^#][^=]*)\s*=\s*(.*)\s*$") {
+            $name = $matches[1].Trim()
+            $value = $matches[2].Trim().Trim('"').Trim("'")
+            Set-Item -Path "env:$name" -Value $value
+        }
+    }
+    Write-Color -Text "Loaded credentials from .env file" -Color Green
+}
 
 # Use environment variables if parameters are not provided
-if ([string]::IsNullOrEmpty($githubUsername) -and $env:GITHUB_USERNAME) {
-    $githubUsername = $env:GITHUB_USERNAME
-    Write-Color -Text "Using GitHub username from environment variable" -Color Green
-}
-
-if ([string]::IsNullOrEmpty($githubToken) -and $env:GITHUB_TOKEN) {
-    $githubToken = $env:GITHUB_TOKEN
-    Write-Color -Text "Using GitHub token from environment variable" -Color Green
-}
+if ([string]::IsNullOrEmpty($githubUsername)) { $githubUsername = $env:GITHUB_USERNAME }
+if ([string]::IsNullOrEmpty($githubToken)) { $githubToken = $env:GITHUB_TOKEN }
 
 Output-Parameters -param $includeSearchUI -name "includeSearchUI"
 Output-Parameters -param $includePostgres -name "includePostgres"
@@ -158,30 +136,8 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
     }
 }
 
-# Prepare Helm values
-$helmArgs = @()
-
-# Add GitHub credentials if available
-if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEmpty($githubToken)) {
-    $helmArgs += "--set"
-    $helmArgs += "ghcr.enabled=true"
-    $helmArgs += "--set"
-    $helmArgs += "ghcr.username=$githubUsername"
-    $helmArgs += "--set"
-    $helmArgs += "ghcr.password=$githubToken"
-    
-    Write-Color -Text "GitHub credentials will be passed to Helm" -Color Green
-}
-
-# Install chart with values
-if ($helmArgs.Count -gt 0) {
-    Write-Color -Text "Installing Helm chart with GitHub credentials..." -Color Yellow
-    helm install s2search . -n $S2Namespace @helmArgs
-}
-else {
-    Write-Color -Text "Installing Helm chart without GitHub credentials..." -Color Yellow
-    helm install s2search . -n $S2Namespace
-}
+# Install chart
+helm install s2search . -n $S2Namespace
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green
