@@ -136,7 +136,7 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
 }
 
 # Install chart with verbose output
-helm install s2search . -n $S2Namespace --debug --verbose
+helm install s2search . -n $S2Namespace
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green
