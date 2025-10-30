@@ -158,8 +158,30 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
     }
 }
 
-# Install chart with default values
-helm install s2search . -n $S2Namespace
+# Prepare Helm values
+$helmArgs = @()
+
+# Add GitHub credentials if available
+if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEmpty($githubToken)) {
+    $helmArgs += "--set"
+    $helmArgs += "ghcr.enabled=true"
+    $helmArgs += "--set"
+    $helmArgs += "ghcr.username=$githubUsername"
+    $helmArgs += "--set"
+    $helmArgs += "ghcr.password=$githubToken"
+    
+    Write-Color -Text "GitHub credentials will be passed to Helm" -Color Green
+}
+
+# Install chart with values
+if ($helmArgs.Count -gt 0) {
+    Write-Color -Text "Installing Helm chart with GitHub credentials..." -Color Yellow
+    helm install s2search . -n $S2Namespace @helmArgs
+}
+else {
+    Write-Color -Text "Installing Helm chart without GitHub credentials..." -Color Yellow
+    helm install s2search . -n $S2Namespace
+}
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green

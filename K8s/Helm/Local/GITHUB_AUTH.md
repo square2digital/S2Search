@@ -22,6 +22,27 @@
    .\helm-deploy-script.ps1 -includeSearchUI $true -includeSearchAPI $true
    ```
 
+## How It Works
+
+The deployment script can read from `.env` and pass values to Helm in multiple ways:
+
+### Method 1: Script Creates K8s Secret (Current Default)
+
+- Script loads `.env` variables
+- Creates `ghcr-secret` directly in Kubernetes
+- Helm chart references the existing secret
+
+### Method 2: Helm Values via --set Flags
+
+- Script loads `.env` variables
+- Passes values to Helm using `--set ghcr.username=...`
+- Helm template creates the secret
+
+### Method 3: Generated Values File
+
+- Use `generate-values.ps1` to create `values-local.yaml` from `.env`
+- Deploy with: `helm install s2search . -f values-local.yaml`
+
 ## Security Notes
 
 - ✅ The `.env` file is ignored by git and won't be committed
