@@ -75,14 +75,15 @@ jobs:
     permissions:
       packages: write
 
+    env:
+      IMAGE_NAME: s2search-ui
+
     steps:
       - name: Clean up old GHCR images
-        uses: actions/ghcr-cleanup@v1
+        uses: actions/delete-package-versions@v5
         with:
+          package-name: ${{ env.IMAGE_NAME }}
+          package-type: container
           token: ${{ secrets.GHCR_PAT }}
-          owner: square2digital
-          repository: s2search
-          package: ${{ env.IMAGE_NAME }}
-          keep-n-tagged: 10
-          keep-n-untagged: 0
-          delete-untagged: true
+          min-versions-to-keep: 10
+          delete-only-untagged-versions: false
