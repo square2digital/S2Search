@@ -105,9 +105,10 @@ Write-Color -Text "################################" -Color DarkBlue
 Write-Color -Text "Helm Deployment"                  -Color DarkBlue
 Write-Color -Text "################################" -Color DarkBlue
 
-kubectl delete namespace $S2Namespace -IgnoreNotFound
+Write-Color -Text "kubectl delete namespace $S2Namespace" -Color Yellow
+kubectl delete namespace $S2Namespace
 
-# Add namespace (optional but recommended)
+Write-Color -Text "kubectl create namespace $S2Namespace" -Color Yellow
 kubectl create namespace $S2Namespace
 
 # Create GitHub Container Registry secret if credentials are provided
@@ -125,7 +126,7 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
         -n $S2Namespace
     
     if ($LASTEXITCODE -eq 0) {
-        Write-Color -Text "GitHub Container Registry secret created successfully!" -Color Green
+        Write-Color -Text "GitHub Container Registry secret created successfully!" -Color Blue
     }
     else {
         Write-Color -Text "Failed to create GitHub Container Registry secret!" -Color Red
