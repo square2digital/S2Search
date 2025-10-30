@@ -15,7 +15,7 @@
 # Simple deployment
 #######################
 # Put your GitHub credentials in .env file, then run:
-# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -includeSearchUI $true -includeSearchAPI $true
+# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -includeSearchUI $true -includeSearchAPI $true -deleteAllImages $true
 
 param (
     [bool]$includeSearchUI = $false,
@@ -23,7 +23,8 @@ param (
     [bool]$includeSearchAPI = $false,
     [bool]$includeFunctions = $false,
     [string]$githubUsername = "",
-    [string]$githubToken = ""
+    [string]$githubToken = "",
+    [bool]$deleteAllImages = $false
 )
 
 # Supported colour values - Black DarkBlue DarkGreen DarkCyan DarkRed DarkMagenta DarkYellow Gray DarkGray Blue Green Cyan Red Magenta Yellow White
@@ -76,16 +77,11 @@ else {
 }
 
 $S2SearchAsciiArt = @"
-  ██████   ██████ ▓█████ ▄▄▄       ██▀███   ▄████▄   ██░ ██     ██ ▄█▀  ██████ 
-▒██    ▒ ▒██    ▒ ▓█   ▀▒████▄    ▓██ ▒ ██▒▒██▀ ▀█  ▓██░ ██▒    ██▄█▒ ▒██    ▒ 
-░ ▓██▄   ░ ▓██▄   ▒███  ▒██  ▀█▄  ▓██ ░▄█ ▒▒▓█    ▄ ▒██▀▀██░   ▓███▄░ ░ ▓██▄   
-  ▒   ██▒  ▒   ██▒▒▓█  ▄░██▄▄▄▄██ ▒██▀▀█▄  ▒▓▓▄ ▄██▒░▓█ ░██    ▓██ █▄   ▒   ██▒
-▒██████▒▒▒██████▒▒░▒████▒▓█   ▓██▒░██▓ ▒██▒▒ ▓███▀ ░░▓█▒░██▓   ▒██▒ █▄▒██████▒▒
-▒ ▒▓▒ ▒ ░▒ ▒▓▒ ▒ ░░░ ▒░ ░▒▒   ▓▒█░░ ▒▓ ░▒▓░░ ░▒ ▒  ░ ▒ ░░▒░▒   ▒ ▒▒ ▓▒▒ ▒▓▒ ▒ ░
-░ ░▒  ░ ░░ ░▒  ░ ░ ░ ░  ░ ▒   ▒▒ ░  ░▒ ░ ▒░  ░  ▒    ▒ ░▒░ ░   ░ ░▒ ▒░░ ░▒  ░ ░
-░  ░  ░  ░  ░  ░     ░    ░   ▒     ░░   ░ ░         ░  ░░ ░   ░ ░░ ░ ░  ░  ░  
-      ░        ░     ░  ░     ░  ░   ░     ░ ░       ░  ░  ░   ░  ░         ░  
-                                           ░                                   
+   _______  ____                 __ 
+  / __/_  |/ __/__ ___ _________/ / 
+ _\ \/ __/_\ \/ -_) _ `/ __/ __/ _ \
+/___/____/___/\__/\_,_/_/  \__/_//_/
+                                    
 "@
 
 Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
@@ -100,7 +96,7 @@ Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
 #$DeploymentRoot = "E:\github\S2Search"
 
 # Use environment variable for namespace if available, otherwise use default
-$S2Namespace = if ($env:S2_NAMESPACE) { $env:S2_NAMESPACE } else { "s2search" }
+$S2Namespace = "s2search"
 
 Write-Color -Text "################################" -Color DarkBlue
 Write-Color -Text "Helm Deployment"                  -Color DarkBlue
@@ -111,6 +107,23 @@ kubectl delete namespace $S2Namespace
 
 Write-Color -Text "kubectl create namespace $S2Namespace" -Color DarkYellow
 kubectl create namespace $S2Namespace
+
+if ($deleteAllImages) {
+    
+    Write-Color -Text "################################" -Color DarkBlue
+    Write-Color -Text "Delete Images"                    -Color DarkBlue
+    Write-Color -Text "################################" -Color DarkBlue
+
+    # delete S2 Namespace
+    #Write-Color -Text "Delete all resources in the $S2Namespace Namespace" -Color Yellow
+    #kubectl delete all --all -n $S2Namespace
+
+    Write-Color -Text "ghcr.io/square2digital/s2search-ui" -Color DarkYellow
+    docker rmi ghcr.io/square2digital/s2search-ui:latest
+
+    Write-Color -Text "ghcr.io/square2digital/s2search-backend-api" -Color DarkYellow
+    docker rmi ghcr.io/square2digital/s2search-backend-api:latestQ
+}
 
 # Create GitHub Container Registry secret if credentials are provided
 if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEmpty($githubToken)) {

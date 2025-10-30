@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: s2searchui-deployment
+  name: "{{ .Values.S2SearchUi.image.name }}-deployment"
   labels:
-    app: s2searchui
+    app: {{ .Values.S2SearchUi.image.name }}
 spec:
   replicas: {{ .Values.S2SearchUi.replicaCount }}
   selector:
     matchLabels:
-      app: s2searchui
+      app: {{ .Values.S2SearchUi.image.name }}
   minReadySeconds: 3
   strategy:
     type: RollingUpdate
@@ -18,19 +18,22 @@ spec:
   template:
     metadata:
       labels:
-        app: s2searchui
+        app: {{ .Values.S2SearchUi.image.name }}
     spec:
       imagePullSecrets:
         - name: ghcr-secret
       containers:
-        - name: s2searchui
+        - name: {{ .Values.S2SearchUi.image.name }}
           image: {{ .Values.S2SearchUi.image.repository }}:{{ .Values.S2SearchUi.image.tag }}
           ports:
             - containerPort: 3000
           resources:
             limits:
-              memory: "128Mi" #128 MB
-              cpu: "200m" #200 millicpu (.2 cpu or 20% of the cpu)
+              memory: {{ .Values.S2SearchUi.resources.limits.memory }}
+              cpu: {{ .Values.S2SearchUi.resources.limits.cpu }}
+            requests:
+              memory: {{ .Values.S2SearchUi.resources.requests.memory }}
+              cpu: {{ .Values.S2SearchUi.resources.requests.cpu }}
           imagePullPolicy: {{ .Values.S2SearchUi.image.pullPolicy }}
           livenessProbe:
             httpGet:
