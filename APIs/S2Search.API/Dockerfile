@@ -4,20 +4,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# 1. Copy the projects from the build context (which is now the solution root)
-# We copy all .csproj files to allow project references to be resolved.
-# We also copy a potential solution file (.sln) if it exists.
-COPY **/*.csproj ./
-# NOTE: If you have a solution file, add it here: COPY **/*.sln ./
-
-# 2. Restore all project dependencies
-# We use the simple filename as it was copied to the WORKDIR /src
-RUN dotnet restore S2Search.Backend.API.csproj
-
-# 3. Copy the rest of the application source code (including all directories like Domain, Services, etc.)
+# 1. Copy the entire solution structure (Domain, Services, APIs folders) 
+# The build context is the root (E:\github\S2Search), so this copies everything and preserves the directory structure.
 COPY . .
 
-# 4. Publish the specific API project using its relative path from the solution root
+# 2. Restore all project dependencies by referencing the API project using its full path inside the container (/src)
+# This allows the project references (e.g., ../../Domain/...) to resolve correctly.
+RUN dotnet restore APIs/S2Search.API/S2Search.Backend.API.csproj
+
+# 3. Publish the specific API project using its relative path from the solution root
 RUN dotnet publish APIs/S2Search.API/S2Search.Backend.API.csproj -c Release -o /app/publish /p:UseAppHost=false
 
 # Runtime stage: use the smaller ASP.NET runtime image
