@@ -53,14 +53,3 @@ S2SearchUi:
   nodeSelector: {}
   tolerations: []
   affinity: {}
-
-# GitHub Container Registry configuration
-# This can be set via:
-# 1. Environment variables (loaded by deployment script from .env file)
-# 2. Helm --set flags (automatically done by deployment script)
-# 3. Directly editing this file (not recommended for public repos)
-ghcr:
-  enabled: false # Set to true to create the secret via Helm (done automatically by script)
-  server: ghcr.io
-  username: "" # Your GitHub username (passed from .env via script)
-  password: "" # Your GitHub Personal Access Token (passed from .env via script)

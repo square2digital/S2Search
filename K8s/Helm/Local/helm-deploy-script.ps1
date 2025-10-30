@@ -12,13 +12,10 @@
 # E:\github\S2Search\K8s\Helm\Local
 
 #######################
-# debug the elastic UI
+# Simple deployment
 #######################
-# build everything (credentials loaded from .env file)
-# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -includeSearchUI $true -includePostgres $true -includeSearchAPI $true -includeFunctions $true
-# 
-# Or with explicit credentials (not recommended for public repos):
-# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -includeSearchUI $true -includePostgres $true -includeSearchAPI $true -includeFunctions $true -githubUsername "your-username" -githubToken "your-token"
+# Put your GitHub credentials in .env file, then run:
+# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -includeSearchUI $true -includeSearchAPI $true
 
 param (
     [bool]$includeSearchUI = $false,
