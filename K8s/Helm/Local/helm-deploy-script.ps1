@@ -122,7 +122,7 @@ if ($deleteAllImages) {
     docker rmi ghcr.io/square2digital/s2search-ui:latest
 
     Write-Color -Text "ghcr.io/square2digital/s2search-backend-api" -Color DarkYellow
-    docker rmi ghcr.io/square2digital/s2search-backend-api:latestQ
+    docker rmi ghcr.io/square2digital/s2search-backend-api:latest
 }
 
 # Create GitHub Container Registry secret if credentials are provided
