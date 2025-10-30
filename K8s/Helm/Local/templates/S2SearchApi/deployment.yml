@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: s2search-backend-deployment
+  name: "{{ .Values.S2Backend.image.name }}-deployment"
   labels:
-    app: s2search-backend
+    app: {{ .Values.S2Backend.image.name }}
 spec:
   replicas: {{ .Values.S2Backend.replicaCount }}
   selector:
     matchLabels:
-      app: s2search-backend
+      app: {{ .Values.S2Backend.image.name }}
   minReadySeconds: 3
   strategy:
     type: RollingUpdate
@@ -18,12 +18,12 @@ spec:
   template:
     metadata:
       labels:
-        app: s2search-backend
+        app: {{ .Values.S2Backend.image.name }}
     spec:
       imagePullSecrets:
         - name: ghcr-secret      
       containers:
-        - name: s2search-backend
+        - name: {{ .Values.S2Backend.image.name }}
           image: {{ .Values.S2Backend.image.repository }}:{{ .Values.S2Backend.image.tag }}
           ports:
             - containerPort: {{ .Values.S2Backend.service.port }}

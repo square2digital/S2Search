@@ -1,0 +1,18 @@
+# ClusterIP Service for the ASP.NET API Application
+apiVersion: v1
+kind: Service
+metadata:
+  name: s2search-api-service
+  namespace: s2search
+spec:
+  type: ClusterIP
+  selector:
+    # This must match the label on your API Deployment Pods
+    app: s2search-backend-api
+  ports:
+    - name: http
+      protocol: TCP
+      # The port the service exposes internally
+      port: 80
+      # The targetPort is the port the ASP.NET container listens on (standard 80)
+      targetPort: 80

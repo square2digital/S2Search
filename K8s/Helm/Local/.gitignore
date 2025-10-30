@@ -1,0 +1,10 @@
+# Environment files containing sensitive information
+.env
+values-local.yaml
+
+# Helm temporary files
+*.tmp
+*.lock
+
+# Kubernetes temporary files
+*.yaml.tmp

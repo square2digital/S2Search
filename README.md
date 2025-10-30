@@ -1,5 +1,5 @@
 [![Cache Manager Build Status](https://github.com/square2digital/S2Search/actions/workflows/build-cachemanager.yml/badge.svg)](https://github.com/square2digital/S2Search/actions/workflows/build-cachemanager.yml)
-[![Backend Build Status](https://github.com/square2digital/S2Search/actions/workflows/build-S2Search-backend.yml/badge.svg)](https://github.com/square2digital/S2Search/actions/workflows/build-S2Search-backend.yml)
+[![Backend Build Status](https://github.com/square2digital/S2Search/actions/workflows/build-S2Search-backend-api.yml/badge.svg)](https://github.com/square2digital/S2Search/actions/workflows/build-S2Search-backend-api.yml)
 [![Search UI Build Status](https://github.com/square2digital/S2Search/actions/workflows/build-search-ui.yml/badge.svg)](https://github.com/square2digital/S2Search/actions/workflows/build-search-ui.yml)
 
 # S2 Search

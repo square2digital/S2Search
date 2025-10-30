@@ -1,7 +1,8 @@
 S2Backend:
   replicaCount: 1
   image:
-    repository: ghcr.io/square2digital/s2search-backend
+    name: s2search-backend-api
+    repository: ghcr.io/square2digital/s2search-backend-api
     tag: latest
     pullPolicy: IfNotPresent
   service:
@@ -27,6 +28,7 @@ S2Backend:
 S2SearchUi:
   replicaCount: 1
   image:
+    name: s2search-ui
     repository: ghcr.io/square2digital/s2search-ui
     tag: latest
     pullPolicy: IfNotPresent
