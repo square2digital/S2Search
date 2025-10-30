@@ -24,60 +24,54 @@ data:
       },
       "AllowedHosts": "*",
       "ConnectionStrings": {
-        "SqlDatabase": "User Id=s2search;Password=34gfDF43@g548734SDFG5yh5662;Server=s2search-postgresql;Port=5432;Database=postgres",      
-        "StorageQueue": "DefaultEndpointsProtocol=https;AccountName=storages2searchwesteu;AccountKey=Hr5Jw94HFgkwhjd0u4XML6R1BGg1I2Q5RBgsyCSrRzjZ7vu0WHNdg0AAwTqYABm7bWYH/PI00INxEIw25VkCLg==;EndpointSuffix=core.windows.net",
-        "CustomerResourceStore": "Server=tcp:s2-sql-dev.database.windows.net,1433;Initial Catalog=CustomerResourceStore;Persist Security Info=False;User ID=jgilmartin;Password=y5j5G5jikDdy5jtSUd#ZhP3x48m@7nVwxRg5YA$QUKaYrf%456Gd@w£d*h45QUKaY;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        "SqlDatabase": "User Id=s2search;Password=34gfDF43@g548734SDFG5yh5662;Server=s2search-postgresql;Port=5432;Database=postgres",
+        "AzureStorage": "ADD_AZURE_STORAGE_CONNECTION_STRING",
+        "Redis": "localhost:32388,ssl=false,password=a-very-complex-password-here,abortConnect=false,connectTimeout=15000,responseTimeout=5000"
       },
-      "SqlConnection": {
-        "ConnectionString": "Server=tcp:s2-sql-dev.database.windows.net,1433;Initial Catalog=CustomerResourceStore;Persist Security Info=False;User ID=jgilmartin;Password=y5j5G5jikDdy5jtSUd#ZhP3x48m@7nVwxRg5YA$QUKaYrf%456Gd@w£d*h45QUKaY;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      "DemoSearchCredentials": {
+        "UseDemoSearchCredentials": true,
+        "SearchCredentialsQueryKey": "JTli3f7UNsq6UP5aarwr6kEuXLziImNklC1EZlI3zSAzSeDZXlvC",
+        "SearchCredentialsIndexId": "6FB3C6D1-F480-47B5-9934-02E611AEFD02",
+        "SearchCredentialsIndexName": "s2-demo-vehicles",
+        "SearchCredentialsInstanceEndpoint": "https://s2-search-dev.search.windows.net",
+        "SearchCredentialsInstanceName": "s2-search-dev"
       },
-      "AppSettings": {
-        "DemoSearchCredentials": {
-          "UseDemoSearchCredentials": true,
-          "SearchCredentialsQueryKey": "JTli3f7UNsq6UP5aarwr6kEuXLziImNklC1EZlI3zSAzSeDZXlvC",
-          "SearchCredentialsIndexId": "6FB3C6D1-F480-47B5-9934-02E611AEFD02",
-          "SearchCredentialsIndexName": "s2-demo-vehicles",
-          "SearchCredentialsInstanceEndpoint": "https://s2-search-dev.search.windows.net",
-          "SearchCredentialsInstanceName": "s2-search-dev"
-        },
-        "SearchSettings": {
-          "UseRequestedCallingHost": true,
-          "DefaultSearchOrderBy": "price desc",
-          "FacetOrder": "[\"make\", \"model\", \"variant\", \"price\", \"monthlyPrice\", \"location\", \"year\", \"mileage\", \"transmission\", \"fuelType\", \"bodyStyle\", \"engineSize\", \"doors\", \"colour\"]",
-          "DefaultFacetsURL": "REDUNDANT",
-          "FacetNamesToMatch": "[\"make\", \"model\", \"transmission\", \"fuelType\", \"year\", \"colour\", \"bodyStyle\" ]",
-          "FacetEdgeCases": "[{\"SearchTerm\": \"6\", \"FullSearchTerm\": \"bmw\", \"Result\":true}, {\"SearchTerm\": \"6\", \"FullSearchTerm\": \"mazda\", \"Result\":false}, {\"SearchTerm\": \"6\", \"FullSearchTerm\": \"6 door\", \"Result\":true}, {\"SearchTerm\": \"6\", \"FullSearchTerm\": \"6 doors\", \"Result\":true}]",
-          "FacetCurrencyRanges": "price,monthlyPrice",
-          "FacetNonCurrencyRange": "mileage",
-          "FacetMaxRangeToValue": 20000000,
-          "FacetToOverrideDisplay": "engineSize,mileage,doors"
-        },
-        "FacetSettings": {
-          "Make": "make, count:9999",
-          "Model": "model, count:9999",
-          "Variant": "variant, count:9999",
-          "Location": "location, count:9999",
-          "Price": "price, values:5001|10001|20001|30001|40001|50001|60001|70001|80001|90001|100001|150001|200001|500001|1000001",
-          "MonthlyPrice": "monthlyPrice, values:201|401|601|801|1001|1501|2001",
-          "Mileage": "mileage, values:1000|5000|10000|20000|30000|50000|75000|100000",
-          "FuelType": "fuelType, count:9999",
-          "Transmission": "transmission, count:9999",
-          "Doors": "doors, count:9999",
-          "EngineSize": "engineSize, count:9999",
-          "BodyStyle": "bodyStyle, count:9999",
-          "Colour": "colour, count:9999",
-          "Year": "year, count:9999"
-        },
-        "MemoryCacheSettings": {
-          "SearchCacheSlidingExpirySeconds": 1,
-          "ConfigCacheSlidingExpirySeconds": 1,
-          "DefaultFacetsCacheExpiryInSeconds": 60,
-          "GenericSynonymsCacheExpiryInSeconds": 86400
-        },
-        "RedisCacheSettings": {
-          "EnableRedisCache": false,
-          "RedisConnectionString": "redis-0.redis.redis.svc.cluster.local,ssl=false,password=a-very-complex-password-here,abortConnect=false,connectTimeout=15000,responseTimeout=5000",
-          "DefaultCacheExpiryInSeconds": 3600
-        }
+      "SearchSettings": {
+        "UseRequestedCallingHost": true,
+        "DefaultSearchOrderBy": "price desc",
+        "FacetOrder": "[\"make\", \"model\", \"variant\", \"price\", \"monthlyPrice\", \"location\", \"year\", \"mileage\", \"transmission\", \"fuelType\", \"bodyStyle\", \"engineSize\", \"doors\", \"colour\"]",
+        "DefaultFacetsURL": "REDUNDANT",
+        "FacetNamesToMatch": "[\"make\", \"model\", \"transmission\", \"fuelType\", \"year\", \"colour\", \"bodyStyle\" ]",
+        "FacetEdgeCases": "[{\"SearchTerm\": \"6\", \"FullSearchTerm\": \"bmw\", \"Result\":true}, {\"SearchTerm\": \"6\", \"FullSearchTerm\": \"mazda\", \"Result\":false}, {\"SearchTerm\": \"6\", \"FullSearchTerm\": \"6 door\", \"Result\":true}, {\"SearchTerm\": \"6\", \"FullSearchTerm\": \"6 doors\", \"Result\":true}]",
+        "FacetCurrencyRanges": "price,monthlyPrice",
+        "FacetNonCurrencyRange": "mileage",
+        "FacetMaxRangeToValue": 20000000,
+        "FacetToOverrideDisplay": "engineSize,mileage,doors"
+      },
+      "FacetSettings": {
+        "Make": "make, count:9999",
+        "Model": "model, count:9999",
+        "Variant": "variant, count:9999",
+        "Location": "location, count:9999",
+        "Price": "price, values:5001|10001|20001|30001|40001|50001|60001|70001|80001|90001|100001|150001|200001|500001|1000001",
+        "MonthlyPrice": "monthlyPrice, values:201|401|601|801|1001|1501|2001",
+        "Mileage": "mileage, values:1000|5000|10000|20000|30000|50000|75000|100000",
+        "FuelType": "fuelType, count:9999",
+        "Transmission": "transmission, count:9999",
+        "Doors": "doors, count:9999",
+        "EngineSize": "engineSize, count:9999",
+        "BodyStyle": "bodyStyle, count:9999",
+        "Colour": "colour, count:9999",
+        "Year": "year, count:9999"
+      },
+      "MemoryCacheSettings": {
+        "SearchCacheSlidingExpirySeconds": 1,
+        "ConfigCacheSlidingExpirySeconds": 1,
+        "DefaultFacetsCacheExpiryInSeconds": 60,
+        "GenericSynonymsCacheExpiryInSeconds": 86400
+      },
+      "RedisCacheSettings": {
+        "EnableRedisCache": false,
+        "DefaultCacheExpiryInSeconds": 3600
       }
     }
