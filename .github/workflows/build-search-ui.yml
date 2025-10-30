@@ -77,7 +77,7 @@ jobs:
       - name: Delete old container versions from GHCR
         uses: actions/delete-package-versions@v5
         with:
-          package-name: ${{ env.IMAGE_NAME }}
+          package-name: square2digital/${{ env.IMAGE_NAME }}
           package-type: container
           min-versions-to-keep: 10
           delete-only-untagged-versions: false
