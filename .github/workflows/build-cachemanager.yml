@@ -14,6 +14,7 @@ jobs:
     env:
       WORKDIR: CacheManager/S2Search.CacheManager
       PROJECT: CacheManager/S2Search.CacheManager/S2Search.CacheManager.csproj
+      IMAGE_NAME: s2search-cachemanager
 
     steps:
       - name: Checkout code
@@ -31,5 +32,24 @@ jobs:
         run: dotnet build ${{ env.PROJECT }} --configuration Release --no-restore
 
       - name: Build Docker image
-        run: docker build -t s2search-cachemanager:latest .
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
         working-directory: ${{ env.WORKDIR }}/CacheManager
+
+  cleanup-ghcr:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      packages: write
+
+    env:
+      IMAGE_NAME: s2search-cachemanager
+
+    steps:
+      - name: Clean up old ${{ env.IMAGE_NAME }} GHCR images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ env.IMAGE_NAME }}
+          package-type: container
+          token: ${{ secrets.GHCR_PAT }}
+          min-versions-to-keep: 10
+          delete-only-untagged-versions: false
