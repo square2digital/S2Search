@@ -1,5 +1,6 @@
 # azure globals
-location = "northeurope"
+resource_group_name = "s2 search"
+location            = "northeurope"
 
 # s2search search instance
 search_service_name       = "s2-search-dev"
