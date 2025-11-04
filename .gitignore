@@ -267,6 +267,7 @@ __pycache__/
 
 # Cake - Uncomment if you are using it
 # tools/
+/APIs/S2Search.API/appsettings.json
 /APIs/S2Search.Admin.API/S2Search.Admin.API/appsettings.json
 /SearchAPIs/ElasticSearch/S2Search.Elastic.API/Search/appsettings.json
 /SearchAPIs/ElasticSearch/S2Search.Elastic.API/Search/appsettings.Development.json
@@ -279,8 +280,3 @@ UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search/nex
 
 # Terraform files
 Terraform/secrets.tfvars
-
-# API appsettings
-/APIs/S2Search.API/appsettings.json
-/APIs/S2Search.Admin.API/Admin/appsettings.Secrets.json
-/SearchAPIs/ElasticSearch/S2Search.Elastic.API/Search/appsettings.Secrets.json
