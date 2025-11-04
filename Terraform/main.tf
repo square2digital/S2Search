@@ -6,6 +6,7 @@ provider "azurerm" {
   tenant_id       = var.tenant_id
   subscription_id = var.subscription_id
 
+  resource_provider_registrations = "none"
 }
 
 variable "serviceprinciple_client_id" {
@@ -27,4 +28,10 @@ variable "subscription_id" {
   type        = string
   description = "Azure subscription ID"
   sensitive   = true
+}
+
+
+resource "azurerm_resource_group" "s2search_test" {
+  name     = "s2search-terraform-test-rg"
+  location = "UK South"
 }
