@@ -84,7 +84,7 @@ DECLARE
     
     -- endpoint overrides
     LocalDevEndpoint TEXT := 'localhost:2997';
-    LocalK8sEndpoint TEXT := 'localhost:3000';
+    LocalK8sEndpoint TEXT := 'ui.s2search.local';
     
     -- ********************************************
     -- to override endpoints - useful to setting a search instance to another URL or to localhost
@@ -133,7 +133,7 @@ DECLARE
 
 BEGIN
     -- override endpoint for demo
-    S2DemoEndpoint := LocalDevEndpoint;
+    S2DemoEndpoint := LocalK8sEndpoint;
 
     -- your logic here
     

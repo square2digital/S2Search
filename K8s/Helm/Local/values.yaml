@@ -55,3 +55,18 @@ S2SearchUi:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "34gfDF43@g548734SDFG5yh5662"
+    username: "s2search"
+    database: "postgres"
+  primary:
+    service:
+      type: NodePort
+      nodePort: 30432
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: "latest"

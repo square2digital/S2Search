@@ -102,6 +102,9 @@ Write-Color -Text "################################" -Color DarkBlue
 Write-Color -Text "Helm Deployment"                  -Color DarkBlue
 Write-Color -Text "################################" -Color DarkBlue
 
+Write-Color -Text "helm uninstall s2search . -n $S2Namespace" -Color DarkYellow
+helm uninstall s2search . -n $S2Namespace
+
 Write-Color -Text "kubectl delete namespace $S2Namespace" -Color DarkYellow
 kubectl delete namespace $S2Namespace
 
@@ -148,7 +151,8 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
     }
 }
 
-# Install chart with verbose output
+helm dependency update .
+
 helm install s2search . -n $S2Namespace
 
 Write-Color -Text "################################" -Color Green
