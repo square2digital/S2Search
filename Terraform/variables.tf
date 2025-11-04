@@ -27,3 +27,27 @@ variable "subscription_id" {
   description = "Azure subscription ID"
   sensitive   = true
 }
+
+variable "search_service_name" {
+  type        = string
+  description = "Name of the Azure Search service"
+  sensitive   = false
+}
+
+variable "search_service_sku" {
+  type        = string
+  description = "SKU for the Azure Search service"
+  sensitive   = false
+}
+
+variable "search_service_replicas" {
+  type        = number
+  description = "Number of replicas for the Azure Search service"
+  sensitive   = false
+}
+
+variable "search_service_partitions" {
+  type        = number
+  description = "Number of partitions for the Azure Search service"
+  sensitive   = false
+}
