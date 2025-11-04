@@ -74,6 +74,7 @@ resource "azurerm_storage_account" "s2search_storage" {
   tags = {
     Environment = "terraform-managed"
     Project     = "S2Search"
+    Service     = "storage"
   }
 }
 
