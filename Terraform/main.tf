@@ -110,3 +110,19 @@ resource "azurerm_storage_container" "s2search_feed_services" {
   storage_account_name  = azurerm_storage_account.s2search_storage.name
   container_access_type = "private"
 }
+
+# Storage Queues for async processing
+resource "azurerm_storage_queue" "feed_processing" {
+  name                 = "feed-process"
+  storage_account_name = azurerm_storage_account.s2search_storage.name
+}
+
+resource "azurerm_storage_queue" "search_indexing" {
+  name                 = "feed-validate"
+  storage_account_name = azurerm_storage_account.s2search_storage.name
+}
+
+resource "azurerm_storage_queue" "cache_invalidation" {
+  name                 = "feed-extract"
+  storage_account_name = azurerm_storage_account.s2search_storage.name
+}
