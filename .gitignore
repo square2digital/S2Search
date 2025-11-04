@@ -280,3 +280,4 @@ UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search/nex
 
 # Terraform files
 Terraform/secrets.tfvars
+APIs/S2Search.API/appsettings.json
