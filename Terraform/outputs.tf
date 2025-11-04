@@ -96,3 +96,48 @@ output "resource_group_location" {
   value       = azurerm_resource_group.s2search_test.location
   description = "The location of the resource group"
 }
+
+# =================================================================
+# Azure Storage Account Outputs
+# =================================================================
+
+output "storage_account_name" {
+  value       = azurerm_storage_account.s2search_storage.name
+  description = "The name of the storage account"
+}
+
+output "storage_account_id" {
+  value       = azurerm_storage_account.s2search_storage.id
+  description = "The ID of the storage account"
+}
+
+output "storage_account_primary_endpoint" {
+  value       = azurerm_storage_account.s2search_storage.primary_blob_endpoint
+  description = "The primary blob endpoint of the storage account"
+}
+
+output "storage_account_primary_key" {
+  value       = azurerm_storage_account.s2search_storage.primary_access_key
+  description = "The primary access key for the storage account"
+  sensitive   = true
+}
+
+output "storage_account_connection_string" {
+  value       = azurerm_storage_account.s2search_storage.primary_connection_string
+  description = "The primary connection string for the storage account"
+  sensitive   = true
+}
+
+# =================================================================
+# Storage Container Outputs
+# =================================================================
+
+output "storage_container_assets_url" {
+  value       = "${azurerm_storage_account.s2search_storage.primary_blob_endpoint}${azurerm_storage_container.s2search_blob.name}"
+  description = "The URL of the assets container"
+}
+
+output "storage_container_feed_services_url" {
+  value       = "${azurerm_storage_account.s2search_storage.primary_blob_endpoint}${azurerm_storage_container.s2search_feed_services.name}"
+  description = "The URL of the feed-services container"
+}

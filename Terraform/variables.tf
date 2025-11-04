@@ -51,3 +51,39 @@ variable "search_service_partitions" {
   description = "Number of partitions for the Azure Search service"
   sensitive   = false
 }
+
+variable "storage_account_name" {
+  type        = string
+  description = "Name of the storage account"
+  sensitive   = false
+}
+
+variable "account_tier" {
+  type        = string
+  description = "Tier of the storage account"
+  sensitive   = false
+}
+
+variable "account_replication_type" {
+  type        = string
+  description = "Replication type of the storage account"
+  sensitive   = false
+}
+
+variable "account_kind" {
+  type        = string
+  description = "Kind of the storage account"
+  sensitive   = false
+}
+
+variable "access_tier" {
+  type        = string
+  description = "Access tier of the storage account"
+  sensitive   = false
+}
+
+variable "min_tls_version" {
+  type        = string
+  description = "Minimum TLS version for the storage account"
+  sensitive   = false
+}
