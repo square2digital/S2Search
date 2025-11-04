@@ -37,6 +37,8 @@ resource "random_string" "storage_suffix" {
   length  = 3
   special = false
   upper   = false
+  lower   = false
+  numeric = true
 }
 
 resource "azurerm_search_service" "s2search_instance" {
