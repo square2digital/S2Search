@@ -60,8 +60,14 @@ variable "search_service_partitions" {
 
 variable "storage_account_name" {
   type        = string
-  description = "Name of the storage account"
+  description = "Base name of the storage account (random suffix will be added for uniqueness)"
   sensitive   = false
+  default     = "s2search"
+
+  validation {
+    condition     = can(regex("^[a-z0-9]{3,15}$", var.storage_account_name))
+    error_message = "Storage account name must be between 3-15 characters, lowercase letters and numbers only."
+  }
 }
 
 variable "account_tier" {

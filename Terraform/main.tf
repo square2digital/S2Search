@@ -1,3 +1,17 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.6"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.1"
+    }
+  }
+  required_version = ">= 1.8"
+}
+
 provider "azurerm" {
   features {}
 
@@ -5,8 +19,6 @@ provider "azurerm" {
   client_secret   = var.serviceprinciple_client_secret
   tenant_id       = var.tenant_id
   subscription_id = var.subscription_id
-
-  resource_provider_registrations = "none"
 }
 
 resource "azurerm_resource_group" "s2search_test" {
@@ -18,6 +30,13 @@ resource "azurerm_resource_group" "s2search_test" {
     Project     = "S2Search"
     CreatedBy   = "terraform"
   }
+}
+
+# Generate a random suffix for globally unique storage account name
+resource "random_string" "storage_suffix" {
+  length  = 3
+  special = false
+  upper   = false
 }
 
 resource "azurerm_search_service" "s2search_instance" {
@@ -42,7 +61,7 @@ resource "azurerm_search_service" "s2search_instance" {
 }
 
 resource "azurerm_storage_account" "s2search_storage" {
-  name                     = var.storage_account_name
+  name                     = "${var.storage_account_name}${random_string.storage_suffix.result}"
   resource_group_name      = azurerm_resource_group.s2search_test.name
   location                 = azurerm_resource_group.s2search_test.location
   account_tier             = var.account_tier
@@ -80,12 +99,12 @@ resource "azurerm_storage_account" "s2search_storage" {
 
 resource "azurerm_storage_container" "s2search_blob" {
   name                  = "assets"
-  storage_account_id    = azurerm_storage_account.s2search_storage.id
+  storage_account_name  = azurerm_storage_account.s2search_storage.name
   container_access_type = "private"
 }
 
 resource "azurerm_storage_container" "s2search_feed_services" {
   name                  = "feed-services"
-  storage_account_id    = azurerm_storage_account.s2search_storage.id
+  storage_account_name  = azurerm_storage_account.s2search_storage.name
   container_access_type = "private"
 }
