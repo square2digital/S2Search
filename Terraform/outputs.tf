@@ -2,16 +2,16 @@
 # Azure Search Service Outputs
 # =================================================================
 
-output "search_service_primary_key" {
-  value       = azurerm_search_service.s2search_instance.primary_admin_key
-  description = "Primary admin key for the Azure Search service"
-  sensitive   = true
+# Admin keys are not available through Terraform for security reasons
+# Use the Azure CLI commands below to retrieve them after deployment
+output "search_service_admin_key_command" {
+  value       = "az search admin-key show --resource-group ${azurerm_resource_group.s2search_test.name} --service-name ${azurerm_search_service.s2search_instance.name}"
+  description = "Azure CLI command to retrieve admin keys for the search service"
 }
 
-output "search_service_secondary_key" {
-  value       = azurerm_search_service.s2search_instance.secondary_admin_key
-  description = "Secondary admin key for the Azure Search service"
-  sensitive   = true
+output "search_service_query_key_command" {
+  value       = "az search query-key list --resource-group ${azurerm_resource_group.s2search_test.name} --service-name ${azurerm_search_service.s2search_instance.name}"
+  description = "Azure CLI command to retrieve query keys for the search service"
 }
 
 output "search_service_id" {
@@ -55,9 +55,8 @@ output "search_service_partition_count" {
 }
 
 output "search_service_query_keys" {
-  value       = azurerm_search_service.s2search_instance.query_keys
-  description = "List of query keys for the Azure Search service"
-  sensitive   = true
+  value       = "Use Azure CLI: az search query-key list --resource-group ${azurerm_resource_group.s2search_test.name} --service-name ${azurerm_search_service.s2search_instance.name}"
+  description = "Command to retrieve query keys for the Azure Search service"
 }
 
 output "search_service_public_network_access_enabled" {
