@@ -276,3 +276,6 @@ __pycache__/
 /SearchAPIs/AzureCognitiveServices/S2Search.Search.API/Search/appsettings.Kubernetes.json
 UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search/next-env.d.ts
 UIs/SearchUIs/AzureCognitiveServices/S2Search.Search.NextJS.ReactUI/S2Search/next-env.d.ts
+
+# Terraform files
+Terraform/secrets.tfvars
