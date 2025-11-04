@@ -33,5 +33,5 @@ variable "subscription_id" {
 
 resource "azurerm_resource_group" "s2search_test" {
   name     = "s2search-terraform-test-rg"
-  location = "UK South"
+  location = var.location
 }
