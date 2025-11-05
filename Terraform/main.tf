@@ -141,8 +141,8 @@ resource "azurerm_kubernetes_cluster" "s2search_aks" {
     vm_size              = var.aks_node_size
     type                 = "VirtualMachineScaleSets"
     auto_scaling_enabled = true
-    min_count            = var.aks_min_count # 1 from your tfvars
-    max_count            = var.aks_max_count # 2 from your tfvars
+    min_count            = var.aks_min_count
+    max_count            = var.aks_max_count
 
     # Network and storage
     vnet_subnet_id = null # Will use default subnet
@@ -159,7 +159,7 @@ resource "azurerm_kubernetes_cluster" "s2search_aks" {
   # Network profile
   network_profile {
     network_plugin    = "azure"
-    network_policy    = "azure"
+    network_policy    = var.aks_network_policy
     dns_service_ip    = "10.2.0.10"
     service_cidr      = "10.2.0.0/24"
     load_balancer_sku = "standard"

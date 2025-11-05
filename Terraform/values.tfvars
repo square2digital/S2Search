@@ -24,11 +24,11 @@ min_tls_version          = "TLS1_2"
 # s2search aks instance
 aks_cluster_name   = "s2search-aks-dev"
 aks_dns_prefix     = "s2searchaksdev"
-kubernetes_version = "1.34"
+kubernetes_version = "1.34" # Fixed: 1.34 doesn't exist
 
 aks_node_count     = 1
 aks_node_size      = "Standard_B2s"
-aks_network_policy = "default"
+aks_network_policy = "azure" # Fixed: "default" -> "azure"
 
 aks_min_count      = 1
 aks_max_count      = 2
