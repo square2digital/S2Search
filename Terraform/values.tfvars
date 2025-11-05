@@ -21,11 +21,10 @@ account_kind             = "StorageV2"
 access_tier              = "Cold"
 min_tls_version          = "TLS1_2"
 
-# s2search k8s instance
-aks_cluster_name   = "s2search-k8s"
+# s2search aks instance
+aks_cluster_name   = "s2search-aks-dev"
+aks_dns_prefix     = "s2searchaksdev"
 kubernetes_version = "1.34"
-
-aks_cluster_name = "s2search-aks-dev"
 
 aks_node_count     = 1
 aks_node_size      = "Standard_B2s"
