@@ -215,6 +215,11 @@ if ($provisionSearch) {
 
 if ($HelmDeployment) {
     
+    Write-Color -Text "###################" -Color DarkBlue
+    Write-Color -Text "Helm Deployment"     -Color DarkBlue
+    Write-Color -Text "###################" -Color DarkBlue
+   
+    
     $tfOutput = terraform output -json | ConvertFrom-Json
     $aksClusterName = $tfOutput.aks_cluster_name.value
     $resourceGroup = $tfOutput.resource_group_name.value
@@ -227,11 +232,7 @@ if ($HelmDeployment) {
     # Use environment variable for namespace if available, otherwise use default
     $S2Namespace = "s2search"
 
-    Write-Color -Text "###################" -Color DarkBlue
-    Write-Color -Text "Helm Deployment"     -Color DarkBlue
-    Write-Color -Text "###################" -Color DarkBlue
-
-    Set-Location "E:\github\S2Search\K8s\Helm\Local"  # ← Wrong directory for Helm
+    Set-Location "E:\github\S2Search\K8s\Helm\Local"
 
     Write-Color -Text "helm uninstall s2search . -n $S2Namespace" -Color DarkYellow
     helm uninstall s2search . -n $S2Namespace
@@ -241,6 +242,49 @@ if ($HelmDeployment) {
 
     Write-Color -Text "kubectl create namespace $S2Namespace" -Color DarkYellow
     kubectl create namespace $S2Namespace
+
+    # Get GitHub credentials from environment variables
+    # Load environment variables from .env file
+    # Load .env file if it exists
+    if (Test-Path ".env") {
+        Get-Content ".env" | ForEach-Object {
+            if ($_ -match "^\s*([^#][^=]*)\s*=\s*(.*)\s*$") {
+                $name = $matches[1].Trim()
+                $value = $matches[2].Trim().Trim('"').Trim("'")
+                Set-Item -Path "env:$name" -Value $value
+            }
+        }
+        Write-Color -Text "Loaded credentials from .env file" -Color Green
+    }
+
+    $githubUsername = $env:GITHUB_USERNAME
+    $githubToken = $env:GITHUB_TOKEN
+
+    Write-Color -Text "githubUsername = $githubUsername" -Color Magenta
+    Write-Color -Text "githubToken = $githubToken" -Color Magenta
+
+    # Create GitHub Container Registry secret if credentials are provided
+    if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEmpty($githubToken)) {
+        Write-Color -Text "Creating GitHub Container Registry secret..." -Color DarkYellow
+    
+        # Delete existing secret if it exists (ignore errors)
+        kubectl delete secret ghcr-secret -n $S2Namespace 2>$null
+    
+        # Create the secret
+        kubectl create secret docker-registry ghcr-secret `
+            --docker-server=ghcr.io `
+            --docker-username=$githubUsername `
+            --docker-password=$githubToken `
+            -n $S2Namespace
+    
+        if ($LASTEXITCODE -eq 0) {
+            Write-Color -Text "GitHub Container Registry secret created successfully!" -Color Blue
+        }
+        else {
+            Write-Color -Text "Failed to create GitHub Container Registry secret!" -Color Red
+            exit 1
+        }
+    }
 
     helm dependency update .
 
