@@ -136,13 +136,13 @@ resource "azurerm_kubernetes_cluster" "s2search_aks" {
   kubernetes_version  = var.kubernetes_version
 
   default_node_pool {
-    name                 = var.aks_node_pool_name
+    name                 = var.k8s_node_pool_name
     node_count           = var.k8s_node_count
     vm_size              = var.k8s_node_size
     type                 = "VirtualMachineScaleSets"
-    auto_scaling_enabled = false
-    min_count            = var.aks_min_count
-    max_count            = var.aks_max_count
+    auto_scaling_enabled = true
+    min_count            = var.k8s_min_count # 1 from your tfvars
+    max_count            = var.k8s_max_count # 2 from your tfvars
 
     # Network and storage
     vnet_subnet_id = null # Will use default subnet

@@ -164,19 +164,19 @@ variable "k8s_node_size" {
   sensitive   = false
 }
 
-variable "aks_min_count" {
+variable "k8s_min_count" {
   type        = number
   description = "Minimum number of nodes for auto-scaling"
   sensitive   = false
 }
 
-variable "aks_max_count" {
+variable "k8s_max_count" {
   type        = number
   description = "Maximum number of nodes for auto-scaling"
   sensitive   = false
 }
 
-variable "aks_node_pool_name" {
+variable "k8s_node_pool_name" {
   type        = string
   description = "Name of the AKS node pool"
   sensitive   = false
