@@ -26,9 +26,9 @@ resource "azurerm_resource_group" "s2search_test" {
   location = var.location
 
   tags = {
-    Environment = "terraform-managed"
-    Project     = "S2Search"
-    CreatedBy   = "terraform"
+    Environment = var.tags_environment
+    Project     = var.tags_project
+    Service     = var.tags_service
   }
 }
 
@@ -56,9 +56,9 @@ resource "azurerm_search_service" "s2search_instance" {
   public_network_access_enabled = true
 
   tags = {
-    Environment = "terraform-managed"
-    Project     = "S2Search"
-    Service     = "search"
+    Environment = var.tags_environment
+    Project     = var.tags_project
+    Service     = var.tags_service
   }
 }
 
@@ -93,9 +93,9 @@ resource "azurerm_storage_account" "s2search_storage" {
   }
 
   tags = {
-    Environment = "terraform-managed"
-    Project     = "S2Search"
-    Service     = "storage"
+    Environment = var.tags_environment
+    Project     = var.tags_project
+    Service     = var.tags_service
   }
 }
 
@@ -125,4 +125,57 @@ resource "azurerm_storage_queue" "search_indexing" {
 resource "azurerm_storage_queue" "cache_invalidation" {
   name                 = "feed-extract"
   storage_account_name = azurerm_storage_account.s2search_storage.name
+}
+
+# AKS Cluster for container orchestration
+resource "azurerm_kubernetes_cluster" "s2search_aks" {
+  name                = var.aks_cluster_name
+  location            = azurerm_resource_group.s2search_test.location
+  resource_group_name = azurerm_resource_group.s2search_test.name
+  dns_prefix          = var.aks_dns_prefix
+  kubernetes_version  = var.kubernetes_version
+
+  default_node_pool {
+    name                 = var.aks_node_pool_name
+    node_count           = var.aks_node_count
+    vm_size              = var.aks_node_size
+    type                 = "VirtualMachineScaleSets"
+    auto_scaling_enabled = true
+    min_count            = var.aks_min_count
+    max_count            = var.aks_max_count
+
+    # Network and storage
+    vnet_subnet_id = null # Will use default subnet
+
+    # Security
+    only_critical_addons_enabled = true
+  }
+
+  # Service Principal or Managed Identity
+  identity {
+    type = "SystemAssigned"
+  }
+
+  # Network profile
+  network_profile {
+    network_plugin    = "azure"
+    network_policy    = var.aks_network_policy
+    dns_service_ip    = "10.2.0.10"
+    service_cidr      = "10.2.0.0/24"
+    load_balancer_sku = "standard"
+  }
+
+  # Security and monitoring
+  role_based_access_control_enabled = true
+  local_account_disabled            = false
+
+  # Add-ons
+  azure_policy_enabled             = true
+  http_application_routing_enabled = false
+
+  tags = {
+    Environment = var.tags_environment
+    Project     = var.tags_project
+    Service     = var.tags_service
+  }
 }

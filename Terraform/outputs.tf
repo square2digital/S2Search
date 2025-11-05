@@ -141,3 +141,52 @@ output "storage_container_feed_services_url" {
   value       = "${azurerm_storage_account.s2search_storage.primary_blob_endpoint}${azurerm_storage_container.s2search_feed_services.name}"
   description = "The URL of the feed-services container"
 }
+
+# =================================================================
+# AKS Cluster Outputs
+# =================================================================
+
+output "aks_cluster_name" {
+  value       = azurerm_kubernetes_cluster.s2search_aks.name
+  description = "The name of the AKS cluster"
+}
+
+output "aks_cluster_id" {
+  value       = azurerm_kubernetes_cluster.s2search_aks.id
+  description = "The ID of the AKS cluster"
+}
+
+output "aks_cluster_fqdn" {
+  value       = azurerm_kubernetes_cluster.s2search_aks.fqdn
+  description = "The FQDN of the AKS cluster"
+}
+
+output "aks_cluster_endpoint" {
+  value       = azurerm_kubernetes_cluster.s2search_aks.kube_config.0.host
+  description = "The endpoint of the AKS cluster"
+  sensitive   = true
+}
+
+output "aks_cluster_ca_certificate" {
+  value       = azurerm_kubernetes_cluster.s2search_aks.kube_config.0.cluster_ca_certificate
+  description = "The cluster CA certificate"
+  sensitive   = true
+}
+
+output "aks_get_credentials_command" {
+  value       = "az aks get-credentials --resource-group ${azurerm_resource_group.s2search_test.name} --name ${azurerm_kubernetes_cluster.s2search_aks.name}"
+  description = "Azure CLI command to get AKS credentials"
+}
+
+# =================================================================
+# Storage Queue Outputs
+# =================================================================
+
+output "storage_queue_names" {
+  value = [
+    azurerm_storage_queue.feed_processing.name,
+    azurerm_storage_queue.search_indexing.name,
+    azurerm_storage_queue.cache_invalidation.name
+  ]
+  description = "Names of all storage queues"
+}

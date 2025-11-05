@@ -1,3 +1,26 @@
+#####################
+# terraform globals
+#####################
+variable "tags_environment" {
+  type        = string
+  description = "Environment tag for resources"
+  sensitive   = false
+}
+variable "tags_project" {
+  type        = string
+  description = "Project tag for resources"
+  sensitive   = false
+}
+variable "tags_service" {
+  type        = string
+  description = "Service tag for resources"
+  sensitive   = false
+}
+
+#####################
+# Azure Connectivity
+#####################
+
 variable "resource_group_name" {
   type        = string
   description = "Name of the resource group"
@@ -34,6 +57,10 @@ variable "subscription_id" {
   sensitive   = true
 }
 
+###################
+# Azure Search Variables
+###################
+
 variable "search_service_name" {
   type        = string
   description = "Name of the Azure Search service"
@@ -58,6 +85,9 @@ variable "search_service_partitions" {
   sensitive   = false
 }
 
+###################
+# Azure Storage Variables
+###################
 variable "storage_account_name" {
   type        = string
   description = "Base name of the storage account (random suffix will be added for uniqueness)"
@@ -98,4 +128,63 @@ variable "min_tls_version" {
   type        = string
   description = "Minimum TLS version for the storage account"
   sensitive   = false
+}
+
+###################
+# AKS Variables
+###################
+variable "aks_cluster_name" {
+  type        = string
+  description = "Name of the AKS cluster"
+  sensitive   = false
+}
+
+variable "aks_dns_prefix" {
+  type        = string
+  description = "DNS prefix for the AKS cluster"
+  sensitive   = false
+}
+
+variable "kubernetes_version" {
+  type        = string
+  description = "Kubernetes version for the AKS cluster"
+  sensitive   = false
+  default     = "1.28"
+}
+
+variable "aks_node_count" {
+  type        = number
+  description = "Initial number of nodes for the AKS cluster"
+  sensitive   = false
+}
+
+variable "aks_node_size" {
+  type        = string
+  description = "VM size for AKS nodes"
+  sensitive   = false
+}
+
+variable "aks_min_count" {
+  type        = number
+  description = "Minimum number of nodes for auto-scaling"
+  sensitive   = false
+}
+
+variable "aks_max_count" {
+  type        = number
+  description = "Maximum number of nodes for auto-scaling"
+  sensitive   = false
+}
+
+variable "aks_node_pool_name" {
+  type        = string
+  description = "Name of the AKS node pool"
+  sensitive   = false
+}
+
+variable "aks_network_policy" {
+  type        = string
+  description = "Network policy for the AKS cluster"
+  sensitive   = false
+  default     = "azure"
 }

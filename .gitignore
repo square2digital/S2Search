@@ -429,3 +429,4 @@ id_rsa.pub
 temp/
 tmp/
 .tmp/
+Terraform/.terraform.tfstate.lock.info
