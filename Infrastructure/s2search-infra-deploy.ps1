@@ -12,12 +12,13 @@
 # 1 - run Terraform to create AKS cluster and supporting infra
 # 2 - copy files to new assets folder in blob storage
 # 3 - run the APIs to create and deploy the index to Azure Search
-# 4 - run Helm deployment script to deploy S2 Search components to AKS
+# 4 - Deploy indexes and data to Azure Search
 
 param (
     [bool]$deployInfra = $false,
     [bool]$destroyInfra = $false,
-    [bool]$uploadAssets = $false
+    [bool]$uploadAssets = $false,
+    [bool]$uploadInBackground = $false  # New parameter for background upload
 )
 
 function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
@@ -43,13 +44,19 @@ $tfOutput = ""
 Write-Color -Text "Changing to Terraform directory" -Color DarkYellow
 Set-Location "E:\github\S2Search\Terraform"
 
-# 1 - run Terraform to create AKS cluster and supporting infra
+# 1 - run Terraform to provision infrastructure
+Write-Color -Text "###################################" -Color DarkBlue
+Write-Color -Text "1. run Terraform to provision infra" -Color DarkBlue
+Write-Color -Text "###################################" -Color DarkBlue
+
 if ($destroyInfra) {
+    
     Write-Color -Text "running terraform destroy" -Color DarkYellow
     terraform destroy -var-file="values.tfvars" -var-file="secrets.tfvars"    
 }
 
 if ($deployInfra) {
+
     Write-Color -Text "running terraform validate" -Color DarkYellow
     terraform validate
 
@@ -67,17 +74,23 @@ if ($deployInfra) {
     Write-Host "Storage Account: $storageAccountName"
 }
 
+Write-Color -Text "##################################################" -Color DarkBlue
+Write-Color -Text "2. copy files to new assets folder in blob storage" -Color DarkBlue
+Write-Color -Text "##################################################" -Color DarkBlue
+
 if ($uploadAssets) {
 
     Write-Color -Text "getting terraform outputs" -Color DarkYellow
     $tfOutput = terraform output -json | ConvertFrom-Json
 
     # output all vars    
-    <#     foreach ($key in $tfOutput.PSObject.Properties.Name) {
+    <#
+        foreach ($key in $tfOutput.PSObject.Properties.Name) {
         $value = $tfOutput.$key.value
         Write-Host "$key = $value"
     }
- #>
+    #>
+
     # Set variables
     $resourceGroup = $tfOutput.resource_group_name.value
     $storageAccount = $tfOutput.storage_account_name.value
@@ -91,20 +104,25 @@ if ($uploadAssets) {
         --query "[0].value" `
         --output tsv
 
-    # Upload files recursively
-    Get-ChildItem -Path $localFolderPath -Recurse -File | ForEach-Object {
-        $filePath = $_.FullName
-        $relativePath = $_.FullName.Substring($localFolderPath.Length + 1) -replace '\\', '/'
+    # Upload files using az storage blob sync (much faster than individual uploads)
+    Write-Color -Text "Syncing files to storage container '$containerName' using az storage blob sync..." -Color DarkYellow
+    
+    $syncStartTime = Get-Date
+    
+    az storage blob sync `
+        --account-name $storageAccount `
+        --account-key $accountKey `
+        --container $containerName `
+        --source $localFolderPath `
+        --delete-destination false `
+        --exclude-pattern "*.tmp;*.log;Thumbs.db" `
+        --output table
+    
+    $syncEndTime = Get-Date
+    $syncDuration = ($syncEndTime - $syncStartTime).TotalSeconds
 
-        az storage blob upload `
-            --account-name $storageAccount `
-            --account-key $accountKey `
-            --container-name $containerName `
-            --name $relativePath `
-            --file $filePath `
-            --overwrite
-    }
+    Write-Color -Text "Asset Upload complete - time $([math]::Round($syncDuration, 2)) seconds" -Color Green
 }
 
+# 2 - Deploy indexes and data to Azure Search
 
-# 2 - copy files to new assets folder in blob storage
