@@ -6,7 +6,7 @@
 #######################
 # Simple deployment
 #######################
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $true
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -deployInfra $false -destroyInfra $false -uploadAssets $false -provisionSearch $true
 
 # Steps
 # 1 - run Terraform to create AKS cluster and supporting infra
@@ -87,7 +87,7 @@ if ($uploadAssets) {
     Write-Color -Text "##################################################" -Color DarkBlue
 
     Write-Color -Text "getting terraform outputs" -Color DarkYellow
-    $tfOutput = terraform output -json | ConvertFrom-Json
+    $tfOutput = terraform output -json | ConvertFrom-Json    
 
     # output all vars    
     <#
@@ -211,3 +211,10 @@ if ($provisionSearch) {
     # Output the response
     Write-Color -Text $response -Color Green
 }
+
+Write-Color -Text "###################################" -Color DarkBlue
+Write-Color -Text "Terraform output" -Color DarkBlue
+Write-Color -Text "###################################" -Color DarkBlue
+
+Write-Color -Text "running terraform output" -Color DarkYellow
+terraform output
