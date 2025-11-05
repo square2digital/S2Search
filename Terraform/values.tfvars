@@ -33,4 +33,4 @@ k8s_network_policy = "default"
 
 aks_min_count      = 1
 aks_max_count      = 2
-aks_node_pool_name = "s2searchnodepool"
+aks_node_pool_name = "s2nodepool"
