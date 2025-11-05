@@ -147,8 +147,8 @@ resource "azurerm_kubernetes_cluster" "s2search_aks" {
     # Network and storage
     vnet_subnet_id = null # Will use default subnet
 
-    # Security
-    only_critical_addons_enabled = true
+    # Security - Allow user workloads on this node pool
+    only_critical_addons_enabled = false
   }
 
   # Service Principal or Managed Identity
@@ -177,5 +177,29 @@ resource "azurerm_kubernetes_cluster" "s2search_aks" {
     Environment = var.tags_environment
     Project     = var.tags_project
     Service     = var.tags_service
+  }
+}
+
+# User node pool for application workloads
+resource "azurerm_kubernetes_cluster_node_pool" "user_nodes" {
+  name                  = "user"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.s2search_aks.id
+  vm_size               = var.aks_node_size
+  node_count            = var.aks_node_count
+  auto_scaling_enabled  = true
+  min_count             = var.aks_min_count
+  max_count             = var.aks_max_count
+
+  # This is a user node pool - can run application workloads
+  mode = "User"
+
+  # Network
+  vnet_subnet_id = null
+
+  tags = {
+    Environment = var.tags_environment
+    Project     = var.tags_project
+    Service     = var.tags_service
+    NodeType    = "user"
   }
 }

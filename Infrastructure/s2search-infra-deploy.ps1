@@ -6,7 +6,7 @@
 #######################
 # Simple deployment
 #######################
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -deployInfra $true -destroyInfra $true -uploadAssets $true -provisionSearch $true
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $false -HelmDeployment $true
 
 # Steps
 # 1 - run Terraform to create AKS cluster and supporting infra
@@ -18,7 +18,8 @@ param (
     [bool]$deployInfra = $false,
     [bool]$destroyInfra = $false,
     [bool]$uploadAssets = $false,
-    [bool]$provisionSearch = $false  # New parameter for background upload
+    [bool]$provisionSearch = $false,
+    [bool]$HelmDeployment = $false
 )
 
 function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
@@ -212,9 +213,47 @@ if ($provisionSearch) {
     Write-Color -Text $response -Color Green
 }
 
-Write-Color -Text "###################################" -Color DarkBlue
+if ($HelmDeployment) {
+    
+    $tfOutput = terraform output -json | ConvertFrom-Json
+    $aksClusterName = $tfOutput.aks_cluster_name.value
+    $resourceGroup = $tfOutput.resource_group_name.value
+
+    az aks get-credentials `
+        --name $aksClusterName `
+        --resource-group $resourceGroup `
+        --overwrite-existing    
+
+    # Use environment variable for namespace if available, otherwise use default
+    $S2Namespace = "s2search"
+
+    Write-Color -Text "###################" -Color DarkBlue
+    Write-Color -Text "Helm Deployment"     -Color DarkBlue
+    Write-Color -Text "###################" -Color DarkBlue
+
+    Set-Location "E:\github\S2Search\K8s\Helm\Local"  # ← Wrong directory for Helm
+
+    Write-Color -Text "helm uninstall s2search . -n $S2Namespace" -Color DarkYellow
+    helm uninstall s2search . -n $S2Namespace
+
+    Write-Color -Text "kubectl delete namespace $S2Namespace" -Color DarkYellow
+    kubectl delete namespace $S2Namespace
+
+    Write-Color -Text "kubectl create namespace $S2Namespace" -Color DarkYellow
+    kubectl create namespace $S2Namespace
+
+    helm dependency update .
+
+    helm install s2search . -n $S2Namespace
+}
+
+Write-Color -Text "################################" -Color Green
+Write-Color -Text "Process Complete"                 -Color Green
+Write-Color -Text "################################" -Color Green
+
+<# Write-Color -Text "###################################" -Color DarkBlue
 Write-Color -Text "Terraform output" -Color DarkBlue
 Write-Color -Text "###################################" -Color DarkBlue
 
 Write-Color -Text "running terraform output" -Color DarkYellow
-terraform output
+terraform output #>
