@@ -27,14 +27,13 @@ USER app
 # Copy the published output from the build stage
 COPY --from=build /app/publish .
 
-# ** SECURITY IMPROVEMENT 2: Change the port to 8080 **
-# Running on port 8080 (above 1024) allows the non-root 'app' user to bind to it.
-ENV ASPNETCORE_URLS=http://+:8080
+# ** FIX: Use ASPNETCORE_HTTP_PORT for reliable Kestrel binding to port 8080 **
+# This environment variable is preferred for container environments.
+ENV ASPNETCORE_HTTP_PORT 8080
 EXPOSE 8080
 
 # NOTE: Removed EXPOSE 443. If you require HTTPS, it's standard practice
 # to handle SSL termination at the Ingress Controller (e.g., Nginx, Application Gateway)
-# and communicate with the pod over plain HTTP (port 8080).
 
 # Use the dll produced by dotnet publish
 ENTRYPOINT ["dotnet", "S2Search.Backend.API.dll"]
