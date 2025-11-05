@@ -22,15 +22,15 @@ access_tier              = "Cold"
 min_tls_version          = "TLS1_2"
 
 # s2search k8s instance
-k8s_cluster_name   = "s2search-k8s"
+aks_cluster_name   = "s2search-k8s"
 kubernetes_version = "1.34"
 
-k8s_dns_prefix = "s2search-aks-dev"
+aks_cluster_name = "s2search-aks-dev"
 
-k8s_node_count     = 1
-k8s_node_size      = "Standard_B2s"
-k8s_network_policy = "default"
+aks_node_count     = 1
+aks_node_size      = "Standard_B2s"
+aks_network_policy = "default"
 
-k8s_min_count      = 1
-k8s_max_count      = 2
-k8s_node_pool_name = "s2nodepool"
+aks_min_count      = 1
+aks_max_count      = 2
+aks_node_pool_name = "s2nodepool"

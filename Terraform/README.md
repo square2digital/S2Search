@@ -102,7 +102,7 @@ storage_account_name = "s2storage"
 account_tier         = "Standard"
 
 # AKS configuration
-k8s_cluster_name     = "s2search-k8s"
+aks_cluster_name     = "s2search-k8s"
 kubernetes_version   = "1.28.0"
 k8s_node_count       = 1
 ```
@@ -155,11 +155,11 @@ terraform output -raw storage_account_primary_key
 | `account_replication_type`       | string | Replication type            | -          | Yes      |
 | `min_tls_version`                | string | Minimum TLS version         | -          | Yes      |
 | **AKS Cluster**                  |        |                             |            |          |
-| `k8s_cluster_name`               | string | AKS cluster name            | -          | Yes      |
+| `aks_cluster_name`               | string | AKS cluster name            | -          | Yes      |
 | `aks_dns_prefix`                 | string | DNS prefix for AKS          | -          | Yes      |
 | `kubernetes_version`             | string | Kubernetes version          | `1.28`     | No       |
 | `k8s_node_count`                 | number | Initial node count          | -          | Yes      |
-| `k8s_node_size`                  | string | VM size for nodes           | -          | Yes      |
+| `aks_node_size`                  | string | VM size for nodes           | -          | Yes      |
 | `aks_min_count`                  | number | Min nodes for auto-scaling  | -          | Yes      |
 | `aks_max_count`                  | number | Max nodes for auto-scaling  | -          | Yes      |
 | **Authentication**               |        |                             |            |          |

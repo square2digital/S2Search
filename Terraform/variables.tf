@@ -133,7 +133,7 @@ variable "min_tls_version" {
 ###################
 # AKS Variables
 ###################
-variable "k8s_cluster_name" {
+variable "aks_cluster_name" {
   type        = string
   description = "Name of the AKS cluster"
   sensitive   = false
@@ -152,37 +152,37 @@ variable "kubernetes_version" {
   default     = "1.28"
 }
 
-variable "k8s_node_count" {
+variable "aks_node_count" {
   type        = number
   description = "Initial number of nodes for the AKS cluster"
   sensitive   = false
 }
 
-variable "k8s_node_size" {
+variable "aks_node_size" {
   type        = string
   description = "VM size for AKS nodes"
   sensitive   = false
 }
 
-variable "k8s_min_count" {
+variable "aks_min_count" {
   type        = number
   description = "Minimum number of nodes for auto-scaling"
   sensitive   = false
 }
 
-variable "k8s_max_count" {
+variable "aks_max_count" {
   type        = number
   description = "Maximum number of nodes for auto-scaling"
   sensitive   = false
 }
 
-variable "k8s_node_pool_name" {
+variable "aks_node_pool_name" {
   type        = string
   description = "Name of the AKS node pool"
   sensitive   = false
 }
 
-variable "k8s_network_policy" {
+variable "aks_network_policy" {
   type        = string
   description = "Network policy for the AKS cluster"
   sensitive   = false

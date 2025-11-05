@@ -129,20 +129,20 @@ resource "azurerm_storage_queue" "cache_invalidation" {
 
 # AKS Cluster for container orchestration
 resource "azurerm_kubernetes_cluster" "s2search_aks" {
-  name                = var.k8s_cluster_name
+  name                = var.aks_cluster_name
   location            = azurerm_resource_group.s2search_test.location
   resource_group_name = azurerm_resource_group.s2search_test.name
   dns_prefix          = var.aks_dns_prefix
   kubernetes_version  = var.kubernetes_version
 
   default_node_pool {
-    name                 = var.k8s_node_pool_name
-    node_count           = var.k8s_node_count
-    vm_size              = var.k8s_node_size
+    name                 = var.aks_node_pool_name
+    node_count           = var.aks_node_count
+    vm_size              = var.aks_node_size
     type                 = "VirtualMachineScaleSets"
     auto_scaling_enabled = true
-    min_count            = var.k8s_min_count # 1 from your tfvars
-    max_count            = var.k8s_max_count # 2 from your tfvars
+    min_count            = var.aks_min_count # 1 from your tfvars
+    max_count            = var.aks_max_count # 2 from your tfvars
 
     # Network and storage
     vnet_subnet_id = null # Will use default subnet
