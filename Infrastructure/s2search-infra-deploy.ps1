@@ -6,7 +6,7 @@
 #######################
 # Simple deployment
 #######################
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $true
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $true
 
 # Steps
 # 1 - run Terraform to create AKS cluster and supporting infra
@@ -18,7 +18,7 @@ param (
     [bool]$deployInfra = $false,
     [bool]$destroyInfra = $false,
     [bool]$uploadAssets = $false,
-    [bool]$uploadInBackground = $false  # New parameter for background upload
+    [bool]$provisionSearch = $false  # New parameter for background upload
 )
 
 function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
@@ -34,7 +34,7 @@ $S2SearchAsciiArt = @"
   / ___/_/ /   / / __ \/ /_/ ___/ __ `/
  (__  ) __/   / / / / / __/ /  / /_/ / 
 /____/____/  /_/_/ /_/_/ /_/   \__,_/  
-                                                                           
+
 "@
 
 Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
@@ -45,17 +45,22 @@ Write-Color -Text "Changing to Terraform directory" -Color DarkYellow
 Set-Location "E:\github\S2Search\Terraform"
 
 # 1 - run Terraform to provision infrastructure
-Write-Color -Text "###################################" -Color DarkBlue
-Write-Color -Text "1. run Terraform to provision infra" -Color DarkBlue
-Write-Color -Text "###################################" -Color DarkBlue
 
 if ($destroyInfra) {
     
+    Write-Color -Text "###################################" -Color DarkBlue
+    Write-Color -Text "Terraform destroy infrastructure" -Color DarkBlue
+    Write-Color -Text "###################################" -Color DarkBlue
+
     Write-Color -Text "running terraform destroy" -Color DarkYellow
     terraform destroy -var-file="values.tfvars" -var-file="secrets.tfvars"    
 }
 
 if ($deployInfra) {
+
+    Write-Color -Text "###################################" -Color DarkBlue
+    Write-Color -Text "Terraform create infrastructure" -Color DarkBlue
+    Write-Color -Text "###################################" -Color DarkBlue
 
     Write-Color -Text "running terraform validate" -Color DarkYellow
     terraform validate
@@ -74,11 +79,12 @@ if ($deployInfra) {
     Write-Host "Storage Account: $storageAccountName"
 }
 
-Write-Color -Text "##################################################" -Color DarkBlue
-Write-Color -Text "2. copy files to new assets folder in blob storage" -Color DarkBlue
-Write-Color -Text "##################################################" -Color DarkBlue
-
+# copy files to new assets folder in blob storage
 if ($uploadAssets) {
+
+    Write-Color -Text "##################################################" -Color DarkBlue
+    Write-Color -Text "copy files to new assets folder in blob storage" -Color DarkBlue
+    Write-Color -Text "##################################################" -Color DarkBlue
 
     Write-Color -Text "getting terraform outputs" -Color DarkYellow
     $tfOutput = terraform output -json | ConvertFrom-Json
@@ -124,5 +130,84 @@ if ($uploadAssets) {
     Write-Color -Text "Asset Upload complete - time $([math]::Round($syncDuration, 2)) seconds" -Color Green
 }
 
-# 2 - Deploy indexes and data to Azure Search
+# Deploy indexes and data to Azure Search
+if ($provisionSearch) {
 
+    Write-Color -Text "##################################################" -Color DarkBlue
+    Write-Color -Text "Deploy indexes and data to Azure Search" -Color DarkBlue
+    Write-Color -Text "##################################################" -Color DarkBlue    
+
+    Write-Color -Text "getting terraform outputs" -Color DarkYellow
+    $tfOutput = terraform output -json | ConvertFrom-Json    
+
+    $searchServiceName = $tfOutput.search_service_name.value
+    $resourceGroup = $tfOutput.resource_group_name.value
+
+    # Get the admin API key
+    $apiKey = az search admin-key show `
+        --service-name $searchServiceName `
+        --resource-group $resourceGroup `
+        --query "primaryKey" `
+        --output tsv
+        
+    # Define the API endpoint and headers
+    $uri = "$($tfOutput.search_service_url.value)/synonymmaps?api-version=2025-08-01-preview"
+    $headers = @{
+        "api-key"      = $apiKey
+        "Content-Type" = "application/json"
+    }
+
+    ######################
+    ## Create Synonym Map
+    ######################
+    Write-Color -Text "Create Synonym Map" -Color DarkYellow
+
+    $body = @{
+        name          = "vehicles"
+        format        = "solr"
+        synonyms      = "beema, bimma => BMW`nVW => Volkswagen`ngas => Petrol`nChevy => Chevrolet`nsedan => Saloon"
+        encryptionKey = $null
+    } | ConvertTo-Json -Depth 3
+
+    # Send the POST request
+    $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body
+    
+    # Output the response
+    Write-Color -Text $response -Color Green
+
+    ######################
+    ## Create Index
+    ######################
+    Write-Color -Text "Create Index" -Color DarkYellow
+    $indexName = "s2-demo-vehicles"
+    
+    $jsonContent = Get-Content -Raw -Path "E:/github/S2Search/Infrastructure/assets/index-schema.json"
+    $jsonContent = $jsonContent -replace '##index_name##', $indexName
+    $body = $jsonContent
+    #Write-Color -Text $body -Color DarkMagenta
+    
+    $uri = "$($tfOutput.search_service_url.value)/indexes?api-version=2025-08-01-preview"
+
+    # Send request
+    $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body
+    
+    # Output the response
+    Write-Color -Text $response -Color Green
+
+    ######################
+    ## Import Data
+    ######################        
+    Write-Color -Text "Import Data" -Color DarkYellow
+    $jsonContent = Get-Content -Raw -Path "E:/github/S2Search/Infrastructure/assets/vehicle-data.json"
+
+    $jsonContent = $jsonContent -replace 'https://s2storagedev.blob.core.windows.net', $tfOutput.search_service_url.value
+    #Write-Color -Text $jsonContent -Color DarkMagenta
+
+    $uri = "$($tfOutput.search_service_url.value)/indexes/$indexName/docs/index?api-version=2025-08-01-preview"
+
+    # Send request
+    $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $jsonContent
+    
+    # Output the response
+    Write-Color -Text $response -Color Green
+}
