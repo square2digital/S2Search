@@ -6,7 +6,7 @@
 #######################
 # Simple deployment
 #######################
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -deployInfra $false -destroyInfra $false -uploadAssets $false -provisionSearch $true
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -deployInfra $true -destroyInfra $true -uploadAssets $true -provisionSearch $true
 
 # Steps
 # 1 - run Terraform to create AKS cluster and supporting infra
@@ -53,7 +53,7 @@ if ($destroyInfra) {
     Write-Color -Text "###################################" -Color DarkBlue
 
     Write-Color -Text "running terraform destroy" -Color DarkYellow
-    terraform destroy -var-file="values.tfvars" -var-file="secrets.tfvars"    
+    terraform destroy -var-file="values.tfvars" -var-file="secrets.tfvars" -auto-approve
 }
 
 if ($deployInfra) {
