@@ -1,3 +1,8 @@
+# terraform globals
+tags_environment = "terraform-managed"
+tags_project     = "S2Search"
+tags_service     = "storage"
+
 # azure globals
 resource_group_name = "s2 search"
 location            = "northeurope"
@@ -15,3 +20,17 @@ account_replication_type = "LRS"
 account_kind             = "StorageV2"
 access_tier              = "Cold"
 min_tls_version          = "TLS1_2"
+
+# s2search k8s instance
+k8s_cluster_name = "s2search-k8s"
+
+aks_dns_prefix = "s2search-aks-dev"
+
+kubernetes_version = "1.34"
+k8s_node_count     = 1
+k8s_node_size      = "Standard_B2s"
+k8s_network_policy = "default"
+
+aks_min_count      = 1
+aks_max_count      = 2
+aks_node_pool_name = "s2searchnodepool"
