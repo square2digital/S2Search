@@ -20,7 +20,7 @@ S2Backend:
     ASPNETCORE_URLS: "http://+:80"
   configmap:
     enabled: true
-    name: searchapi-appsettings-localk8s
+    name: searchapi-appsettings-appsettings
   nodeSelector: {}
   tolerations: []
   affinity: {}

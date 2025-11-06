@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: searchapi-appsettings-localk8s
+  name: searchapi-appsettings-appsettings
 data:
   appsettings.json: |-
     {
