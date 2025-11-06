@@ -11,17 +11,12 @@
 # local path
 # E:\github\S2Search\K8s\Helm\Local
 
-#######################
-# Simple deployment
-#######################
-# Put your GitHub credentials in .env file, then run:
-# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -includeSearchUI $true -includeSearchAPI $true -deleteAllImages $true
-
 param (
-    [bool]$includeSearchUI = $false,
-    [bool]$includePostgres = $false,    
-    [bool]$includeSearchAPI = $false,
-    [bool]$includeFunctions = $false,
+    [string]$databasePassword = "",    
+    [string]$databaseConnectionString = "",
+    [string]$azureStorageConnectionString = "",    
+    [string]$SearchCredentialsQueryKey = "",
+    [string]$SearchCredentialsInstanceEndpoint = "",
     [string]$githubUsername = "",
     [string]$githubToken = "",
     [bool]$deleteAllImages = $false
@@ -59,11 +54,6 @@ if (Test-Path ".env") {
 # Use environment variables if parameters are not provided
 if ([string]::IsNullOrEmpty($githubUsername)) { $githubUsername = $env:GITHUB_USERNAME }
 if ([string]::IsNullOrEmpty($githubToken)) { $githubToken = $env:GITHUB_TOKEN }
-
-Output-Parameters -param $includeSearchUI -name "includeSearchUI"
-Output-Parameters -param $includePostgres -name "includePostgres"
-Output-Parameters -param $includeSearchAPI -name "includeSearchAPI"
-Output-Parameters -param $includeFunctions -name "includeFunctions"
 
 # Check if GitHub credentials are provided
 if ([string]::IsNullOrEmpty($githubUsername) -or [string]::IsNullOrEmpty($githubToken)) {
@@ -154,7 +144,19 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
 
 helm dependency update .
 
-helm install s2search . -n $S2Namespace
+Write-Color -Text "databasePassword - $databasePassword" -Color Blue
+Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
+Write-Color -Text "azureStorageConnectionString - $azureStorageConnectionString" -Color Blue
+Write-Color -Text "SearchCredentialsQueryKey - $SearchCredentialsQueryKey" -Color Blue
+Write-Color -Text "SearchCredentialsInstanceEndpoint - $SearchCredentialsInstanceEndpoint" -Color Blue
+
+helm install s2search . -n $S2Namespace `
+    --set-string postgresql.auth.password=$databasePassword `
+    --set-string postgresql.auth.connectionString=$databaseConnectionString `
+    --set-string ConnectionStrings.databaseConnectionString=$databaseConnectionString `
+    --set-string ConnectionStrings.azureStorageConnectionString=$azureStorageConnectionString `
+    --set-string Search.SearchCredentialsQueryKey=$SearchCredentialsQueryKey `
+    --set-string Search.SearchCredentialsInstanceEndpoint=$SearchCredentialsInstanceEndpoint
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green

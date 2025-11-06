@@ -61,7 +61,6 @@ postgresql:
   auth:
     database: "s2searchdb"
     username: "s2search"
-    password: ""
   primary:
     service:
       type: NodePort
