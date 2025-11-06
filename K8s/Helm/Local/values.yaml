@@ -4,7 +4,7 @@ S2Backend:
     name: s2search-backend-api
     repository: ghcr.io/square2digital/s2search-backend-api
     tag: latest
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 80
@@ -31,7 +31,7 @@ S2SearchUi:
     name: s2search-ui
     repository: ghcr.io/square2digital/s2search-ui
     tag: latest
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   service:
     type: LoadBalancer
     port: 80
