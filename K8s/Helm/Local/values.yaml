@@ -59,7 +59,6 @@ S2SearchUi:
 postgresql:
   enabled: true
   auth:
-    postgresPassword: "34gfDF43@g548734SDFG5yh5662"
     username: "s2search"
     database: "postgres"
   primary:
@@ -70,3 +69,8 @@ postgresql:
     registry: docker.io
     repository: bitnami/postgresql
     tag: "latest"
+
+ConnectionStrings:
+  databaseConnectionString: "TESTER_DB"
+  azureStorageConnectionString: "TESTER_STORAGE"
+  redisConnectionString: "TESTER_REDIS"
