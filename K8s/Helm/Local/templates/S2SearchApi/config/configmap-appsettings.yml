@@ -24,13 +24,13 @@ data:
       },
       "AllowedHosts": "*",
       "ConnectionStrings": {
-        "SqlDatabase": "Host=s2search-postgresql;Port=5432;Database=postgres;Username=postgres;Password=34gfDF43@g548734SDFG5yh5662",
-        "AzureStorage": "ADD_AZURE_STORAGE_CONNECTION_STRING",
-        "Redis": "localhost:32388,ssl=false,password=a-very-complex-password-here,abortConnect=false,connectTimeout=15000,responseTimeout=5000"
+        "SqlDatabase": "#{SQL_DATABASE_CONNECTION}#",
+        "AzureStorage": "#{AZURE_STORAGE_CONNECTION}#",
+        "Redis": "#{REDIS_CONNECTION}#"
       },
       "DemoSearchCredentials": {
         "UseDemoSearchCredentials": true,
-        "SearchCredentialsQueryKey": "JTli3f7UNsq6UP5aarwr6kEuXLziImNklC1EZlI3zSAzSeDZXlvC",
+        "SearchCredentialsQueryKey": "#{SEARCH_CREDENTIALS_QUERY_KEY}#",
         "SearchCredentialsIndexId": "6FB3C6D1-F480-47B5-9934-02E611AEFD02",
         "SearchCredentialsIndexName": "s2-demo-vehicles",
         "SearchCredentialsInstanceEndpoint": "https://s2-search-dev.search.windows.net",
