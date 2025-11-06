@@ -278,7 +278,7 @@ graph TB
 
 #### ConfigMaps
 
-**searchapi-appsettings-appsettings:**
+**searchapi-appsettings:**
 
 - Complete `appsettings.json` configuration
 - Database connection strings
@@ -438,7 +438,7 @@ kubectl describe pod <pod-name> -n s2search
 kubectl logs <pod-name> -c <container-name> -n s2search
 
 # Check ConfigMap
-kubectl get configmap searchapi-appsettings-appsettings -o yaml -n s2search
+kubectl get configmap searchapi-appsettings -o yaml -n s2search
 ```
 
 #### Image Pull Errors
@@ -477,10 +477,10 @@ kubectl port-forward svc/s2searchui-service 3000:80 -n s2search
 
 ```bash
 # Check ConfigMap contents
-kubectl get configmap searchapi-appsettings-appsettings -o json -n s2search
+kubectl get configmap searchapi-appsettings -o json -n s2search
 
 # Update ConfigMap
-kubectl create configmap searchapi-appsettings-appsettings \
+kubectl create configmap searchapi-appsettings \
   --from-file=appsettings.json --dry-run=client -o yaml | \
   kubectl apply -f - -n s2search
 

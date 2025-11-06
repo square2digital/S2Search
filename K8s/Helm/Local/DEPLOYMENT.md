@@ -541,7 +541,7 @@ kubectl exec -it <pod-name> --namespace s2search -- \
 
 ```bash
 # Check ConfigMap contents
-kubectl get configmap searchapi-appsettings-appsettings --namespace s2search -o yaml
+kubectl get configmap searchapi-appsettings --namespace s2search -o yaml
 
 # Check environment variables
 kubectl exec -it <pod-name> --namespace s2search -- env

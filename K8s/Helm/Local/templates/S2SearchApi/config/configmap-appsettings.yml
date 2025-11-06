@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: searchapi-appsettings-appsettings
+  name: searchapi-appsettings
 data:
   appsettings.json: |-
     {
