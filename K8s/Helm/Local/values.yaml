@@ -59,22 +59,26 @@ S2SearchUi:
 postgresql:
   enabled: true
   auth:
+    database: "s2searchdb"
     username: "s2search"
-    database: "postgres"
+    password: ""
   primary:
     service:
       type: NodePort
       nodePort: 30432
+    persistence:
+      enabled: true
+      size: 1Gi
   image:
     registry: docker.io
     repository: bitnami/postgresql
     tag: "latest"
 
 ConnectionStrings:
-  databaseConnectionString: "TESTER_DB"
-  azureStorageConnectionString: "TESTER_STORAGE"
-  redisConnectionString: "TESTER_REDIS"
+  databaseConnectionString: "DB_CONNECTION_STRING"
+  azureStorageConnectionString: "AZURE_STORAGE_CONNECTION_STRING"
+  redisConnectionString: "REDIS_CONNECTION_STRING"
 
 Search:
-  SearchCredentialsQueryKey: "TESTER_SEARCH_CREDENTIALS_QUERY_KEY"
-  SearchCredentialsInstanceEndpoint: "https://s2-search-dev.search.windows.net"
+  SearchCredentialsQueryKey: "SEARCH_CREDENTIALS_QUERY_KEY"
+  SearchCredentialsInstanceEndpoint: "SEARCH_CREDENTIALS_INSTANCE_ENDPOINT"
