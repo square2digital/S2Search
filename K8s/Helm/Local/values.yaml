@@ -74,3 +74,7 @@ ConnectionStrings:
   databaseConnectionString: "TESTER_DB"
   azureStorageConnectionString: "TESTER_STORAGE"
   redisConnectionString: "TESTER_REDIS"
+
+Search:
+  SearchCredentialsQueryKey: "TESTER_SEARCH_CREDENTIALS_QUERY_KEY"
+  SearchCredentialsInstanceEndpoint: "https://s2-search-dev.search.windows.net"

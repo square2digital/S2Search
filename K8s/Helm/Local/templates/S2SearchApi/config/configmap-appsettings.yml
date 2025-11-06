@@ -24,16 +24,16 @@ data:
       },
       "AllowedHosts": "*",
       "ConnectionStrings": {
-        "SqlDatabase": "#{SQL_DATABASE_CONNECTION}#",
-        "AzureStorage": "#{AZURE_STORAGE_CONNECTION}#",
-        "Redis": "#{REDIS_CONNECTION}#"
+        "SqlDatabase": "{{ .Values.ConnectionStrings.databaseConnectionString }}",
+        "AzureStorage": "{{ .Values.ConnectionStrings.azureStorageConnectionString }}",
+        "Redis": "{{ .Values.ConnectionStrings.redisConnectionString }}"
       },
       "DemoSearchCredentials": {
         "UseDemoSearchCredentials": true,
-        "SearchCredentialsQueryKey": "#{SEARCH_CREDENTIALS_QUERY_KEY}#",
+        "SearchCredentialsQueryKey": "{{ .Values.Search.SearchCredentialsQueryKey }}",
         "SearchCredentialsIndexId": "6FB3C6D1-F480-47B5-9934-02E611AEFD02",
         "SearchCredentialsIndexName": "s2-demo-vehicles",
-        "SearchCredentialsInstanceEndpoint": "https://s2-search-dev.search.windows.net",
+        "SearchCredentialsInstanceEndpoint": "{{ .Values.Search.SearchCredentialsInstanceEndpoint }}",
         "SearchCredentialsInstanceName": "s2-search-dev"
       },
       "SearchSettings": {
