@@ -15,7 +15,7 @@ param (
     [string]$databasePassword = "",    
     [string]$databaseConnectionString = "",
     [string]$azureStorageConnectionString = "",    
-    [string]$SearchCredentialsInstanceEndpoint = "",
+    [string]$redisConnectionString = "",    
     [string]$githubUsername = "",
     [string]$githubToken = "",
     [bool]$deleteAllImages = $false
@@ -153,16 +153,18 @@ $searchEndpoint = "https://$searchServiceName.search.windows.net"
 Write-Color -Text "databasePassword - $databasePassword" -Color Blue
 Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
 Write-Color -Text "azureStorageConnectionString - $azureStorageConnectionString" -Color Blue
+Write-Color -Text "redisConnectionString - $redisConnectionString" -Color Blue
 Write-Color -Text "SearchCredentialsQueryKey: - $searchQueryKey" -Color Blue
-Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchEndpoint " -Color Blue
+Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchEndpoint" -Color Blue
 
 helm install s2search . -n $S2Namespace `
-    --set-string postgresql.auth.password=$databasePassword `
-    --set-string postgresql.auth.connectionString=$databaseConnectionString `
-    --set-string ConnectionStrings.databaseConnectionString=$databaseConnectionString `
-    --set-string ConnectionStrings.azureStorageConnectionString=$azureStorageConnectionString `
-    --set-string Search.SearchCredentialsQueryKey=$searchQueryKey `
-    --set-string Search.SearchCredentialsInstanceEndpoint=$searchEndpoint
+    --set-string postgresql.auth.password="$databasePassword" `
+    --set-string postgresql.auth.connectionString="$databaseConnectionString" `
+    --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
+    --set-string ConnectionStrings.azureStorageConnectionString="$azureStorageConnectionString" `
+    --set-string ConnectionStrings.redisConnectionString="$redisConnectionString" `
+    --set-string Search.SearchCredentialsQueryKey="$searchQueryKey" `
+    --set-string Search.SearchCredentialsInstanceEndpoint="$searchEndpoint"
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green
