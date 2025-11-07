@@ -6,7 +6,11 @@
 #######################
 # Simple deployment
 #######################
+# full script execution
 # cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $true -uploadAssets $true -provisionSearch $true -HelmDeployment $true
+
+# segmented execution - test search
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $true -HelmDeployment $false
 
 # Steps
 # 1 - run Terraform to create AKS cluster and supporting infra
