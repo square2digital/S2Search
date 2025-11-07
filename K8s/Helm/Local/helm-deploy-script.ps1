@@ -15,7 +15,6 @@ param (
     [string]$databasePassword = "",    
     [string]$databaseConnectionString = "",
     [string]$azureStorageConnectionString = "",    
-    [string]$SearchCredentialsQueryKey = "",
     [string]$SearchCredentialsInstanceEndpoint = "",
     [string]$githubUsername = "",
     [string]$githubToken = "",
@@ -144,19 +143,26 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
 
 helm dependency update .
 
+###########################
+## Get the Search details
+###########################
+$searchQueryKey = az search query-key list --resource-group s2search-terraform-test-rg --service-name s2-search-dev --output tsv --query "[0].key"
+$searchServiceName = (az search service show --resource-group s2search-terraform-test-rg --name s2-search-dev | ConvertFrom-Json).name
+$searchEndpoint = "https://$searchServiceName.search.windows.net"
+
 Write-Color -Text "databasePassword - $databasePassword" -Color Blue
 Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
 Write-Color -Text "azureStorageConnectionString - $azureStorageConnectionString" -Color Blue
-Write-Color -Text "SearchCredentialsQueryKey - $SearchCredentialsQueryKey" -Color Blue
-Write-Color -Text "SearchCredentialsInstanceEndpoint - $SearchCredentialsInstanceEndpoint" -Color Blue
+Write-Color -Text "SearchCredentialsQueryKey: - $searchQueryKey" -Color Blue
+Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchEndpoint " -Color Blue
 
 helm install s2search . -n $S2Namespace `
     --set-string postgresql.auth.password=$databasePassword `
     --set-string postgresql.auth.connectionString=$databaseConnectionString `
     --set-string ConnectionStrings.databaseConnectionString=$databaseConnectionString `
     --set-string ConnectionStrings.azureStorageConnectionString=$azureStorageConnectionString `
-    --set-string Search.SearchCredentialsQueryKey=$SearchCredentialsQueryKey `
-    --set-string Search.SearchCredentialsInstanceEndpoint=$SearchCredentialsInstanceEndpoint
+    --set-string Search.SearchCredentialsQueryKey=$searchQueryKey `
+    --set-string Search.SearchCredentialsInstanceEndpoint=$searchEndpoint
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green
