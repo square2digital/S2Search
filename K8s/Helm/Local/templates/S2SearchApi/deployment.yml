@@ -21,7 +21,7 @@ spec:
         app: {{ .Values.S2Backend.image.name }}
     spec:
       imagePullSecrets:
-        - name: ghcr-secret      
+        - name: ghcr-secret
       containers:
         - name: {{ .Values.S2Backend.image.name }}
           image: {{ .Values.S2Backend.image.repository }}:{{ .Values.S2Backend.image.tag }}
@@ -39,6 +39,12 @@ spec:
               value: {{ .Values.S2Backend.env.ASPNETCORE_ENVIRONMENT | default "Production" }}
             - name: ASPNETCORE_URLS
               value: {{ .Values.S2Backend.env.ASPNETCORE_URLS | default "http://+:80" }}
+            - name: SQL_DATABASE_CONNECTION
+              value: {{ .Values.ConnectionStrings.databaseConnectionString }}
+            - name: AZURE_STORAGE_CONNECTION
+              value: {{ .Values.ConnectionStrings.azureStorageConnectionString }}
+            - name: REDIS_CONNECTION
+              value: {{ .Values.ConnectionStrings.redisConnectionString }}
           imagePullPolicy: {{ .Values.S2Backend.image.pullPolicy }}
           livenessProbe:
            httpGet:
@@ -64,3 +70,7 @@ spec:
         - name: appsettings-volume
           configMap:
             name: {{ .Values.S2Backend.configmap.name }}
+        - name: config-script
+          configMap:
+            name: config-replacer-script
+            defaultMode: 0755

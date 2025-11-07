@@ -73,7 +73,7 @@ resource "azurerm_storage_account" "s2search_storage" {
   min_tls_version          = var.min_tls_version
 
   # Security best practices
-  allow_nested_items_to_be_public = false
+  allow_nested_items_to_be_public = true
   shared_access_key_enabled       = true
   public_network_access_enabled   = true
 
@@ -101,30 +101,30 @@ resource "azurerm_storage_account" "s2search_storage" {
 
 resource "azurerm_storage_container" "s2search_blob" {
   name                  = "assets"
-  storage_account_name  = azurerm_storage_account.s2search_storage.name
-  container_access_type = "private"
+  storage_account_id    = azurerm_storage_account.s2search_storage.id
+  container_access_type = "blob"
 }
 
 resource "azurerm_storage_container" "s2search_feed_services" {
   name                  = "feed-services"
-  storage_account_name  = azurerm_storage_account.s2search_storage.name
+  storage_account_id    = azurerm_storage_account.s2search_storage.id
   container_access_type = "private"
 }
 
 # Storage Queues for async processing
 resource "azurerm_storage_queue" "feed_processing" {
-  name                 = "feed-process"
-  storage_account_name = azurerm_storage_account.s2search_storage.name
+  name               = "feed-process"
+  storage_account_id = azurerm_storage_account.s2search_storage.id
 }
 
 resource "azurerm_storage_queue" "search_indexing" {
-  name                 = "feed-validate"
-  storage_account_name = azurerm_storage_account.s2search_storage.name
+  name               = "feed-validate"
+  storage_account_id = azurerm_storage_account.s2search_storage.id
 }
 
 resource "azurerm_storage_queue" "cache_invalidation" {
-  name                 = "feed-extract"
-  storage_account_name = azurerm_storage_account.s2search_storage.name
+  name               = "feed-extract"
+  storage_account_id = azurerm_storage_account.s2search_storage.id
 }
 
 # AKS Cluster for container orchestration
@@ -147,14 +147,17 @@ resource "azurerm_kubernetes_cluster" "s2search_aks" {
     # Network and storage
     vnet_subnet_id = null # Will use default subnet
 
-    # Security
-    only_critical_addons_enabled = true
+    # Security - Allow user workloads on this node pool
+    only_critical_addons_enabled = false
   }
 
   # Service Principal or Managed Identity
   identity {
     type = "SystemAssigned"
   }
+
+  # OIDC Issuer (required for newer AKS versions)
+  oidc_issuer_enabled = true
 
   # Network profile
   network_profile {
@@ -177,5 +180,29 @@ resource "azurerm_kubernetes_cluster" "s2search_aks" {
     Environment = var.tags_environment
     Project     = var.tags_project
     Service     = var.tags_service
+  }
+}
+
+# User node pool for application workloads
+resource "azurerm_kubernetes_cluster_node_pool" "user_nodes" {
+  name                  = "user"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.s2search_aks.id
+  vm_size               = var.aks_node_size
+  node_count            = var.aks_node_count
+  auto_scaling_enabled  = true
+  min_count             = var.aks_min_count
+  max_count             = var.aks_max_count
+
+  # This is a user node pool - can run application workloads
+  mode = "User"
+
+  # Network
+  vnet_subnet_id = null
+
+  tags = {
+    Environment = var.tags_environment
+    Project     = var.tags_project
+    Service     = var.tags_service
+    NodeType    = "user"
   }
 }

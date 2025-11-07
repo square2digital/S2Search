@@ -11,17 +11,11 @@
 # local path
 # E:\github\S2Search\K8s\Helm\Local
 
-#######################
-# Simple deployment
-#######################
-# Put your GitHub credentials in .env file, then run:
-# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -includeSearchUI $true -includeSearchAPI $true -deleteAllImages $true
-
 param (
-    [bool]$includeSearchUI = $false,
-    [bool]$includePostgres = $false,    
-    [bool]$includeSearchAPI = $false,
-    [bool]$includeFunctions = $false,
+    [string]$databasePassword = "",    
+    [string]$databaseConnectionString = "",
+    [string]$azureStorageConnectionString = "",    
+    [string]$redisConnectionString = "",    
     [string]$githubUsername = "",
     [string]$githubToken = "",
     [bool]$deleteAllImages = $false
@@ -60,11 +54,6 @@ if (Test-Path ".env") {
 if ([string]::IsNullOrEmpty($githubUsername)) { $githubUsername = $env:GITHUB_USERNAME }
 if ([string]::IsNullOrEmpty($githubToken)) { $githubToken = $env:GITHUB_TOKEN }
 
-Output-Parameters -param $includeSearchUI -name "includeSearchUI"
-Output-Parameters -param $includePostgres -name "includePostgres"
-Output-Parameters -param $includeSearchAPI -name "includeSearchAPI"
-Output-Parameters -param $includeFunctions -name "includeFunctions"
-
 # Check if GitHub credentials are provided
 if ([string]::IsNullOrEmpty($githubUsername) -or [string]::IsNullOrEmpty($githubToken)) {
     Write-Color -Text "Warning: GitHub credentials not provided. You may need to create the ghcr-secret manually." -Color Red
@@ -77,11 +66,12 @@ else {
 }
 
 $S2SearchAsciiArt = @"
-   _______  ____                 __ 
-  / __/_  |/ __/__ ___ _________/ / 
- _\ \/ __/_\ \/ -_) _ `/ __/ __/ _ \
-/___/____/___/\__/\_,_/_/  \__/_//_/
-                                    
+        ___      __         __             __   ____      
+   ____|__ \    / /_  ___  / /___ ___     / /__( __ )_____
+  / ___/_/ /   / __ \/ _ \/ / __ `__ \   / //_/ __  / ___/
+ (__  ) __/   / / / /  __/ / / / / / /  / ,< / /_/ (__  ) 
+/____/____/  /_/ /_/\___/_/_/ /_/ /_/  /_/|_|\____/____/  
+                                                                                        
 "@
 
 Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
@@ -153,7 +143,28 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
 
 helm dependency update .
 
-helm install s2search . -n $S2Namespace
+###########################
+## Get the Search details
+###########################
+$searchQueryKey = az search query-key list --resource-group s2search-terraform-test-rg --service-name s2-search-dev --output tsv --query "[0].key"
+$searchServiceName = (az search service show --resource-group s2search-terraform-test-rg --name s2-search-dev | ConvertFrom-Json).name
+$searchEndpoint = "https://$searchServiceName.search.windows.net"
+
+Write-Color -Text "databasePassword - $databasePassword" -Color Blue
+Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
+Write-Color -Text "azureStorageConnectionString - $azureStorageConnectionString" -Color Blue
+Write-Color -Text "redisConnectionString - $redisConnectionString" -Color Blue
+Write-Color -Text "SearchCredentialsQueryKey: - $searchQueryKey" -Color Blue
+Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchEndpoint" -Color Blue
+
+helm install s2search . -n $S2Namespace `
+    --set-string postgresql.auth.password="$databasePassword" `
+    --set-string postgresql.auth.connectionString="$databaseConnectionString" `
+    --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
+    --set-string ConnectionStrings.azureStorageConnectionString="$azureStorageConnectionString" `
+    --set-string ConnectionStrings.redisConnectionString="$redisConnectionString" `
+    --set-string Search.SearchCredentialsQueryKey="$searchQueryKey" `
+    --set-string Search.SearchCredentialsInstanceEndpoint="$searchEndpoint"
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green
