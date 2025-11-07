@@ -201,7 +201,7 @@ if ($provisionSearch) {
     Write-Color -Text "Import Data" -Color DarkYellow
     $jsonContent = Get-Content -Raw -Path "E:/github/S2Search/Infrastructure/assets/vehicle-data.json"
 
-    $jsonContent = $jsonContent -replace 'https://s2storagedev.blob.core.windows.net', $tfOutput.search_service_url.value
+    $jsonContent = $jsonContent -replace 'https://s2storagedev.blob.core.windows.net/assets', $tfOutput.storage_container_assets_url.value
     #Write-Color -Text $jsonContent -Color DarkMagenta
 
     $uri = "$($tfOutput.search_service_url.value)/indexes/$indexName/docs/index?api-version=2025-08-01-preview"
