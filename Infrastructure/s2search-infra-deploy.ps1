@@ -1,5 +1,5 @@
 # #############################################################
-# Script to deploy infrastructure and code for S2Search
+# Script to deploy infrastructure and codebase for S2Search
 # - the script is designed to be run as required
 # ##############################################################
 
@@ -19,11 +19,14 @@
 # 4 - Deploy indexes and data to Azure Search
 
 param (
-    [bool]$deployInfra = $false,
-    [bool]$destroyInfra = $false,
+    [bool]$destroyInfra = $false,    
+    [bool]$deployInfra = $false,    
     [bool]$uploadAssets = $false,
     [bool]$provisionSearch = $false,
-    [bool]$HelmDeployment = $false
+    [bool]$HelmDeployment = $false,
+    [string]$databasePassword = "",    
+    [string]$databaseConnectionString = "",
+    [string]$redisConnectionString = ""
 )
 
 function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
@@ -305,16 +308,42 @@ if ($HelmDeployment) {
 
     helm dependency update .
 
-    helm install s2search . -n $S2Namespace
+    ###########################
+    ## Get the Search details
+    ###########################
+    $searchQueryKey = az search query-key list --resource-group $resourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
+    $searchServiceName = (az search service show --resource-group $resourceGroup --name s2-search-dev | ConvertFrom-Json).name
+    $searchEndpoint = "https://$searchServiceName.search.windows.net"
+
+    ###########################
+    ## Get the Storage details
+    ###########################
+    $storageConnectionString = (az storage account show-connection-string --resource-group $resourceGroup --name $storageAccountName --output tsv)
+    Write-Host "Storage Connection String: $storageConnectionString"
+
+    Write-Color -Text "databasePassword - $databasePassword" -Color Blue
+    Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
+    Write-Color -Text "azureStorageConnectionString - $storageConnectionString" -Color Blue
+    Write-Color -Text "redisConnectionString - $redisConnectionString" -Color Blue
+    Write-Color -Text "SearchCredentialsQueryKey: - $searchQueryKey" -Color Blue
+    Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchEndpoint" -Color Blue
+
+    helm install s2search . -n $S2Namespace `
+        --set-string postgresql.auth.password="$databasePassword" `
+        --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
+        --set-string ConnectionStrings.azureStorageConnectionString="$storageConnectionString" `
+        --set-string ConnectionStrings.redisConnectionString="$redisConnectionString" `
+        --set-string Search.SearchCredentialsQueryKey="$searchQueryKey" `
+        --set-string Search.SearchCredentialsInstanceEndpoint="$searchEndpoint"
 }
 
-Write-Color -Text "################################" -Color Green
-Write-Color -Text "Process Complete"                 -Color Green
-Write-Color -Text "################################" -Color Green
-
-<# Write-Color -Text "###################################" -Color DarkBlue
+Write-Color -Text "###################################" -Color DarkBlue
 Write-Color -Text "Terraform output" -Color DarkBlue
 Write-Color -Text "###################################" -Color DarkBlue
 
 Write-Color -Text "running terraform output" -Color DarkYellow
-terraform output #>
+terraform output
+
+Write-Color -Text "################################" -Color Green
+Write-Color -Text "Process Complete"                 -Color Green
+Write-Color -Text "################################" -Color Green
