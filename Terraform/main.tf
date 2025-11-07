@@ -73,7 +73,7 @@ resource "azurerm_storage_account" "s2search_storage" {
   min_tls_version          = var.min_tls_version
 
   # Security best practices
-  allow_nested_items_to_be_public = false
+  allow_nested_items_to_be_public = true
   shared_access_key_enabled       = true
   public_network_access_enabled   = true
 
@@ -102,7 +102,7 @@ resource "azurerm_storage_account" "s2search_storage" {
 resource "azurerm_storage_container" "s2search_blob" {
   name                  = "assets"
   storage_account_name  = azurerm_storage_account.s2search_storage.name
-  container_access_type = "private"
+  container_access_type = "blob"
 }
 
 resource "azurerm_storage_container" "s2search_feed_services" {

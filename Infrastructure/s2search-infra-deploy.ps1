@@ -49,6 +49,21 @@ $tfOutput = ""
 Write-Color -Text "Changing to Terraform directory" -Color DarkYellow
 Set-Location "E:\github\S2Search\Terraform"
 
+# Pause for user confirmation
+Write-Color -Text "" -Color White
+Write-Color -Text "Press any key to continue with deployment, or ESC/N to exit..." -Color Yellow
+$key = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+
+if ($key.VirtualKeyCode -eq 27 -or $key.Character -eq 'n') {
+    Write-Color -Text "" -Color White
+    Write-Color -Text "Deployment cancelled by user." -Color Red
+    Write-Color -Text "Exiting script..." -Color Yellow
+    exit 0
+}
+
+Write-Color -Text "Continuing with deployment..." -Color Green
+Write-Color -Text "" -Color White
+
 # 1 - run Terraform to provision infrastructure
 
 if ($destroyInfra) {
@@ -222,8 +237,6 @@ if ($HelmDeployment) {
     Write-Color -Text "###################" -Color DarkBlue
     Write-Color -Text "Helm Deployment"     -Color DarkBlue
     Write-Color -Text "###################" -Color DarkBlue
-   
-    
     $tfOutput = terraform output -json | ConvertFrom-Json
     $aksClusterName = $tfOutput.aks_cluster_name.value
     $resourceGroup = $tfOutput.resource_group_name.value
