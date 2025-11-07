@@ -51,7 +51,7 @@ Set-Location "E:\github\S2Search\Terraform"
 
 # Pause for user confirmation
 Write-Color -Text "" -Color White
-Write-Color -Text "Press any key to continue with deployment, or ESC/N to exit..." -Color Yellow
+Write-Color -Text "Press any key to continue with deployment, or ESC or n to exit..." -Color Yellow
 $key = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 
 if ($key.VirtualKeyCode -eq 27 -or $key.Character -eq 'n') {

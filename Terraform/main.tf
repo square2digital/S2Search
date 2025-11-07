@@ -101,30 +101,30 @@ resource "azurerm_storage_account" "s2search_storage" {
 
 resource "azurerm_storage_container" "s2search_blob" {
   name                  = "assets"
-  storage_account_name  = azurerm_storage_account.s2search_storage.name
+  storage_account_id    = azurerm_storage_account.s2search_storage.id
   container_access_type = "blob"
 }
 
 resource "azurerm_storage_container" "s2search_feed_services" {
   name                  = "feed-services"
-  storage_account_name  = azurerm_storage_account.s2search_storage.name
+  storage_account_id    = azurerm_storage_account.s2search_storage.id
   container_access_type = "private"
 }
 
 # Storage Queues for async processing
 resource "azurerm_storage_queue" "feed_processing" {
-  name                 = "feed-process"
-  storage_account_name = azurerm_storage_account.s2search_storage.name
+  name               = "feed-process"
+  storage_account_id = azurerm_storage_account.s2search_storage.id
 }
 
 resource "azurerm_storage_queue" "search_indexing" {
-  name                 = "feed-validate"
-  storage_account_name = azurerm_storage_account.s2search_storage.name
+  name               = "feed-validate"
+  storage_account_id = azurerm_storage_account.s2search_storage.id
 }
 
 resource "azurerm_storage_queue" "cache_invalidation" {
-  name                 = "feed-extract"
-  storage_account_name = azurerm_storage_account.s2search_storage.name
+  name               = "feed-extract"
+  storage_account_id = azurerm_storage_account.s2search_storage.id
 }
 
 # AKS Cluster for container orchestration
@@ -155,6 +155,9 @@ resource "azurerm_kubernetes_cluster" "s2search_aks" {
   identity {
     type = "SystemAssigned"
   }
+
+  # OIDC Issuer (required for newer AKS versions)
+  oidc_issuer_enabled = true
 
   # Network profile
   network_profile {
