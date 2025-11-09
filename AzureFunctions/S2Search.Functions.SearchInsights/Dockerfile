@@ -13,23 +13,32 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copy project files and restore dependencies (better Docker layer caching)
-COPY ["S2Search.Functions.SearchInsights/S2Search.Functions.SearchInsights.csproj", "S2Search.Functions.SearchInsights/"]
-RUN dotnet restore "./S2Search.Functions.SearchInsights/S2Search.Functions.SearchInsights.csproj" --disable-parallel
+# Copy the main function project
+COPY ["AzureFunctions/S2Search.Functions.SearchInsights/S2Search.Functions.SearchInsights.csproj", "./AzureFunctions/S2Search.Functions.SearchInsights/"]
 
-# Copy source code
-COPY . .
-WORKDIR "/src/S2Search.Functions.SearchInsights"
+# Copy the dependency projects (correct paths based on workspace structure)
+COPY ["Domain/S2Search.Backend.Domain/S2Search.Backend.Domain.csproj", "./Domain/S2Search.Backend.Domain/"]
+COPY ["Services/S2Search.Backend.Services/S2Search.Backend.Services.csproj", "./Services/S2Search.Backend.Services/"]
 
-# Build the project
-RUN dotnet build "./S2Search.Functions.SearchInsights.csproj" -c $BUILD_CONFIGURATION -o /app/build --no-restore
+# Restore dependencies for the function project (this will restore all dependencies including referenced projects)
+RUN dotnet restore "./AzureFunctions/S2Search.Functions.SearchInsights/S2Search.Functions.SearchInsights.csproj" --disable-parallel
+
+# Copy all source code
+COPY AzureFunctions/S2Search.Functions.SearchInsights/ ./AzureFunctions/S2Search.Functions.SearchInsights/
+COPY Domain/ ./Domain/
+COPY Services/ ./Services/
+
+# Set working directory to the function project and build it (this will build all dependencies)
+WORKDIR "/src/AzureFunctions/S2Search.Functions.SearchInsights"
+RUN dotnet build "S2Search.Functions.SearchInsights.csproj" -c $BUILD_CONFIGURATION --no-restore
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./S2Search.Functions.SearchInsights.csproj" \
+WORKDIR "/src/AzureFunctions/S2Search.Functions.SearchInsights"
+RUN dotnet publish "S2Search.Functions.SearchInsights.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
-    --no-build \
     --no-restore \
     /p:UseAppHost=false \
     /p:PublishReadyToRun=false
