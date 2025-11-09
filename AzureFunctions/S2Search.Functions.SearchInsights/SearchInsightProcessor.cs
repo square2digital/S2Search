@@ -1,8 +1,10 @@
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
+using System.Net;
 
 namespace S2Search.Functions.SearchInsights;
 
@@ -30,5 +32,13 @@ public class SearchInsightProcessor
         var dataPoints = dataPointsExtractionManager.Extract(searchInsightMessage);
 
         await searchInsightsManager.SaveInsightsAsync(searchInsightMessage.SearchIndexId, dataPoints, searchInsightMessage.DateGenerated);
+    }
+
+    [Function("health")]
+    public async Task<HttpResponseData> Health([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
+    {
+        var response = req.CreateResponse(HttpStatusCode.OK);
+        await response.WriteStringAsync("Healthy");
+        return response;
     }
 }
