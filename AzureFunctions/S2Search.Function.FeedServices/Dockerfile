@@ -27,9 +27,8 @@ COPY AzureFunctions/S2Search.Function.FeedServices/ ./AzureFunctions/S2Search.Fu
 COPY Domain/ ./Domain/
 COPY Services/ ./Services/
 
-# Set working directory to the function project and build it (this will build all dependencies)
+# Set working directory to the function project (publish will compile directly)
 WORKDIR "/src/AzureFunctions/S2Search.Function.FeedServices"
-RUN dotnet build "S2Search.Function.FeedServices.csproj" -c $BUILD_CONFIGURATION -o /app/build --no-restore
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
@@ -39,7 +38,6 @@ RUN dotnet publish "S2Search.Function.FeedServices.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
     --no-restore \
-    --no-build \
     /p:UseAppHost=false \
     /p:PublishReadyToRun=false
 
