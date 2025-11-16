@@ -56,6 +56,37 @@ S2SearchUi:
   tolerations: []
   affinity: {}
 
+feedfunctions:
+  replicaCount: 1
+  image:
+    name: s2search-functions-feedservices
+    repository: ghcr.io/square2digital/s2search-functions-feedservices
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80
+  resources:
+    limits:
+      cpu: 300m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  env:
+    - name: ENVIRONMENT
+      value: "local"
+    - name: ASPNETCORE_ENVIRONMENT
+      value: "Production"
+    - name: ASPNETCORE_URLS
+      value: "http://+:80"
+  configmap:
+    enabled: true
+    name: configmap-localk8s
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
 postgresql:
   enabled: true
   auth:

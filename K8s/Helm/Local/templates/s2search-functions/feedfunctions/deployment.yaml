@@ -3,12 +3,12 @@ kind: Deployment
 metadata:
   name: "functions-feedfunctions-deployment"
   labels:
-    app: {{ .Values.S2SearchUi.image.name }}
+    app: {{ .Values.feedfunctions.image.name }}
 spec:
-  replicas: {{ .Values.S2SearchUi.replicaCount }}
+  replicas: {{ .Values.feedfunctions.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.S2SearchUi.image.name }}
+      app: {{ .Values.feedfunctions.image.name }}
   minReadySeconds: 3
   strategy:
     type: RollingUpdate
@@ -18,23 +18,23 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .Values.S2SearchUi.image.name }}
+        app: {{ .Values.feedfunctions.image.name }}
     spec:
       imagePullSecrets:
         - name: ghcr-secret
       containers:
-        - name: {{ .Values.S2SearchUi.image.name }}
-          image: {{ .Values.S2SearchUi.image.repository }}:{{ .Values.S2SearchUi.image.tag }}
+        - name: {{ .Values.feedfunctions.image.name }}
+          image: {{ .Values.feedfunctions.image.repository }}:{{ .Values.feedfunctions.image.tag }}
           ports:
             - containerPort: 3000
           resources:
             limits:
-              memory: {{ .Values.S2SearchUi.resources.limits.memory }}
-              cpu: {{ .Values.S2SearchUi.resources.limits.cpu }}
+              memory: {{ .Values.feedfunctions.resources.limits.memory }}
+              cpu: {{ .Values.feedfunctions.resources.limits.cpu }}
             requests:
-              memory: {{ .Values.S2SearchUi.resources.requests.memory }}
-              cpu: {{ .Values.S2SearchUi.resources.requests.cpu }}
-          imagePullPolicy: {{ .Values.S2SearchUi.image.pullPolicy }}
+              memory: {{ .Values.feedfunctions.resources.requests.memory }}
+              cpu: {{ .Values.feedfunctions.resources.requests.cpu }}
+          imagePullPolicy: {{ .Values.feedfunctions.image.pullPolicy }}
           envFrom:
             - configMapRef:
                 name: s2searchui-env
