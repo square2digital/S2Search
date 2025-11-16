@@ -1,4 +1,4 @@
-name: Build FeedServices Function
+name: Build Function FeedServices
 
 on:
   push:

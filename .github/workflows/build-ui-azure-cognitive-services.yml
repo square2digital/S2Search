@@ -1,4 +1,4 @@
-name: Build AzureCognitiveServices S2Search UI
+name: Build UI AzureCognitiveServices
 
 on:
   push:

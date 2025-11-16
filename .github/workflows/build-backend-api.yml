@@ -1,4 +1,4 @@
-name: Build S2Search.Backend.API
+name: Build Backend.API
 
 on:
   push:
