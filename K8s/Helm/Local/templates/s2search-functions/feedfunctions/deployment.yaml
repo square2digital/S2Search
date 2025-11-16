@@ -26,7 +26,7 @@ spec:
         - name: {{ .Values.feedfunctions.image.name }}
           image: {{ .Values.feedfunctions.image.repository }}:{{ .Values.feedfunctions.image.tag }}
           ports:
-            - containerPort: 3000
+            - containerPort: 80
           resources:
             limits:
               memory: {{ .Values.feedfunctions.resources.limits.memory }}
@@ -35,6 +35,18 @@ spec:
               memory: {{ .Values.feedfunctions.resources.requests.memory }}
               cpu: {{ .Values.feedfunctions.resources.requests.cpu }}
           imagePullPolicy: {{ .Values.feedfunctions.image.pullPolicy }}
-          envFrom:
-            - configMapRef:
-                name: s2searchui-env
+          env:
+            - name: FUNCTIONS_WORKER_RUNTIME
+              value: "dotnet-isolated"
+            - name: AzureWebJobsSecretStorageType
+              value: "kubernetes"
+            - name: AzureWebJobsStorage
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.feedfunctions.secret.name }}
+                  key: AzureWebJobsStorage
+            - name: ConnectionStrings__AzureStorage
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.feedfunctions.secret.name }}
+                  key: AzureStorageConnectionString

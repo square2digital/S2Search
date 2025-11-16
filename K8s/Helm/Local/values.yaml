@@ -69,20 +69,14 @@ feedfunctions:
   resources:
     limits:
       cpu: 300m
-      memory: 256Mi
+      memory: 512Mi
     requests:
       cpu: 100m
-      memory: 128Mi
-  env:
-    - name: ENVIRONMENT
-      value: "local"
-    - name: ASPNETCORE_ENVIRONMENT
-      value: "Production"
-    - name: ASPNETCORE_URLS
-      value: "http://+:80"
-  configmap:
-    enabled: true
-    name: configmap-localk8s
+      memory: 256Mi
+  secret:
+    name: feedfunctions-secret
+  azureStorage:
+    connectionString: "DefaultEndpointsProtocol=https;AccountName=s2storagedev;AccountKey=3qMRIgisGsfc5AV/x5wDKYVbSEfw+lPropDKBy67+fG32BS+WHL7a2zyH/A/p2bJKEDCH5w+EGJP+AStqFdPsA==;EndpointSuffix=core.windows.net"
   nodeSelector: {}
   tolerations: []
   affinity: {}
