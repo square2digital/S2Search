@@ -22,7 +22,7 @@ public class FeedMonitor
     }
 
     [Function(nameof(FeedMonitor))]
-    public async Task Run([BlobTrigger(FeedAreas.BlobMonitorDirectory, Source = BlobTriggerSource.EventGrid, Connection = ConnectionStringKeys.AzureStorage)] 
+    public async Task Run([BlobTrigger(FeedAreas.BlobMonitorDirectory, Source = BlobTriggerSource.EventGrid, Connection = ConnectionStringFunctionKeys.AzureStorage)] 
         BlobClient blobClient,
         string name,
         ILogger log)

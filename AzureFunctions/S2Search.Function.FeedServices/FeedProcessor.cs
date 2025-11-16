@@ -33,7 +33,7 @@ public class FeedProcessor
     }
 
     [Function(nameof(FeedProcessor))]
-    public async Task Run([QueueTrigger(StorageQueues.Process, Connection = ConnectionStringKeys.AzureStorage)]
+    public async Task Run([QueueTrigger(StorageQueues.Process, Connection = ConnectionStringFunctionKeys.AzureStorage)]
         FeedBlob feedBlob,
         ILogger logger)
     {
