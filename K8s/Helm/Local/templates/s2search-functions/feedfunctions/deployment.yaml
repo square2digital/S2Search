@@ -39,14 +39,8 @@ spec:
             - name: FUNCTIONS_WORKER_RUNTIME
               value: "dotnet-isolated"
             - name: AzureWebJobsSecretStorageType
-              value: "kubernetes"
+              value: "Kubernetes"
             - name: AzureWebJobsStorage
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.feedfunctions.secret.name }}
-                  key: AzureWebJobsStorage
+              value: {{ .Values.feedfunctions.azureStorage.connectionString | quote }}
             - name: ConnectionStrings__AzureStorage
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.feedfunctions.secret.name }}
-                  key: AzureStorageConnectionString
+              value: {{ .Values.feedfunctions.azureStorage.connectionString | quote }}
