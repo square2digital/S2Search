@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "functions-searchinsights-deployment"
+  labels:
+    app: {{ .Values.searchinsights.image.name }}
+spec:
+  replicas: {{ .Values.searchinsights.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.searchinsights.image.name }}
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.searchinsights.image.name }}
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: {{ .Values.searchinsights.image.name }}
+          image: {{ .Values.searchinsights.image.repository }}:{{ .Values.searchinsights.image.tag }}
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: {{ .Values.searchinsights.resources.limits.memory }}
+              cpu: {{ .Values.searchinsights.resources.limits.cpu }}
+            requests:
+              memory: {{ .Values.searchinsights.resources.requests.memory }}
+              cpu: {{ .Values.searchinsights.resources.requests.cpu }}
+          imagePullPolicy: {{ .Values.searchinsights.image.pullPolicy }}
+          env:
+            - name: FUNCTIONS_WORKER_RUNTIME
+              value: "dotnet-isolated"
+            - name: AzureWebJobsSecretStorageType
+              value: "Kubernetes"
+            - name: AzureWebJobsStorage
+              value: {{ .Values.searchinsights.azureStorage.connectionString | quote }}
+            - name: ConnectionStrings__AzureStorage
+              value: {{ .Values.searchinsights.azureStorage.connectionString | quote }}

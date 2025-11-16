@@ -81,6 +81,31 @@ feedfunctions:
   tolerations: []
   affinity: {}
 
+searchinsights:
+  replicaCount: 1
+  image:
+    name: s2search-functions-searchinsights
+    repository: ghcr.io/square2digital/s2search-functions-searchinsights
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  secret:
+    name: feedfunctions-secret
+  azureStorage:
+    connectionString: "DefaultEndpointsProtocol=https;AccountName=s2storagedev;AccountKey=3qMRIgisGsfc5AV/x5wDKYVbSEfw+lPropDKBy67+fG32BS+WHL7a2zyH/A/p2bJKEDCH5w+EGJP+AStqFdPsA==;EndpointSuffix=core.windows.net"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
 postgresql:
   enabled: true
   auth:
