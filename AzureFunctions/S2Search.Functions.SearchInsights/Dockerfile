@@ -2,9 +2,9 @@
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated9.0 AS base
-USER app
 WORKDIR /home/site/wwwroot
 EXPOSE 8080
+USER app
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
@@ -20,7 +20,7 @@ COPY ["Domain/S2Search.Backend.Domain/S2Search.Backend.Domain.csproj", "./Domain
 COPY ["Services/S2Search.Backend.Services/S2Search.Backend.Services.csproj", "./Services/S2Search.Backend.Services/"]
 
 # Restore dependencies for the function project (this will restore all dependencies including referenced projects)
-RUN dotnet restore "./AzureFunctions/S2Search.Function.SearchInsights/S2Search.Function.SearchInsights.csproj" --disable-parallel
+RUN dotnet restore "./AzureFunctions/S2Search.Function.SearchInsights/S2Search.Function.SearchInsights.csproj"
 
 # Copy all source code
 COPY AzureFunctions/S2Search.Function.SearchInsights/ ./AzureFunctions/S2Search.Function.SearchInsights/
@@ -29,7 +29,6 @@ COPY Services/ ./Services/
 
 # Set working directory to the function project and build it (this will build all dependencies)
 WORKDIR "/src/AzureFunctions/S2Search.Function.SearchInsights"
-RUN dotnet build "S2Search.Function.SearchInsights.csproj" -c $BUILD_CONFIGURATION --no-restore
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
