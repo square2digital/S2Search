@@ -24,7 +24,7 @@ public class SearchInsightProcessor
     }
 
     [Function(nameof(SearchInsightProcessor))]
-    public async Task Run([QueueTrigger(StorageQueues.SearchInsightsProcessing, Connection = ConnectionStringFunctionKeys.AzureStorage)] SearchInsightMessage searchInsightMessage)
+    public async Task Run([QueueTrigger(StorageQueues.SearchInsightsProcessing)] SearchInsightMessage searchInsightMessage)
     {
         _logger.LogInformation($"{nameof(SearchInsightProcessor)} | Processing Message - SearchIndexId: {searchInsightMessage.SearchIndexId}");
         _logger.LogInformation($"{searchInsightMessage}");
@@ -32,13 +32,5 @@ public class SearchInsightProcessor
         var dataPoints = dataPointsExtractionManager.Extract(searchInsightMessage);
 
         await searchInsightsManager.SaveInsightsAsync(searchInsightMessage.SearchIndexId, dataPoints, searchInsightMessage.DateGenerated);
-    }
-
-    [Function("health")]
-    public async Task<HttpResponseData> Health([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
-    {
-        var response = req.CreateResponse(HttpStatusCode.OK);
-        await response.WriteStringAsync("Healthy");
-        return response;
     }
 }
