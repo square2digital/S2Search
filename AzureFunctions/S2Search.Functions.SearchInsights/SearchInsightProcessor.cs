@@ -6,7 +6,7 @@ using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
 using System.Net;
 
-namespace S2Search.Functions.SearchInsights;
+namespace S2Search.Function.SearchInsights;
 
 public class SearchInsightProcessor
 {

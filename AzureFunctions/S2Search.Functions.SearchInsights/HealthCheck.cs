@@ -2,7 +2,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using System.Net;
 
-namespace S2Search.Functions.SearchInsights;
+namespace S2Search.Function.SearchInsights;
 
 public class HealthCheck
 {

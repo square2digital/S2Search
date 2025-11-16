@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "S2Search.Functions.SearchInsights": {
+    "S2Search.Function.SearchInsights": {
       "commandName": "Project",
       "commandLineArgs": "--port 7032"
     },

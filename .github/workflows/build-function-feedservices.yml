@@ -13,7 +13,7 @@ jobs:
 
     env:
       IMAGE_NAME: s2search-functions-feedservices
-      DOCKERFILE_PATH: ./AzureFunctions/S2Search.Functions.FeedServices/Dockerfile
+      DOCKERFILE_PATH: ./AzureFunctions/S2Search.Function.FeedServices/Dockerfile
 
     steps:
       - name: Checkout code

@@ -28,4 +28,4 @@ Infrastructure/
 # Keep only what we need
 !Domain/
 !Services/
-!AzureFunctions/S2Search.Functions.SearchInsights/
+!AzureFunctions/S2Search.Function.SearchInsights/

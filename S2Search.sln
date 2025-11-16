@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Backend.API", "API
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Function.FeedServices", "AzureFunctions\S2Search.Function.FeedServices\S2Search.Function.FeedServices.csproj", "{203273D6-C4BB-2FAA-D15C-E8C0B99CCD3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Functions.SearchInsights", "AzureFunctions\S2Search.Functions.SearchInsights\S2Search.Functions.SearchInsights.csproj", "{CA0CAF4B-505A-1815-59C2-626B8F509A6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Function.SearchInsights", "AzureFunctions\S2Search.Function.SearchInsights\S2Search.Function.SearchInsights.csproj", "{CA0CAF4B-505A-1815-59C2-626B8F509A6F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.CacheManager", "CacheManager\S2Search.CacheManager\S2Search.CacheManager.csproj", "{985A8F3E-1831-D371-D377-AC8360BE3A51}"
 EndProject

@@ -13,7 +13,7 @@ jobs:
 
     env:
       IMAGE_NAME: s2search-functions-searchinsights
-      DOCKERFILE_PATH: ./AzureFunctions/S2Search.Functions.SearchInsights/Dockerfile
+      DOCKERFILE_PATH: ./AzureFunctions/S2Search.Function.SearchInsights/Dockerfile
 
     steps:
       - name: Checkout code
