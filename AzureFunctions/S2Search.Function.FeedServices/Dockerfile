@@ -4,25 +4,59 @@
 FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated9.0 AS base
 WORKDIR /home/site/wwwroot
 EXPOSE 8080
+USER app
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["S2Search.FeedServices.Function/S2Search.FeedServices.Function.csproj", "S2Search.FeedServices.Function/"]
-RUN dotnet restore "./S2Search.FeedServices.Function/S2Search.FeedServices.Function.csproj"
-COPY . .
-WORKDIR "/src/S2Search.FeedServices.Function"
-RUN dotnet build "./S2Search.FeedServices.Function.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# Copy project files and restore dependencies (better Docker layer caching)
+# Copy the main function project
+COPY ["AzureFunctions/S2Search.Function.FeedServices/S2Search.Function.FeedServices.csproj", "./AzureFunctions/S2Search.Function.FeedServices/"]
+
+# Copy the dependency projects (correct paths based on workspace structure)
+COPY ["Domain/S2Search.Backend.Domain/S2Search.Backend.Domain.csproj", "./Domain/S2Search.Backend.Domain/"]
+COPY ["Services/S2Search.Backend.Services/S2Search.Backend.Services.csproj", "./Services/S2Search.Backend.Services/"]
+
+# Restore dependencies for the function project (this will restore all dependencies including referenced projects)
+RUN dotnet restore "./AzureFunctions/S2Search.Function.FeedServices/S2Search.Function.FeedServices.csproj"
+
+# Copy all source code
+COPY AzureFunctions/S2Search.Function.FeedServices/ ./AzureFunctions/S2Search.Function.FeedServices/
+COPY Domain/ ./Domain/
+COPY Services/ ./Services/
+
+# Set working directory to the function project and build it (this will build all dependencies)
+WORKDIR "/src/AzureFunctions/S2Search.Function.FeedServices"
+RUN dotnet build "S2Search.Function.FeedServices.csproj" -c $BUILD_CONFIGURATION -o /app/build --no-restore
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./S2Search.FeedServices.Function.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+WORKDIR "/src/AzureFunctions/S2Search.Function.FeedServices"
+RUN dotnet publish "S2Search.Function.FeedServices.csproj" \
+    -c $BUILD_CONFIGURATION \
+    -o /app/publish \
+    --no-restore \
+    --no-build \
+    /p:UseAppHost=false \
+    /p:PublishReadyToRun=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /home/site/wwwroot
+
+# Copy published application
 COPY --from=publish /app/publish .
+
+# Set Azure Functions environment variables
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
-    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+    AzureFunctionsJobHost__Logging__Console__IsEnabled=true \
+    FUNCTIONS_WORKER_RUNTIME=dotnet-isolated \
+    DOTNET_USE_POLLING_FILE_WATCHER=true \
+    ASPNETCORE_URLS=http://+:8080
+
+# Note: Add HEALTHCHECK once a health endpoint is implemented
+# HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+#     CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
