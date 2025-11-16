@@ -22,7 +22,7 @@ public class FeedExtractor
     }
 
     [Function(nameof(FeedExtractor))]
-    public async Task Run([QueueTrigger(StorageQueues.Extract, Connection = ConnectionStringKeys.AzureStorage)] FeedBlob feedBlob,
+    public async Task Run([QueueTrigger(StorageQueues.Extract)] FeedBlob feedBlob,
                                     IBinder binder,
                                     ILogger log)
     {

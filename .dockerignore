@@ -1,0 +1,31 @@
+# Ignore build artifacts and IDE files
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+**/*.suo
+**/*.cache
+**/.dockerignore
+**/.env
+**/.git/
+**/.gitignore
+**/node_modules/
+**/bower_components/
+**/*.log
+.DS_Store
+Thumbs.db
+
+# Ignore specific directories not needed for this build
+UIs/
+DB/
+FTP/
+K8s/
+Terraform/
+Infrastructure/
+
+# Keep only what we need
+!Domain/
+!Services/
+!AzureFunctions/S2Search.Function.SearchInsights/

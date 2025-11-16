@@ -1,10 +1,12 @@
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Interfaces.SearchInsights.Managers;
+using System.Net;
 
-namespace S2Search.Functions.SearchInsights;
+namespace S2Search.Function.SearchInsights;
 
 public class SearchInsightProcessor
 {
@@ -22,7 +24,7 @@ public class SearchInsightProcessor
     }
 
     [Function(nameof(SearchInsightProcessor))]
-    public async Task Run([QueueTrigger(StorageQueues.SearchInsightsProcessing, Connection = ConnectionStringFunctionKeys.AzureStorage)] SearchInsightMessage searchInsightMessage)
+    public async Task Run([QueueTrigger(StorageQueues.SearchInsightsProcessing)] SearchInsightMessage searchInsightMessage)
     {
         _logger.LogInformation($"{nameof(SearchInsightProcessor)} | Processing Message - SearchIndexId: {searchInsightMessage.SearchIndexId}");
         _logger.LogInformation($"{searchInsightMessage}");

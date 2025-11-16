@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Backend.API", "API
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Function.FeedServices", "AzureFunctions\S2Search.Function.FeedServices\S2Search.Function.FeedServices.csproj", "{203273D6-C4BB-2FAA-D15C-E8C0B99CCD3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Functions.SearchInsights", "AzureFunctions\S2Search.Functions.SearchInsights\S2Search.Functions.SearchInsights.csproj", "{CA0CAF4B-505A-1815-59C2-626B8F509A6F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.CacheManager", "CacheManager\S2Search.CacheManager\S2Search.CacheManager.csproj", "{985A8F3E-1831-D371-D377-AC8360BE3A51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Backend.Domain", "Domain\S2Search.Backend.Domain\S2Search.Backend.Domain.csproj", "{4D6F384D-ACE9-8648-51BD-E7C8FB114199}"
@@ -16,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Backend.Services", "Services\S2Search.Backend.Services\S2Search.Backend.Services.csproj", "{D9AD07B2-797A-B67D-D397-4CFCA759305A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Backend.Importer", "Importer\S2Search.Backend.Importer\S2Search.Backend.Importer.csproj", "{490E26D7-0D5D-4BF6-EE7C-61DE76747E95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S2Search.Function.SearchInsights", "AzureFunctions\S2Search.Function.SearchInsights\S2Search.Function.SearchInsights.csproj", "{84CD6143-1E18-AE98-A7B7-E350B22310D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +31,6 @@ Global
 		{203273D6-C4BB-2FAA-D15C-E8C0B99CCD3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{203273D6-C4BB-2FAA-D15C-E8C0B99CCD3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{203273D6-C4BB-2FAA-D15C-E8C0B99CCD3A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA0CAF4B-505A-1815-59C2-626B8F509A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA0CAF4B-505A-1815-59C2-626B8F509A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA0CAF4B-505A-1815-59C2-626B8F509A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA0CAF4B-505A-1815-59C2-626B8F509A6F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{985A8F3E-1831-D371-D377-AC8360BE3A51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{985A8F3E-1831-D371-D377-AC8360BE3A51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{985A8F3E-1831-D371-D377-AC8360BE3A51}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +47,10 @@ Global
 		{490E26D7-0D5D-4BF6-EE7C-61DE76747E95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{490E26D7-0D5D-4BF6-EE7C-61DE76747E95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{490E26D7-0D5D-4BF6-EE7C-61DE76747E95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84CD6143-1E18-AE98-A7B7-E350B22310D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84CD6143-1E18-AE98-A7B7-E350B22310D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84CD6143-1E18-AE98-A7B7-E350B22310D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84CD6143-1E18-AE98-A7B7-E350B22310D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

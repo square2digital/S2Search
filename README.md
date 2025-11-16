@@ -54,7 +54,7 @@ S2Search/
 │   └── S2Search.API/             # Main Backend API
 ├── AzureFunctions/               # Serverless Functions (.NET 8)
 │   ├── S2Search.Function.FeedServices/      # Feed processing
-│   ├── S2Search.Functions.SearchInsights/   # Analytics
+│   ├── S2Search.Function.SearchInsights/   # Analytics
 │   └── S2Search.SFTPGoServices.Function/    # SFTP management
 ├── CacheManager/                 # Redis Caching Layer
 │   └── S2Search.CacheManager/
