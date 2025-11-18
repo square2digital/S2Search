@@ -9,6 +9,9 @@
 # full script execution
 # cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $true -uploadAssets $true -provisionSearch $true -HelmDeployment $true
 
+# Deployment only - no infrastructure changes
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $false -HelmDeployment $true
+
 # segmented execution - test search
 # cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $true -HelmDeployment $false
 
@@ -240,7 +243,9 @@ if ($HelmDeployment) {
     Write-Color -Text "###################" -Color DarkBlue
     Write-Color -Text "Helm Deployment"     -Color DarkBlue
     Write-Color -Text "###################" -Color DarkBlue
+
     $tfOutput = terraform output -json | ConvertFrom-Json
+    
     $aksClusterName = $tfOutput.aks_cluster_name.value
     $resourceGroup = $tfOutput.resource_group_name.value
 

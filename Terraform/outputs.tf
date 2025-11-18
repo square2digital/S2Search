@@ -82,19 +82,34 @@ output "search_service_connection_info" {
 # Resource Group Outputs
 # =================================================================
 
-output "resource_group_name" {
+output "default_resource_group_name" {
   value       = azurerm_resource_group.default.name
-  description = "The name of the resource group"
+  description = "The name of the default resource group"
 }
 
-output "resource_group_id" {
+output "default_resource_group_id" {
   value       = azurerm_resource_group.default.id
-  description = "The ID of the resource group"
+  description = "The ID of the default resource group"
 }
 
-output "resource_group_location" {
+output "default_resource_group_location" {
   value       = azurerm_resource_group.default.location
-  description = "The location of the resource group"
+  description = "The location of the default resource group"
+}
+
+output "k8s_resource_group_name" {
+  value       = azurerm_resource_group.k8s.name
+  description = "The name of the k8s resource group"
+}
+
+output "k8s_resource_group_id" {
+  value       = azurerm_resource_group.k8s.id
+  description = "The ID of the k8s resource group"
+}
+
+output "k8s_resource_group_location" {
+  value       = azurerm_resource_group.k8s.location
+  description = "The location of the k8sresource group"
 }
 
 # =================================================================
