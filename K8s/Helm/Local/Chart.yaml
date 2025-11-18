@@ -10,3 +10,7 @@ dependencies:
     repository: "https://charts.bitnami.com/bitnami"
     # The condition below lets you easily disable the DB for production
     condition: postgresql.enabled
+  - name: redis
+    version: "18.4.0" # Always pin to a specific version
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled

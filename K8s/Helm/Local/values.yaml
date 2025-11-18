@@ -124,6 +124,28 @@ postgresql:
     repository: bitnami/postgresql
     tag: "latest"
 
+redis:
+  enabled: true
+  auth:
+    enabled: false # Set to true and add password for production
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    tag: "latest"
+  master:
+    service:
+      type: NodePort
+      nodePorts:
+        redis: 30379
+    persistence:
+      enabled: true
+      size: 1Gi
+  replica:
+    replicaCount: 1
+    persistence:
+      enabled: true
+      size: 1Gi
+
 ConnectionStrings:
   databaseConnectionString: "DB_CONNECTION_STRING"
   azureStorageConnectionString: "AZURE_STORAGE_CONNECTION_STRING"
