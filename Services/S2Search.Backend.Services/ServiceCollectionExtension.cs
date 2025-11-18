@@ -11,7 +11,6 @@ using S2Search.Backend.Domain.Models;
 using S2Search.Backend.Services.Admin.Configuration.Repositories;
 using S2Search.Backend.Services.Admin.Customer.Interfaces.Managers;
 using S2Search.Backend.Services.Admin.Customer.Managers;
-using S2Search.Backend.Services.AzureFunctions.FeedServices.Providers;
 using S2Search.Backend.Services.Services;
 using S2Search.Backend.Services.Services.Admin.Configuration.Repositories;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Managers;
@@ -72,6 +71,7 @@ namespace S2Search.Backend.Services
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
             services
+                .AddSingleton(RedisConnectionMultiplexer())
                 .AddSingleton<IDbContextProvider, DbContextProvider>()
                 .AddSingleton<ISearchIndexRepository, SearchIndexRepository>()
                 .AddSingleton<IMemoryCacheService, LazyCacheService>()
@@ -88,7 +88,6 @@ namespace S2Search.Backend.Services
                 .AddSingleton<IAzureQueueService, AzureQueueService>()
                 .AddSingleton<IFireForgetService<IAzureQueueService>, FireForgetService<IAzureQueueService>>()
                 .AddSingleton<IDbConnectionFactory, DbConnectionFactory>()
-                .AddSingleton(RedisConnectionMultiplexer(Configuration))
                 .AddSingleton<IQueueClientProvider, QueueClientProvider>()
 
                 .AddSingleton<IQueueManager, QueueManager>()
@@ -174,7 +173,7 @@ namespace S2Search.Backend.Services
             return appSettings;
         }
 
-        private static Func<IServiceProvider, IConnectionMultiplexer> RedisConnectionMultiplexer(IConfiguration configuration)
+        private static Func<IServiceProvider, IConnectionMultiplexer> RedisConnectionMultiplexer()
         {
             return x =>
             {
@@ -183,12 +182,12 @@ namespace S2Search.Backend.Services
 
                 try
                 {
-                    var connection = ConnectionMultiplexer.Connect(configuration.GetValue<string>(ConnectionStringKeys.Redis));
+                    var connection = ConnectionMultiplexer.Connect(Configuration.GetValue<string>(ConnectionStringFunctionKeys.Redis));
                     return connection;
                 }
                 catch (Exception ex)
                 {
-                    logger.LogCritical(ex, $"Unable to connect to Redis using Configuration Key: '{ConnectionStringKeys.Redis}'");
+                    logger.LogCritical(ex, $"Unable to connect to Redis using Configuration Key: '{ConnectionStringFunctionKeys.Redis}'");
                     throw;
                 }
             };

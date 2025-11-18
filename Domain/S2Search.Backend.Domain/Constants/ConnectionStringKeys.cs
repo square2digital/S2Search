@@ -11,5 +11,6 @@ public static class ConnectionStringFunctionKeys
 {
     public const string SqlDatabase = "ConnectionStrings:SqlDatabase";
     public const string AzureStorage = "ConnectionStrings:AzureStorage";
+    public const string Redis = "ConnectionStrings:Redis";
 }
 
