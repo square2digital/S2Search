@@ -124,7 +124,7 @@ if ($uploadAssets) {
     #>
 
     # Set variables
-    $resourceGroup = $tfOutput.resource_group_name.value
+    $resourceGroup = $tfOutput.default_resource_group_name.value
     $storageAccount = $tfOutput.storage_account_name.value
     $containerName = "assets"
     $localFolderPath = "C:\Users\square2\OneDrive - Square2 Digital\Square2 Digital\Development\Storage\assets"
@@ -167,7 +167,7 @@ if ($provisionSearch) {
     $tfOutput = terraform output -json | ConvertFrom-Json    
 
     $searchServiceName = $tfOutput.search_service_name.value
-    $resourceGroup = $tfOutput.resource_group_name.value
+    $resourceGroup = $tfOutput.default_resource_group_name.value
 
     # Get the admin API key
     $apiKey = az search admin-key show `
@@ -245,9 +245,9 @@ if ($HelmDeployment) {
     Write-Color -Text "###################" -Color DarkBlue
 
     $tfOutput = terraform output -json | ConvertFrom-Json
-    
+
     $aksClusterName = $tfOutput.aks_cluster_name.value
-    $resourceGroup = $tfOutput.resource_group_name.value
+    $resourceGroup = $tfOutput.k8s_resource_group_name.value
 
     az aks get-credentials `
         --name $aksClusterName `
