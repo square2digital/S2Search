@@ -21,8 +21,19 @@ provider "azurerm" {
   subscription_id = var.subscription_id
 }
 
-resource "azurerm_resource_group" "s2search_test" {
-  name     = "s2search-terraform-test-rg"
+resource "azurerm_resource_group" "default" {
+  name     = var.default_resource_group_name
+  location = var.location
+
+  tags = {
+    Environment = var.tags_environment
+    Project     = var.tags_project
+    Service     = var.tags_service
+  }
+}
+
+resource "azurerm_resource_group" "k8s" {
+  name     = var.k8s_resource_group_name
   location = var.location
 
   tags = {
@@ -43,8 +54,8 @@ resource "random_string" "storage_suffix" {
 
 resource "azurerm_search_service" "s2search_instance" {
   name                = var.search_service_name
-  resource_group_name = azurerm_resource_group.s2search_test.name
-  location            = azurerm_resource_group.s2search_test.location
+  resource_group_name = azurerm_resource_group.default.name
+  location            = azurerm_resource_group.default.location
   sku                 = var.search_service_sku
   replica_count       = var.search_service_replicas
   partition_count     = var.search_service_partitions
@@ -64,8 +75,8 @@ resource "azurerm_search_service" "s2search_instance" {
 
 resource "azurerm_storage_account" "s2search_storage" {
   name                     = "${var.storage_account_name}${random_string.storage_suffix.result}"
-  resource_group_name      = azurerm_resource_group.s2search_test.name
-  location                 = azurerm_resource_group.s2search_test.location
+  resource_group_name      = azurerm_resource_group.default.name
+  location                 = azurerm_resource_group.default.location
   account_tier             = var.account_tier
   account_replication_type = var.account_replication_type
   account_kind             = var.account_kind
@@ -130,8 +141,8 @@ resource "azurerm_storage_queue" "cache_invalidation" {
 # AKS Cluster for container orchestration
 resource "azurerm_kubernetes_cluster" "s2search_aks" {
   name                = var.aks_cluster_name
-  location            = azurerm_resource_group.s2search_test.location
-  resource_group_name = azurerm_resource_group.s2search_test.name
+  location            = azurerm_resource_group.k8s.location
+  resource_group_name = azurerm_resource_group.k8s.name
   dns_prefix          = var.aks_dns_prefix
   kubernetes_version  = var.kubernetes_version
 

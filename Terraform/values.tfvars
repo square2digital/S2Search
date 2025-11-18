@@ -4,8 +4,10 @@ tags_project     = "S2Search"
 tags_service     = "storage"
 
 # azure globals
-resource_group_name = "s2 search"
-location            = "northeurope"
+#resource_group_name         = "s2 search"
+location                    = "northeurope"
+default_resource_group_name = "s2search-rg"
+k8s_resource_group_name     = "s2search-aks-rg"
 
 # s2search search instance
 search_service_name       = "s2-search-dev"
