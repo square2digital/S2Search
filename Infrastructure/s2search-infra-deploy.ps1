@@ -247,11 +247,14 @@ if ($HelmDeployment) {
     $tfOutput = terraform output -json | ConvertFrom-Json
 
     $aksClusterName = $tfOutput.aks_cluster_name.value
-    $resourceGroup = $tfOutput.k8s_resource_group_name.value
+
+    # resource groups
+    $defaultResourceGroup = $tfOutput.default_resource_group_name.value
+    $k8sResourceGroup = $tfOutput.k8s_resource_group_name.value
 
     az aks get-credentials `
         --name $aksClusterName `
-        --resource-group $resourceGroup `
+        --resource-group $k8sResourceGroup `
         --overwrite-existing    
 
     # Use environment variable for namespace if available, otherwise use default
@@ -316,14 +319,14 @@ if ($HelmDeployment) {
     ###########################
     ## Get the Search details
     ###########################
-    $searchQueryKey = az search query-key list --resource-group $resourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
-    $searchServiceName = (az search service show --resource-group $resourceGroup --name s2-search-dev | ConvertFrom-Json).name
+    $searchQueryKey = az search query-key list --resource-group $defaultResourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
+    $searchServiceName = (az search service show --resource-group $defaultResourceGroup --name s2-search-dev | ConvertFrom-Json).name
     $searchEndpoint = "https://$searchServiceName.search.windows.net"
 
     ###########################
     ## Get the Storage details
     ###########################
-    $storageConnectionString = (az storage account show-connection-string --resource-group $resourceGroup --name $storageAccountName --output tsv)
+    $storageConnectionString = (az storage account show-connection-string --resource-group $defaultResourceGroup --name $storageAccountName --output tsv)
     Write-Host "Storage Connection String: $storageConnectionString"
 
     Write-Color -Text "databasePassword - $databasePassword" -Color Blue
