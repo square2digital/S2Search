@@ -12,6 +12,9 @@
 # Deployment only - no infrastructure changes
 # cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $false -HelmDeployment $true
 
+# Destroy only
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $false -uploadAssets $false -provisionSearch $false -HelmDeployment $false
+
 # segmented execution - test search
 # cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $true -HelmDeployment $false
 
