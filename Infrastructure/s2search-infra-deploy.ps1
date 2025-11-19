@@ -325,9 +325,9 @@ if ($HelmDeployment) {
     ###########################
     ## Get the Search details
     ###########################
-    $SearchCredentialsQueryKey = az search query-key list --resource-group $defaultResourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
+    $searchCredentialsQueryKey = az search query-key list --resource-group $defaultResourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
     $searchServiceName = (az search service show --resource-group $defaultResourceGroup --name s2-search-dev | ConvertFrom-Json).name
-    $SearchCredentialsInstanceEndpoint = $tfOutput.search_service_connection_info.endpoint_url.value
+    $searchCredentialsInstanceEndpoint = $tfOutput.search_service_connection_info.endpoint_url.value
     $azureStorageAccountName = $tfOutput.storage_account_name.value
     $redisConnectionString = "s2search-redis-master:6379";
 
@@ -343,22 +343,22 @@ if ($HelmDeployment) {
 
     Write-Color -Text "databasePassword - $databasePassword" -Color Blue
     Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
-    Write-Color -Text "azureStorageConnectionString - $StorageConnectionString" -Color Blue
+    Write-Color -Text "azureStorageConnectionString - $storageConnectionString" -Color Blue
     Write-Color -Text "redisConnectionString - $redisConnectionString" -Color Blue
-    Write-Color -Text "SearchCredentialsQueryKey: - $SearchCredentialsQueryKey" -Color Blue
-    Write-Color -Text "SearchCredentialsInstanceEndpoint - $SearchCredentialsInstanceEndpoint" -Color Blue
+    Write-Color -Text "SearchCredentialsQueryKey: - $searchCredentialsQueryKey" -Color Blue
+    Write-Color -Text "searchCredentialsInstanceEndpoint - $searchCredentialsInstanceEndpoint" -Color Blue
     Write-Color -Text "AzureStorageAccountName - $azureStorageAccountName" -Color Blue
 
     helm upgrade --install s2search . -n $S2Namespace `
         --set-string postgresql.auth.password=$databasePassword `
         --set-string postgresql.auth.connectionString="$databaseConnectionString" `
         --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
-        --set-string ConnectionStrings.azureStorageConnectionString=$StorageConnectionString `
+        --set-string ConnectionStrings.azureStorageConnectionString=$storageConnectionString `
         --set-string ConnectionStrings.redisConnectionString=$redisConnectionString `
-        --set-string Search.SearchCredentialsQueryKey=$SearchCredentialsQueryKey `
-        --set-string Search.SearchCredentialsInstanceEndpoint=$SearchCredentialsInstanceEndpoint `
-        --set-string feedfunctions.azureStorage.connectionString=$StorageConnectionString `
-        --set-string searchinsights.azureStorage.connectionString=$StorageConnectionString;
+        --set-string Search.SearchCredentialsQueryKey=$searchCredentialsQueryKey `
+        --set-string Search.searchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
+        --set-string feedfunctions.azureStorage.connectionString=$storageConnectionString `
+        --set-string searchinsights.azureStorage.connectionString=$storageConnectionString;
 }
 
 Write-Color -Text "###################################" -Color DarkBlue
