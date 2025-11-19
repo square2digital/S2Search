@@ -432,3 +432,4 @@ temp/
 tmp/
 .tmp/
 Terraform/.terraform.tfstate.lock.info
+/APIs/S2Search.API/appsettings.json
