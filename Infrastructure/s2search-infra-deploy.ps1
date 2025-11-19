@@ -9,7 +9,10 @@
 # full script execution
 # cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $true -uploadAssets $true -provisionSearch $true -HelmDeployment $true
 
-# Deployment only - no infrastructure changes
+# infrastructure only - no helm deployment
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $true -uploadAssets $true -provisionSearch $true -HelmDeployment $false
+
+# Helm Deployment only - no infrastructure changes
 # cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $false -HelmDeployment $true
 
 # Destroy only
@@ -322,9 +325,15 @@ if ($HelmDeployment) {
     ###########################
     ## Get the Search details
     ###########################
-    $searchQueryKey = az search query-key list --resource-group $defaultResourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
+    $SearchCredentialsQueryKey = az search query-key list --resource-group $defaultResourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
     $searchServiceName = (az search service show --resource-group $defaultResourceGroup --name s2-search-dev | ConvertFrom-Json).name
-    $searchEndpoint = "https://$searchServiceName.search.windows.net"
+    $SearchCredentialsInstanceEndpoint = $tfOutput.search_service_connection_info.endpoint_url.value
+    $azureStorageAccountName = $tfOutput.storage_account_name.value
+    $redisConnectionString = "s2search-redis-master:6379";
+
+    $databasePassword = "";
+    $databaseConnectionString = "Host=s2search-postgresql;Port=5432;Database=s2searchdb;Username=s2search;Password=$databasePassword";
+
 
     ###########################
     ## Get the Storage details
@@ -334,18 +343,22 @@ if ($HelmDeployment) {
 
     Write-Color -Text "databasePassword - $databasePassword" -Color Blue
     Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
-    Write-Color -Text "azureStorageConnectionString - $storageConnectionString" -Color Blue
+    Write-Color -Text "azureStorageConnectionString - $StorageConnectionString" -Color Blue
     Write-Color -Text "redisConnectionString - $redisConnectionString" -Color Blue
-    Write-Color -Text "SearchCredentialsQueryKey: - $searchQueryKey" -Color Blue
-    Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchEndpoint" -Color Blue
+    Write-Color -Text "SearchCredentialsQueryKey: - $SearchCredentialsQueryKey" -Color Blue
+    Write-Color -Text "SearchCredentialsInstanceEndpoint - $SearchCredentialsInstanceEndpoint" -Color Blue
+    Write-Color -Text "AzureStorageAccountName - $azureStorageAccountName" -Color Blue
 
-    helm install s2search . -n $S2Namespace `
-        --set-string postgresql.auth.password="$databasePassword" `
+    helm upgrade --install s2search . -n $S2Namespace `
+        --set-string postgresql.auth.password=$databasePassword `
+        --set-string postgresql.auth.connectionString="$databaseConnectionString" `
         --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
-        --set-string ConnectionStrings.azureStorageConnectionString="$storageConnectionString" `
-        --set-string ConnectionStrings.redisConnectionString="$redisConnectionString" `
-        --set-string Search.SearchCredentialsQueryKey="$searchQueryKey" `
-        --set-string Search.SearchCredentialsInstanceEndpoint="$searchEndpoint"
+        --set-string ConnectionStrings.azureStorageConnectionString=$StorageConnectionString `
+        --set-string ConnectionStrings.redisConnectionString=$redisConnectionString `
+        --set-string Search.SearchCredentialsQueryKey=$SearchCredentialsQueryKey `
+        --set-string Search.SearchCredentialsInstanceEndpoint=$SearchCredentialsInstanceEndpoint `
+        --set-string feedfunctions.azureStorage.connectionString=$StorageConnectionString `
+        --set-string searchinsights.azureStorage.connectionString=$StorageConnectionString;
 }
 
 Write-Color -Text "###################################" -Color DarkBlue
