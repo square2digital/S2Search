@@ -7,7 +7,7 @@ S2Backend:
     pullPolicy: Always
   service:
     type: ClusterIP
-    port: 80
+    port: 8080
   resources:
     limits:
       cpu: 500m
