@@ -145,8 +145,8 @@ ConnectionStrings:
   redisConnectionString: "OVERRIDDEN_VALUE"
 
 Search:
-  SearchCredentialsQueryKey: "OVERRIDDEN_VALUE"
-  SearchCredentialsInstanceEndpoint: "OVERRIDDEN_VALUE"
+  searchCredentialsQueryKey: "OVERRIDDEN_VALUE"
+  searchCredentialsInstanceEndpoint: "OVERRIDDEN_VALUE"
 
 Storage:
   accountName: "OVERRIDDEN_VALUE"

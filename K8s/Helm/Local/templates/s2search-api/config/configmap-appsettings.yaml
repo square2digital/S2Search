@@ -30,10 +30,10 @@ data:
       },
       "DemoSearchCredentials": {
         "UseDemoSearchCredentials": true,
-        "SearchCredentialsQueryKey": "{{ .Values.Search.SearchCredentialsQueryKey }}",
+        "SearchCredentialsQueryKey": "{{ .Values.Search.searchCredentialsQueryKey }}",
         "SearchCredentialsIndexId": "6FB3C6D1-F480-47B5-9934-02E611AEFD02",
         "SearchCredentialsIndexName": "s2-demo-vehicles",
-        "SearchCredentialsInstanceEndpoint": "{{ .Values.Search.SearchCredentialsInstanceEndpoint }}",
+        "SearchCredentialsInstanceEndpoint": "{{ .Values.Search.searchCredentialsInstanceEndpoint }}",
         "SearchCredentialsInstanceName": "s2-search-dev"
       },
       "SearchSettings": {
