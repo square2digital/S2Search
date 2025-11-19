@@ -7,19 +7,19 @@
 # Simple deployment
 #######################
 # full script execution
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $true -uploadAssets $true -provisionSearch $true -HelmDeployment $true
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $true -uploadAssets $true -provisionSearch $true -helmDeployment $true
 
 # infrastructure only - no helm deployment
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $true -uploadAssets $true -provisionSearch $true -HelmDeployment $false
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $true -uploadAssets $true -provisionSearch $true -helmDeployment $false
 
 # Helm Deployment only - no infrastructure changes
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $false -HelmDeployment $true
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $false -helmDeployment $true
 
 # Destroy only
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $false -uploadAssets $false -provisionSearch $false -HelmDeployment $false
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $true -deployInfra $false -uploadAssets $false -provisionSearch $false -helmDeployment $false
 
 # segmented execution - test search
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $true -HelmDeployment $false
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-infra-deploy.ps1 -destroyInfra $false -deployInfra $false -uploadAssets $false -provisionSearch $true -helmDeployment $false
 
 # Steps
 # 1 - run Terraform to create AKS cluster and supporting infra
@@ -32,7 +32,7 @@ param (
     [bool]$deployInfra = $false,    
     [bool]$uploadAssets = $false,
     [bool]$provisionSearch = $false,
-    [bool]$HelmDeployment = $false,
+    [bool]$helmDeployment = $false,
     [string]$databasePassword = "",    
     [string]$databaseConnectionString = "",
     [string]$redisConnectionString = ""
@@ -244,7 +244,7 @@ if ($provisionSearch) {
     Write-Color -Text $response -Color Green
 }
 
-if ($HelmDeployment) {
+if ($helmDeployment) {
     
     Write-Color -Text "###################" -Color DarkBlue
     Write-Color -Text "Helm Deployment"     -Color DarkBlue
