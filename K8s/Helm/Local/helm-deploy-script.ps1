@@ -151,28 +151,29 @@ helm dependency update .
 ###########################
 ## Get the Search details
 ###########################
-$SearchCredentialsQueryKey = az search query-key list --resource-group s2search-terraform-test-rg --service-name s2-search-dev --output tsv --query "[0].key"
-$searchServiceName = (az search service show --resource-group s2search-terraform-test-rg --name s2-search-dev | ConvertFrom-Json).name
-$SearchCredentialsInstanceEndpoint = "https://$searchServiceName.search.windows.net"
+$searchCredentialsQueryKey = az search query-key list --resource-group s2search-rg --service-name s2-search-dev --output tsv --query "[0].key"
+$searchServiceName = (az search service show --resource-group s2search-rg --name s2-search-dev | ConvertFrom-Json).name
+$searchCredentialsInstanceEndpoint = "https://$searchServiceName.search.windows.net"
 
 Write-Color -Text "databasePassword - $databasePassword" -Color Blue
 Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
-Write-Color -Text "azureStorageConnectionString - $StorageConnectionString" -Color Blue
+Write-Color -Text "azureStorageConnectionString - $storageConnectionString" -Color Blue
 Write-Color -Text "redisConnectionString - $redisConnectionString" -Color Blue
-Write-Color -Text "SearchCredentialsQueryKey: - $SearchCredentialsQueryKey" -Color Blue
-Write-Color -Text "SearchCredentialsInstanceEndpoint - $SearchCredentialsInstanceEndpoint" -Color Blue
-Write-Color -Text "AzureStorageAccountName - $azureStorageAccountName" -Color Blue
+Write-Color -Text "SearchCredentialsQueryKey: - $searchCredentialsQueryKey" -Color Blue
+Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchCredentialsInstanceEndpoint" -Color Blue
+Write-Color -Text "AzureStorageAccountName - $storageAccountName" -Color Blue
 
 helm upgrade --install s2search . -n $S2Namespace `
     --set-string postgresql.auth.password=$databasePassword `
     --set-string postgresql.auth.connectionString="$databaseConnectionString" `
     --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
-    --set-string ConnectionStrings.azureStorageConnectionString=$StorageConnectionString `
+    --set-string ConnectionStrings.azureStorageConnectionString=$storageConnectionString `
     --set-string ConnectionStrings.redisConnectionString=$redisConnectionString `
-    --set-string Search.SearchCredentialsQueryKey=$SearchCredentialsQueryKey `
-    --set-string Search.SearchCredentialsInstanceEndpoint=$SearchCredentialsInstanceEndpoint `
-    --set-string feedfunctions.azureStorage.connectionString=$StorageConnectionString `
-    --set-string searchinsights.azureStorage.connectionString=$StorageConnectionString;
+    --set-string feedfunctions.azureStorage.connectionString=$storageConnectionString `
+    --set-string searchinsights.azureStorage.connectionString=$storageConnectionString `
+    --set-string Search.searchCredentialsQueryKey=$searchCredentialsQueryKey `
+    --set-string Search.searchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
+    --set-string Storage.accountName=$storageAccountName;
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green

@@ -13,7 +13,8 @@ $defaultResourceGroup = $tfOutput.default_resource_group_name.value
 $storageAccountName = $tfOutput.storage_account_name.value
 
 $searchCredentialsQueryKey = az search query-key list --resource-group $defaultResourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
-$searchCredentialsInstanceEndpoint = (az search service show --resource-group $defaultResourceGroup --name s2-search-dev | ConvertFrom-Json).name
+$searchServiceName = (az search service show --resource-group $defaultResourceGroup --name s2-search-dev | ConvertFrom-Json).name
+$searchCredentialsInstanceEndpoint = "https://$searchServiceName.search.windows.net"
 $storageConnectionString = (az storage account show-connection-string --resource-group $defaultResourceGroup --name $storageAccountName --output tsv)
 
 $databasePassword = "";
@@ -25,6 +26,7 @@ cd "E:\github\S2Search\K8s\Helm\Local";
 Write-Host "defaultResourceGroup - $defaultResourceGroup"
 Write-Host "storageAccountName - $storageAccountName"
 Write-Host "searchCredentialsQueryKey - $searchCredentialsQueryKey"
+Write-Host "searchServiceName - $searchServiceName"
 Write-Host "searchCredentialsInstanceEndpoint - $searchCredentialsInstanceEndpoint"
 Write-Host "storageConnectionString - $storageConnectionString"
 
