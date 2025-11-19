@@ -6,7 +6,7 @@
                                       
 # execution commands
 # build all services
-# .\helm-deploy-script.ps1
+# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -deleteAllImages $true
 
 # local path
 # E:\github\S2Search\K8s\Helm\Local
@@ -15,12 +15,6 @@
 # - see one note - K8s & Helm for commands and examples
 
 param (
-    [string]$databasePassword = "",    
-    [string]$databaseConnectionString = "",
-    [string]$azureStorageConnectionString = "",    
-    [string]$redisConnectionString = "",
-    [string]$githubUsername = "",
-    [string]$githubToken = "",
     [bool]$deleteAllImages = $false
 )
 
@@ -56,6 +50,7 @@ if (Test-Path ".env") {
 # Use environment variables if parameters are not provided
 if ([string]::IsNullOrEmpty($githubUsername)) { $githubUsername = $env:GITHUB_USERNAME }
 if ([string]::IsNullOrEmpty($githubToken)) { $githubToken = $env:GITHUB_TOKEN }
+if ([string]::IsNullOrEmpty($databasePassword)) { $databasePassword = $env:DATABASE_PASSWORD }
 
 # Check if GitHub credentials are provided
 if ([string]::IsNullOrEmpty($githubUsername) -or [string]::IsNullOrEmpty($githubToken)) {
@@ -66,6 +61,14 @@ if ([string]::IsNullOrEmpty($githubUsername) -or [string]::IsNullOrEmpty($github
 }
 else {
     Write-Color -Text "GitHub credentials provided. Will create ghcr-secret." -Color Green
+}
+
+if ([string]::IsNullOrEmpty($databasePassword)) {
+    Write-Color -Text "Error: The database password not provided. You may need to create the database secret manually." -Color Red
+    exit
+}
+else {
+    Write-Color -Text "Database password provided. Will create database secret." -Color Green
 }
 
 $S2SearchAsciiArt = @"
@@ -148,12 +151,24 @@ docker image prune -f
 
 helm dependency update .
 
+cd "E:\github\S2Search\Terraform"
+
+#terraform output -json | ConvertFrom-Json
+$tfOutput = terraform output -json | ConvertFrom-Json
+
+$defaultResourceGroup = $tfOutput.default_resource_group_name.value
+$storageAccountName = $tfOutput.storage_account_name.value
+
 ###########################
 ## Get the Search details
 ###########################
 $searchCredentialsQueryKey = az search query-key list --resource-group s2search-rg --service-name s2-search-dev --output tsv --query "[0].key"
 $searchServiceName = (az search service show --resource-group s2search-rg --name s2-search-dev | ConvertFrom-Json).name
 $searchCredentialsInstanceEndpoint = "https://$searchServiceName.search.windows.net"
+$storageConnectionString = (az storage account show-connection-string --resource-group $defaultResourceGroup --name $storageAccountName --output tsv)
+
+$databaseConnectionString = "Host=s2search-postgresql;Port=5432;Database=s2searchdb;Username=s2search;Password=$databasePassword";
+$redisConnectionString = "s2search-redis-master:6379";
 
 Write-Color -Text "databasePassword - $databasePassword" -Color Blue
 Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
@@ -163,7 +178,9 @@ Write-Color -Text "SearchCredentialsQueryKey: - $searchCredentialsQueryKey" -Col
 Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchCredentialsInstanceEndpoint" -Color Blue
 Write-Color -Text "AzureStorageAccountName - $storageAccountName" -Color Blue
 
-helm upgrade --install s2search . -n $S2Namespace `
+cd "E:\github\S2Search\K8s\Helm\Local"; 
+
+helm upgrade --install s2search . -n s2search `
     --set-string postgresql.auth.password=$databasePassword `
     --set-string postgresql.auth.connectionString="$databaseConnectionString" `
     --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
@@ -174,6 +191,8 @@ helm upgrade --install s2search . -n $S2Namespace `
     --set-string Search.searchCredentialsQueryKey=$searchCredentialsQueryKey `
     --set-string Search.searchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
     --set-string Storage.accountName=$storageAccountName;
+
+docker image prune -f;
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green
