@@ -22,11 +22,11 @@ $redisConnectionString = "s2search-redis-master:6379";
 
 cd "E:\github\S2Search\K8s\Helm\Local"; 
 
-Write-Color -Text "defaultResourceGroup - $defaultResourceGroup" -Color Blue
-Write-Color -Text "storageAccountName - $storageAccountName" -Color Blue
-Write-Color -Text "searchCredentialsQueryKey - $searchCredentialsQueryKey" -Color Blue
-Write-Color -Text "searchCredentialsInstanceEndpoint - $searchCredentialsInstanceEndpoint" -Color Blue
-Write-Color -Text "storageConnectionString - $storageConnectionString" -Color Blue
+Write-Host "defaultResourceGroup - $defaultResourceGroup"
+Write-Host "storageAccountName - $storageAccountName"
+Write-Host "searchCredentialsQueryKey - $searchCredentialsQueryKey"
+Write-Host "searchCredentialsInstanceEndpoint - $searchCredentialsInstanceEndpoint"
+Write-Host "storageConnectionString - $storageConnectionString"
 
 helm upgrade --install s2search . -n s2search `
     --set-string postgresql.auth.password=$databasePassword `
@@ -34,8 +34,10 @@ helm upgrade --install s2search . -n s2search `
     --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
     --set-string ConnectionStrings.azureStorageConnectionString=$storageConnectionString `
     --set-string ConnectionStrings.redisConnectionString=$redisConnectionString `
-    --set-string Search.searchCredentialsQueryKey=$searchCredentialsQueryKey `
-    --set-string Search.SearchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
     --set-string feedfunctions.azureStorage.connectionString=$storageConnectionString `
-    --set-string searchinsights.azureStorage.connectionString=$storageConnectionString;
+    --set-string searchinsights.azureStorage.connectionString=$storageConnectionString `
+    --set-string Search.searchCredentialsQueryKey=$searchCredentialsQueryKey `
+    --set-string Search.searchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
+    --set-string Storage.accountName=$storageAccountName;
+
 docker image prune -f;
