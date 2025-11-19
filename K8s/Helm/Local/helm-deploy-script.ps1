@@ -6,16 +6,19 @@
                                       
 # execution commands
 # build all services
-# .\deployment-script.ps1
+# .\helm-deploy-script.ps1
 
 # local path
 # E:\github\S2Search\K8s\Helm\Local
+
+# running command
+# - see one note - K8s & Helm for commands and examples
 
 param (
     [string]$databasePassword = "",    
     [string]$databaseConnectionString = "",
     [string]$azureStorageConnectionString = "",    
-    [string]$redisConnectionString = "",    
+    [string]$redisConnectionString = "",
     [string]$githubUsername = "",
     [string]$githubToken = "",
     [bool]$deleteAllImages = $false
@@ -141,30 +144,35 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
     }
 }
 
+docker image prune -f
+
 helm dependency update .
 
 ###########################
 ## Get the Search details
 ###########################
-$searchQueryKey = az search query-key list --resource-group s2search-terraform-test-rg --service-name s2-search-dev --output tsv --query "[0].key"
+$SearchCredentialsQueryKey = az search query-key list --resource-group s2search-terraform-test-rg --service-name s2-search-dev --output tsv --query "[0].key"
 $searchServiceName = (az search service show --resource-group s2search-terraform-test-rg --name s2-search-dev | ConvertFrom-Json).name
-$searchEndpoint = "https://$searchServiceName.search.windows.net"
+$SearchCredentialsInstanceEndpoint = "https://$searchServiceName.search.windows.net"
 
 Write-Color -Text "databasePassword - $databasePassword" -Color Blue
 Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
-Write-Color -Text "azureStorageConnectionString - $azureStorageConnectionString" -Color Blue
+Write-Color -Text "azureStorageConnectionString - $StorageConnectionString" -Color Blue
 Write-Color -Text "redisConnectionString - $redisConnectionString" -Color Blue
-Write-Color -Text "SearchCredentialsQueryKey: - $searchQueryKey" -Color Blue
-Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchEndpoint" -Color Blue
+Write-Color -Text "SearchCredentialsQueryKey: - $SearchCredentialsQueryKey" -Color Blue
+Write-Color -Text "SearchCredentialsInstanceEndpoint - $SearchCredentialsInstanceEndpoint" -Color Blue
+Write-Color -Text "AzureStorageAccountName - $azureStorageAccountName" -Color Blue
 
-helm install s2search . -n $S2Namespace `
-    --set-string postgresql.auth.password="$databasePassword" `
+helm upgrade --install s2search . -n $S2Namespace `
+    --set-string postgresql.auth.password=$databasePassword `
     --set-string postgresql.auth.connectionString="$databaseConnectionString" `
     --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
-    --set-string ConnectionStrings.azureStorageConnectionString="$azureStorageConnectionString" `
-    --set-string ConnectionStrings.redisConnectionString="$redisConnectionString" `
-    --set-string Search.SearchCredentialsQueryKey="$searchQueryKey" `
-    --set-string Search.SearchCredentialsInstanceEndpoint="$searchEndpoint"
+    --set-string ConnectionStrings.azureStorageConnectionString=$StorageConnectionString `
+    --set-string ConnectionStrings.redisConnectionString=$redisConnectionString `
+    --set-string Search.SearchCredentialsQueryKey=$SearchCredentialsQueryKey `
+    --set-string Search.SearchCredentialsInstanceEndpoint=$SearchCredentialsInstanceEndpoint `
+    --set-string feedfunctions.azureStorage.connectionString=$StorageConnectionString `
+    --set-string searchinsights.azureStorage.connectionString=$StorageConnectionString;
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green

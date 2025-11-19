@@ -71,7 +71,7 @@ data:
         "GenericSynonymsCacheExpiryInSeconds": 86400
       },
       "RedisCacheSettings": {
-        "EnableRedisCache": false,
+        "EnableRedisCache": true,
         "DefaultCacheExpiryInSeconds": 3600
       }
     }
