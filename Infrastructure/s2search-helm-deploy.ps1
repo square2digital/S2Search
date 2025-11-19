@@ -6,16 +6,18 @@
                                       
 # execution commands
 # build all services
-# cls; cd "E:\github\S2Search\K8s\Helm\Local"; .\helm-deploy-script.ps1 -deleteAllImages $true
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "s2search-aks-dev"
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "rancher-desktop"
 
 # local path
-# E:\github\S2Search\K8s\Helm\Local
+# E:\github\S2Search\Infrastructure
 
 # running command
 # - see one note - K8s & Helm for commands and examples
 
 param (
-    [bool]$deleteAllImages = $false
+    [bool]$deleteAllImages = $false,
+    [string]$context = "rancher-desktop"
 )
 
 # Supported colour values - Black DarkBlue DarkGreen DarkCyan DarkRed DarkMagenta DarkYellow Gray DarkGray Blue Green Cyan Red Magenta Yellow White
@@ -82,6 +84,8 @@ $S2SearchAsciiArt = @"
 
 Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
 
+cd "E:\github\S2Search\K8s\Helm"
+
 ############
 # Variables
 ############
@@ -97,6 +101,10 @@ $S2Namespace = "s2search"
 Write-Color -Text "################################" -Color DarkBlue
 Write-Color -Text "Helm Deployment"                  -Color DarkBlue
 Write-Color -Text "################################" -Color DarkBlue
+
+Write-Color -Text "selected K8s Context $context" -Color DarkYellow
+kubectl config use-context $context
+kubectl config get-contexts
 
 Write-Color -Text "helm uninstall s2search . -n $S2Namespace" -Color DarkYellow
 helm uninstall s2search . -n $S2Namespace
@@ -178,7 +186,7 @@ Write-Color -Text "SearchCredentialsQueryKey: - $searchCredentialsQueryKey" -Col
 Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchCredentialsInstanceEndpoint" -Color Blue
 Write-Color -Text "AzureStorageAccountName - $storageAccountName" -Color Blue
 
-cd "E:\github\S2Search\K8s\Helm\Local"; 
+cd "E:\github\S2Search\K8s\Helm"; 
 
 helm upgrade --install s2search . -n s2search `
     --set-string postgresql.auth.password=$databasePassword `
