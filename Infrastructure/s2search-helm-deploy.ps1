@@ -6,19 +6,18 @@
                                       
 # execution commands
 # build all services
-# .\deployment-script.ps1
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "s2search-aks-dev"
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "rancher-desktop"
 
 # local path
-# E:\github\S2Search\K8s\Helm\Local
+# E:\github\S2Search\Infrastructure
+
+# running command
+# - see one note - K8s & Helm for commands and examples
 
 param (
-    [string]$databasePassword = "",    
-    [string]$databaseConnectionString = "",
-    [string]$azureStorageConnectionString = "",    
-    [string]$redisConnectionString = "",    
-    [string]$githubUsername = "",
-    [string]$githubToken = "",
-    [bool]$deleteAllImages = $false
+    [bool]$deleteAllImages = $false,
+    [string]$context = "rancher-desktop"
 )
 
 # Supported colour values - Black DarkBlue DarkGreen DarkCyan DarkRed DarkMagenta DarkYellow Gray DarkGray Blue Green Cyan Red Magenta Yellow White
@@ -53,6 +52,7 @@ if (Test-Path ".env") {
 # Use environment variables if parameters are not provided
 if ([string]::IsNullOrEmpty($githubUsername)) { $githubUsername = $env:GITHUB_USERNAME }
 if ([string]::IsNullOrEmpty($githubToken)) { $githubToken = $env:GITHUB_TOKEN }
+if ([string]::IsNullOrEmpty($databasePassword)) { $databasePassword = $env:DATABASE_PASSWORD }
 
 # Check if GitHub credentials are provided
 if ([string]::IsNullOrEmpty($githubUsername) -or [string]::IsNullOrEmpty($githubToken)) {
@@ -65,6 +65,14 @@ else {
     Write-Color -Text "GitHub credentials provided. Will create ghcr-secret." -Color Green
 }
 
+if ([string]::IsNullOrEmpty($databasePassword)) {
+    Write-Color -Text "Error: The database password not provided. You may need to create the database secret manually." -Color Red
+    exit
+}
+else {
+    Write-Color -Text "Database password provided. Will create database secret." -Color Green
+}
+
 $S2SearchAsciiArt = @"
         ___      __         __             __   ____      
    ____|__ \    / /_  ___  / /___ ___     / /__( __ )_____
@@ -75,6 +83,8 @@ $S2SearchAsciiArt = @"
 "@
 
 Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
+
+cd "E:\github\S2Search\K8s\Helm"
 
 ############
 # Variables
@@ -91,6 +101,10 @@ $S2Namespace = "s2search"
 Write-Color -Text "################################" -Color DarkBlue
 Write-Color -Text "Helm Deployment"                  -Color DarkBlue
 Write-Color -Text "################################" -Color DarkBlue
+
+Write-Color -Text "selected K8s Context $context" -Color DarkYellow
+kubectl config use-context $context
+kubectl config get-contexts
 
 Write-Color -Text "helm uninstall s2search . -n $S2Namespace" -Color DarkYellow
 helm uninstall s2search . -n $S2Namespace
@@ -141,30 +155,52 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
     }
 }
 
+docker image prune -f
+
 helm dependency update .
+
+cd "E:\github\S2Search\Terraform"
+
+#terraform output -json | ConvertFrom-Json
+$tfOutput = terraform output -json | ConvertFrom-Json
+
+$defaultResourceGroup = $tfOutput.default_resource_group_name.value
+$storageAccountName = $tfOutput.storage_account_name.value
 
 ###########################
 ## Get the Search details
 ###########################
-$searchQueryKey = az search query-key list --resource-group s2search-terraform-test-rg --service-name s2-search-dev --output tsv --query "[0].key"
-$searchServiceName = (az search service show --resource-group s2search-terraform-test-rg --name s2-search-dev | ConvertFrom-Json).name
-$searchEndpoint = "https://$searchServiceName.search.windows.net"
+$searchCredentialsQueryKey = az search query-key list --resource-group s2search-rg --service-name s2-search-dev --output tsv --query "[0].key"
+$searchServiceName = (az search service show --resource-group s2search-rg --name s2-search-dev | ConvertFrom-Json).name
+$searchCredentialsInstanceEndpoint = "https://$searchServiceName.search.windows.net"
+$storageConnectionString = (az storage account show-connection-string --resource-group $defaultResourceGroup --name $storageAccountName --output tsv)
+
+$databaseConnectionString = "Host=s2search-postgresql;Port=5432;Database=s2searchdb;Username=s2search;Password=$databasePassword";
+$redisConnectionString = "s2search-redis-master:6379";
 
 Write-Color -Text "databasePassword - $databasePassword" -Color Blue
 Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
-Write-Color -Text "azureStorageConnectionString - $azureStorageConnectionString" -Color Blue
+Write-Color -Text "azureStorageConnectionString - $storageConnectionString" -Color Blue
 Write-Color -Text "redisConnectionString - $redisConnectionString" -Color Blue
-Write-Color -Text "SearchCredentialsQueryKey: - $searchQueryKey" -Color Blue
-Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchEndpoint" -Color Blue
+Write-Color -Text "SearchCredentialsQueryKey: - $searchCredentialsQueryKey" -Color Blue
+Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchCredentialsInstanceEndpoint" -Color Blue
+Write-Color -Text "AzureStorageAccountName - $storageAccountName" -Color Blue
 
-helm install s2search . -n $S2Namespace `
-    --set-string postgresql.auth.password="$databasePassword" `
+cd "E:\github\S2Search\K8s\Helm"; 
+
+helm upgrade --install s2search . -n s2search `
+    --set-string postgresql.auth.password=$databasePassword `
     --set-string postgresql.auth.connectionString="$databaseConnectionString" `
     --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
-    --set-string ConnectionStrings.azureStorageConnectionString="$azureStorageConnectionString" `
-    --set-string ConnectionStrings.redisConnectionString="$redisConnectionString" `
-    --set-string Search.SearchCredentialsQueryKey="$searchQueryKey" `
-    --set-string Search.SearchCredentialsInstanceEndpoint="$searchEndpoint"
+    --set-string ConnectionStrings.azureStorageConnectionString=$storageConnectionString `
+    --set-string ConnectionStrings.redisConnectionString=$redisConnectionString `
+    --set-string feedfunctions.azureStorage.connectionString=$storageConnectionString `
+    --set-string searchinsights.azureStorage.connectionString=$storageConnectionString `
+    --set-string Search.searchCredentialsQueryKey=$searchCredentialsQueryKey `
+    --set-string Search.searchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
+    --set-string Storage.accountName=$storageAccountName;
+
+docker image prune -f;
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green

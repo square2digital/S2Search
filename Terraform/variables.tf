@@ -18,12 +18,17 @@ variable "tags_service" {
 }
 
 #####################
-# Azure Connectivity
+# Azure globals
 #####################
-
-variable "resource_group_name" {
+variable "default_resource_group_name" {
   type        = string
-  description = "Name of the resource group"
+  description = "Name of the default resource group that contains non k8s dependencies"
+  sensitive   = false
+}
+
+variable "k8s_resource_group_name" {
+  type        = string
+  description = "Name of the Kubernetes resource group"
   sensitive   = false
 }
 
@@ -60,7 +65,6 @@ variable "subscription_id" {
 ###################
 # Azure Search Variables
 ###################
-
 variable "search_service_name" {
   type        = string
   description = "Name of the Azure Search service"

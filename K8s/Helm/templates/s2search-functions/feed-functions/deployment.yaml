@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "functions-feedfunctions-deployment"
+  labels:
+    app: {{ .Values.feedfunctions.image.name }}
+spec:
+  replicas: {{ .Values.feedfunctions.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.feedfunctions.image.name }}
+  minReadySeconds: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.feedfunctions.image.name }}
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: {{ .Values.feedfunctions.image.name }}
+          image: {{ .Values.feedfunctions.image.repository }}:{{ .Values.feedfunctions.image.tag }}
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: {{ .Values.feedfunctions.resources.limits.memory }}
+              cpu: {{ .Values.feedfunctions.resources.limits.cpu }}
+            requests:
+              memory: {{ .Values.feedfunctions.resources.requests.memory }}
+              cpu: {{ .Values.feedfunctions.resources.requests.cpu }}
+          imagePullPolicy: {{ .Values.feedfunctions.image.pullPolicy }}
+          env:
+            - name: FUNCTIONS_WORKER_RUNTIME
+              value: "dotnet-isolated"
+            - name: AzureWebJobsSecretStorageType
+              value: "Kubernetes"
+            - name: AzureWebJobsStorage
+              value: {{ .Values.feedfunctions.azureStorage.connectionString | quote }}
+            - name: ConnectionStrings__AzureStorage
+              value: {{ .Values.feedfunctions.azureStorage.connectionString | quote }}

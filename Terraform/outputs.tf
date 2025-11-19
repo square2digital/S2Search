@@ -5,12 +5,12 @@
 # Admin keys are not available through Terraform for security reasons
 # Use the Azure CLI commands below to retrieve them after deployment
 output "search_service_admin_key_command" {
-  value       = "az search admin-key show --resource-group ${azurerm_resource_group.s2search_test.name} --service-name ${azurerm_search_service.s2search_instance.name}"
+  value       = "az search admin-key show --resource-group ${azurerm_resource_group.default.name} --service-name ${azurerm_search_service.s2search_instance.name}"
   description = "Azure CLI command to retrieve admin keys for the search service"
 }
 
 output "search_service_query_key_command" {
-  value       = "az search query-key list --resource-group ${azurerm_resource_group.s2search_test.name} --service-name ${azurerm_search_service.s2search_instance.name}"
+  value       = "az search query-key list --resource-group ${azurerm_resource_group.default.name} --service-name ${azurerm_search_service.s2search_instance.name}"
   description = "Azure CLI command to retrieve query keys for the search service"
 }
 
@@ -55,7 +55,7 @@ output "search_service_partition_count" {
 }
 
 output "search_service_query_keys" {
-  value       = "Use Azure CLI: az search query-key list --resource-group ${azurerm_resource_group.s2search_test.name} --service-name ${azurerm_search_service.s2search_instance.name}"
+  value       = "Use Azure CLI: az search query-key list --resource-group ${azurerm_resource_group.default.name} --service-name ${azurerm_search_service.s2search_instance.name}"
   description = "Command to retrieve query keys for the Azure Search service"
 }
 
@@ -82,19 +82,34 @@ output "search_service_connection_info" {
 # Resource Group Outputs
 # =================================================================
 
-output "resource_group_name" {
-  value       = azurerm_resource_group.s2search_test.name
-  description = "The name of the resource group"
+output "default_resource_group_name" {
+  value       = azurerm_resource_group.default.name
+  description = "The name of the default resource group"
 }
 
-output "resource_group_id" {
-  value       = azurerm_resource_group.s2search_test.id
-  description = "The ID of the resource group"
+output "default_resource_group_id" {
+  value       = azurerm_resource_group.default.id
+  description = "The ID of the default resource group"
 }
 
-output "resource_group_location" {
-  value       = azurerm_resource_group.s2search_test.location
-  description = "The location of the resource group"
+output "default_resource_group_location" {
+  value       = azurerm_resource_group.default.location
+  description = "The location of the default resource group"
+}
+
+output "k8s_resource_group_name" {
+  value       = azurerm_resource_group.k8s.name
+  description = "The name of the k8s resource group"
+}
+
+output "k8s_resource_group_id" {
+  value       = azurerm_resource_group.k8s.id
+  description = "The ID of the k8s resource group"
+}
+
+output "k8s_resource_group_location" {
+  value       = azurerm_resource_group.k8s.location
+  description = "The location of the k8sresource group"
 }
 
 # =================================================================
@@ -174,7 +189,7 @@ output "aks_cluster_ca_certificate" {
 }
 
 output "aks_get_credentials_command" {
-  value       = "az aks get-credentials --resource-group ${azurerm_resource_group.s2search_test.name} --name ${azurerm_kubernetes_cluster.s2search_aks.name}"
+  value       = "az aks get-credentials --resource-group ${azurerm_resource_group.k8s.name} --name ${azurerm_kubernetes_cluster.s2search_aks.name}"
   description = "Azure CLI command to get AKS credentials"
 }
 

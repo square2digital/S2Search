@@ -1,0 +1,152 @@
+S2Backend:
+  replicaCount: 1
+  image:
+    name: s2search-backend-api
+    repository: ghcr.io/square2digital/s2search-backend-api
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  env:
+    ASPNETCORE_ENVIRONMENT: "Production"
+    ASPNETCORE_URLS: "http://+:8080"
+  configmap:
+    enabled: true
+    name: searchapi-appsettings
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+S2SearchUi:
+  replicaCount: 1
+  image:
+    name: s2search-ui
+    repository: ghcr.io/square2digital/s2search-ui
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: LoadBalancer
+    port: 80
+  resources:
+    limits:
+      cpu: 300m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  configmap:
+    enabled: true
+    name: configmap-localk8s
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+feedfunctions:
+  replicaCount: 1
+  image:
+    name: s2search-functions-feedservices
+    repository: ghcr.io/square2digital/s2search-functions-feedservices
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: LoadBalancer
+    port: 80
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  secret:
+    name: feedfunctions-secret
+  azureStorage:
+    connectionString: "OVERRIDDEN_VALUE"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+searchinsights:
+  replicaCount: 1
+  image:
+    name: s2search-functions-searchinsights
+    repository: ghcr.io/square2digital/s2search-functions-searchinsights
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: LoadBalancer
+    port: 80
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  secret:
+    name: feedfunctions-secret
+  azureStorage:
+    connectionString: "OVERRIDDEN_VALUE"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+postgresql:
+  enabled: true
+  auth:
+    database: "s2searchdb"
+    username: "s2search"
+  primary:
+    service:
+      type: NodePort
+      nodePorts:
+        postgresql: 30432
+    persistence:
+      enabled: true
+      size: 1Gi
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: "latest"
+
+redis:
+  enabled: true
+  auth:
+    enabled: false # Set to true and add password for production
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    tag: "latest"
+  master:
+    service:
+      type: NodePort
+      nodePorts:
+        redis: 30379
+    persistence:
+      enabled: true
+      size: 1Gi
+  replica:
+    replicaCount: 1
+    persistence:
+      enabled: true
+      size: 1Gi
+
+ConnectionStrings:
+  databaseConnectionString: "OVERRIDDEN_VALUE"
+  azureStorageConnectionString: "OVERRIDDEN_VALUE"
+  redisConnectionString: "OVERRIDDEN_VALUE"
+
+Search:
+  searchCredentialsQueryKey: "OVERRIDDEN_VALUE"
+  searchCredentialsInstanceEndpoint: "OVERRIDDEN_VALUE"
+
+Storage:
+  accountName: "OVERRIDDEN_VALUE"

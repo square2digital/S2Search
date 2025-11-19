@@ -15,4 +15,4 @@ spec:
       # The port the service exposes internally
       port: 80
       # The targetPort is the port the ASP.NET container listens on (standard 80)
-      targetPort: 80
+      targetPort: {{ .Values.S2Backend.service.port }}

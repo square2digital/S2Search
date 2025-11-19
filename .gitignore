@@ -291,6 +291,8 @@ Terraform/*.tfstate.backup
 Terraform/.terraform/
 Terraform/.terraform.lock.hcl
 Terraform/terraform.tfvars
+*.tfstate.backup
+terraform.tfstate.*
 
 # Kubernetes secrets
 K8s/**/secrets.yaml
@@ -430,3 +432,4 @@ temp/
 tmp/
 .tmp/
 Terraform/.terraform.tfstate.lock.info
+/APIs/S2Search.API/appsettings.json
