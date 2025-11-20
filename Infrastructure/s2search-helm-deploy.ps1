@@ -48,6 +48,8 @@ $S2SearchAsciiArt = @"
 
 Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
 
+$S2Namespace = "s2search"
+
 # Load .env file if it exists
 if (Test-Path ".env") {
     Get-Content ".env" | ForEach-Object {
@@ -61,6 +63,9 @@ if (Test-Path ".env") {
 }
 
 # Use environment variables if parameters are not provided
+Write-Color -Text "####################################################" -Color DarkBlue
+Write-Color -Text "Confirming GitHub Credentials & Secrets from .env"    -Color DarkBlue
+Write-Color -Text "####################################################" -Color DarkBlue
 if ([string]::IsNullOrEmpty($githubUsername)) { $githubUsername = $env:GITHUB_USERNAME }
 if ([string]::IsNullOrEmpty($githubToken)) { $githubToken = $env:GITHUB_TOKEN }
 if ([string]::IsNullOrEmpty($databasePassword)) { $databasePassword = $env:DATABASE_PASSWORD }
@@ -69,11 +74,13 @@ if ([string]::IsNullOrEmpty($databasePassword)) { $databasePassword = $env:DATAB
 if ([string]::IsNullOrEmpty($githubUsername) -or [string]::IsNullOrEmpty($githubToken)) {
     Write-Color -Text "Warning: GitHub credentials not provided. You may need to create the ghcr-secret manually." -Color Red
     Write-Color -Text "To create the secret manually, run:" -Color Red
-    Write-Color -Text "kubectl create secret docker-registry ghcr-secret --docker-server=ghcr.io --docker-username=<your-github-username> --docker-password=<your-github-token> -n s2search" -Color Red
+    Write-Color -Text "kubectl create secret docker-registry ghcr-secret --docker-server=ghcr.io --docker-username=$githubUsername --docker-password=$githubToken -n $S2Namespace" -Color Red
     exit
 }
 else {
     Write-Color -Text "GitHub credentials provided. Will create ghcr-secret." -Color Green
+    Write-Color -Text "githubUsername = $githubUsername" -Color Yellow
+    Write-Color -Text "githubToken = $githubToken" -Color Yellow
 }
 
 if ([string]::IsNullOrEmpty($databasePassword)) {
@@ -82,21 +89,10 @@ if ([string]::IsNullOrEmpty($databasePassword)) {
 }
 else {
     Write-Color -Text "Database password provided. Will create database secret." -Color Green
+    Write-Color -Text "databasePassword = $databasePassword" -Color Yellow
 }
 
 cd "E:\github\S2Search\K8s\Helm"
-
-############
-# Variables
-############
-
-# the PatToken is for the "Azure DevOps Artifacts Credentials Provider" which allows the docker images
-# when built to pull down dependacies from the DevOps artifacts repo "square2digital"
-#$PatToken = "4quc53ontolu6jwvy4ktkj2o5z2mhojgpykrzba6mh477wc6zhcq"
-#$DeploymentRoot = "E:\github\S2Search"
-
-# Use environment variable for namespace if available, otherwise use default
-$S2Namespace = "s2search"
 
 Write-Color -Text "################################" -Color DarkBlue
 Write-Color -Text "Helm Deployment"                  -Color DarkBlue
@@ -121,15 +117,11 @@ if ($deleteAllImages) {
     Write-Color -Text "Delete Images"                    -Color DarkBlue
     Write-Color -Text "################################" -Color DarkBlue
 
-    # delete S2 Namespace
-    #Write-Color -Text "Delete all resources in the $S2Namespace Namespace" -Color Yellow
-    #kubectl delete all --all -n $S2Namespace
-
     Write-Color -Text "ghcr.io/square2digital/s2search-ui" -Color DarkYellow
-    docker rmi ghcr.io/square2digital/s2search-ui:latest
+    docker rmi ghcr.io/square2digital/s2search-ui:latest -f
 
     Write-Color -Text "ghcr.io/square2digital/s2search-backend-api" -Color DarkYellow
-    docker rmi ghcr.io/square2digital/s2search-backend-api:latest
+    docker rmi ghcr.io/square2digital/s2search-backend-api:latest -f
 }
 
 # Create GitHub Container Registry secret if credentials are provided
@@ -147,7 +139,7 @@ if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEm
         -n $S2Namespace
     
     if ($LASTEXITCODE -eq 0) {
-        Write-Color -Text "GitHub Container Registry secret created successfully!" -Color Blue
+        Write-Color -Text "GitHub Container Registry secret created successfully!" -Color Green
     }
     else {
         Write-Color -Text "Failed to create GitHub Container Registry secret!" -Color Red
@@ -170,8 +162,8 @@ $storageAccountName = $tfOutput.storage_account_name.value
 ###########################
 ## Get the Search details
 ###########################
-$searchCredentialsQueryKey = az search query-key list --resource-group s2search-rg --service-name s2-search-dev --output tsv --query "[0].key"
-$searchServiceName = (az search service show --resource-group s2search-rg --name s2-search-dev | ConvertFrom-Json).name
+$searchCredentialsQueryKey = az search query-key list --resource-group $defaultResourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
+$searchServiceName = (az search service show --resource-group $defaultResourceGroup --name s2-search-dev | ConvertFrom-Json).name
 $searchCredentialsInstanceEndpoint = "https://$searchServiceName.search.windows.net"
 $storageConnectionString = (az storage account show-connection-string --resource-group $defaultResourceGroup --name $storageAccountName --output tsv)
 
