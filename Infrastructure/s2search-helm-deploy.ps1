@@ -201,13 +201,22 @@ Write-Color -Text "###########################################" -Color DarkBlue
 
 Start-Sleep -Seconds 60
 
+Write-Color -Text "Getting 01-sql_deploy.sql from configmap" -Color Cyan
 kubectl get configmap s2search-postgres-init -n $S2Namespace -o jsonpath='{.data.01-sql_deploy\.sql}' > 01-sql_deploy.sql
+
+Write-Color -Text "Getting 02-create_data.sql from configmap" -Color Cyan
 kubectl get configmap s2search-postgres-init -n $S2Namespace -o jsonpath='{.data.02-create_data\.sql}' > 02-create_data.sql
 
+Write-Color -Text "copying SQL script 01-sql_deploy from configmap to pod" -Color Cyan
 kubectl cp ./01-sql_deploy.sql s2search/s2search-postgresql-0:/tmp/01-sql_deploy.sql
+
+Write-Color -Text "copying SQL script 02-create_data from configmap to pod" -Color Cyan
 kubectl cp ./02-create_data.sql s2search/s2search-postgresql-0:/tmp/02-create_data.sql
 
+Write-Color -Text "Executing SQL script 01-sql_deploy.sql in pod" -Color Cyan
 kubectl exec -it s2search-postgresql-0 -n $S2Namespace -- sh -c "PGPASSWORD='$databasePassword' psql -U s2search -d s2searchdb -f /tmp/01-sql_deploy.sql"
+
+Write-Color -Text "Executing SQL script 02-create_data.sql in pod" -Color Cyan
 kubectl exec -it s2search-postgresql-0 -n $S2Namespace -- sh -c "PGPASSWORD='$databasePassword' psql -U s2search -d s2searchdb -f /tmp/02-create_data.sql"
 
 Write-Color -Text "################################" -Color Green
