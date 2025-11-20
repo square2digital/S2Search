@@ -104,8 +104,8 @@ Write-Color -Text "selected K8s Context $context" -Color DarkYellow
 kubectl config use-context $context
 kubectl config get-contexts
 
-Write-Color -Text "helm uninstall s2search . -n $S2Namespace" -Color DarkYellow
-helm uninstall s2search . -n $S2Namespace
+Write-Color -Text "helm uninstall s2search -n $S2Namespace" -Color DarkYellow
+helm uninstall s2search -n $S2Namespace
 
 Write-Color -Text "kubectl delete namespace $S2Namespace" -Color DarkYellow
 kubectl delete namespace $S2Namespace

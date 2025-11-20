@@ -235,11 +235,33 @@ if ($provisionSearch) {
 
 if ($helmDeployment) {
 
+    Write-Color -Text "Waiting for AKS cluster to become available..." -Color Magenta
+    $maxRetries = 50
+    $retryCount = 0
+    $delaySeconds = 10
+
+    while ($retryCount -lt $maxRetries) {
+        try {
+            kubectl cluster-info | Out-Null
+            Write-Color -Text "K8s AKS Cluster is reachable - start helm install - stand by" -Color Green
+            break
+        }
+        catch {
+            Write-Color -Text "Cluster not ready yet. Retrying in $delaySeconds seconds..." -Color Yellow
+            Start-Sleep -Seconds $delaySeconds
+            $retryCount++
+        }
+    }
+
+    if ($retryCount -ge $maxRetries) {
+        Write-Color -Text "Cluster did not become ready after $($maxRetries * $delaySeconds) seconds." -Color Red
+        exit 1
+    }
+
     #$context = $tfOutput.aks_kube_config_context.value
     $context = "s2search-aks-dev";
     cd "E:\github\S2Search\Infrastructure"
-    ./s2search-helm-deploy.ps1 -deleteAllImages $true -context $context
-
+    ./s2search-helm-deploy.ps1 -deleteAllImages $false -context $context
 }
 
 Write-Color -Text "###################################" -Color DarkBlue
