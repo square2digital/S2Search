@@ -183,14 +183,14 @@ cd "E:\github\S2Search\K8s\Helm";
 helm upgrade --install s2search . -n s2search `
     --set-string postgresql.auth.password=$databasePassword `
     --set-string postgresql.auth.connectionString="$databaseConnectionString" `
-    --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
-    --set-string ConnectionStrings.azureStorageConnectionString=$storageConnectionString `
-    --set-string ConnectionStrings.redisConnectionString=$redisConnectionString `
+    --set-string connectionStrings.databaseConnectionString="$databaseConnectionString" `
+    --set-string connectionStrings.azureStorageConnectionString=$storageConnectionString `
+    --set-string connectionStrings.redisConnectionString=$redisConnectionString `
     --set-string feedfunctions.azureStorage.connectionString=$storageConnectionString `
     --set-string searchinsights.azureStorage.connectionString=$storageConnectionString `
-    --set-string Search.searchCredentialsQueryKey=$searchCredentialsQueryKey `
-    --set-string Search.searchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
-    --set-string Storage.accountName=$storageAccountName;
+    --set-string search.searchCredentialsQueryKey=$searchCredentialsQueryKey `
+    --set-string search.searchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
+    --set-string storage.accountName=$storageAccountName;
 
 docker image prune -f;
 

@@ -116,6 +116,7 @@ postgresql:
     registry: docker.io
     repository: bitnami/postgresql
     tag: "latest"
+  initdbScriptsConfigMap: s2search-postgres-init
 
 redis:
   enabled: true
@@ -139,14 +140,14 @@ redis:
       enabled: true
       size: 1Gi
 
-ConnectionStrings:
+connectionStrings:
   databaseConnectionString: "OVERRIDDEN_VALUE"
   azureStorageConnectionString: "OVERRIDDEN_VALUE"
   redisConnectionString: "OVERRIDDEN_VALUE"
 
-Search:
+search:
   searchCredentialsQueryKey: "OVERRIDDEN_VALUE"
   searchCredentialsInstanceEndpoint: "OVERRIDDEN_VALUE"
 
-Storage:
+storage:
   accountName: "OVERRIDDEN_VALUE"

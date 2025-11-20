@@ -59,7 +59,7 @@ Write-Color -Text "Changing to Terraform directory" -Color DarkYellow
 Set-Location "E:\github\S2Search\Terraform"
 
 # Pause for user confirmation
-if ([bool]::IsNullOrEmpty($destroyInfra) -or [bool]::IsNullOrEmpty($deployInfra)) {
+if ($destroyInfra -or $deployInfra) {
     Write-Color -Text "" -Color White
     Write-Color -Text "Press any key to continue with deployment, or ESC or n to exit..." -Color Yellow
     $key = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
