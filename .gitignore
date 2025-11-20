@@ -433,3 +433,6 @@ tmp/
 .tmp/
 Terraform/.terraform.tfstate.lock.info
 /APIs/S2Search.API/appsettings.json
+K8s/Helm/01-sql_deploy.sql
+K8s/Helm/02-create_data.sql
+K8s/Helm/03-search-insights-data.sql
