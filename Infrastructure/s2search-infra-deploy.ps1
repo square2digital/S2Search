@@ -32,10 +32,7 @@ param (
     [bool]$deployInfra = $false,    
     [bool]$uploadAssets = $false,
     [bool]$provisionSearch = $false,
-    [bool]$helmDeployment = $false,
-    [string]$databasePassword = "",    
-    [string]$databaseConnectionString = "",
-    [string]$redisConnectionString = ""
+    [bool]$helmDeployment = $false
 )
 
 function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
@@ -62,21 +59,21 @@ Write-Color -Text "Changing to Terraform directory" -Color DarkYellow
 Set-Location "E:\github\S2Search\Terraform"
 
 # Pause for user confirmation
-Write-Color -Text "" -Color White
-Write-Color -Text "Press any key to continue with deployment, or ESC or n to exit..." -Color Yellow
-$key = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-
-if ($key.VirtualKeyCode -eq 27 -or $key.Character -eq 'n') {
+if ($destroyInfra -or $deployInfra) {
     Write-Color -Text "" -Color White
-    Write-Color -Text "Deployment cancelled by user." -Color Red
-    Write-Color -Text "Exiting script..." -Color Yellow
-    exit 0
+    Write-Color -Text "Press any key to continue with deployment, or ESC or n to exit..." -Color Yellow
+    $key = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+
+    if ($key.VirtualKeyCode -eq 27 -or $key.Character -eq 'n') {
+        Write-Color -Text "" -Color White
+        Write-Color -Text "Deployment cancelled by user." -Color Red
+        Write-Color -Text "Exiting script..." -Color Yellow
+        exit 0
+    }
+
+    Write-Color -Text "Continuing with deployment..." -Color Green
+    Write-Color -Text "" -Color White
 }
-
-Write-Color -Text "Continuing with deployment..." -Color Green
-Write-Color -Text "" -Color White
-
-# 1 - run Terraform to provision infrastructure
 
 if ($destroyInfra) {
     
@@ -237,125 +234,34 @@ if ($provisionSearch) {
 }
 
 if ($helmDeployment) {
-    
-    Write-Color -Text "###################" -Color DarkBlue
-    Write-Color -Text "Helm Deployment"     -Color DarkBlue
-    Write-Color -Text "###################" -Color DarkBlue
 
-    $tfOutput = terraform output -json | ConvertFrom-Json
+    Write-Color -Text "Waiting for AKS cluster to become available..." -Color Magenta
+    $maxRetries = 50
+    $retryCount = 0
+    $delaySeconds = 10
 
-    $aksClusterName = $tfOutput.aks_cluster_name.value
-
-    # resource groups
-    $defaultResourceGroup = $tfOutput.default_resource_group_name.value
-    $k8sResourceGroup = $tfOutput.k8s_resource_group_name.value
-
-    az aks get-credentials `
-        --name $aksClusterName `
-        --resource-group $k8sResourceGroup `
-        --overwrite-existing    
-
-    # Use environment variable for namespace if available, otherwise use default
-    $S2Namespace = "s2search"
-
-    Set-Location "E:\github\S2Search\K8s\Helm\Local"
-
-    Write-Color -Text "helm uninstall s2search . -n $S2Namespace" -Color DarkYellow
-    helm uninstall s2search . -n $S2Namespace
-
-    Write-Color -Text "kubectl delete namespace $S2Namespace" -Color DarkYellow
-    kubectl delete namespace $S2Namespace
-
-    Write-Color -Text "kubectl create namespace $S2Namespace" -Color DarkYellow
-    kubectl create namespace $S2Namespace
-
-    # Get GitHub credentials from environment variables
-    # Load environment variables from .env file
-    # Load .env file if it exists
-    if (Test-Path ".env") {
-        Get-Content ".env" | ForEach-Object {
-            if ($_ -match "^\s*([^#][^=]*)\s*=\s*(.*)\s*$") {
-                $name = $matches[1].Trim()
-                $value = $matches[2].Trim().Trim('"').Trim("'")
-                Set-Item -Path "env:$name" -Value $value
-            }
+    while ($retryCount -lt $maxRetries) {
+        try {
+            kubectl cluster-info | Out-Null
+            Write-Color -Text "K8s AKS Cluster is reachable - start helm install - stand by" -Color Green
+            break
         }
-        Write-Color -Text "Loaded credentials from .env file" -Color Green
-    }
-
-    $githubUsername = $env:GITHUB_USERNAME
-    $githubToken = $env:GITHUB_TOKEN
-    $databasePassword = $env:DATABASE_PASSWORD
-
-    Write-Color -Text "githubUsername = $githubUsername" -Color Magenta
-    Write-Color -Text "githubToken = $githubToken" -Color Magenta
-
-    # Create GitHub Container Registry secret if credentials are provided
-    if (-not [string]::IsNullOrEmpty($githubUsername) -and -not [string]::IsNullOrEmpty($githubToken)) {
-        Write-Color -Text "Creating GitHub Container Registry secret..." -Color DarkYellow
-    
-        # Delete existing secret if it exists (ignore errors)
-        kubectl delete secret ghcr-secret -n $S2Namespace 2>$null
-    
-        # Create the secret
-        kubectl create secret docker-registry ghcr-secret `
-            --docker-server=ghcr.io `
-            --docker-username=$githubUsername `
-            --docker-password=$githubToken `
-            -n $S2Namespace
-    
-        if ($LASTEXITCODE -eq 0) {
-            Write-Color -Text "GitHub Container Registry secret created successfully!" -Color Blue
-        }
-        else {
-            Write-Color -Text "Failed to create GitHub Container Registry secret!" -Color Red
-            exit 1
+        catch {
+            Write-Color -Text "Cluster not ready yet. Retrying in $delaySeconds seconds..." -Color Yellow
+            Start-Sleep -Seconds $delaySeconds
+            $retryCount++
         }
     }
 
-    helm dependency update .
+    if ($retryCount -ge $maxRetries) {
+        Write-Color -Text "Cluster did not become ready after $($maxRetries * $delaySeconds) seconds." -Color Red
+        exit 1
+    }
 
-    ###########################
-    ## Get the Search details
-    ###########################
-    $searchCredentialsQueryKey = az search query-key list --resource-group $defaultResourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
-    $searchServiceName = (az search service show --resource-group $defaultResourceGroup --name s2-search-dev | ConvertFrom-Json).name
-    $searchCredentialsInstanceEndpoint = "https://$searchServiceName.search.windows.net"
-    $azureStorageAccountName = $tfOutput.storage_account_name.value
-    $redisConnectionString = "s2search-redis-master:6379";
-    $databaseConnectionString = "Host=s2search-postgresql;Port=5432;Database=s2searchdb;Username=s2search;Password=$databasePassword";
-
-    ###########################
-    ## Get the Search details
-    ###########################
-    $storageConnectionString = (az storage account show-connection-string --resource-group $defaultResourceGroup --name $storageAccountName --output tsv)
-
-    $databaseConnectionString = "Host=s2search-postgresql;Port=5432;Database=s2searchdb;Username=s2search;Password=$databasePassword";
-    $redisConnectionString = "s2search-redis-master:6379";
-
-    Write-Color -Text "databasePassword - $databasePassword" -Color Blue
-    Write-Color -Text "databaseConnectionString - $databaseConnectionString" -Color Blue
-    Write-Color -Text "azureStorageConnectionString - $storageConnectionString" -Color Blue
-    Write-Color -Text "redisConnectionString - $redisConnectionString" -Color Blue
-    Write-Color -Text "SearchCredentialsQueryKey: - $searchCredentialsQueryKey" -Color Blue
-    Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchCredentialsInstanceEndpoint" -Color Blue
-    Write-Color -Text "AzureStorageAccountName - $storageAccountName" -Color Blue
-
-    cd "E:\github\S2Search\K8s\Helm"; 
-
-    helm upgrade --install s2search . -n $S2Namespace `
-        --set-string postgresql.auth.password=$databasePassword `
-        --set-string postgresql.auth.connectionString="$databaseConnectionString" `
-        --set-string ConnectionStrings.databaseConnectionString="$databaseConnectionString" `
-        --set-string ConnectionStrings.azureStorageConnectionString=$storageConnectionString `
-        --set-string ConnectionStrings.redisConnectionString=$redisConnectionString `
-        --set-string feedfunctions.azureStorage.connectionString=$storageConnectionString `
-        --set-string searchinsights.azureStorage.connectionString=$storageConnectionString `
-        --set-string Search.searchCredentialsQueryKey=$searchCredentialsQueryKey `
-        --set-string Search.searchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
-        --set-string Storage.accountName=$storageAccountName;
-
-    docker image prune -f;
+    #$context = $tfOutput.aks_kube_config_context.value
+    $context = "s2search-aks-dev";
+    cd "E:\github\S2Search\Infrastructure"
+    ./s2search-helm-deploy.ps1 -deleteAllImages $false -context $context
 }
 
 Write-Color -Text "###################################" -Color DarkBlue

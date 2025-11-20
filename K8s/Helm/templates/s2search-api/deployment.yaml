@@ -40,11 +40,11 @@ spec:
             - name: ASPNETCORE_URLS
               value: {{ .Values.S2Backend.env.ASPNETCORE_URLS | default "http://+:80" }}
             - name: SQL_DATABASE_CONNECTION
-              value: {{ .Values.ConnectionStrings.databaseConnectionString }}
+              value: {{ .Values.connectionStrings.databaseConnectionString }}
             - name: AZURE_STORAGE_CONNECTION
-              value: {{ .Values.ConnectionStrings.azureStorageConnectionString }}
+              value: {{ .Values.connectionStrings.azureStorageConnectionString }}
             - name: REDIS_CONNECTION
-              value: {{ .Values.ConnectionStrings.redisConnectionString }}
+              value: {{ .Values.connectionStrings.redisConnectionString }}
           imagePullPolicy: {{ .Values.S2Backend.image.pullPolicy }}
           livenessProbe:
            httpGet:
