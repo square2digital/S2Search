@@ -183,7 +183,7 @@ Write-Color -Text "AzureStorageAccountName - $storageAccountName" -Color Blue
 
 cd "E:\github\S2Search\K8s\Helm"; 
 
-helm upgrade --install s2search . -n s2search `
+helm upgrade --install s2search . -n $S2Namespace `
     --set-string postgresql.auth.password=$databasePassword `
     --set-string postgresql.auth.connectionString="$databaseConnectionString" `
     --set-string connectionStrings.databaseConnectionString="$databaseConnectionString" `
@@ -195,8 +195,23 @@ helm upgrade --install s2search . -n s2search `
     --set-string search.searchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
     --set-string storage.accountName=$storageAccountName;
 
-docker image prune -f;
+Write-Color -Text "###########################################" -Color DarkBlue
+Write-Color -Text "Deploy SQL Scripts to Postgres - stand by "  -Color DarkBlue
+Write-Color -Text "###########################################" -Color DarkBlue
+
+Start-Sleep -Seconds 60
+
+kubectl get configmap s2search-postgres-init -n $S2Namespace -o jsonpath='{.data.01-sql_deploy\.sql}' > 01-sql_deploy.sql
+kubectl get configmap s2search-postgres-init -n $S2Namespace -o jsonpath='{.data.02-create_data\.sql}' > 02-create_data.sql
+
+kubectl cp ./01-sql_deploy.sql s2search/s2search-postgresql-0:/tmp/01-sql_deploy.sql
+kubectl cp ./02-create_data.sql s2search/s2search-postgresql-0:/tmp/02-create_data.sql
+
+kubectl exec -it s2search-postgresql-0 -n $S2Namespace -- sh -c "PGPASSWORD='$databasePassword' psql -U s2search -d s2searchdb -f /tmp/01-sql_deploy.sql"
+kubectl exec -it s2search-postgresql-0 -n $S2Namespace -- sh -c "PGPASSWORD='$databasePassword' psql -U s2search -d s2searchdb -f /tmp/02-create_data.sql"
 
 Write-Color -Text "################################" -Color Green
 Write-Color -Text "Process Complete"                 -Color Green
 Write-Color -Text "################################" -Color Green
+
+docker image prune -f;
