@@ -37,6 +37,17 @@ function Output-Parameters([bool]$param, [String]$name) {
     }
 }
 
+$S2SearchAsciiArt = @"
+        ___      __         __             __   ____      
+   ____|__ \    / /_  ___  / /___ ___     / /__( __ )_____
+  / ___/_/ /   / __ \/ _ \/ / __ `__ \   / //_/ __  / ___/
+ (__  ) __/   / / / /  __/ / / / / / /  / ,< / /_/ (__  ) 
+/____/____/  /_/ /_/\___/_/_/ /_/ /_/  /_/|_|\____/____/  
+                                                                                        
+"@
+
+Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
+
 # Load .env file if it exists
 if (Test-Path ".env") {
     Get-Content ".env" | ForEach-Object {
@@ -72,17 +83,6 @@ if ([string]::IsNullOrEmpty($databasePassword)) {
 else {
     Write-Color -Text "Database password provided. Will create database secret." -Color Green
 }
-
-$S2SearchAsciiArt = @"
-        ___      __         __             __   ____      
-   ____|__ \    / /_  ___  / /___ ___     / /__( __ )_____
-  / ___/_/ /   / __ \/ _ \/ / __ `__ \   / //_/ __  / ___/
- (__  ) __/   / / / /  __/ / / / / / /  / ,< / /_/ (__  ) 
-/____/____/  /_/ /_/\___/_/_/ /_/ /_/  /_/|_|\____/____/  
-                                                                                        
-"@
-
-Write-Color -Text "$S2SearchAsciiArt" -Color DarkBlue
 
 cd "E:\github\S2Search\K8s\Helm"
 

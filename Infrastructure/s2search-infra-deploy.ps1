@@ -32,10 +32,7 @@ param (
     [bool]$deployInfra = $false,    
     [bool]$uploadAssets = $false,
     [bool]$provisionSearch = $false,
-    [bool]$helmDeployment = $false,
-    [string]$databasePassword = "",    
-    [string]$databaseConnectionString = "",
-    [string]$redisConnectionString = ""
+    [bool]$helmDeployment = $false
 )
 
 function Write-Color([String[]]$Text, [ConsoleColor[]]$Color) {
@@ -258,7 +255,7 @@ if ($helmDeployment) {
     # Use environment variable for namespace if available, otherwise use default
     $S2Namespace = "s2search"
 
-    Set-Location "E:\github\S2Search\K8s\Helm\Local"
+    Set-Location "E:\github\S2Search\K8s\Helm"
 
     Write-Color -Text "helm uninstall s2search . -n $S2Namespace" -Color DarkYellow
     helm uninstall s2search . -n $S2Namespace
@@ -321,7 +318,6 @@ if ($helmDeployment) {
     $searchCredentialsQueryKey = az search query-key list --resource-group $defaultResourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
     $searchServiceName = (az search service show --resource-group $defaultResourceGroup --name s2-search-dev | ConvertFrom-Json).name
     $searchCredentialsInstanceEndpoint = "https://$searchServiceName.search.windows.net"
-    $azureStorageAccountName = $tfOutput.storage_account_name.value
     $redisConnectionString = "s2search-redis-master:6379";
     $databaseConnectionString = "Host=s2search-postgresql;Port=5432;Database=s2searchdb;Username=s2search;Password=$databasePassword";
 
