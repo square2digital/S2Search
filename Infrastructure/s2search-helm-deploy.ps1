@@ -183,7 +183,7 @@ Write-Color -Text "AzureStorageAccountName - $storageAccountName" -Color Blue
 
 cd "E:\github\S2Search\K8s\Helm"; 
 
-helm upgrade --install s2search . -n s2search --debug `
+helm upgrade --install s2search . -n s2search `
     --set-string postgresql.auth.password=$databasePassword `
     --set-string postgresql.auth.connectionString="$databaseConnectionString" `
     --set-string connectionStrings.databaseConnectionString="$databaseConnectionString" `

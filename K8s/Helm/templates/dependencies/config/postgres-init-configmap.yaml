@@ -1241,7 +1241,7 @@ data:
         SearchInstanceId UUID := '97032266-c1c0-4278-8816-053bbc3a1036';
         ResourceGroup   TEXT := 'S2Search';
         SearchInstanceEndpoint   TEXT := '{{ .Values.search.searchCredentialsInstanceEndpoint }}';
-        StorageURI   TEXT := 'https://s2storagedev.blob.core.windows.net';
+        StorageURI   TEXT := 'https://{{ .Values.storage.accountName }}.blob.core.windows.net';
         AdminKey  TEXT  := 'TO_BE_REPLACED_ADMIN_KEY';
         SecondaryKey   TEXT := '{{ .Values.search.searchCredentialsQueryKey }}';
         QueryKey TEXT := '{{ .Values.search.searchCredentialsQueryKey }}';
