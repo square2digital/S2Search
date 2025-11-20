@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: s2search-postgres-init
 data:
-  01-Postgres_Deploy.sql: |
+  01-sql_deploy.sql: |
     -- =============================
     DO $$ BEGIN RAISE NOTICE 'Drop Table Definitions Start...'; END $$;
     -- =============================
@@ -1233,7 +1233,7 @@ data:
     END;
     $$ LANGUAGE plpgsql;
 
-  02-CreateData_Postgres.sql: |
+  02-create_data.sql: |
     DO $$
     DECLARE
         --SearchIndex variables
