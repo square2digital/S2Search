@@ -10,7 +10,7 @@
 # cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "rancher-desktop"
 
 # combined script
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "s2search-aks-dev"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "rancher-desktop";
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $false -context "s2search-aks-dev"; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $false -context "rancher-desktop";
 
 # local path
 # E:\github\S2Search\Infrastructure
