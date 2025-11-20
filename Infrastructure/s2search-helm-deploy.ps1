@@ -98,6 +98,8 @@ Write-Color -Text "################################" -Color DarkBlue
 Write-Color -Text "Helm Deployment"                  -Color DarkBlue
 Write-Color -Text "################################" -Color DarkBlue
 
+az aks get-credentials --resource-group s2search-aks-rg --name s2search-aks-dev --overwrite-existing
+
 Write-Color -Text "selected K8s Context $context" -Color DarkYellow
 kubectl config use-context $context
 kubectl config get-contexts
@@ -159,9 +161,10 @@ $tfOutput = terraform output -json | ConvertFrom-Json
 $defaultResourceGroup = $tfOutput.default_resource_group_name.value
 $storageAccountName = $tfOutput.storage_account_name.value
 
-###########################
-## Get the Search details
-###########################
+Write-Color -Text "################################" -Color DarkBlue
+Write-Color -Text "Helm Install"                     -Color DarkBlue
+Write-Color -Text "################################" -Color DarkBlue
+
 $searchCredentialsQueryKey = az search query-key list --resource-group $defaultResourceGroup --service-name s2-search-dev --output tsv --query "[0].key"
 $searchServiceName = (az search service show --resource-group $defaultResourceGroup --name s2-search-dev | ConvertFrom-Json).name
 $searchCredentialsInstanceEndpoint = "https://$searchServiceName.search.windows.net"
@@ -180,7 +183,7 @@ Write-Color -Text "AzureStorageAccountName - $storageAccountName" -Color Blue
 
 cd "E:\github\S2Search\K8s\Helm"; 
 
-helm upgrade --install s2search . -n s2search `
+helm upgrade --install s2search . -n s2search --debug `
     --set-string postgresql.auth.password=$databasePassword `
     --set-string postgresql.auth.connectionString="$databaseConnectionString" `
     --set-string connectionStrings.databaseConnectionString="$databaseConnectionString" `
