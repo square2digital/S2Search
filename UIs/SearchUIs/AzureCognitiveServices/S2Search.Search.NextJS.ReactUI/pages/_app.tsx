@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <meta name='viewport' content='initial-scale=1, width=device-width' />
-        <link rel='icon' href='/favicon.ico' />
+        <link rel='icon' href='/images/Square2Digital-Logo-2024.png' />
         {/* Default meta tags - can be overridden by individual pages */}
         <meta
           name='description'
