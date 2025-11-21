@@ -31,6 +31,7 @@ export default [
       ...tseslint.configs.recommended.rules,
 
       // Custom overrides
+      'react/react-in-jsx-scope': 'off', // Not needed with React 17+ and new JSX transform
       'react-hooks/exhaustive-deps': 'warn', // Change from error to warn to prevent auto-fixing
       'react/prop-types': 'off', // Turn off since you're using TypeScript
     },

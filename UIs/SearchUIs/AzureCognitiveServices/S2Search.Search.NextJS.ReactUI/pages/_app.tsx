@@ -14,12 +14,12 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name='viewport' content='initial-scale=1, width=device-width' />
+        <link rel='icon' href='/favicon.ico' />
         {/* Default meta tags - can be overridden by individual pages */}
         <meta
-          name="description"
-          content="S2 Search - Modern search interface"
+          name='description'
+          content='S2 Search - Modern search interface'
         />
       </Head>
       <ThemeProvider theme={theme}>
