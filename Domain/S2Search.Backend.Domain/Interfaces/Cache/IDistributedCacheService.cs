@@ -4,6 +4,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Inter
 
 public interface IDistributedCacheService
 {
+    bool IsConnected();
     string CreateRedisKey(string customerEndpoint, string endpointName, string requestHash);
     Task<bool> SetValueAsync(string key, string value, TimeSpan? expiry = null);
     Task<RedisValue> GetValueAsync(string key);
