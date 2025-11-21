@@ -15,11 +15,11 @@ export const ThemeURL =
   process.env.NEXT_PUBLIC_THEME_URL || `/v1/theme/GetTheme`;
 
 export const DefaultPageNumber = Number(
-  process.env.NEXT_PUBLIC_DEFAULT_PAGE_NUMBER
+  process.env.NEXT_PUBLIC_DEFAULT_PAGE_NUMBER,
 );
 
 export const DefaultPageSize = Number(
-  process.env.NEXT_PUBLIC_DEFAULT_PAGE_SIZE
+  process.env.NEXT_PUBLIC_DEFAULT_PAGE_SIZE,
 );
 
 export const MobileMaxWidth = Number(process.env.NEXT_PUBLIC_MOBILE_MAX_WIDTH);
@@ -51,14 +51,11 @@ export const StaticFacets = ['make'];
 
 // global S2 theme
 export const DefaultTheme = {
-  primaryHexColour: process.env.NEXT_PUBLIC_THEME_PRIMARY_COLOUR || '#616161ff',
-  secondaryHexColour:
-    process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR || '#9f3092ff',
-  navBarHexColour: process.env.NEXT_PUBLIC_THEME_NAVBAR_COLOUR || '#4c9d40ff',
-  logoURL: process.env.NEXT_PUBLIC_THEME_LOGO_URL || '',
-  missingImageURL:
-    process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL ||
-    '/images/Square_2_Logo_Colour.svg',
+  primaryHexColour: process.env.NEXT_PUBLIC_THEME_PRIMARY_COLOUR,
+  secondaryHexColour: process.env.NEXT_PUBLIC_THEME_SECONDARY_COLOUR,
+  navBarHexColour: process.env.NEXT_PUBLIC_THEME_NAVBAR_COLOUR,
+  logoURL: process.env.NEXT_PUBLIC_THEME_LOGO_URL,
+  missingImageURL: process.env.NEXT_PUBLIC_THEME_MISSING_IMAGE_URL,
 };
 
 export const EnableAutoComplete = true;

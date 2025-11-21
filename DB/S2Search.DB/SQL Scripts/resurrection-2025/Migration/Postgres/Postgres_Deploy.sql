@@ -389,7 +389,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '7. GetSynonymById'; END $$;
+DO $$ BEGIN RAISE NOTICE '7. get_synonym_by_id'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonym_by_id(
     p_search_index_id UUID,
@@ -417,7 +417,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '8. GetSynonymByKeyWord'; END $$;
+DO $$ BEGIN RAISE NOTICE '8. get_synonym_by_key_word'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION get_synonym_by_key_word(
     p_search_index_id UUID,
@@ -445,7 +445,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '9. SupersedeLatestFeed'; END $$;
+DO $$ BEGIN RAISE NOTICE '9. supersede_latest_feed'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION supersede_latest_feed(
     p_search_index_id UUID
@@ -464,7 +464,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '10. SupersedeSynonym'; END $$;
+DO $$ BEGIN RAISE NOTICE '10. supersede_synonym'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION supersede_synonym(
     p_search_index_id UUID,
@@ -485,7 +485,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '11. UpdateSynonym'; END $$;
+DO $$ BEGIN RAISE NOTICE '11. update_synonym'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION update_synonym(
     p_search_index_id UUID,
@@ -540,7 +540,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================
-DO $$ BEGIN RAISE NOTICE '14. dd_synonym'; END $$;
+DO $$ BEGIN RAISE NOTICE '14. add_synonym'; END $$;
 -- =============================
 CREATE OR REPLACE FUNCTION add_synonym(
     p_synonym_id UUID,

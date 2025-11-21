@@ -23,56 +23,48 @@ public static class StoredProcedures
     public const string UpdateSynonym = "update_synonym"; // OK
 
 
-    public const string AddSearchIndex = "add_search_index"; // DONE
-    //public const string AddSearchInterface = "add_search_interface";
-    public const string AddSynonym = "add_synonym"; // DONE
+    public const string AddSearchIndex = "add_search_index"; // OK
+    public const string AddSynonym = "add_synonym"; // OK
 
-    //public const string GetLatestSearchInterface = "get_latest_search_interface";
+    public const string GetSearchInsightsByDataCategories = "get_search_insights_by_data_categories"; // OK
+    public const string GetSearchInsightsSearchCountByDateRange = "get_search_insights_search_count_by_date_range"; // OK
 
-    //public const string GetSearchIndexKeysForCustomer = "get_search_index_keys_for_customer";
-    public const string GetSearchInsightsByDataCategories = "get_search_insights_by_data_categories"; // DONE
-    public const string GetSearchInsightsSearchCountByDateRange = "get_search_insights_search_count_by_date_range"; // DONE
+    public const string GetSynonyms = "get_synonyms"; // OK
+    public const string GetThemeByCustomerId = "get_theme_by_customer_id"; // OK
+    public const string GetThemeById = "get_theme_by_id"; // OK
+    public const string GetThemeBySearchIndexId = "get_theme_by_search_index_id"; // OK
 
-    public const string GetSynonyms = "get_synonyms"; // DONE
-    public const string GetThemeByCustomerId = "get_theme_by_customer_id"; // DONE
-    public const string GetThemeById = "get_theme_by_id"; // DONE
-    public const string GetThemeBySearchIndexId = "get_theme_by_search_index_id"; // DONE
-    //public const string InsertOrUpdateSearchConfigurationValueById = "insert_or_update_search_configuration_value_by_id";
-    //public const string SupersedeNotificationRule = "supersede_notification_rule";
-
-    public const string UpdateTheme = "update_theme"; // DONE
+    public const string UpdateTheme = "update_theme"; // OK
 
     // ***********
     // Configuration
     // ***********
-    //public const string GetConfigurationForSearchIndex = "get_configuration_for_search_index";
-    //public const string GetGenericSynonymsByCategory = "get_generic_synonyms_by_category";
-    public const string GetTheme = "get_theme_by_customer_endpoint"; // DONE
-    public const string GetSearchIndexQueryCredentials = "get_search_index_query_credentials_by_customer_endpoint"; // DONE
+    public const string GetTheme = "get_theme_by_customer_endpoint"; // OK
+    public const string GetSearchIndexQueryCredentials = "get_search_index_query_credentials_by_customer_endpoint"; // OK
 
     // ***********
     // Feed
     // ***********
-    public const string GetFeedCredentialsUsername = "get_feed_credentials_username"; // DONE
+    public const string GetFeedCredentialsUsername = "get_feed_credentials_username"; // OK
 
     // ***********
     // SFTPGoServicesFunc
     // ***********
-    public const string GetFeedCredentials = "get_feed_credentials"; // DONE
+    public const string GetFeedCredentials = "get_feed_credentials"; // OK
 
     // ***********
     // Functions
     // ***********
-    public const string GetFeedDataFormat = "get_feed_data_format";
+    public const string GetFeedDataFormat = "get_feed_data_format";  // OK
     public const string GetCurrentFeedDocuments = "get_current_feed_documents";
     public const string GetCurrentFeedDocumentsTotal = "get_current_feed_documents_total";
-    public const string MergeFeedDocuments = "merge_feed_documents";
+    public const string MergeFeedDocuments = "merge_feed_documents"; // OK
 
-    public const string GetSearchIndexCredentials = "get_search_index_credentials";
-    public const string GetSearchIndexFeedProcessingData = "get_search_index_feed_processing_data";
+    public const string GetSearchIndexCredentials = "get_search_index_credentials"; // OK
+    public const string GetSearchIndexFeedProcessingData = "get_search_index_feed_processing_data"; // OK
 
-    public const string GetLatestGenericSynonyms = "get_latest_generic_synonyms_by_category";
+    public const string GetLatestGenericSynonyms = "get_latest_generic_synonyms_by_category"; // OK
 
-    public const string AddDataPoints = "add_data_points";
-    public const string AddSearchRequest = "add_search_request";
+    public const string AddDataPoints = "add_data_points"; // OK
+    public const string AddSearchRequest = "add_search_request"; // OK
 }

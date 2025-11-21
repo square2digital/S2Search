@@ -21,6 +21,11 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             }
         }
 
+        public bool IsConnected()
+        {
+            return _connection.IsConnected;
+        }
+
         public string CreateRedisKey(string firstKey, string secondKey, string requestHash)
         {
             StringBuilder sb = new StringBuilder();
