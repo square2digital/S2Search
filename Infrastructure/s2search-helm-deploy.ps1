@@ -6,8 +6,8 @@
                                       
 # execution commands
 # build all services
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "s2search-aks-dev"
-# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "rancher-desktop"
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "rancher-desktop" -customerEndpointSqlVariable "LocalDevEndpoint"
+# cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $true -context "s2search-aks-dev" -customerEndpointSqlVariable "LocalK8sEndpoint"
 
 # combined script
 # cls; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $false -context "s2search-aks-dev"; cd "E:\github\S2Search\Infrastructure"; .\s2search-helm-deploy.ps1 -deleteAllImages $false -context "rancher-desktop";
@@ -20,7 +20,8 @@
 
 param (
     [bool]$deleteAllImages = $false,
-    [string]$context = "rancher-desktop"
+    [string]$context = "rancher-desktop",
+    [string]$customerEndpointSqlVariable = "LocalDevEndpoint"
 )
 
 # Supported colour values - Black DarkBlue DarkGreen DarkCyan DarkRed DarkMagenta DarkYellow Gray DarkGray Blue Green Cyan Red Magenta Yellow White
@@ -183,6 +184,7 @@ Write-Color -Text "redisConnectionString - $redisConnectionString" -Color Blue
 Write-Color -Text "SearchCredentialsQueryKey: - $searchCredentialsQueryKey" -Color Blue
 Write-Color -Text "SearchCredentialsInstanceEndpoint - $searchCredentialsInstanceEndpoint" -Color Blue
 Write-Color -Text "AzureStorageAccountName - $storageAccountName" -Color Blue
+Write-Color -Text "customerEndpointSqlVariable - $customerEndpointSqlVariable" -Color Blue
 
 cd "E:\github\S2Search\K8s\Helm"; 
 
@@ -196,7 +198,8 @@ helm upgrade --install s2search . -n $S2Namespace `
     --set-string searchinsights.azureStorage.connectionString=$storageConnectionString `
     --set-string search.searchCredentialsQueryKey=$searchCredentialsQueryKey `
     --set-string search.searchCredentialsInstanceEndpoint=$searchCredentialsInstanceEndpoint `
-    --set-string storage.accountName=$storageAccountName;
+    --set-string storage.accountName=$storageAccountName `
+    --set-string S2Backend.customerEndpointSqlVariable=$customerEndpointSqlVariable;
 
 Write-Color -Text "###########################################" -Color DarkBlue
 Write-Color -Text "Deploy SQL Scripts to Postgres - stand by "  -Color DarkBlue

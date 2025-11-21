@@ -21,9 +21,7 @@ S2Backend:
   configmap:
     enabled: true
     name: searchapi-appsettings
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
+  customerEndpointSqlVariable: LocalDevEndpoint
 
 S2SearchUi:
   replicaCount: 1
@@ -45,9 +43,6 @@ S2SearchUi:
   configmap:
     enabled: true
     name: configmap-localk8s
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
 
 feedfunctions:
   replicaCount: 1
@@ -70,9 +65,6 @@ feedfunctions:
     name: feedfunctions-secret
   azureStorage:
     connectionString: "OVERRIDDEN_VALUE"
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
 
 searchinsights:
   replicaCount: 1
@@ -95,9 +87,6 @@ searchinsights:
     name: feedfunctions-secret
   azureStorage:
     connectionString: "OVERRIDDEN_VALUE"
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
 
 postgresql:
   enabled: true
