@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CacheManager\Extensions\" />
     <Folder Include="Services\Providers\" />
   </ItemGroup>
 

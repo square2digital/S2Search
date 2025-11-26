@@ -1,5 +1,4 @@
-﻿using CacheManager.Extensions;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -25,16 +24,13 @@ namespace CacheManagerApp
 
             var services = new ServiceCollection();
 
-            // Remove this line if AddConsole is not available or not working
-            services.AddLogging(); // Registers ILoggerFactory and basic logging services
-
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            var host = CreateHostBuilder(args);
+            var builder = CreateHostBuilder(args);
 
-            host.ConfigureServices(services =>
+            builder.ConfigureServices(services =>
             {
                 services.AddLogging();
 
@@ -48,24 +44,24 @@ namespace CacheManagerApp
                 services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
             });
 
-            var build = host.Build();
+            var host = builder.Build();
 
             var cancelTokenSource = new CancellationTokenSource();
 
-            using (build)
+            using (host)
             {
                 try
                 {
-                    await build.Instance<IPurgeCacheProcessor>().RunAsync(cancelTokenSource.Token);
+                    await host.Services.GetRequiredService<IPurgeCacheProcessor>().RunAsync(cancelTokenSource.Token);
                 }
-                catch
+                catch(Exception ex) 
                 {
-                    Console.WriteLine("Exception caught");
+                    Console.WriteLine($"Exception caught {ex}");
                 }
                 finally
                 {
                     cancelTokenSource.CancelAfter(TimeSpan.FromSeconds(5));
-                    await build.WaitForShutdownAsync(cancelTokenSource.Token);
+                    await host.WaitForShutdownAsync(cancelTokenSource.Token);
                 }
             }
 
