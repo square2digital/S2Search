@@ -95,12 +95,11 @@ namespace CacheManagerApp
                         }
                     });
 
-                    // Keep the processor registered so it can be injected into the BackgroundService.
-                    services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
-
                     // Host should manage lifecycle of the processor via a BackgroundService wrapper.
                     services.AddHostedService<PurgeCache>();
 
+                    // Keep the processor registered so it can be injected into the BackgroundService.
+                    services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
                     services.AddSingleton<IQueueClientProvider, QueueClientProvider>();
                     services.AddSingleton<ICacheManager, RedisCacheManager>();
                     services.AddSingleton<IQueueManager, QueueManager>();
