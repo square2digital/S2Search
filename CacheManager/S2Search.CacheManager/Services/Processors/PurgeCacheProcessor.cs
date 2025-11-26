@@ -42,23 +42,55 @@ namespace Services.Processors
                 return;
             }
 
+            TimeSpan backoff = TimeSpan.FromSeconds(2);
+            TimeSpan maxBackoff = TimeSpan.FromSeconds(30);
+
             try
             {
-                var messages = await queueManager.GetMessagesAsync(StorageQueues.PurgeCache, cancellationToken);
-
-                logger.LogInformation("Messages to process: {messages.Length}", messages.Length);
-
-                foreach (var message in messages)
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    await ProcessMessageAsync(message, cancellationToken);
-                }
+                    try
+                    {
+                        var messages = await queueManager.GetMessagesAsync(StorageQueues.PurgeCache, cancellationToken);
 
-                logger.LogInformation("Shutting down PurgeCacheProcessor...");
+                        if (messages == null || messages.Length == 0)
+                        {
+                            // No work found — wait with exponential backoff
+                            logger.LogInformation("No messages found. Backing off for {BackoffSeconds}s.", backoff.TotalSeconds);
+                            await Task.Delay(backoff, cancellationToken);
+                            backoff = TimeSpan.FromSeconds(Math.Min(maxBackoff.TotalSeconds, backoff.TotalSeconds * 2));
+                            continue;
+                        }
+
+                        // Reset backoff when work is found
+                        backoff = TimeSpan.FromSeconds(2);
+
+                        logger.LogInformation("Messages to process: {Count}", messages.Length);
+
+                        foreach (var message in messages)
+                        {
+                            // stop quickly if cancellation requested
+                            cancellationToken.ThrowIfCancellationRequested();
+                            await ProcessMessageAsync(message, cancellationToken);
+                        }
+                    }
+                    catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                    {
+                        // graceful shutdown requested
+                        logger.LogInformation("Cancellation requested. Exiting polling loop.");
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        // transient error — log and continue after a short delay
+                        logger.LogError(ex, "Unhandled exception while polling/processing messages. Retrying after delay.");
+                        await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+                    }
+                }
             }
-            catch (Exception ex)
+            finally
             {
-                var message = $"Exception on {nameof(RunAsync)} - Message: {ex.Message}";
-                logger.LogError(ex, message);
+                logger.LogInformation("PurgeCacheProcessor stopped.");
             }
         }
 
@@ -77,17 +109,17 @@ namespace Services.Processors
                 var purgeCacheMessage = JsonSerializer.Deserialize<PurgeCacheMessage>(decodedMessage, jsonSerializerOptions);
                 var hostCacheKey = Generate(purgeCacheMessage.Host);
 
-                logger.LogInformation($"Deleting Cache for {hostCacheKey}");
+                logger.LogInformation("Deleting Cache for {HostCacheKey}", hostCacheKey);
 
                 await cacheManager.DeleteKeysByWildcard(hostCacheKey);
 
-                logger.LogInformation($"Deleting MessageId: {message.MessageId}");
+                logger.LogInformation("Deleting MessageId: {MessageId}", message.MessageId);
 
                 await queueManager.DeleteMessageAsync(StorageQueues.PurgeCache, message, cancellationToken);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Exception on {nameof(ProcessMessageAsync)} | Message: {message.MessageId} | DecodedMessage: {decodedMessage}");
+                logger.LogError(ex, "Exception on {Method} | Message: {MessageId} | DecodedMessage: {DecodedMessage}", nameof(ProcessMessageAsync), message.MessageId, decodedMessage);
             }
         }
 
