@@ -8,6 +8,7 @@ using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Domain.Models;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
 using S2Search.Backend.Services.Services.Admin.Customer.Providers;
+using S2Search.CacheManager.Services;
 using Services.Interfaces.Managers;
 using Services.Interfaces.Processors;
 using Services.Managers;
@@ -25,7 +26,7 @@ namespace CacheManagerApp
                 var logger = host.Services.GetRequiredService<ILogger<Program>>();
                 logger.LogInformation("Cache Manager Starting up...");
 
-                // shutdown via Ctrl+C
+                // graceful shutdown via Ctrl+C
                 using (var cts = new CancellationTokenSource())
                 {
                     Console.CancelKeyPress += (s, e) =>
@@ -37,8 +38,8 @@ namespace CacheManagerApp
 
                     try
                     {
-                        var processor = host.Services.GetRequiredService<IPurgeCacheProcessor>();
-                        await processor.RunAsync(cts.Token);
+                        // Let the host run and manage the BackgroundService which calls processor.RunAsync(...)
+                        await host.RunAsync(cts.Token);
                         return 0;
                     }
                     catch (OperationCanceledException)
@@ -94,10 +95,15 @@ namespace CacheManagerApp
                         }
                     });
 
+                    // Keep the processor registered so it can be injected into the BackgroundService.
+                    services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
+
+                    // Host should manage lifecycle of the processor via a BackgroundService wrapper.
+                    services.AddHostedService<PurgeCache>();
+
                     services.AddSingleton<IQueueClientProvider, QueueClientProvider>();
                     services.AddSingleton<ICacheManager, RedisCacheManager>();
                     services.AddSingleton<IQueueManager, QueueManager>();
-                    services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
                 });
         }
     }
