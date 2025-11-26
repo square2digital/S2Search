@@ -18,81 +18,87 @@ namespace CacheManagerApp
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
-            Console.WriteLine("Cache Manager Starting up...");
-
-            var services = new ServiceCollection();
-
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
-            var builder = CreateHostBuilder(args);
-
-            builder.ConfigureServices(services =>
+            using (var host = CreateHostBuilder(args).Build())
             {
-                services.AddLogging();
+                var logger = host.Services.GetRequiredService<ILogger<Program>>();
+                logger.LogInformation("Cache Manager Starting up...");
 
-                services.Configure<AppSettings>(configuration);
-                services.AddSingleton<IAppSettings>(sp => sp.GetRequiredService<IOptions<AppSettings>>().Value);
-
-                services.AddSingleton(RedisConnectionMultiplexer(configuration));
-                services.AddSingleton<IQueueClientProvider, QueueClientProvider>();
-                services.AddSingleton<ICacheManager, RedisCacheManager>();
-                services.AddSingleton<IQueueManager, QueueManager>();
-                services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
-            });
-
-            var host = builder.Build();
-
-            var cancelTokenSource = new CancellationTokenSource();
-
-            using (host)
-            {
-                try
+                // shutdown via Ctrl+C
+                using (var cts = new CancellationTokenSource())
                 {
-                    await host.Services.GetRequiredService<IPurgeCacheProcessor>().RunAsync(cancelTokenSource.Token);
-                }
-                catch(Exception ex) 
-                {
-                    Console.WriteLine($"Exception caught {ex}");
-                }
-                finally
-                {
-                    cancelTokenSource.CancelAfter(TimeSpan.FromSeconds(5));
-                    await host.WaitForShutdownAsync(cancelTokenSource.Token);
+                    Console.CancelKeyPress += (s, e) =>
+                    {
+                        e.Cancel = true;
+                        logger.LogInformation("Cancel requested via Console. Shutting down...");
+                        cts.Cancel();
+                    };
+
+                    try
+                    {
+                        var processor = host.Services.GetRequiredService<IPurgeCacheProcessor>();
+                        await processor.RunAsync(cts.Token);
+                        return 0;
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        logger.LogInformation("Shutdown requested.");
+                        return 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogCritical(ex, "Unhandled exception in Cache Manager.");
+                        return 1;
+                    }
+                    finally
+                    {
+                        logger.LogInformation("Cache Manager Shutting Down...");
+                    }
                 }
             }
-
-            Console.WriteLine("Cache Manager Shutting Down...");
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return Host.CreateDefaultBuilder(args);
-        }
-
-        private static Func<IServiceProvider, IConnectionMultiplexer> RedisConnectionMultiplexer(IConfiguration configuration)
-        {
-            var redisConStr = configuration.GetConnectionString(ConnectionStringKeys.Redis);
-
-            return x =>
-            {
-                var loggerFactory = x.GetRequiredService<ILoggerFactory>();
-                var logger = loggerFactory.CreateLogger(nameof(RedisConnectionMultiplexer));
-
-                try
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureServices((context, services) =>
                 {
-                    var connection = ConnectionMultiplexer.Connect(redisConStr);
-                    return connection;
-                }
-                catch (Exception ex)
-                {
-                    logger.LogCritical(ex, $"Unable to connect to Redis using Connection String: '{redisConStr}'");
-                    throw;
-                }
-            };
+                    services.AddLogging();
+                    services.Configure<AppSettings>(context.Configuration);
+                    services.AddSingleton<IAppSettings>(sp => sp.GetRequiredService<IOptions<AppSettings>>().Value);
+
+                    // Register Redis connection multiplexer as a singleton and let DI dispose it on shutdown.
+                    services.AddSingleton<IConnectionMultiplexer>(sp =>
+                    {
+                        var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
+                        var logger = loggerFactory.CreateLogger("RedisConnectionMultiplexer");
+
+                        var redisConStr = context.Configuration.GetConnectionString(ConnectionStringKeys.Redis);
+                        if (string.IsNullOrWhiteSpace(redisConStr))
+                        {
+                            logger.LogCritical("Redis connection string is not configured. Key: {Key}", ConnectionStringKeys.Redis);
+                            throw new InvalidOperationException("Redis connection string is missing.");
+                        }
+
+                        try
+                        {
+                            var connection = ConnectionMultiplexer.Connect(redisConStr);
+                            logger.LogInformation("Connected to Redis.");
+                            return connection;
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.LogCritical(ex, "Unable to connect to Redis using Connection String: '{ConnStr}'", redisConStr);
+                            throw;
+                        }
+                    });
+
+                    services.AddSingleton<IQueueClientProvider, QueueClientProvider>();
+                    services.AddSingleton<ICacheManager, RedisCacheManager>();
+                    services.AddSingleton<IQueueManager, QueueManager>();
+                    services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
+                });
         }
     }
 }
