@@ -15,30 +15,27 @@ namespace S2Search.Backend.Services.Services.Admin.Customer.Providers
 
         public async Task<QueueClient> GetAsync(string connectionString, string queueName)
         {
-            var queueClient = CreateQueueClient(connectionString, queueName);
+            var queueClient = new QueueClient(connectionString, queueName);
             await queueClient.CreateIfNotExistsAsync();
 
             return queueClient;
         }
 
-        public async Task<bool> TestConnectionAsync(string connectionKey, string queueName)
+        public async Task<bool> TestConnectionAsync(string connectionString, string queueName)
         {
-            var queueClient = CreateQueueClient(_appSettings.ConnectionStrings.Redis, queueName);
             try
             {
+                var queueClient = new QueueClient(connectionString, queueName);
+
                 await queueClient.CreateIfNotExistsAsync();
-                var response = await queueClient.PeekMessageAsync();
+                await queueClient.PeekMessageAsync();
+
                 return true;
             }
             catch
             {
                 return false;
             }
-        }
-
-        private QueueClient CreateQueueClient(string connectionString, string queueName)
-        {
-            return new QueueClient(connectionString, queueName);
         }
     }
 }
