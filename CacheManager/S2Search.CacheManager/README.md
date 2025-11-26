@@ -56,7 +56,7 @@ This service ensures that when search indices or configurations change, all cach
 - **Batch processing** - Processes up to 25 messages per execution cycle
 - **Connection validation** - Tests storage account connectivity before processing
 - **Graceful shutdown** - 5-second timeout with cancellation token support
-- **Structured logging** - Microsoft.Extensions.Logging with ApplicationInsights integration
+- **Structured logging** - Microsoft.Extensions.Logging (optional ApplicationInsights)
 - **Base64 message decoding** - Handles Azure Storage Queue message encoding
 - **Error resilience** - Continues processing remaining messages if individual message fails
 
@@ -98,10 +98,10 @@ This service ensures that when search indices or configurations change, all cach
 
 ### Environment-Specific Configuration
 
-- `appsettings.Development.json` - Local development overrides
-- `appsettings.Kubernetes.json` - Kubernetes deployment settings
+- `appsettings.Development.json` - Local development overrides (optional)
+- `appsettings.Kubernetes.json` - Kubernetes deployment settings (optional)
 
-Environment-specific files are loaded automatically based on the `DOTNET_ENVIRONMENT` variable.
+If present, these are loaded automatically based on `DOTNET_ENVIRONMENT`.
 
 ### Queue Message Format
 
@@ -165,6 +165,8 @@ docker run -e ConnectionStrings__AzureStorage="..." \
            -e ConnectionStrings__Redis="redis:6379" \
            -e ApplicationInsights__InstrumentationKey="YOUR_KEY" \
            s2search-cachemanager:latest
+
+# Note: ensure Dockerfile base image matches .NET 9 console apps (e.g., mcr.microsoft.com/dotnet/runtime:9.0).
 ```
 
 ## Development
@@ -303,9 +305,6 @@ S2Search.CacheManager/
    - Number of messages processed
    - Cache keys being deleted
    - Any errors encountered
-   ```
-
-   ```
 
 ### Unit Testing
 
