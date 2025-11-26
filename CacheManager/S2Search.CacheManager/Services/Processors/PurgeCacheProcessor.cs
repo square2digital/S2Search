@@ -76,7 +76,7 @@ namespace Services.Processors
                 };
 
                 var purgeCacheMessage = JsonSerializer.Deserialize<PurgeCacheMessage>(decodedMessage, jsonSerializerOptions);
-                var hostCacheKey = S2SearchCacheKeyGenerationManager.Generate(purgeCacheMessage.Host);
+                var hostCacheKey = Generate(purgeCacheMessage.Host);
 
                 logger.LogInformation($"Deleting Cache for {hostCacheKey}");
 
@@ -90,6 +90,12 @@ namespace Services.Processors
             {
                 logger.LogError(ex, $"Exception on {nameof(ProcessMessageAsync)} | Message: {message.MessageId} | DecodedMessage: {decodedMessage}");
             }
+        }
+
+        private static string Generate(string host)
+        {
+            var formattedHost = host.Replace(":", string.Empty);
+            return $"{formattedHost}:";
         }
     }
 }

@@ -175,6 +175,8 @@ namespace S2Search.Backend.Services
 
         private static Func<IServiceProvider, IConnectionMultiplexer> RedisConnectionMultiplexer()
         {
+            var redisConStr = Configuration.GetValue<string>(Configuration.GetConnectionString(ConnectionStringKeys.Redis));
+
             return x =>
             {
                 var loggerFactory = x.GetRequiredService<ILoggerFactory>();
@@ -182,12 +184,12 @@ namespace S2Search.Backend.Services
 
                 try
                 {
-                    var connection = ConnectionMultiplexer.Connect(Configuration.GetValue<string>(ConnectionStringFunctionKeys.Redis));
+                    var connection = ConnectionMultiplexer.Connect(redisConStr);
                     return connection;
                 }
                 catch (Exception ex)
                 {
-                    logger.LogCritical(ex, $"Unable to connect to Redis using Configuration Key: '{ConnectionStringFunctionKeys.Redis}'");
+                    logger.LogCritical(ex, $"Unable to connect to Redis using Connection String: '{redisConStr}'");
                     throw;
                 }
             };
