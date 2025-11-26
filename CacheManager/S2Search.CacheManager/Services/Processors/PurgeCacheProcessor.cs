@@ -5,7 +5,6 @@ using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Models;
 using Services.Interfaces.Managers;
 using Services.Interfaces.Processors;
-using Services.Managers;
 using System.Text;
 using System.Text.Json;
 
