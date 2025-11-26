@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
-using Services.Interfaces.Managers;
+using S2Search.CacheManager.Interfaces.Managers;
 
-namespace Services.Managers
+namespace S2Search.CacheManager.Managers
 {
     internal class QueueManager : IQueueManager
     {

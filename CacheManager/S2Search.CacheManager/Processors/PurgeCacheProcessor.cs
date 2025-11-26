@@ -3,12 +3,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Models;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Processors;
+using S2Search.CacheManager.Interfaces.Managers;
+using S2Search.CacheManager.Interfaces.Processors;
 using System.Text;
 using System.Text.Json;
 
-namespace Services.Processors
+namespace S2Search.CacheManager.Processors
 {
     internal class PurgeCacheProcessor : IPurgeCacheProcessor
     {

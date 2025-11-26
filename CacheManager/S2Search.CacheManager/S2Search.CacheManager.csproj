@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Services\Interfaces\Providers\**" />
-    <EmbeddedResource Remove="Services\Interfaces\Providers\**" />
-    <None Remove="Services\Interfaces\Providers\**" />
+    <Compile Remove="Interfaces\Providers\**" />
+    <EmbeddedResource Remove="Interfaces\Providers\**" />
+    <None Remove="Interfaces\Providers\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,7 +34,6 @@
 
   <ItemGroup>
     <Folder Include="CacheManager\Extensions\" />
-    <Folder Include="Services\Providers\" />
   </ItemGroup>
 
   <ItemGroup>

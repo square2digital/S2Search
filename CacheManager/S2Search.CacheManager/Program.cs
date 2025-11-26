@@ -8,11 +8,11 @@ using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Domain.Models;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
 using S2Search.Backend.Services.Services.Admin.Customer.Providers;
+using S2Search.CacheManager.Interfaces.Managers;
+using S2Search.CacheManager.Interfaces.Processors;
+using S2Search.CacheManager.Managers;
+using S2Search.CacheManager.Processors;
 using S2Search.CacheManager.Services;
-using Services.Interfaces.Managers;
-using Services.Interfaces.Processors;
-using Services.Managers;
-using Services.Processors;
 using StackExchange.Redis;
 
 namespace CacheManagerApp
@@ -27,19 +27,19 @@ namespace CacheManagerApp
                 logger.LogInformation("Cache Manager Starting up...");
 
                 // graceful shutdown via Ctrl+C
-                using (var cts = new CancellationTokenSource())
+                using (var stoppingToken = new CancellationTokenSource())
                 {
                     Console.CancelKeyPress += (s, e) =>
                     {
                         e.Cancel = true;
                         logger.LogInformation("Cancel requested via Console. Shutting down...");
-                        cts.Cancel();
+                        stoppingToken.Cancel();
                     };
 
                     try
                     {
                         // Let the host run and manage the BackgroundService which calls processor.RunAsync(...)
-                        await host.RunAsync(cts.Token);
+                        await host.RunAsync(stoppingToken.Token);
                         return 0;
                     }
                     catch (OperationCanceledException)

@@ -1,6 +1,6 @@
 ﻿using Azure.Storage.Queues.Models;
 
-namespace Services.Interfaces.Managers
+namespace S2Search.CacheManager.Interfaces.Managers
 {
     public interface IQueueManager
     {

@@ -1,4 +1,4 @@
-﻿namespace Services.Interfaces.Processors
+﻿namespace S2Search.CacheManager.Interfaces.Processors
 {
     public interface IPurgeCacheProcessor
     {

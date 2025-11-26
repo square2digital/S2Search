@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Services.Interfaces.Processors;
+using S2Search.CacheManager.Interfaces.Processors;
 
 namespace S2Search.CacheManager.Services
 {
