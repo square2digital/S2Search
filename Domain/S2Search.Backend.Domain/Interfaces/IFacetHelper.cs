@@ -5,6 +5,5 @@ namespace S2Search.Backend.Domain.Interfaces;
 
 public interface IFacetHelper
 {
-    Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials);
     IList<FacetGroup> SetFacetOrder(IList<FacetGroup> Facets);
 }

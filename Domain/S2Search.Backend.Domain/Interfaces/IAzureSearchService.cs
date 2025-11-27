@@ -9,7 +9,6 @@ public interface IAzureSearchService
 {
     Task<SearchResultRoot> InvokeSearchRequest(SearchRequest request, SearchIndexQueryCredentials queryCredentials);
     Task<int> TotalDocumentCount(SearchIndexQueryCredentials queryCredentials);
-    Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials);
 
     /// <summary>
     /// Returns a list containing an autocomplete result first, followed by suggestions that match the <paramref name="searchTerm"/> provided.
