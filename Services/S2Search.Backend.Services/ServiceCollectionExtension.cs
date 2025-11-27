@@ -175,7 +175,7 @@ namespace S2Search.Backend.Services
 
         private static Func<IServiceProvider, IConnectionMultiplexer> RedisConnectionMultiplexer()
         {
-            var redisConStr = Configuration.GetValue<string>(Configuration.GetConnectionString(ConnectionStringKeys.Redis));
+            var redisConStr = Configuration.GetConnectionString(ConnectionStringKeys.Redis);
 
             return x =>
             {
