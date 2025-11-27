@@ -19,6 +19,8 @@ namespace CacheManagerApp
 {
     class Program
     {
+        private static readonly string CustomerEndpoint = "ui.s2search.local";
+
         static async Task<int> Main(string[] args)
         {
             using (var host = CreateHostBuilder(args).Build())
@@ -38,8 +40,15 @@ namespace CacheManagerApp
 
                     try
                     {
+                        // this will run the background service
                         // Let the host run and manage the BackgroundService which calls processor.RunAsync(...)
-                        await host.RunAsync(stoppingToken.Token);
+                        //await host.RunAsync(stoppingToken.Token);
+
+                        // how can i create an instance of IBuildCacheProcessor and run its method ProcessAsync here?
+                        // run the build cache processor directly for testing
+                        var buildCacheProcessor = host.Services.GetRequiredService<IBuildCacheProcessor>();
+                        await buildCacheProcessor.ProcessAsync(CustomerEndpoint);
+
                         return 0;
                     }
                     catch (OperationCanceledException)
@@ -100,6 +109,7 @@ namespace CacheManagerApp
 
                     // Keep the processor registered so it can be injected into the BackgroundService.
                     services.AddSingleton<IPurgeCacheProcessor, PurgeCacheProcessor>();
+                    services.AddSingleton<IBuildCacheProcessor, BuildCacheProcessor>();
                     services.AddSingleton<IQueueClientProvider, QueueClientProvider>();
                     services.AddSingleton<ICacheManager, RedisCacheManager>();
                     services.AddSingleton<IQueueManager, QueueManager>();
