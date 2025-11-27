@@ -27,13 +27,5 @@ USER app
 # Copy the published output from the build stage
 COPY --from=build /app/publish .
 
-# ** FIX: Use ASPNETCORE_HTTP_PORT for reliable Kestrel binding to port 8080 **
-# This environment variable is preferred for container environments.
-ENV ASPNETCORE_HTTP_PORT 8080
-EXPOSE 8080
-
-# NOTE: Removed EXPOSE 443. If you require HTTPS, it's standard practice
-# to handle SSL termination at the Ingress Controller (e.g., Nginx, Application Gateway)
-
 # Use the dll produced by dotnet publish
 ENTRYPOINT ["dotnet", "CacheManager.dll"]
