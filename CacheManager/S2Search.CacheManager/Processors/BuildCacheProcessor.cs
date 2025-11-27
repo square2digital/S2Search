@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Domain.Models.Facets;
 using S2Search.Backend.Domain.Models.Request;
@@ -10,18 +14,20 @@ using Services.Interfaces;
 
 namespace S2Search.CacheManager.Processors
 {
-    internal class BuildCacheProcessor : IBuildCacheProcessor
+    internal sealed class BuildCacheProcessor : IBuildCacheProcessor
     {
         private readonly IAzureSearchService _azureSearchService;
         private readonly IAzureFacetService _azureFacetService;
         private readonly IDistributedCacheService _redisService;
         private readonly ISearchIndexQueryCredentialsProvider _queryCredentialsProvider;
         private readonly IAppSettings _appSettings;
-        private readonly List<string> _facetKeys;
+
+        private static readonly IReadOnlyList<string> DefaultFacetKeys = new List<string> { "Make", "Model", "Location", "Year", "Transmission", "FuelType", "BodyStyle", "Doors", "Colour" };
 
         private IList<FacetGroup> _facetItems = new List<FacetGroup>();
 
-        public BuildCacheProcessor(IAzureSearchService azureSearchService,
+        public BuildCacheProcessor(
+            IAzureSearchService azureSearchService,
             IAzureFacetService azureFacetService,
             IDistributedCacheService redisService,
             ISearchIndexQueryCredentialsProvider queryCredentialsProvider,
@@ -32,105 +38,119 @@ namespace S2Search.CacheManager.Processors
             _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
             _queryCredentialsProvider = queryCredentialsProvider ?? throw new ArgumentNullException(nameof(queryCredentialsProvider));
             _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
-            _facetKeys = new List<string>() { "Make", "Model", "Location", "Year", "Transmission", "FuelType", "BodyStyle", "Doors", "Colour" };
         }
 
         public async Task ProcessAsync(string customerEndpoint)
         {
-            var searchRequest = GetDefaultSearchRequest(customerEndpoint);
-            var queryCredentials = await _queryCredentialsProvider.GetAsync(customerEndpoint);
+            var queryCredentials = await _queryCredentialsProvider.GetAsync(customerEndpoint).ConfigureAwait(false);
             _facetItems = _azureFacetService.GetOrSetDefaultFacets(customerEndpoint, queryCredentials);
 
-            // add tasks to a list and run them in parallel
-            var tasks = new List<Task>();
+            var tasks = new List<Task>
+            {
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Model"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Location"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Year"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Transmission"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Colour"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "FuelType"),
 
-            tasks.Add(BuildRequest(customerEndpoint, "Make", "Model"));
-            tasks.Add(BuildRequest(customerEndpoint, "Make", "Location"));
-            tasks.Add(BuildRequest(customerEndpoint, "Make", "Year"));
-            tasks.Add(BuildRequest(customerEndpoint, "Make", "Transmission"));
-            tasks.Add(BuildRequest(customerEndpoint, "Make", "Colour"));
-            tasks.Add(BuildRequest(customerEndpoint, "Make", "FuelType"));
+                BuildRequestsForFacetsAsync(customerEndpoint, "Model", "Location"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Model", "Year"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Model", "Transmission"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Model", "Colour"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Model", "FuelType"),
 
-            tasks.Add(BuildRequest(customerEndpoint, "Model", "Location"));
-            tasks.Add(BuildRequest(customerEndpoint, "Model", "Year"));
-            tasks.Add(BuildRequest(customerEndpoint, "Model", "Transmission"));
-            tasks.Add(BuildRequest(customerEndpoint, "Model", "Colour"));
-            tasks.Add(BuildRequest(customerEndpoint, "Model", "FuelType"));
+                BuildRequestsForFacetsAsync(customerEndpoint, "Location", "Transmission"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "FuelType", "Year"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "BodyStyle", "Year"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "BodyStyle", "Transmission"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Colour", "BodyStyle"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "BodyStyle", "Colour"),
 
-            tasks.Add(BuildRequest(customerEndpoint, "Location", "Transmission"));
-            tasks.Add(BuildRequest(customerEndpoint, "FuelType", "Year"));
-            tasks.Add(BuildRequest(customerEndpoint, "BodyStyle", "Year"));
-            tasks.Add(BuildRequest(customerEndpoint, "BodyStyle", "Transmission"));
-            tasks.Add(BuildRequest(customerEndpoint, "Colour", "BodyStyle"));
-            tasks.Add(BuildRequest(customerEndpoint, "BodyStyle", "Colour"));
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Model"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Location"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Year"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Transmission"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "FuelType"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "BodyStyle"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Colour"),
 
-            await Task.WhenAll(tasks);
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Model", "Location"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Model", "FuelType"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Model", "Location", "Colour"),
+            };
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
-        private async Task BuildRequest(string customerEndpoint, params string[] facetKeys)
+        private async Task BuildRequestsForFacetsAsync(string customerEndpoint, params string[] facetKeys)
         {
-            string searchTerm = "";
-
-            Dictionary<string, IList<FacetItem>> facetItems = new Dictionary<string, IList<FacetItem>>();
-
-            for (int i = 0; i < facetKeys.Length; i++)
+            if (facetKeys == null || facetKeys.Length == 0)
             {
-                var results = _facetItems.Where(x => x.FacetName == facetKeys[i]).SingleOrDefault();
-                if (results != null)
-                {
-                    facetItems.Add(facetKeys[i], results.FacetItems);
-                }
+                return;
             }
 
-            foreach (var facetKey in facetItems.Keys)
+            // build a lookup of requested facet groups
+            var facetLookup = _facetItems
+                .Where(fg => facetKeys.Contains(fg.FacetName, StringComparer.OrdinalIgnoreCase))
+                .ToDictionary(fg => fg.FacetName, fg => fg.FacetItems);
+
+            if (facetLookup.Count == 0)
             {
-                foreach (var facetItem in facetItems[facetKey])
+                return;
+            }
+
+            // reuse credentials across loop iterations
+            var creds = await _queryCredentialsProvider.GetAsync(customerEndpoint).ConfigureAwait(false);
+
+            foreach (var facetList in facetLookup.Values)
+            {
+                if (facetList == null)
                 {
-                    searchTerm = facetItem.Value;
+                    continue;
+                }
 
-                    var request = BuildFacetSearchRequest(customerEndpoint, searchTerm);
-                    var creds = await _queryCredentialsProvider.GetAsync(customerEndpoint);
+                foreach (var facetItem in facetList)
+                {
+                    if (facetItem == null || string.IsNullOrWhiteSpace(facetItem.Value))
+                    {
+                        continue;
+                    }
 
-                    var result = await _azureSearchService.InvokeSearchRequest(request, creds);
-
-                    var redisKey = _redisService.CreateRedisKey(request.CustomerEndpoint, "search", HashHelper.GetXXHashString(JsonConvert.SerializeObject(request)));
-                    var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
+                    var request = BuildFacetSearchRequest(customerEndpoint, facetItem.Value);
+                    var keyPayload = JsonConvert.SerializeObject(request);
+                    var redisKey = _redisService.CreateRedisKey(request.CustomerEndpoint, "search", HashHelper.GetXXHashString(keyPayload));
 
                     if (_appSettings.RedisCacheSettings.EnableRedisCache && redisKey != null)
                     {
-                        await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
-                    }                        
+                        var existing = await _redisService.GetFromRedisIfExistsAsync(redisKey).ConfigureAwait(false);
+                        if (!string.IsNullOrEmpty(existing))
+                        {
+                            continue;
+                        }
+                    }
+
+                    var result = await _azureSearchService.InvokeSearchRequest(request, creds).ConfigureAwait(false);
+
+                    if (_appSettings.RedisCacheSettings.EnableRedisCache && redisKey != null)
+                    {
+                        var serialized = JsonConvert.SerializeObject(result);
+                        await _redisService.SetValueAsync(redisKey, serialized, CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds)).ConfigureAwait(false);
+                    }
                 }
             }
         }
 
-        private SearchRequest GetDefaultSearchRequest(string customerEndpoint)
+        private static SearchRequest BuildFacetSearchRequest(string customerEndpoint, string searchTerm)
         {
-            var request = new SearchRequest
-            {
-                SearchTerm = "",
-                Filters = "",
-                OrderBy = null,
-                PageNumber = 0,
-                PageSize = 0,
-                NumberOfExistingResults = 0,
-                CustomerEndpoint = customerEndpoint,
-            };
-
-            return request;
-        }
-
-        private SearchRequest BuildFacetSearchRequest(string customerEndpoint, string searchTerm)
-        {
-            var request = new SearchRequest
+            return new SearchRequest
             {
                 PageNumber = 1,
                 PageSize = 0,
                 CustomerEndpoint = customerEndpoint,
                 SearchTerm = searchTerm
             };
-
-            return request;
         }
     }
 }
