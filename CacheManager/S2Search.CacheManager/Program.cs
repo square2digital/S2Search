@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using S2Search.Backend.Domain.Constants;
 using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Domain.Models;
+using S2Search.Backend.Services;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
 using S2Search.Backend.Services.Services.Admin.Customer.Providers;
 using S2Search.CacheManager.Interfaces.Managers;
@@ -46,9 +47,17 @@ namespace CacheManagerApp
 
                         // how can i create an instance of IBuildCacheProcessor and run its method ProcessAsync here?
                         // run the build cache processor directly for testing
-                        var buildCacheProcessor = host.Services.GetRequiredService<IBuildCacheProcessor>();
-                        await buildCacheProcessor.ProcessAsync(CustomerEndpoint);
 
+                        // registers AzureFacetService and all other services from the services project
+                        // Start the host to ensure hosted services and other start-up work run if required.
+                        await host.StartAsync(stoppingToken.Token).ConfigureAwait(false);
+
+                        // Resolve and run the processor directly for testing.
+                        var buildCacheProcessor = host.Services.GetRequiredService<IBuildCacheProcessor>();
+                        await buildCacheProcessor.ProcessAsync(CustomerEndpoint).ConfigureAwait(false);
+
+                        // Graceful shutdown
+                        await host.StopAsync(CancellationToken.None).ConfigureAwait(false);
                         return 0;
                     }
                     catch (OperationCanceledException)
@@ -103,6 +112,8 @@ namespace CacheManagerApp
                             throw;
                         }
                     });
+
+                    services.AddBackendServices(context.Configuration);
 
                     // Host should manage lifecycle of the processor via a BackgroundService wrapper.
                     services.AddHostedService<PurgeCache>();
