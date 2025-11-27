@@ -1,49 +1,52 @@
-﻿using S2Search.Backend.Domain.Interfaces;
+﻿using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
+using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Domain.Models.Facets;
-using System.Net;
-using System.Text.Json;
+using S2Search.Backend.Domain.Models.Request;
+using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
+using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Services;
 
 namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers
 {
     public class FacetHelper : IFacetHelper
     {
         private readonly IAppSettings _appSettings;
+        private readonly IAzureSearchService _azureSearchService;
 
-        public FacetHelper(IAppSettings appSettings)
+        private IList<FacetGroup> _defaultFacets;
+
+        public FacetHelper(IAzureSearchService azureSearchService,
+            IAppSettings appSettings)
         {
             _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
+            _azureSearchService = azureSearchService ?? throw new ArgumentNullException(nameof(azureSearchService));
         }
 
-        public IList<FacetGroup> GetDefaultFacetsFromOneDrive()
+        public async Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials)
         {
-            return FacetsFromOneDrive();
-        }
+            if (_defaultFacets == null)
+            {
+                var request = new SearchRequest
+                {
+                    SearchTerm = "",
+                    Filters = "",
+                    OrderBy = null,
+                    PageNumber = 0,
+                    PageSize = 0,
+                    NumberOfExistingResults = 0,
+                    CustomerEndpoint = customerEndpoint,
+                };
 
-        public IList<FacetGroup> GetDefaultFacetsFromLocal()
-        {
-            return FacetsFromLocalJSONFile();
+                var rats = await _azureSearchService.InvokeSearchRequest(request, queryCredentials);
+
+                _defaultFacets = rats.SearchProductResult.Facets;
+            }
+
+            return _defaultFacets;
         }
 
         public IList<FacetGroup> SetFacetOrder(IList<FacetGroup> facets)
         {
             return OrderFacets(facets);
-        }
-
-        private IList<FacetGroup> FacetsFromOneDrive()
-        {
-            using (var client = new WebClient())
-            {
-                var json = client.DownloadString(_appSettings.SearchSettings.DefaultFacetsURL);
-                IList<FacetGroup> facets = JsonSerializer.Deserialize<IList<FacetGroup>>(json);
-                return facets;
-            }
-        }
-
-        private IList<FacetGroup> FacetsFromLocalJSONFile()
-        {
-            var json = File.ReadAllText(@"DefaultFacets.json");
-            IList<FacetGroup> facets = JsonSerializer.Deserialize<IList<FacetGroup>>(json);
-            return facets;
         }
 
         private IList<FacetGroup> OrderFacets(IList<FacetGroup> facets)
