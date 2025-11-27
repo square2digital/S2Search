@@ -1,11 +1,12 @@
-﻿using S2Search.Backend.Domain.Models.Facets;
+﻿using Newtonsoft.Json;
+using S2Search.Backend.Domain.Interfaces;
+using S2Search.Backend.Domain.Models.Facets;
 using S2Search.Backend.Domain.Models.Request;
+using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Services;
 using S2Search.CacheManager.Interfaces.Processors;
 using Services.Interfaces;
-using System.Collections.Generic;
 
 namespace S2Search.CacheManager.Processors
 {
@@ -15,6 +16,7 @@ namespace S2Search.CacheManager.Processors
         private readonly IAzureFacetService _azureFacetService;
         private readonly IDistributedCacheService _redisService;
         private readonly ISearchIndexQueryCredentialsProvider _queryCredentialsProvider;
+        private readonly IAppSettings _appSettings;
         private readonly List<string> _facetKeys;
 
         private IList<FacetGroup> _facetItems = new List<FacetGroup>();
@@ -22,12 +24,14 @@ namespace S2Search.CacheManager.Processors
         public BuildCacheProcessor(IAzureSearchService azureSearchService,
             IAzureFacetService azureFacetService,
             IDistributedCacheService redisService,
-            ISearchIndexQueryCredentialsProvider queryCredentialsProvider)
+            ISearchIndexQueryCredentialsProvider queryCredentialsProvider,
+            IAppSettings appSettings)
         {
             _azureSearchService = azureSearchService ?? throw new ArgumentNullException(nameof(azureSearchService));
             _azureFacetService = azureFacetService ?? throw new ArgumentNullException(nameof(azureFacetService));
             _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
             _queryCredentialsProvider = queryCredentialsProvider ?? throw new ArgumentNullException(nameof(queryCredentialsProvider));
+            _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
             _facetKeys = new List<string>() { "Make", "Model", "Location", "Year", "Transmission", "FuelType", "BodyStyle", "Doors", "Colour" };
         }
 
@@ -60,9 +64,19 @@ namespace S2Search.CacheManager.Processors
                 foreach (var facetItem in facetItems[facetKey])
                 {
                     searchTerm = facetItem.Value;
-                    await _azureSearchService.InvokeSearchRequest(
-                        BuildFacetSearchRequest(customerEndpoint, searchTerm),
-                        await _queryCredentialsProvider.GetAsync(customerEndpoint));
+
+                    var request = BuildFacetSearchRequest(customerEndpoint, searchTerm);
+                    var creds = await _queryCredentialsProvider.GetAsync(customerEndpoint);
+
+                    var result = await _azureSearchService.InvokeSearchRequest(request, creds);
+
+                    var redisKey = _redisService.CreateRedisKey(request.CustomerEndpoint, "search", HashHelper.GetXXHashString(JsonConvert.SerializeObject(request)));
+                    var redisValue = await _redisService.GetFromRedisIfExistsAsync(redisKey);
+
+                    if (_appSettings.RedisCacheSettings.EnableRedisCache && redisKey != null)
+                    {
+                        await _redisService.SetValueAsync(redisKey, JsonConvert.SerializeObject(result), CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds));
+                    }                        
                 }
             }
         }
