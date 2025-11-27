@@ -45,8 +45,6 @@ namespace S2Search.Backend.Services
             // Register LazyCache
             services.AddSingleton<IAppCache, CachingService>();
 
-            // Register your IAppSettings implementation
-            services.AddSingleton<IAppSettings, AppSettings>();
 
             var appSettings = LoadAppSettings(services);
 
@@ -168,7 +166,8 @@ namespace S2Search.Backend.Services
                 throw new InvalidOperationException("AppSettings section is missing or invalid in configuration.");
             }
 
-            services.AddSingleton(appSettings);
+            // Register the bound instance explicitly as IAppSettings so consumers get the configuration-bound object.
+            services.AddSingleton<IAppSettings>(appSettings);
 
             return appSettings;
         }
