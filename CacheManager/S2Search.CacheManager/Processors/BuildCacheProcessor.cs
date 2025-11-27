@@ -41,7 +41,30 @@ namespace S2Search.CacheManager.Processors
             var queryCredentials = await _queryCredentialsProvider.GetAsync(customerEndpoint);
             _facetItems = _azureFacetService.GetOrSetDefaultFacets(customerEndpoint, queryCredentials);
 
-            await BuildRequest(customerEndpoint, "Make", "Model");
+            // add tasks to a list and run them in parallel
+            var tasks = new List<Task>();
+
+            tasks.Add(BuildRequest(customerEndpoint, "Make", "Model"));
+            tasks.Add(BuildRequest(customerEndpoint, "Make", "Location"));
+            tasks.Add(BuildRequest(customerEndpoint, "Make", "Year"));
+            tasks.Add(BuildRequest(customerEndpoint, "Make", "Transmission"));
+            tasks.Add(BuildRequest(customerEndpoint, "Make", "Colour"));
+            tasks.Add(BuildRequest(customerEndpoint, "Make", "FuelType"));
+
+            tasks.Add(BuildRequest(customerEndpoint, "Model", "Location"));
+            tasks.Add(BuildRequest(customerEndpoint, "Model", "Year"));
+            tasks.Add(BuildRequest(customerEndpoint, "Model", "Transmission"));
+            tasks.Add(BuildRequest(customerEndpoint, "Model", "Colour"));
+            tasks.Add(BuildRequest(customerEndpoint, "Model", "FuelType"));
+
+            tasks.Add(BuildRequest(customerEndpoint, "Location", "Transmission"));
+            tasks.Add(BuildRequest(customerEndpoint, "FuelType", "Year"));
+            tasks.Add(BuildRequest(customerEndpoint, "BodyStyle", "Year"));
+            tasks.Add(BuildRequest(customerEndpoint, "BodyStyle", "Transmission"));
+            tasks.Add(BuildRequest(customerEndpoint, "Colour", "BodyStyle"));
+            tasks.Add(BuildRequest(customerEndpoint, "BodyStyle", "Colour"));
+
+            await Task.WhenAll(tasks);
         }
 
         private async Task BuildRequest(string customerEndpoint, params string[] facetKeys)
