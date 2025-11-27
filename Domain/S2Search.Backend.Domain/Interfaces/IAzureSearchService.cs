@@ -7,8 +7,8 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Inter
 
 public interface IAzureSearchService
 {
-    Task<SearchResultRoot> InvokeSearchRequest(SearchRequest request, SearchIndexQueryCredentials targetSearchResource);
-    Task<int> TotalDocumentCount(SearchIndexQueryCredentials targetSearchResource);
+    Task<SearchResultRoot> InvokeSearchRequest(SearchRequest request, SearchIndexQueryCredentials queryCredentials);
+    Task<int> TotalDocumentCount(SearchIndexQueryCredentials queryCredentials);
     Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials);
 
     /// <summary>

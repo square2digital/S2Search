@@ -52,9 +52,9 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             _autoSuggestOptionsProvider = autoSuggestOptionsProvider ?? throw new ArgumentNullException(nameof(autoSuggestOptionsProvider));
         }
 
-        public async Task<SearchResultRoot> InvokeSearchRequest(SearchRequest request, SearchIndexQueryCredentials targetSearchResource)
+        public async Task<SearchResultRoot> InvokeSearchRequest(SearchRequest request, SearchIndexQueryCredentials queryCredentials)
         {
-            ValidateRequest(request, targetSearchResource);
+            ValidateRequest (request, queryCredentials);
 
             SearchOptions searchOptions = new SearchOptions();
             string luceneSearch = string.Empty;
@@ -69,7 +69,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                 searchOptions = _searchOptionsProvider.CreateSearchOptions(request);
                 luceneSearch = LuceneSyntaxHelper.GenerateLuceneSearchString(request.SearchTerm);
 
-                var result = await GetSearchClient(targetSearchResource).SearchAsync<SearchVehicle>(string.Join(" ", luceneSearch), searchOptions).ConfigureAwait(false);
+                var result = await GetSearchClient(queryCredentials).SearchAsync<SearchVehicle>(string.Join(" ", luceneSearch), searchOptions).ConfigureAwait(false);
                 var facetGroups = result.Value.Facets;
                 var totalResults = result.Value.TotalCount;
 
@@ -80,7 +80,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                     searchVehicleResults.Add(item.Document);
                 }
 
-                var searchInsightMessage = CreateSearchInsightMessage(request, targetSearchResource, luceneSearch, totalResults);
+                var searchInsightMessage = CreateSearchInsightMessage(request, queryCredentials, luceneSearch, totalResults);
 
                 var searchResult = new SearchResultRoot()
                 {
@@ -105,11 +105,11 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             }
         }
 
-        private static SearchInsightMessage CreateSearchInsightMessage(SearchRequest request, SearchIndexQueryCredentials targetSearchResource, string luceneSearch, long? totalResults)
+        private static SearchInsightMessage CreateSearchInsightMessage(SearchRequest request, SearchIndexQueryCredentials queryCredentials, string luceneSearch, long? totalResults)
         {
             return new SearchInsightMessage()
             {
-                SearchIndexId = targetSearchResource.id,
+                SearchIndexId = queryCredentials.id,
                 ActualSearchQuery = request.SearchTerm,
                 LuceneSearchQuery = luceneSearch,
                 Filters = request.Filters,
@@ -118,19 +118,19 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             };
         }
 
-        public async Task<int> TotalDocumentCount(SearchIndexQueryCredentials targetSearchResource)
+        public async Task<int> TotalDocumentCount(SearchIndexQueryCredentials queryCredentials)
         {
-            if (targetSearchResource == null)
+            if (queryCredentials == null)
             {
-                throw new ArgumentNullException(nameof(targetSearchResource));
+                throw new ArgumentNullException(nameof(queryCredentials));
             }
 
-            var result = await GetSearchClient(targetSearchResource).GetDocumentCountAsync().ConfigureAwait(false);
+            var result = await GetSearchClient(queryCredentials).GetDocumentCountAsync().ConfigureAwait(false);
 
             return Convert.ToInt32(result);
         }
 
-        public async Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials targetSearchResource)
+        public async Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials)
         {
             SearchRequest request = new SearchRequest
             {
@@ -143,22 +143,22 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                 CustomerEndpoint = customerEndpoint,
             };
 
-            var data = await InvokeSearchRequest(request, targetSearchResource);
+            var data = await InvokeSearchRequest(request, queryCredentials);
             return data.SearchProductResult.Facets;
         }
 
-        private void ValidateRequest(SearchRequest request, SearchIndexQueryCredentials targetSearchResource)
+        private void ValidateRequest(SearchRequest request, SearchIndexQueryCredentials queryCredentials)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            if (targetSearchResource == null) throw new ArgumentNullException(nameof(targetSearchResource));
+            if (queryCredentials == null) throw new ArgumentNullException(nameof(queryCredentials));
         }
 
-        private SearchClient GetSearchClient(SearchIndexQueryCredentials targetSearchResource)
+        private SearchClient GetSearchClient(SearchIndexQueryCredentials queryCredentials)
         {
-            return _searchClientProvider.GetSearchClient(targetSearchResource.search_instance_endpoint, targetSearchResource.search_index_name, targetSearchResource.QueryApiKey);
+            return _searchClientProvider.GetSearchClient(queryCredentials.search_instance_endpoint, queryCredentials.search_index_name, queryCredentials.QueryApiKey);
         }
 
-        public async Task<IEnumerable<string>> AutocompleteWithSuggestions(string searchTerm, SearchIndexQueryCredentials targetSearchResource)
+        public async Task<IEnumerable<string>> AutocompleteWithSuggestions(string searchTerm, SearchIndexQueryCredentials queryCredentials)
         {
             if (string.IsNullOrEmpty(searchTerm))
             {
@@ -167,7 +167,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
 
             try
             {
-                var searchClient = GetSearchClient(targetSearchResource);
+                var searchClient = GetSearchClient(queryCredentials);
                 var autoSuggestOptions = _autoSuggestOptionsProvider.Get(AzureAutoSuggest.DefaultSuggesterName,
                                                                          AzureAutoSuggest.DefaultSuggestSelectFields,
                                                                          AzureAutoSuggest.DefaultSuggestSearchFields,

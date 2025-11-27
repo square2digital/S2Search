@@ -45,9 +45,9 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
         /// these are used on first load and for generating lucence search strings 
         /// </summary>
         /// <param name="customerEndpoint"></param>
-        /// <param name="targetSearchResource"></param>
+        /// <param name="queryCredentials"></param>
         /// <returns></returns>
-        public async Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials targetSearchResource)
+        public async Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials)
         {
             SearchRequest request = new SearchRequest
             {
@@ -60,7 +60,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                 CustomerEndpoint = customerEndpoint,
             };
 
-            var data = await InvokeFacetRequest(request, targetSearchResource);
+            var data = await InvokeFacetRequest(request, queryCredentials);
             return data.Facets;
         }
 
@@ -90,12 +90,12 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             };
         }
 
-        private async Task<SearchProductResult> InvokeFacetRequest(SearchRequest request, SearchIndexQueryCredentials targetSearchResource)
+        private async Task<SearchProductResult> InvokeFacetRequest(SearchRequest request, SearchIndexQueryCredentials queryCredentials)
         {
             try
             {
                 var searchParams = _searchOptionsProvider.CreateSearchOptions(request);
-                var result = await GetSearchClient(targetSearchResource).SearchAsync<SearchVehicle>("", searchParams).ConfigureAwait(false);
+                var result = await GetSearchClient(queryCredentials).SearchAsync<SearchVehicle>("", searchParams).ConfigureAwait(false);
                 var facetGroups = result.Value.Facets;
                 var totalResults = result.Value.TotalCount;
 
@@ -115,9 +115,9 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             }
         }
 
-        private SearchClient GetSearchClient(SearchIndexQueryCredentials targetSearchResource)
+        private SearchClient GetSearchClient(SearchIndexQueryCredentials queryCredentials)
         {
-            return _searchClientProvider.GetSearchClient(targetSearchResource.search_instance_endpoint, targetSearchResource.search_index_name, targetSearchResource.QueryApiKey);
+            return _searchClientProvider.GetSearchClient(queryCredentials.search_instance_endpoint, queryCredentials.search_index_name, queryCredentials.QueryApiKey);
         }
     }
 }

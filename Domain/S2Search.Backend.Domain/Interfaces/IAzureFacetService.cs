@@ -5,6 +5,6 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Inter
 
 public interface IAzureFacetService
 {
-    Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials targetSearchResource);
+    Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials);
     IList<FacetGroup> GetOrSetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials);
 }
