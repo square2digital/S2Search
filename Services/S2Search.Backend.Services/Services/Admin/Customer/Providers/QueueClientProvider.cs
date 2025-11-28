@@ -1,26 +1,41 @@
 ﻿using Azure.Storage.Queues;
+using S2Search.Backend.Domain.Interfaces;
 using S2Search.Backend.Services.Services.Admin.Customer.Interfaces.Providers;
 
 namespace S2Search.Backend.Services.Services.Admin.Customer.Providers
 {
     public class QueueClientProvider : IQueueClientProvider
     {
+        private readonly IAppSettings _appSettings;
+
+        public QueueClientProvider(IAppSettings appSettings)
+        {
+            _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
+        }
+
         public async Task<QueueClient> GetAsync(string connectionString, string queueName)
         {
-            var queueClient = CreateQueueClient(connectionString, queueName);
+            var queueClient = new QueueClient(connectionString, queueName);
             await queueClient.CreateIfNotExistsAsync();
 
             return queueClient;
         }
 
-        public Task<bool> TestConnectionAsync(string connectionKey, string queueName)
+        public async Task<bool> TestConnectionAsync(string connectionString, string queueName)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var queueClient = new QueueClient(connectionString, queueName);
 
-        private QueueClient CreateQueueClient(string connectionString, string queueName)
-        {
-            return new QueueClient(connectionString, queueName);
+                await queueClient.CreateIfNotExistsAsync();
+                await queueClient.PeekMessageAsync();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

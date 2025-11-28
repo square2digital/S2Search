@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Services.Interfaces.Managers;
+using S2Search.CacheManager.Interfaces.Managers;
 using StackExchange.Redis;
 
-namespace Services.Managers
+namespace S2Search.CacheManager.Managers
 {
     internal class RedisCacheManager : ICacheManager
     {

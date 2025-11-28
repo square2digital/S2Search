@@ -1,15 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using Newtonsoft.Json;
+using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
+using S2Search.Backend.Domain.Configuration.SearchResources.Credentials;
 using S2Search.Backend.Domain.Constants;
+using S2Search.Backend.Domain.Interfaces;
+using S2Search.Backend.Domain.Models.Facets;
 using S2Search.Backend.Domain.Models.Request;
 using S2Search.Backend.Domain.Models.Response;
+using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces;
 using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Interfaces.Cache;
-using S2Search.Backend.Domain.Interfaces;
 using Services.Interfaces;
-using S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpers;
-using S2Search.Backend.Domain.AzureFunctions.SearchInsights.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
 {
@@ -26,6 +28,8 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
         private readonly IHttpContextAccessor _httpContext;
         private readonly IDistributedCacheService _redisService;
         private readonly IFireForgetService<IAzureQueueService> _fireForgetAzureQueueService;
+
+        private IList<FacetGroup> _defaultFacets;
 
         public SearchController(ILogger<SearchController> logger,
                                 IAppSettings appSettings,
@@ -60,12 +64,24 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
             if (validator != null) return validator;
 
             var result = new SearchResultRoot();
+            string redisKey = null;
+            string redisValue = null;
 
             try
             {
                 request.CustomerEndpoint = StringHelpers.FormatCustomerEndpoint(request.CustomerEndpoint);
-                string redisKey = null;
-                string redisValue = null;
+
+                var queryCredentials = await _queryCredentialsProvider.GetAsync(request.CustomerEndpoint);
+
+                if (_defaultFacets == null)
+                {
+                    await GetDefaultFacets(request.CustomerEndpoint, queryCredentials);
+                }
+
+                if (queryCredentials == null)
+                {
+                    return BadRequest("customerEndpoint not recognised.");
+                }
 
                 if (_appSettings.RedisCacheSettings.EnableRedisCache)
                 {
@@ -85,13 +101,6 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
                     var searchResults = JsonConvert.DeserializeObject<SearchResultRoot>(redisValue);
                     LogSearchInsight(searchResults.SearchInsightMessage);
                     return Ok(searchResults.SearchProductResult);
-                }
-
-                var queryCredentials = await _queryCredentialsProvider.GetAsync(request.CustomerEndpoint);
-
-                if (queryCredentials == null)
-                {
-                    return BadRequest("customerEndpoint not recognised.");
                 }
 
                 result = await _azureSearchService.InvokeSearchRequest(request, queryCredentials);
@@ -118,6 +127,27 @@ namespace S2Search.Backend.Controllers.Search.AzureCognitiveServices
                 _logger.LogInformation($"Search Request {JsonConvert.SerializeObject(request)}");
                 _logger.LogInformation($"Search Product Result {JsonConvert.SerializeObject(result)}");
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        private async Task GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials)
+        {
+            if (_defaultFacets == null)
+            {
+                var request = new SearchRequest
+                {
+                    SearchTerm = "",
+                    Filters = "",
+                    OrderBy = null,
+                    PageNumber = 0,
+                    PageSize = 0,
+                    NumberOfExistingResults = 0,
+                    CustomerEndpoint = customerEndpoint,
+                };
+
+                var rats = await _azureSearchService.InvokeSearchRequest(request, queryCredentials);
+
+                _defaultFacets = rats.SearchProductResult.Facets;
             }
         }
 

@@ -6,11 +6,3 @@ public static class ConnectionStringKeys
     public const string AzureStorage = "AzureStorage";
     public const string Redis = "Redis";
 }
-
-public static class ConnectionStringFunctionKeys
-{
-    public const string SqlDatabase = "ConnectionStrings:SqlDatabase";
-    public const string AzureStorage = "ConnectionStrings:AzureStorage";
-    public const string Redis = "ConnectionStrings:Redis";
-}
-

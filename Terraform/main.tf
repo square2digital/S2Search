@@ -138,6 +138,11 @@ resource "azurerm_storage_queue" "cache_invalidation" {
   storage_account_id = azurerm_storage_account.s2search_storage.id
 }
 
+resource "azurerm_storage_queue" "cache_purge" {
+  name               = "purge-cache"
+  storage_account_id = azurerm_storage_account.s2search_storage.id
+}
+
 # AKS Cluster for container orchestration
 resource "azurerm_kubernetes_cluster" "s2search_aks" {
   name                = var.aks_cluster_name

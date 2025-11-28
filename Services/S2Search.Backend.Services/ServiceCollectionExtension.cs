@@ -45,8 +45,6 @@ namespace S2Search.Backend.Services
             // Register LazyCache
             services.AddSingleton<IAppCache, CachingService>();
 
-            // Register your IAppSettings implementation
-            services.AddSingleton<IAppSettings, AppSettings>();
 
             var appSettings = LoadAppSettings(services);
 
@@ -168,13 +166,16 @@ namespace S2Search.Backend.Services
                 throw new InvalidOperationException("AppSettings section is missing or invalid in configuration.");
             }
 
-            services.AddSingleton(appSettings);
+            // Register the bound instance explicitly as IAppSettings so consumers get the configuration-bound object.
+            services.AddSingleton<IAppSettings>(appSettings);
 
             return appSettings;
         }
 
         private static Func<IServiceProvider, IConnectionMultiplexer> RedisConnectionMultiplexer()
         {
+            var redisConStr = Configuration.GetConnectionString(ConnectionStringKeys.Redis);
+
             return x =>
             {
                 var loggerFactory = x.GetRequiredService<ILoggerFactory>();
@@ -182,12 +183,12 @@ namespace S2Search.Backend.Services
 
                 try
                 {
-                    var connection = ConnectionMultiplexer.Connect(Configuration.GetValue<string>(ConnectionStringFunctionKeys.Redis));
+                    var connection = ConnectionMultiplexer.Connect(redisConStr);
                     return connection;
                 }
                 catch (Exception ex)
                 {
-                    logger.LogCritical(ex, $"Unable to connect to Redis using Configuration Key: '{ConnectionStringFunctionKeys.Redis}'");
+                    logger.LogCritical(ex, $"Unable to connect to Redis using Connection String: '{redisConStr}'");
                     throw;
                 }
             };

@@ -15,20 +15,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
         private static Dictionary<int, string> _searchTermContainer = new Dictionary<int, string>();
         private static string _fullSearchTerm = string.Empty;
 
-        private static IList<FacetGroup> _defaultFacets = FacetsFromLocalFile();
-
-        private static IList<FacetGroup> FacetsFromLocalFile()
-        {
-            if (_defaultFacets == null)
-            {
-                var json = File.ReadAllText(@"DefaultFacets.json");
-                _defaultFacets = JsonConvert.DeserializeObject<IList<FacetGroup>>(json);
-            }
-
-            return _defaultFacets;
-        }
-
-        public static string GenerateLuceneSearchString(string searchTerm)
+        public static string GenerateLuceneSearchString(string searchTerm, IList<FacetGroup> defaultFacets)
         {
             //FacetsFromLocalFile();
             ClearObjects();
@@ -58,7 +45,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             //}
 
             // initially exact match the term before splitting - eg "4 series"
-            if (DoesSearchTermExactMatchInFacet(NewSearchTerm))
+            if (DoesSearchTermExactMatchInFacet(NewSearchTerm, defaultFacets))
             {
                 BuildSearchTerm(NewSearchTerm, SearchTermBuilder);
                 return SearchTermBuilder.ToString();
@@ -81,7 +68,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             {
                 string comparisonStr = _searchTermContainer.First().Value;
 
-                if (DoesSearchTermExactMatchInFacet(comparisonStr))
+                if (DoesSearchTermExactMatchInFacet(comparisonStr, defaultFacets))
                 {
                     SearchTermBuilder.Append(comparisonStr);
                 }
@@ -102,7 +89,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             foreach (KeyValuePair<int, string> term in searchTermContainer_copy)
             {
                 // if (DoesSearchTermExactMatchInFacet(term.Value) || DoesSearchTermExactMatchInSynonym(term.Value, synonyms))
-                if (DoesSearchTermExactMatchInFacet(term.Value))
+                if (DoesSearchTermExactMatchInFacet(term.Value, defaultFacets))
                 {
                     _searchTermContainer.TryAdd(term.Key, term.Value);
                 }
@@ -123,7 +110,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
                     string SecondValue = _nonExactTermContainer[term.Key + 1];
 
                     string TermConcatinated = $"{FirstValue} {SecondValue}";
-                    if (DoesSearchTermExactMatchInFacet(TermConcatinated))
+                    if (DoesSearchTermExactMatchInFacet(TermConcatinated, defaultFacets))
                     {
                         UpdateDictionaries(term, TermConcatinated);
                         continue;
@@ -151,7 +138,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
 
             _searchTermContainer = _searchTermContainer.OrderBy(x => x.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
 
-            ConcatResults(SearchTermBuilder);
+            ConcatResults(SearchTermBuilder, defaultFacets);
             return CleanLuceneString(SearchTermBuilder.ToString());
 
         }
@@ -236,7 +223,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             return false;
         }
 
-        private static void ConcatResults(StringBuilder SearchTermBuilder)
+        private static void ConcatResults(StringBuilder SearchTermBuilder, IList<FacetGroup> defaultFacets)
         {
             // ***************************************************
             // Concat the results
@@ -250,7 +237,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
                 string testTerm = term.Value.Replace("\"", "");
 
                 // if (DoesSearchTermExactMatchInFacet(testTerm) || DoesSearchTermExactMatchInSynonym(testTerm, synonyms))
-                if (DoesSearchTermExactMatchInFacet(testTerm))
+                if (DoesSearchTermExactMatchInFacet(testTerm, defaultFacets))
                 {
                     if (testTerm.Contains(" ") || testTerm.Contains("-"))
                     {
@@ -305,7 +292,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             return RegExMatch;
         }
 
-        private static bool DoesSearchTermExactMatchInFacet(string searchTerm)
+        private static bool DoesSearchTermExactMatchInFacet(string searchTerm, IList<FacetGroup> defaultFacets)
         {
             searchTerm = searchTerm?.Trim();
 
@@ -314,7 +301,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
             //    return false;
             //}
 
-            foreach (FacetGroup facetGroup in _defaultFacets)
+            foreach (FacetGroup facetGroup in defaultFacets)
             {
                 if (_facetGroupNamesToMatch.Any(x => x.ToUpper(CultureInfo.InvariantCulture) == facetGroup.FacetKey.ToUpper(CultureInfo.InvariantCulture)))
                 {
@@ -342,42 +329,6 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Helpe
 
             return false;
         }
-
-        private static bool DoesSearchTermExactMatchInSynonym(string searchTerm, IDictionary<string, List<string>> synonyms)
-        {
-            //if (HandleEdgeCases(searchTerm))
-            //{
-            //    return false;
-            //}
-
-            foreach (var Synonyms_KVP in synonyms)
-            {
-                foreach (string Synonym in Synonyms_KVP.Value)
-                {
-                    if (string.IsNullOrEmpty(Synonym)) continue;
-
-                    if (Synonym.Equals(searchTerm, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        //private static bool HandleEdgeCases(string searchTerm)
-        //{
-        //    foreach (var edgeCase in _facetEdgeCases)
-        //    {
-        //        if (searchTerm == edgeCase.SearchTerm && _fullSearchTerm.Contains(edgeCase.FullSearchTerm, StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            return edgeCase.Result;
-        //        }
-        //    }
-
-        //    return false;
-        //}
 
         /// <summary>
         /// used to clean the result of a lucence string - they can become corrupted with high throughput of search API calls

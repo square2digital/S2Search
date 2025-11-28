@@ -24,16 +24,16 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
         private readonly IAzureSearchDocumentsClientProvider _searchClientProvider;
         private readonly IDisplayTextFormatHelper _displayTextFormatHelper;
         private readonly ISearchOptionsProvider _searchOptionsProvider;
-        //private readonly ILuceneSyntaxHelper _luceneSyntaxHelper;
         private readonly IFacetHelper _facetHelper;
         private readonly IAzureAutoSuggestOptionsProvider _autoSuggestOptionsProvider;
+
+        private IList<FacetGroup> _defaultFacets;
 
         public AzureSearchService(IAppSettings appSettings,
                                   ILoggerFactory loggerFactory,
                                   ISearchOptionsProvider searchCriteriaProvider,
                                   IDisplayTextFormatHelper displayTextFormatHelper,
                                   IAzureSearchDocumentsClientProvider searchClientProvider,
-                                  //ILuceneSyntaxHelper luceneSyntaxHelper,
                                   IFacetHelper facetHelper,
                                   IFacetOverrideProvider facetOverrideProvider,
                                   IAzureAutoSuggestOptionsProvider autoSuggestOptionsProvider) : base(appSettings,
@@ -47,14 +47,15 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             _searchClientProvider = searchClientProvider ?? throw new ArgumentNullException(nameof(searchClientProvider));
             _displayTextFormatHelper = displayTextFormatHelper ?? throw new ArgumentNullException(nameof(displayTextFormatHelper));
             _searchOptionsProvider = searchCriteriaProvider ?? throw new ArgumentNullException(nameof(searchCriteriaProvider));
-            //_luceneSyntaxHelper = luceneSyntaxHelper ?? throw new ArgumentNullException(nameof(luceneSyntaxHelper));
             _facetHelper = facetHelper ?? throw new ArgumentNullException(nameof(facetHelper));
             _autoSuggestOptionsProvider = autoSuggestOptionsProvider ?? throw new ArgumentNullException(nameof(autoSuggestOptionsProvider));
         }
 
-        public async Task<SearchResultRoot> InvokeSearchRequest(SearchRequest request, SearchIndexQueryCredentials targetSearchResource)
+        public async Task<SearchResultRoot> InvokeSearchRequest(SearchRequest request, SearchIndexQueryCredentials queryCredentials)
         {
-            ValidateRequest(request, targetSearchResource);
+            await SetDefaultFacets(request.CustomerEndpoint, queryCredentials);
+
+            ValidateRequest (request, queryCredentials);
 
             SearchOptions searchOptions = new SearchOptions();
             string luceneSearch = string.Empty;
@@ -67,9 +68,9 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                 }
 
                 searchOptions = _searchOptionsProvider.CreateSearchOptions(request);
-                luceneSearch = LuceneSyntaxHelper.GenerateLuceneSearchString(request.SearchTerm);
+                luceneSearch = LuceneSyntaxHelper.GenerateLuceneSearchString(request.SearchTerm, _defaultFacets);
 
-                var result = await GetSearchClient(targetSearchResource).SearchAsync<SearchVehicle>(string.Join(" ", luceneSearch), searchOptions).ConfigureAwait(false);
+                var result = await GetSearchClient(queryCredentials).SearchAsync<SearchVehicle>(string.Join(" ", luceneSearch), searchOptions).ConfigureAwait(false);
                 var facetGroups = result.Value.Facets;
                 var totalResults = result.Value.TotalCount;
 
@@ -80,7 +81,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
                     searchVehicleResults.Add(item.Document);
                 }
 
-                var searchInsightMessage = CreateSearchInsightMessage(request, targetSearchResource, luceneSearch, totalResults);
+                var searchInsightMessage = CreateSearchInsightMessage(request, queryCredentials, luceneSearch, totalResults);
 
                 var searchResult = new SearchResultRoot()
                 {
@@ -105,11 +106,34 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             }
         }
 
-        private static SearchInsightMessage CreateSearchInsightMessage(SearchRequest request, SearchIndexQueryCredentials targetSearchResource, string luceneSearch, long? totalResults)
+        private async Task SetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials queryCredentials)
+        {
+            if (_defaultFacets == null)
+            {
+                var request = new SearchRequest
+                {
+                    SearchTerm = "",
+                    Filters = "",
+                    OrderBy = null,
+                    PageNumber = 0,
+                    PageSize = 0,
+                    NumberOfExistingResults = 0,
+                    CustomerEndpoint = customerEndpoint,
+                };
+
+                var searchOptions = _searchOptionsProvider.CreateSearchOptions(request);
+                var result = await GetSearchClient(queryCredentials).SearchAsync<SearchVehicle>(string.Empty, searchOptions).ConfigureAwait(false);
+                var facetGroups = result.Value.Facets;
+
+                _defaultFacets = ConvertFacetsToResult(facetGroups);
+            }
+        }
+
+        private static SearchInsightMessage CreateSearchInsightMessage(SearchRequest request, SearchIndexQueryCredentials queryCredentials, string luceneSearch, long? totalResults)
         {
             return new SearchInsightMessage()
             {
-                SearchIndexId = targetSearchResource.id,
+                SearchIndexId = queryCredentials.id,
                 ActualSearchQuery = request.SearchTerm,
                 LuceneSearchQuery = luceneSearch,
                 Filters = request.Filters,
@@ -118,47 +142,30 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
             };
         }
 
-        public async Task<int> TotalDocumentCount(SearchIndexQueryCredentials targetSearchResource)
+        public async Task<int> TotalDocumentCount(SearchIndexQueryCredentials queryCredentials)
         {
-            if (targetSearchResource == null)
+            if (queryCredentials == null)
             {
-                throw new ArgumentNullException(nameof(targetSearchResource));
+                throw new ArgumentNullException(nameof(queryCredentials));
             }
 
-            var result = await GetSearchClient(targetSearchResource).GetDocumentCountAsync().ConfigureAwait(false);
+            var result = await GetSearchClient(queryCredentials).GetDocumentCountAsync().ConfigureAwait(false);
 
             return Convert.ToInt32(result);
         }
 
-        public async Task<IList<FacetGroup>> GetDefaultFacets(string customerEndpoint, SearchIndexQueryCredentials targetSearchResource)
-        {
-            SearchRequest request = new SearchRequest
-            {
-                SearchTerm = "",
-                Filters = "",
-                OrderBy = null,
-                PageNumber = 0,
-                PageSize = 0,
-                NumberOfExistingResults = 0,
-                CustomerEndpoint = customerEndpoint,
-            };
-
-            var data = await InvokeSearchRequest(request, targetSearchResource);
-            return data.SearchProductResult.Facets;
-        }
-
-        private void ValidateRequest(SearchRequest request, SearchIndexQueryCredentials targetSearchResource)
+        private void ValidateRequest(SearchRequest request, SearchIndexQueryCredentials queryCredentials)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            if (targetSearchResource == null) throw new ArgumentNullException(nameof(targetSearchResource));
+            if (queryCredentials == null) throw new ArgumentNullException(nameof(queryCredentials));
         }
 
-        private SearchClient GetSearchClient(SearchIndexQueryCredentials targetSearchResource)
+        private SearchClient GetSearchClient(SearchIndexQueryCredentials queryCredentials)
         {
-            return _searchClientProvider.GetSearchClient(targetSearchResource.search_instance_endpoint, targetSearchResource.search_index_name, targetSearchResource.QueryApiKey);
+            return _searchClientProvider.GetSearchClient(queryCredentials.search_instance_endpoint, queryCredentials.search_index_name, queryCredentials.QueryApiKey);
         }
 
-        public async Task<IEnumerable<string>> AutocompleteWithSuggestions(string searchTerm, SearchIndexQueryCredentials targetSearchResource)
+        public async Task<IEnumerable<string>> AutocompleteWithSuggestions(string searchTerm, SearchIndexQueryCredentials queryCredentials)
         {
             if (string.IsNullOrEmpty(searchTerm))
             {
@@ -167,7 +174,7 @@ namespace S2Search.Backend.Services.Services.Search.AzureCognitiveServices.Servi
 
             try
             {
-                var searchClient = GetSearchClient(targetSearchResource);
+                var searchClient = GetSearchClient(queryCredentials);
                 var autoSuggestOptions = _autoSuggestOptionsProvider.Get(AzureAutoSuggest.DefaultSuggesterName,
                                                                          AzureAutoSuggest.DefaultSuggestSelectFields,
                                                                          AzureAutoSuggest.DefaultSuggestSearchFields,
