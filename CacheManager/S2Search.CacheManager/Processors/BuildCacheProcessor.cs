@@ -79,6 +79,9 @@ namespace S2Search.CacheManager.Processors
                 BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Model", "Location"),
                 BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Model", "FuelType"),
                 BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Model", "Location", "Colour"),
+
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Model", "Colour"),
+                BuildRequestsForFacetsAsync(customerEndpoint, "Make", "Model", "BodyStyle"),
             };
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -133,10 +136,13 @@ namespace S2Search.CacheManager.Processors
 
                     var result = await _azureSearchService.InvokeSearchRequest(request, creds).ConfigureAwait(false);
 
-                    if (_appSettings.RedisCacheSettings.EnableRedisCache && redisKey != null)
+                    if (result.SearchProductResult.SearchResults > 0)
                     {
-                        var serialized = JsonConvert.SerializeObject(result);
-                        await _redisService.SetValueAsync(redisKey, serialized, CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds)).ConfigureAwait(false);
+                        if (_appSettings.RedisCacheSettings.EnableRedisCache && redisKey != null)
+                        {
+                            var serialized = JsonConvert.SerializeObject(result);
+                            await _redisService.SetValueAsync(redisKey, serialized, CacheHelper.GetExpiry(_appSettings.RedisCacheSettings.DefaultCacheExpiryInSeconds)).ConfigureAwait(false);
+                        }
                     }
                 }
             }
@@ -146,10 +152,13 @@ namespace S2Search.CacheManager.Processors
         {
             return new SearchRequest
             {
-                PageNumber = 1,
-                PageSize = 0,
-                CustomerEndpoint = customerEndpoint,
-                SearchTerm = searchTerm
+                SearchTerm = searchTerm,
+                Filters = "",
+                OrderBy = null,
+                PageNumber = 0,
+                PageSize = 100,
+                NumberOfExistingResults = 0,
+                CustomerEndpoint = customerEndpoint
             };
         }
     }
